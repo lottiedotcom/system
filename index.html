@@ -126,7 +126,6 @@
             min-height: 300px;
         }
         .wish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        
         .polaroid {
             background: white; padding: 8px 8px 25px 8px;
             box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
@@ -134,8 +133,6 @@
             text-align: center; position: relative;
         }
         .polaroid:nth-child(even) { transform: rotate(2deg); }
-        .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
-        
         .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; border: 1px solid #ddd; }
         .polaroid-caption {
             font-family: 'Courier New', monospace; font-size: 0.7rem; color: #333;
@@ -147,13 +144,18 @@
             box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
 
-        /* === 3. MIHARU === */
+        /* === 3. EBI (PET) === */
         .pet-container {
             background: white; border: 3px solid var(--pink); border-radius: 20px;
             padding: 20px; text-align: center; margin-bottom: 20px;
         }
-        .pet-face { font-size: 4rem; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% {transform:translateY(0);} 50% {transform:translateY(-8px);} }
+        .pet-img { 
+            width: 120px; height: 120px; 
+            object-fit: contain; 
+            animation: bounce 2s infinite; 
+            filter: drop-shadow(0 4px 0 rgba(0,0,0,0.1));
+        }
+        @keyframes bounce { 0%, 100% {transform:translateY(0);} 50% {transform:translateY(-10px) rotate(5deg);} }
         
         .hunger-track { background: #eee; height: 12px; border-radius: 10px; margin: 10px 0; overflow: hidden; border: 1px solid #ccc; }
         .hunger-fill { height: 100%; background: linear-gradient(90deg, #ff9a9e, #ff69b4); width: 50%; transition: width 0.3s; }
@@ -175,7 +177,6 @@
             cursor: pointer; transition: 0.2s; width: 40px; height: 40px;
         }
         .mood-btn.selected { background: var(--light-pink); border-color: var(--pink); transform: scale(1.1); }
-        
         .entry-bubble {
             background: white; padding: 10px; border-radius: 10px; margin-bottom: 8px;
             border: 1px solid #eee; border-left: 4px solid var(--blue);
@@ -218,7 +219,7 @@
 <div class="app-shell">
     <div class="marquee-container">
         <div class="marquee-text">
-            ★ SEIREN OS v8.0 ★ WISHLIST ONLINE ★ LEVEL UP FOR NEW AVATARS ★ FEED MIHARU ★ GIRLS BRAVO ★
+            ★ SEIREN OS v9.0 ★ EBI'S HOUSE ONLINE ★ LEVEL UP YOUR ID ★ WISH FOR ITEMS ★ GIRLS BRAVO ★
         </div>
     </div>
 
@@ -241,7 +242,6 @@
                         <span><span id="xp-val">0</span> / 100 XP</span>
                     </div>
                     <div class="xp-track"><div id="xp-bar" class="xp-fill"></div></div>
-                    <div style="font-size:0.7rem; color:#888; margin-top:5px;">Next Level: New Avatar Unlock!</div>
                 </div>
 
                 <div class="id-card">
@@ -257,7 +257,7 @@
                                 <strong>Power:</strong> <span id="my-pow">80%</span><br>
                                 <strong>ID:</strong> #<span id="my-id">2004</span>
                             </div>
-                            <div style="font-size:0.6rem; color:var(--blue); margin-top:5px; cursor:pointer;" onclick="changeAvatar()">[TAP IMAGE TO CHANGE]</div>
+                            <div style="font-size:0.6rem; color:var(--blue); margin-top:5px; cursor:pointer;" onclick="changeAvatar()">[TAP TO CHANGE]</div>
                         </div>
                     </div>
                 </div>
@@ -271,7 +271,8 @@
                             </div>
                             <div style="position:absolute; width:100%; height:100%; backface-visibility:hidden; background:white; transform:rotateY(180deg); border:4px solid var(--blue); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px;">
                                 <div id="fortune-icon" style="font-size:3rem;"></div>
-                                <strong id="fortune-title" style="color:var(--pink); margin-top:10px;"></strong>
+                                <strong id="fortune-title" style="color:var(--pink); margin-top:10px; font-size:0.9rem;"></strong>
+                                <p id="fortune-desc" style="font-size:0.75rem; color:#666; margin-top:5px; line-height:1.2;"></p>
                             </div>
                         </div>
                     </div>
@@ -281,30 +282,25 @@
 
         <div id="tab-wish" class="page">
             <h2 style="color:var(--blue);">My Wishlist</h2>
-            
             <div style="background:white; padding:10px; border-radius:10px; margin-bottom:15px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
                 <input type="text" id="wish-name" placeholder="Item Name..." style="margin-bottom:5px;">
-                <input type="text" id="wish-img" placeholder="Image Link (Pinterest/Google)...">
+                <input type="text" id="wish-img" placeholder="Image Link...">
                 <button class="btn-pink" onclick="addWish()">Pin to Board</button>
             </div>
-
-            <div class="corkboard">
-                <div id="wish-grid" class="wish-grid">
-                    </div>
-            </div>
+            <div class="corkboard"><div id="wish-grid" class="wish-grid"></div></div>
         </div>
 
         <div id="tab-pet" class="page">
             <div class="pet-container">
-                <div id="pet-face" class="pet-face">😮</div>
-                <h3 style="color:var(--pink); margin:5px 0;">Miharu</h3>
+                <img src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="pet-img" id="ebi-img">
+                <h3 style="color:var(--pink); margin:5px 0;">Ebi</h3>
                 <div class="hunger-track">
                     <div id="hunger-bar" class="hunger-fill"></div>
                 </div>
-                <p id="pet-msg" style="font-size:0.8rem; color:#888;">Feed me curry!</p>
+                <p id="pet-msg" style="font-size:0.8rem; color:#888;">Ebi wants space snacks!</p>
             </div>
             
-            <h3>To-Do List</h3>
+            <h3>Tasks (Fills Happy Meter)</h3>
             <div style="display:flex; gap:5px; margin-bottom:15px;">
                 <input type="text" id="task-input" placeholder="New Task...">
                 <button class="btn-pink btn-small" onclick="addTask()">+</button>
@@ -332,7 +328,7 @@
     <nav>
         <button class="nav-btn active" onclick="nav('home', this)"><span>🏠</span>Home</button>
         <button class="nav-btn" onclick="nav('wish', this)"><span>📌</span>Wishlist</button>
-        <button class="nav-btn" onclick="nav('pet', this)"><span>🍛</span>Pet</button>
+        <button class="nav-btn" onclick="nav('pet', this)"><span>🍤</span>Ebi</button>
         <button class="nav-btn" onclick="nav('diary', this)"><span>📓</span>Diary</button>
     </nav>
 </div>
@@ -351,7 +347,7 @@
         "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png/revision/latest?cb=20230827221913"
     ];
 
-    // === AUDIO ENGINE (Bloop & Sparkle) ===
+    // === AUDIO ENGINE ===
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playBloop() {
         if(audioCtx.state === 'suspended') audioCtx.resume();
@@ -381,13 +377,13 @@
 
     // === STATE ===
     const DB = {
-        user: JSON.parse(localStorage.getItem('seiren_v8_user')) || null,
-        wishlist: JSON.parse(localStorage.getItem('seiren_v8_wish')) || [],
-        pet: JSON.parse(localStorage.getItem('seiren_v8_pet')) || { hunger: 50, tasks: ['Drink Water'] },
-        diary: JSON.parse(localStorage.getItem('seiren_v8_diary')) || [],
-        fortune: JSON.parse(localStorage.getItem('seiren_v8_fortune')) || { date: '', icon: '', title: '' },
-        xp: parseInt(localStorage.getItem('seiren_v8_xp')) || 0,
-        level: parseInt(localStorage.getItem('seiren_v8_lvl')) || 1
+        user: JSON.parse(localStorage.getItem('seiren_v9_user')) || null,
+        wishlist: JSON.parse(localStorage.getItem('seiren_v9_wish')) || [],
+        pet: JSON.parse(localStorage.getItem('seiren_v9_pet')) || { hunger: 50, tasks: ['Drink Water'] },
+        diary: JSON.parse(localStorage.getItem('seiren_v9_diary')) || [],
+        fortune: JSON.parse(localStorage.getItem('seiren_v9_fortune')) || { date: '', icon: '', title: '', desc: '' },
+        xp: parseInt(localStorage.getItem('seiren_v9_xp')) || 0,
+        level: parseInt(localStorage.getItem('seiren_v9_lvl')) || 1
     };
     let currentMood = '😊';
 
@@ -398,7 +394,6 @@
         renderWishlist(); renderPet(); renderDiary();
     }
 
-    // SNOW SYSTEM
     function createSnow() {
         const container = document.getElementById('snow-container');
         for(let i=0; i<15; i++) {
@@ -412,17 +407,13 @@
         }
     }
 
-    // XP SYSTEM
     function addXP(amount) {
         DB.xp += amount;
         if(DB.xp >= 100) {
-            DB.xp -= 100;
-            DB.level++;
-            playSparkle();
-            alert("LEVEL UP! New Avatar Available!");
+            DB.xp -= 100; DB.level++; playSparkle(); alert("LEVEL UP! New Avatar Available!");
         }
-        localStorage.setItem('seiren_v8_xp', DB.xp);
-        localStorage.setItem('seiren_v8_lvl', DB.level);
+        localStorage.setItem('seiren_v9_xp', DB.xp);
+        localStorage.setItem('seiren_v9_lvl', DB.level);
         updateXPBar();
     }
     function updateXPBar() {
@@ -444,14 +435,11 @@
         const sName = pres[seed % pres.length] + sufs[(seed*3) % sufs.length];
 
         DB.user = {
-            realName: name,
-            seirenName: sName,
-            avatarIdx: 0, // Starts at index 0
+            realName: name, seirenName: sName, avatarIdx: 0,
             type: ["Tsundere", "Dojikko", "Alien", "Idol"][seed % 4],
-            pow: Math.floor(Math.random()*100),
-            id: Math.floor(Math.random()*9000)+1000
+            pow: Math.floor(Math.random()*100), id: Math.floor(Math.random()*9000)+1000
         };
-        localStorage.setItem('seiren_v8_user', JSON.stringify(DB.user));
+        localStorage.setItem('seiren_v9_user', JSON.stringify(DB.user));
         document.getElementById('setup-screen').style.display = 'none';
         renderID();
     }
@@ -464,15 +452,11 @@
         document.getElementById('my-avatar').src = MOE_ICONS[DB.user.avatarIdx % MOE_ICONS.length];
     }
     function changeAvatar() {
-        if(DB.level < 2 && DB.user.avatarIdx === 0) {
-            alert("Level up to unlock more avatars!");
-            return;
-        }
+        if(DB.level < 2 && DB.user.avatarIdx === 0) { alert("Level up to unlock more avatars!"); return; }
         playBloop();
-        // Cycle through unlocked avatars (Level 1 = 1 avatar, Level 2 = 2 avatars, etc)
         const unlockedCount = Math.min(DB.level + 1, MOE_ICONS.length);
         DB.user.avatarIdx = (DB.user.avatarIdx + 1) % unlockedCount;
-        localStorage.setItem('seiren_v8_user', JSON.stringify(DB.user));
+        localStorage.setItem('seiren_v9_user', JSON.stringify(DB.user));
         renderID();
     }
 
@@ -482,33 +466,24 @@
         const name = document.getElementById('wish-name').value;
         const img = document.getElementById('wish-img').value;
         if(!name) return;
-
         DB.wishlist.push({ name: name, img: img || "https://cdn-icons-png.flaticon.com/512/3209/3209955.png" });
-        localStorage.setItem('seiren_v8_wish', JSON.stringify(DB.wishlist));
-        document.getElementById('wish-name').value = "";
-        document.getElementById('wish-img').value = "";
+        localStorage.setItem('seiren_v9_wish', JSON.stringify(DB.wishlist));
+        document.getElementById('wish-name').value = ""; document.getElementById('wish-img').value = "";
         renderWishlist();
     }
     function renderWishlist() {
         const grid = document.getElementById('wish-grid');
         grid.innerHTML = "";
         DB.wishlist.forEach(w => {
-            grid.innerHTML += `
-                <div class="polaroid">
-                    <div class="pin"></div>
-                    <img src="${w.img}">
-                    <div class="polaroid-caption">${w.name}</div>
-                </div>
-            `;
+            grid.innerHTML += `<div class="polaroid"><div class="pin"></div><img src="${w.img}"><div class="polaroid-caption">${w.name}</div></div>`;
         });
     }
 
-    // FORTUNE
+    // FORTUNE (UPDATED CHAOS)
     function checkFortune() {
         const today = new Date().toDateString();
         if(DB.fortune.date === today) {
-            document.getElementById('fortune-icon').innerText = DB.fortune.icon;
-            document.getElementById('fortune-title').innerText = DB.fortune.title;
+            renderFortuneData(DB.fortune);
             const card = document.getElementById('card-inner');
             card.style.transition = 'none'; card.style.transform = 'rotateY(180deg)';
         }
@@ -518,26 +493,34 @@
         const today = new Date().toDateString();
         if(DB.fortune.date === today) return;
 
-        const opts = [{i:"⭐", t:"Lucky!"}, {i:"🛁", t:"Bath Portal!"}, {i:"🍛", t:"Curry Day!"}, {i:"💕", t:"Romance!"}];
+        const opts = [
+            {i:"🍞", t:"Toast Run", d:"You will be late for school and bump into your soulmate."},
+            {i:"🛁", t:"Bath Portal", d:"Avoid bathtubs. High risk of teleportation to a men's bath."},
+            {i:"🤧", t:"Sneeze Warning", d:"If you sneeze, you might turn into a boy. Careful."},
+            {i:"🍮", t:"Pudding Theft", d:"Someone will eat your dessert from the fridge."},
+            {i:"👽", t:"Space Signal", d:"Your phone will receive a text from another galaxy."},
+            {i:"💖", t:"Childhood Friend", d:"Someone has a crush on you but is too tsundere to say it."}
+        ];
         const res = opts[Math.floor(Math.random()*opts.length)];
         
-        DB.fortune = { date: today, icon: res.i, title: res.t };
-        localStorage.setItem('seiren_v8_fortune', JSON.stringify(DB.fortune));
-        addXP(10); // Reward
-        
-        document.getElementById('fortune-icon').innerText = res.i;
-        document.getElementById('fortune-title').innerText = res.t;
+        DB.fortune = { date: today, icon: res.i, title: res.t, desc: res.d };
+        localStorage.setItem('seiren_v9_fortune', JSON.stringify(DB.fortune));
+        addXP(10);
+        renderFortuneData(res);
         document.getElementById('card-inner').style.transition = 'transform 0.6s';
         document.getElementById('card-inner').style.transform = 'rotateY(180deg)';
     }
+    function renderFortuneData(res) {
+        document.getElementById('fortune-icon').innerText = res.icon;
+        document.getElementById('fortune-title').innerText = res.title;
+        document.getElementById('fortune-desc').innerText = res.desc;
+    }
 
-    // PET & DIARY
+    // EBI & DIARY
     function renderPet() {
         const bar = document.getElementById('hunger-bar');
         bar.style.width = DB.pet.hunger + "%";
-        document.getElementById('pet-face').innerText = DB.pet.hunger > 50 ? "😋" : "😫";
-        document.getElementById('pet-msg').innerText = DB.pet.hunger > 50 ? "Miharu is full!" : "So hungry...";
-        
+        document.getElementById('pet-msg').innerText = DB.pet.hunger > 50 ? "Ebi is happy! Squeak!" : "Ebi wants food...";
         const list = document.getElementById('task-list');
         list.innerHTML = "";
         DB.pet.tasks.forEach(t => {
@@ -548,22 +531,19 @@
         playBloop();
         DB.pet.hunger = Math.min(100, DB.pet.hunger + 20);
         addXP(5);
-        localStorage.setItem('seiren_v8_pet', JSON.stringify(DB.pet));
+        localStorage.setItem('seiren_v9_pet', JSON.stringify(DB.pet));
         renderPet();
     }
     function addTask() {
         const val = document.getElementById('task-input').value;
         if(val) {
-            playBloop();
-            DB.pet.tasks.push(val);
-            localStorage.setItem('seiren_v8_pet', JSON.stringify(DB.pet));
-            document.getElementById('task-input').value = "";
-            renderPet();
+            playBloop(); DB.pet.tasks.push(val);
+            localStorage.setItem('seiren_v9_pet', JSON.stringify(DB.pet));
+            document.getElementById('task-input').value = ""; renderPet();
         }
     }
     function setMood(m, btn) {
-        playBloop();
-        currentMood = m;
+        playBloop(); currentMood = m;
         document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
     }
@@ -573,9 +553,8 @@
         playSparkle();
         DB.diary.unshift({ date: new Date().toLocaleDateString(), mood: currentMood, text: txt });
         addXP(15);
-        localStorage.setItem('seiren_v8_diary', JSON.stringify(DB.diary));
-        document.getElementById('diary-text').value = "";
-        renderDiary();
+        localStorage.setItem('seiren_v9_diary', JSON.stringify(DB.diary));
+        document.getElementById('diary-text').value = ""; renderDiary();
     }
     function renderDiary() {
         const div = document.getElementById('diary-history');
