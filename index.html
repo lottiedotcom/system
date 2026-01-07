@@ -10,32 +10,34 @@
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3461/3461877.png">
 
     <style>
-        /* --- CORE 2000s AESTHETIC --- */
+        /* --- CORE AESTHETIC --- */
         :root {
             --pink: #ff69b4;
+            --deep-pink: #d12e87;
             --blue: #00bfff;
             --bg: #e0f7fa;
-            --glass: rgba(255, 255, 255, 0.9);
+            --glass: rgba(255, 255, 255, 0.95);
         }
 
         body {
             font-family: 'Verdana', sans-serif;
             background-color: var(--bg);
+            /* Cute grid pattern */
             background-image: 
-                linear-gradient(rgba(255, 105, 180, 0.1) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(255, 105, 180, 0.1) 2px, transparent 2px);
-            background-size: 30px 30px;
+                linear-gradient(rgba(255, 105, 180, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 105, 180, 0.15) 1px, transparent 1px);
+            background-size: 20px 20px;
             margin: 0;
             display: flex;
             justify-content: center;
             height: 100vh;
             overflow: hidden;
+            color: #444;
         }
 
-        /* SCANLINES OVERLAY */
         .scanlines {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.02) 50%);
             background-size: 100% 4px; pointer-events: none; z-index: 999;
         }
 
@@ -51,105 +53,131 @@
             background: var(--pink); color: white; padding: 5px 0;
             white-space: nowrap; overflow: hidden; border-bottom: 2px solid #ff1493;
             flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .marquee-text {
             display: inline-block; padding-left: 100%;
-            animation: marquee 15s linear infinite; font-weight: bold; font-size: 0.8rem;
+            animation: marquee 20s linear infinite; font-weight: bold; font-size: 0.8rem;
+            text-transform: uppercase; letter-spacing: 1px;
         }
         @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-        /* CONTENT AREA */
         .content {
             flex: 1; overflow-y: auto; padding: 20px;
-            padding-bottom: 90px; /* Space for nav */
+            padding-bottom: 100px; /* Space for nav */
             scroll-behavior: smooth;
         }
 
-        /* --- TABS/PAGES --- */
-        .page { display: none; animation: popIn 0.3s ease; }
+        /* PAGES */
+        .page { display: none; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
-        @keyframes popIn { from {opacity: 0; transform: scale(0.95);} to {opacity: 1; transform: scale(1);} }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
 
-        /* === PAGE 1: ID & FORTUNE === */
+        /* === 1. COMPLEX ID CARD === */
         .id-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
-            border: 2px solid var(--blue); border-radius: 15px; padding: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative; overflow: hidden;
-            margin-bottom: 20px;
+            background: #fff;
+            border: 3px solid var(--blue); border-radius: 15px; padding: 15px;
+            box-shadow: 5px 5px 0px rgba(0,191,255,0.2); position: relative; overflow: hidden;
+            margin-bottom: 25px;
         }
-        .id-card::before {
-            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.6) 50%, transparent 60%);
-            transform: rotate(30deg); animation: shine 4s infinite; pointer-events: none;
+        .id-header {
+            display: flex; justify-content: space-between; border-bottom: 2px solid #eee;
+            padding-bottom: 5px; margin-bottom: 10px; font-size: 0.7rem; color: #888; letter-spacing: 1px;
         }
-        @keyframes shine { 0% {top: -150%;} 100% {top: 150%;} }
+        .id-main { display: flex; align-items: flex-start; gap: 15px; }
+        .id-avatar {
+            width: 80px; height: 80px; background: #fff0f5; border: 2px solid var(--pink);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-size: 3rem;
+        }
+        .id-details h2 { margin: 0; color: var(--pink); font-size: 1.4rem; text-transform: uppercase; }
+        .id-details p { margin: 2px 0; font-size: 0.8rem; color: #555; }
         
-        .fortune-box {
-            background: #fffacd; border: 2px dashed #ffd700; border-radius: 10px;
-            padding: 15px; text-align: center; margin-top: 20px;
+        .stat-bar { margin-top: 5px; display: flex; align-items: center; gap: 5px; font-size: 0.7rem; }
+        .bar-bg { flex: 1; height: 6px; background: #eee; border-radius: 3px; }
+        .bar-fill { height: 100%; background: var(--blue); border-radius: 3px; }
+        
+        .barcode {
+            margin-top: 15px; height: 30px; background: repeating-linear-gradient(90deg, #333 0px, #333 2px, transparent 2px, transparent 4px);
+            opacity: 0.7;
         }
 
-        /* === PAGE 2: YEARBOOK === */
-        .friend-form {
-            background: var(--glass); padding: 15px; border-radius: 10px; border: 1px solid var(--pink);
-            margin-bottom: 20px;
+        /* === FORTUNE CARD FLIP === */
+        .fortune-scene { perspective: 600px; margin-top: 20px; height: 200px; cursor: pointer; }
+        .card-object {
+            width: 100%; height: 100%; position: relative; transition: transform 0.6s;
+            transform-style: preserve-3d; border-radius: 15px;
         }
-        .friend-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .friend-card {
-            background: white; border: 1px solid #ddd; border-radius: 8px; padding: 10px;
-            text-align: center; font-size: 0.8rem;
-            box-shadow: 2px 2px 0px #eee;
+        .card-object.flipped { transform: rotateY(180deg); }
+        .card-face {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Front (Before flip) */
+        .card-front {
+            background: linear-gradient(135deg, var(--pink), #ff9a9e);
+            border: 4px solid white;
+        }
+        .card-front::after { content: "?"; font-size: 5rem; color: white; opacity: 0.8; font-weight: bold; }
+        
+        /* Back (After flip) */
+        .card-back {
+            background: white; transform: rotateY(180deg); border: 4px solid var(--blue);
+            text-align: center; padding: 10px;
         }
 
-        /* === PAGE 3: PET/HABITS === */
-        .pet-zone {
-            text-align: center; background: white; border-radius: 20px; padding: 20px;
-            border: 3px solid var(--blue); margin-bottom: 20px;
+        /* === DIARY === */
+        .mood-selector { display: flex; justify-content: space-around; margin-bottom: 15px; }
+        .mood-btn {
+            font-size: 2rem; background: white; border: 2px solid transparent;
+            border-radius: 50%; width: 50px; height: 50px; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
         }
-        .miharu-avatar { font-size: 4rem; margin-bottom: 10px; display: inline-block; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-10px);} }
+        .mood-btn.selected { border-color: var(--pink); background: #fff0f5; transform: scale(1.1); }
         
-        .hunger-bar-bg { background: #ddd; height: 15px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
-        .hunger-bar-fill { background: linear-gradient(90deg, #ff9a9e, #ff69b4); height: 100%; width: 50%; transition: width 0.5s; }
-        
-        .habit-item {
-            background: var(--glass); padding: 10px; margin-bottom: 8px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-
-        /* === PAGE 4: DIARY === */
         .diary-input {
-            width: 100%; height: 100px; padding: 10px; border: 2px solid var(--pink);
-            border-radius: 10px; font-family: 'Verdana'; box-sizing: border-box;
-            background: #fff0f5; margin-bottom: 10px;
+            width: 100%; height: 80px; padding: 12px; border: 2px solid #ddd; border-radius: 12px;
+            font-family: inherit; margin-bottom: 10px; resize: none; box-sizing: border-box;
         }
-        .entry {
-            background: white; border-left: 4px solid var(--blue); padding: 10px;
-            margin-bottom: 10px; border-radius: 0 10px 10px 0; font-size: 0.9rem;
-        }
-
-        /* === SHARED UI === */
-        input[type="text"], input[type="number"] {
-            width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;
-        }
-        button.btn-pink {
-            background: var(--pink); color: white; border: none; padding: 10px; border-radius: 20px;
-            width: 100%; font-weight: bold; cursor: pointer;
-        }
+        .diary-input:focus { outline: none; border-color: var(--blue); }
         
-        /* NAVBAR */
+        .entry-list { display: flex; flex-direction: column; gap: 10px; }
+        .entry-bubble {
+            background: white; padding: 12px; border-radius: 12px; border-bottom: 3px solid #eee;
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .entry-mood { font-size: 1.5rem; background: #f8f8f8; padding: 5px; border-radius: 8px; }
+        .entry-content { flex: 1; }
+        .entry-date { font-size: 0.7rem; color: #aaa; margin-bottom: 4px; }
+        .entry-text { font-size: 0.9rem; line-height: 1.4; }
+
+        /* === SHARED & NAV === */
+        .btn-action {
+            background: var(--pink); color: white; border: none; padding: 12px;
+            width: 100%; border-radius: 25px; font-weight: bold; font-size: 1rem;
+            box-shadow: 0 4px 0 #c71585; cursor: pointer; margin-top: 10px;
+        }
+        .btn-action:active { transform: translateY(4px); box-shadow: none; }
+        .btn-action:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-top: 3px solid var(--pink);
-            display: flex; justify-content: space-around; padding: 10px 0;
-            z-index: 100;
+            display: flex; justify-content: space-around; padding: 12px 0;
+            padding-bottom: max(12px, env(safe-area-inset-bottom)); z-index: 100;
         }
         .nav-btn {
-            background: none; border: none; font-size: 0.7rem; color: #888;
-            display: flex; flex-direction: column; align-items: center;
+            background: none; border: none; font-size: 0.75rem; color: #999;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
         }
         .nav-btn.active { color: var(--pink); font-weight: bold; }
-        .nav-icon { font-size: 1.5rem; margin-bottom: 2px; }
+        .nav-btn span { font-size: 1.4rem; }
+
+        /* UTILS */
+        .hidden { display: none !important; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; }
 
     </style>
 </head>
@@ -160,309 +188,328 @@
 <div class="app-shell">
     <div class="marquee-container">
         <div class="marquee-text">
-            ★ SEIREN OS V1.0 ★ WELCOME USER ★ FEED MIHARU CURRY ★ DON'T FORGET YOUR HOMEWORK ★ GIRLS BRAVO ★
+            ★ SEIREN OS v5.0 ★ ID VERIFICATION REQUIRED ★ DRAW YOUR DAILY CARD ★ KEEP YOUR DIARY UPDATED ★ GIRLS BRAVO ★
         </div>
     </div>
 
     <div class="content">
 
         <div id="tab-home" class="page active">
-            <div id="id-setup" style="text-align:center; display:none;">
-                <h2 style="color:var(--pink);">Register ID</h2>
-                <input type="text" id="my-name" placeholder="Name">
-                <input type="number" id="my-age" placeholder="Age">
-                <button class="btn-pink" onclick="createMyID()">GENERATE</button>
+            
+            <div id="setup-screen" style="text-align:center; padding:20px; display:none;">
+                <h2 style="color:var(--pink);">New Citizen Registration</h2>
+                <input type="text" id="setup-name" placeholder="Enter Name">
+                <input type="number" id="setup-age" placeholder="Age">
+                <button class="btn-action" onclick="generateID()">CREATE ID</button>
             </div>
 
-            <div id="id-display" class="id-card">
-                <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--blue); padding-bottom:5px; margin-bottom:10px;">
-                    <strong style="color:var(--blue);">STUDENT ID</strong>
-                    <span id="card-date">2004-01-01</span>
+            <div id="id-display" class="hidden">
+                <div class="id-card">
+                    <div class="id-header">
+                        <span>SEIREN HIGH SCHOOL</span>
+                        <span id="id-serial">#000000</span>
+                    </div>
+                    <div class="id-main">
+                        <div class="id-avatar" id="id-avatar">?</div>
+                        <div class="id-details" style="flex:1;">
+                            <h2 id="id-name">Loading...</h2>
+                            <p><strong>Class:</strong> 2-B</p>
+                            <p><strong>Type:</strong> <span id="id-type">Unknown</span></p>
+                            
+                            <div class="stat-bar">
+                                <span>POW</span>
+                                <div class="bar-bg"><div class="bar-fill" id="bar-pow" style="width:50%;"></div></div>
+                            </div>
+                            <div class="stat-bar">
+                                <span>CUTE</span>
+                                <div class="bar-bg"><div class="bar-fill" id="bar-cute" style="width:80%; background:#ff69b4;"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="barcode"></div>
                 </div>
-                <div style="display:flex; align-items:center;">
-                    <div id="card-avatar" style="font-size:3rem; margin-right:15px; border:2px solid var(--pink); border-radius:50%; padding:5px;">✨</div>
-                    <div>
-                        <div id="card-name" style="font-size:1.5rem; font-weight:bold; color:var(--pink);">User</div>
-                        <div id="card-type" style="font-size:0.8rem; color:#666;">Unregistered</div>
+
+                <div style="text-align:center;">
+                    <h3 style="color:var(--blue); margin-bottom:5px;">Daily Fortune Draw</h3>
+                    <p style="font-size:0.8rem; color:#888;">Tap card to reveal • 1 per day</p>
+                    
+                    <div class="fortune-scene" onclick="flipCard()">
+                        <div class="card-object" id="card-obj">
+                            <div class="card-face card-front"></div>
+                            <div class="card-face card-back">
+                                <div style="font-size:3rem; margin-bottom:10px;" id="fortune-icon">⭐</div>
+                                <strong style="color:var(--pink); display:block; margin-bottom:5px;" id="fortune-title">Good Luck!</strong>
+                                <span style="font-size:0.8rem; color:#666;" id="fortune-desc">You will find a shiny coin.</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="fortune-box">
-                <h3 style="margin:0; color:#d2691e;">🔮 Daily Fortune</h3>
-                <div id="fortune-text" style="margin:10px 0; font-style:italic;">"Your lucky item today is Melon Bread."</div>
-                <button onclick="rollFortune()" style="background:orange; border:none; color:white; padding:5px 15px; border-radius:10px;">Reroll Magic</button>
             </div>
         </div>
 
         <div id="tab-friends" class="page">
-            <h2 style="color:var(--blue);">Class 2-B Yearbook</h2>
-            
-            <div class="friend-form">
-                <strong>Add a Friend:</strong>
+            <h2 style="color:var(--blue);">Yearbook</h2>
+            <div style="background:var(--glass); padding:15px; border-radius:15px; margin-bottom:20px;">
                 <input type="text" id="friend-name" placeholder="Friend's Name">
-                <button class="btn-pink" onclick="addFriend()">Add to Yearbook</button>
+                <button class="btn-action" style="margin-top:0;" onclick="addFriend()">Add Friend</button>
             </div>
-
-            <div id="friend-grid" class="friend-list">
+            <div id="friend-list" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 </div>
-            <button onclick="clearFriends()" style="margin-top:20px; width:100%; border:none; background:#eee; padding:10px; border-radius:10px;">Clear Yearbook</button>
         </div>
 
         <div id="tab-pet" class="page">
-            <div class="pet-zone">
-                <div id="miharu-face" class="miharu-avatar">😮</div>
-                <h3 style="margin:0; color:var(--pink);">Miharu</h3>
-                <div style="font-size:0.8rem; margin-top:5px;">Fullness Meter</div>
-                <div class="hunger-bar-bg">
-                    <div class="hunger-bar-fill" id="hunger-fill"></div>
+            <div style="background:white; border:3px solid var(--pink); border-radius:20px; padding:20px; text-align:center;">
+                <div id="pet-face" style="font-size:5rem; animation:bounce 2s infinite;">😮</div>
+                <h3>Miharu</h3>
+                <div style="background:#eee; height:15px; border-radius:10px; margin:15px 0; overflow:hidden;">
+                    <div id="pet-bar" style="width:50%; height:100%; background:linear-gradient(90deg, #ff9a9e, #ff69b4); transition:width 0.5s;"></div>
                 </div>
-                <p id="pet-status" style="font-size:0.8rem; color:#666;">Miharu is hungry...</p>
+                <p id="pet-txt" style="font-size:0.8rem;">Hungry...</p>
             </div>
-
-            <h3 style="color:var(--blue);">Daily Tasks (Feeds Pet)</h3>
-            <div id="habit-list">
-                </div>
-            <div style="margin-top:10px; display:flex; gap:5px;">
-                <input type="text" id="new-habit" placeholder="New task...">
-                <button onclick="addHabit()" style="background:var(--blue); color:white; border:none; border-radius:5px; width:40px;">+</button>
+            
+            <h3 style="margin-top:20px;">Tasks (Feeds Pet)</h3>
+            <div id="task-list"></div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <input type="text" id="new-task" placeholder="Add task..." style="margin:0;">
+                <button onclick="addTask()" style="background:var(--blue); color:white; border:none; width:50px; border-radius:8px; font-size:1.5rem;">+</button>
             </div>
         </div>
 
         <div id="tab-diary" class="page">
-            <h2 style="color:var(--pink);">Secret Diary 🗝️</h2>
-            <textarea id="diary-text" class="diary-input" placeholder="Dear Diary... today I saw a bathtub portal..."></textarea>
-            <div style="margin-bottom:15px;">
-                Mood: 
-                <select id="diary-mood" style="padding:5px; border-radius:5px;">
-                    <option>Happy 😊</option>
-                    <option>Sad 😢</option>
-                    <option>Angry 💢</option>
-                    <option>In Love 😍</option>
-                </select>
-                <button class="btn-pink" style="width:auto; float:right;" onclick="saveEntry()">Save Entry</button>
-            </div>
+            <h2 style="color:var(--pink);">My Diary</h2>
             
-            <div id="diary-history">
+            <div style="background:white; padding:15px; border-radius:15px; box-shadow:0 2px 10px rgba(0,0,0,0.05); margin-bottom:20px;">
+                <div class="mood-selector">
+                    <button class="mood-btn selected" onclick="selectMood('😊', this)">😊</button>
+                    <button class="mood-btn" onclick="selectMood('😢', this)">😢</button>
+                    <button class="mood-btn" onclick="selectMood('😡', this)">😡</button>
+                    <button class="mood-btn" onclick="selectMood('😴', this)">😴</button>
+                    <button class="mood-btn" onclick="selectMood('💖', this)">💖</button>
+                </div>
+                <textarea id="diary-text" class="diary-input" placeholder="How was your day?"></textarea>
+                <button class="btn-action" onclick="saveEntry()">Post Entry</button>
+            </div>
+
+            <div id="diary-feed" class="entry-list">
                 </div>
         </div>
 
     </div>
 
     <nav>
-        <button class="nav-btn active" onclick="nav('home', this)">
-            <span class="nav-icon">🏠</span>ID Card
-        </button>
-        <button class="nav-btn" onclick="nav('friends', this)">
-            <span class="nav-icon">📖</span>Yearbook
-        </button>
-        <button class="nav-btn" onclick="nav('pet', this)">
-            <span class="nav-icon">🍛</span>Miharu
-        </button>
-        <button class="nav-btn" onclick="nav('diary', this)">
-            <span class="nav-icon">🔒</span>Diary
-        </button>
+        <button class="nav-btn active" onclick="nav('home', this)"><span>🏠</span>Home</button>
+        <button class="nav-btn" onclick="nav('friends', this)"><span>📖</span>Yearbook</button>
+        <button class="nav-btn" onclick="nav('pet', this)"><span>🍛</span>Miharu</button>
+        <button class="nav-btn" onclick="nav('diary', this)"><span>✏️</span>Diary</button>
     </nav>
 </div>
 
 <script>
-    // === DATA STORE ===
+    // === STATE MANAGEMENT ===
     const DB = {
         user: JSON.parse(localStorage.getItem('seiren_user')) || null,
         friends: JSON.parse(localStorage.getItem('seiren_friends')) || [],
-        pet: JSON.parse(localStorage.getItem('seiren_pet')) || { hunger: 50, tasks: ["Drink Water", "Skincare"] },
-        diary: JSON.parse(localStorage.getItem('seiren_diary')) || []
+        pet: JSON.parse(localStorage.getItem('seiren_pet')) || { hunger: 40, tasks: ["Drink Water"] },
+        diary: JSON.parse(localStorage.getItem('seiren_diary')) || [],
+        fortune: JSON.parse(localStorage.getItem('seiren_fortune')) || { date: "", data: null }
     };
 
-    // === INIT ===
+    let currentMood = "😊";
+
+    // === INITIALIZE ===
     function init() {
-        if(DB.user) renderID();
-        else document.getElementById('id-setup').style.display = 'block';
-        
+        if(DB.user) {
+            document.getElementById('id-display').classList.remove('hidden');
+            renderID();
+            checkFortuneDate();
+        } else {
+            document.getElementById('setup-screen').style.display = 'block';
+        }
         renderFriends();
         renderPet();
         renderDiary();
-        rollFortune();
     }
 
-    // === 1. ID LOGIC ===
-    function createMyID() {
-        const name = document.getElementById('my-name').value;
-        if(!name) return;
-        
-        // Generate Details
-        const types = ["Tsundere", "Alien", "Dojikko", "Princess"];
-        const avatars = ["👑", "🐱", "👻", "💢", "🎀"];
+    // === ID SYSTEM ===
+    function generateID() {
+        const name = document.getElementById('setup-name').value;
+        const age = document.getElementById('setup-age').value;
+        if(!name || !age) return;
+
+        // Random Generatpr
+        const types = ["Tsundere", "Alien", "Dojikko", "Ghost", "Idol", "Student Council"];
+        const avatars = ["🎀", "👽", "💢", "👻", "🎤", "👓"];
         
         DB.user = {
             name: name,
-            type: types[Math.floor(Math.random()*types.length)],
-            avatar: avatars[Math.floor(Math.random()*avatars.length)],
-            date: new Date().toLocaleDateString()
+            type: types[Math.floor(Math.random() * types.length)],
+            avatar: avatars[Math.floor(Math.random() * avatars.length)],
+            serial: "S-" + Math.floor(Math.random() * 90000 + 10000),
+            pow: Math.floor(Math.random() * 100),
+            cute: Math.floor(Math.random() * 100)
         };
-        
         localStorage.setItem('seiren_user', JSON.stringify(DB.user));
-        document.getElementById('id-setup').style.display = 'none';
+        
+        document.getElementById('setup-screen').style.display = 'none';
+        document.getElementById('id-display').classList.remove('hidden');
         renderID();
     }
 
     function renderID() {
-        document.getElementById('id-display').style.display = 'block';
-        document.getElementById('card-name').innerText = DB.user.name;
-        document.getElementById('card-type').innerText = DB.user.type;
-        document.getElementById('card-avatar').innerText = DB.user.avatar;
-        document.getElementById('card-date').innerText = DB.user.date;
+        document.getElementById('id-name').innerText = DB.user.name;
+        document.getElementById('id-serial').innerText = DB.user.serial;
+        document.getElementById('id-type').innerText = DB.user.type;
+        document.getElementById('id-avatar').innerText = DB.user.avatar;
+        document.getElementById('bar-pow').style.width = DB.user.pow + "%";
+        document.getElementById('bar-cute').style.width = DB.user.cute + "%";
     }
 
-    function rollFortune() {
+    // === FORTUNE SYSTEM ===
+    function checkFortuneDate() {
+        const today = new Date().toDateString();
+        const card = document.getElementById('card-obj');
+
+        if(DB.fortune.date === today) {
+            // Already played today, show result immediately
+            renderFortuneContent(DB.fortune.data);
+            card.style.transition = 'none'; // No animation on load
+            card.classList.add('flipped');
+            // Re-enable transition after small delay
+            setTimeout(() => card.style.transition = 'transform 0.6s', 100);
+        } else {
+            // New day, reset card
+            card.classList.remove('flipped');
+        }
+    }
+
+    function flipCard() {
+        const today = new Date().toDateString();
+        const card = document.getElementById('card-obj');
+
+        if(DB.fortune.date === today) return; // Already flipped
+
+        // Generate Fortune
         const fortunes = [
-            "Great Luck! You will find money on the ground.",
-            "Bad Luck. Watch out for flying bathtubs.",
-            "Romantic Luck! Someone is thinking of you.",
-            "Curry Luck! You will eat something delicious."
+            {icon: "🌟", title: "Super Lucky", desc: "You will find money on the ground!"},
+            {icon: "🛁", title: "Bathtub Alert", desc: "Watch out for portals in the bath."},
+            {icon: "🍛", title: "Spicy Day", desc: "Eat curry for extra power today."},
+            {icon: "💔", title: "Unlucky", desc: "You might trip on nothing."}
         ];
-        const items = ["Rubber Duck", "Flip Phone", "Ribbon", "Spoon"];
-        
-        const f = fortunes[Math.floor(Math.random()*fortunes.length)];
-        const i = items[Math.floor(Math.random()*items.length)];
-        
-        document.getElementById('fortune-text').innerHTML = `${f}<br><strong>Lucky Item: ${i}</strong>`;
+        const result = fortunes[Math.floor(Math.random() * fortunes.length)];
+
+        // Save
+        DB.fortune = { date: today, data: result };
+        localStorage.setItem('seiren_fortune', JSON.stringify(DB.fortune));
+
+        // Render & Animate
+        renderFortuneContent(result);
+        card.classList.add('flipped');
     }
 
-    // === 2. FRIENDS LOGIC ===
-    function addFriend() {
-        const name = document.getElementById('friend-name').value;
-        if(!name) return;
-
-        const emojis = ["🌸", "⭐", "🌙", "🍄", "🌷"];
-        const friend = {
-            name: name,
-            emoji: emojis[Math.floor(Math.random()*emojis.length)]
-        };
-
-        DB.friends.push(friend);
-        localStorage.setItem('seiren_friends', JSON.stringify(DB.friends));
-        document.getElementById('friend-name').value = "";
-        renderFriends();
+    function renderFortuneContent(data) {
+        document.getElementById('fortune-icon').innerText = data.icon;
+        document.getElementById('fortune-title').innerText = data.title;
+        document.getElementById('fortune-desc').innerText = data.desc;
     }
 
-    function renderFriends() {
-        const grid = document.getElementById('friend-grid');
-        grid.innerHTML = "";
-        DB.friends.forEach(f => {
-            grid.innerHTML += `
-                <div class="friend-card">
-                    <div style="font-size:2rem;">${f.emoji}</div>
-                    <strong>${f.name}</strong>
-                </div>
-            `;
-        });
+    // === DIARY SYSTEM ===
+    function selectMood(mood, btn) {
+        currentMood = mood;
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
     }
 
-    function clearFriends() {
-        if(confirm("Delete all friends?")) {
-            DB.friends = [];
-            localStorage.setItem('seiren_friends', JSON.stringify([]));
-            renderFriends();
-        }
-    }
-
-    // === 3. PET LOGIC ===
-    function renderPet() {
-        const fill = document.getElementById('hunger-fill');
-        const face = document.getElementById('miharu-face');
-        const status = document.getElementById('pet-status');
-        
-        fill.style.width = DB.pet.hunger + "%";
-        
-        if(DB.pet.hunger > 80) { face.innerText = "😋"; status.innerText = "Miharu is so full!"; }
-        else if(DB.pet.hunger > 40) { face.innerText = "😮"; status.innerText = "Miharu could eat..."; }
-        else { face.innerText = "😫"; status.innerText = "FEED ME CURRY!"; }
-
-        // Render Tasks
-        const list = document.getElementById('habit-list');
-        list.innerHTML = "";
-        DB.pet.tasks.forEach(task => {
-            list.innerHTML += `
-                <div class="habit-item">
-                    <span>${task}</span>
-                    <input type="checkbox" onclick="feedPet(this)">
-                </div>
-            `;
-        });
-    }
-
-    function feedPet(checkbox) {
-        if(checkbox.checked) {
-            DB.pet.hunger = Math.min(100, DB.pet.hunger + 15);
-            savePet();
-            renderPet();
-        }
-    }
-
-    function addHabit() {
-        const txt = document.getElementById('new-habit').value;
-        if(txt) {
-            DB.pet.tasks.push(txt);
-            document.getElementById('new-habit').value = "";
-            savePet();
-            renderPet();
-        }
-    }
-
-    function savePet() {
-        localStorage.setItem('seiren_pet', JSON.stringify(DB.pet));
-    }
-
-    // === 4. DIARY LOGIC ===
     function saveEntry() {
         const txt = document.getElementById('diary-text').value;
-        const mood = document.getElementById('diary-mood').value;
         if(!txt) return;
 
-        const entry = {
+        DB.diary.unshift({
             date: new Date().toLocaleDateString(),
-            text: txt,
-            mood: mood
-        };
-
-        DB.diary.unshift(entry); // Add to top
+            mood: currentMood,
+            text: txt
+        });
         localStorage.setItem('seiren_diary', JSON.stringify(DB.diary));
+        
         document.getElementById('diary-text').value = "";
         renderDiary();
     }
 
     function renderDiary() {
-        const div = document.getElementById('diary-history');
-        div.innerHTML = "";
+        const feed = document.getElementById('diary-feed');
+        feed.innerHTML = "";
         DB.diary.forEach(e => {
-            div.innerHTML += `
-                <div class="entry">
-                    <div style="font-size:0.75rem; color:#888; display:flex; justify-content:space-between;">
-                        <span>${e.date}</span>
-                        <span>${e.mood}</span>
+            feed.innerHTML += `
+                <div class="entry-bubble">
+                    <div class="entry-mood">${e.mood}</div>
+                    <div class="entry-content">
+                        <div class="entry-date">${e.date}</div>
+                        <div class="entry-text">${e.text}</div>
                     </div>
-                    <div style="margin-top:5px;">${e.text}</div>
                 </div>
             `;
         });
     }
 
-    // === NAVIGATION ===
+    // === PET & FRIENDS (Simplified for brevity) ===
+    function renderPet() {
+        document.getElementById('pet-bar').style.width = DB.pet.hunger + "%";
+        document.getElementById('pet-face').innerText = DB.pet.hunger > 50 ? "😋" : "😫";
+        document.getElementById('pet-txt').innerText = DB.pet.hunger > 50 ? "Miharu is happy!" : "Feed me...";
+        
+        const list = document.getElementById('task-list');
+        list.innerHTML = "";
+        DB.pet.tasks.forEach(t => {
+            list.innerHTML += `<div style="background:white; padding:10px; border-radius:8px; margin-bottom:5px; display:flex; justify-content:space-between;">
+                ${t} <input type="checkbox" onclick="feedPet()">
+            </div>`;
+        });
+    }
+    function feedPet() {
+        DB.pet.hunger = Math.min(100, DB.pet.hunger + 20);
+        localStorage.setItem('seiren_pet', JSON.stringify(DB.pet));
+        renderPet();
+    }
+    function addTask() {
+        const val = document.getElementById('new-task').value;
+        if(val) {
+            DB.pet.tasks.push(val);
+            localStorage.setItem('seiren_pet', JSON.stringify(DB.pet));
+            document.getElementById('new-task').value = "";
+            renderPet();
+        }
+    }
+    function addFriend() {
+        const name = document.getElementById('friend-name').value;
+        if(name) {
+            DB.friends.push(name);
+            localStorage.setItem('seiren_friends', JSON.stringify(DB.friends));
+            document.getElementById('friend-name').value = "";
+            renderFriends();
+        }
+    }
+    function renderFriends() {
+        const list = document.getElementById('friend-list');
+        list.innerHTML = "";
+        DB.friends.forEach(f => {
+            list.innerHTML += `<div style="background:white; padding:10px; border-radius:10px; text-align:center; box-shadow:2px 2px 0 #eee;">
+                <div style="font-size:2rem;">👤</div><div>${f}</div>
+            </div>`;
+        });
+    }
+
+    // === NAV ===
     function nav(id, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById('tab-' + id).classList.add('active');
-        
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     }
 
-    // Start
     init();
 
     // PWA
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
+        window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
     }
 </script>
 
