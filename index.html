@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seiren ID Generator</title>
+    <title>Seiren ID Club</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ff69b4">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3461/3461877.png">
 
     <style>
-        /* --- 2000s ANIME AESTHETIC --- */
+        /* --- 2004 AESTHETIC --- */
         body {
             font-family: 'Verdana', sans-serif;
             background-color: #e0f7fa;
-            background-image: radial-gradient(#ffb7b2 20%, transparent 20%), radial-gradient(#ffb7b2 20%, transparent 20%);
-            background-position: 0 0, 25px 25px;
-            background-size: 50px 50px;
+            /* Cute gingham/grid pattern */
+            background-image: 
+                linear-gradient(rgba(255, 105, 180, 0.2) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 105, 180, 0.2) 2px, transparent 2px);
+            background-size: 30px 30px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,309 +26,298 @@
             margin: 0;
             overflow-x: hidden;
         }
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 999;
-        }
+
         .container {
             background-color: #fff;
-            padding: 0;
-            border-radius: 15px;
-            box-shadow: 10px 10px 0px rgba(255, 105, 180, 0.4);
-            border: 3px solid #ff69b4;
-            max-width: 500px;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+            border: 4px solid #ff69b4;
+            max-width: 400px;
             width: 90%;
             text-align: center;
             position: relative;
-            overflow: hidden;
-            z-index: 10;
         }
-        .marquee-container {
-            background-color: #ff69b4;
-            color: white;
-            padding: 8px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            border-bottom: 3px solid #ff1493;
-        }
-        .marquee-text {
-            display: inline-block;
-            padding-left: 100%;
-            animation: marquee 15s linear infinite;
-            font-weight: bold;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
-        }
-        .inner-content { padding: 2rem; }
+
         h1 {
-            color: #ff1493;
-            font-size: 2rem;
-            margin-top: 0;
-            text-shadow: 2px 2px 0px #afeeee;
+            color: #ff69b4;
+            font-size: 1.8rem;
+            text-transform: uppercase;
             letter-spacing: -1px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0 #e0f7fa;
         }
+
+        .subtitle {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        /* INPUTS */
         .input-group {
-            background: #f0f8ff;
+            background: #fff0f5;
             padding: 15px;
-            border-radius: 10px;
-            border: 2px dashed #87cefa;
+            border-radius: 15px;
+            border: 2px dashed #ffb7b2;
             margin-bottom: 20px;
         }
-        label {
-            display: block;
-            text-align: left;
-            margin-top: 10px;
-            font-size: 0.8rem;
-            color: #ff69b4;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
+
         input, select {
             width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
+            padding: 10px;
+            margin: 5px 0 10px 0;
+            border: 1px solid #ffcae5;
+            border-radius: 8px;
             font-family: 'Verdana', sans-serif;
+            box-sizing: border-box;
+            background: white;
         }
+
         button {
-            background: linear-gradient(45deg, #ff69b4, #ffb6c1);
+            background: linear-gradient(180deg, #ff69b4, #ff1493);
             color: white;
-            border: 2px solid #fff;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
+            border: none;
+            padding: 15px;
             width: 100%;
-            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
-            transition: 0.2s;
-            text-transform: uppercase;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #c71585;
+            transition: transform 0.1s;
         }
-        button:hover {
-            transform: translateY(-2px);
-            background: linear-gradient(45deg, #ff1493, #ff69b4);
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #c71585;
         }
+
+        /* --- THE ID CARD RESULT --- */
         #result {
             display: none;
-            margin-top: 20px;
-            background: #fff0f5;
+            margin-top: 30px;
+            perspective: 1000px;
+        }
+
+        .id-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+            border: 2px solid #00bfff;
+            border-radius: 15px;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+
+        /* Holographic Shine Effect */
+        .id-card::before {
+            content: "";
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0) 40%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 60%);
+            transform: rotate(30deg);
+            pointer-events: none;
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine { 0% {top: -150%;} 100% {top: 150%;} }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #00bfff;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-weight: bold;
+            color: #00bfff;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .avatar-box {
+            float: right;
+            width: 60px;
+            height: 60px;
+            background: #ffebf5;
             border: 2px solid #ff69b4;
             border-radius: 10px;
-            padding: 20px;
-            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            margin-left: 10px;
         }
-        .badge {
-            position: absolute;
-            top: -15px;
-            right: -10px;
-            background: #ffd700;
-            color: #d63384;
-            padding: 5px 10px;
-            border-radius: 20px;
+
+        .card-name {
+            font-size: 1.4rem;
+            color: #ff1493;
             font-weight: bold;
-            border: 2px solid #fff;
-            transform: rotate(10deg);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            margin-bottom: 5px;
         }
-        .char-name {
-            font-size: 1.8rem;
-            color: #00bfff;
-            font-weight: bold;
-            text-decoration: underline wavy #ff69b4;
-            margin-bottom: 15px;
+
+        .card-stats {
+            font-size: 0.8rem;
+            color: #555;
+            line-height: 1.6;
         }
-        .data-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            text-align: left;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-        .data-item strong { color: #ff1493; }
-        .description-box {
-            background: white;
+
+        .lucky-item-box {
+            margin-top: 15px;
+            background: #fffacd; /* Lemon Chiffon */
+            border: 2px dashed #ffd700;
+            border-radius: 10px;
             padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            text-align: left;
-            margin-bottom: 15px;
+            text-align: center;
+            animation: popIn 0.5s ease-out;
         }
-        .catchphrase {
-            font-style: italic;
-            color: #888;
-            font-size: 1.1rem;
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
+
+        .item-icon { font-size: 2rem; display: block; margin-bottom: 5px; }
+        .item-name { font-weight: bold; color: #d2691e; font-size: 0.9rem; }
+        .item-desc { font-size: 0.75rem; color: #888; }
+
+        @keyframes popIn { 
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
-        .meter-container { text-align: left; margin-bottom: 15px; }
-        .meter-label { font-size: 0.8rem; font-weight: bold; color: #555; }
-        .meter-bg { background: #ddd; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 2px; }
-        .meter-fill { height: 100%; background: linear-gradient(to right, #87cefa, #ff69b4); width: 0%; transition: width 1s ease-out; }
+
     </style>
 </head>
 <body>
 
-    <div class="scanlines"></div>
-
     <div class="container">
-        <div class="marquee-container">
-            <div class="marquee-text">
-                ★ WELCOME TO SEIREN ★ OFFICIAL IDENTITY DATABASE ★ WARNING: AVOID HOT WATER ★ GIRLS BRAVO FOREVER ★
-            </div>
+        <h1>Seiren ID Club</h1>
+        <div class="subtitle">Official Resident Registration</div>
+
+        <div class="input-group">
+            <label>Name</label>
+            <input type="text" id="username" placeholder="Your name...">
+            
+            <label>Age</label>
+            <input type="number" id="age" placeholder="18">
+            
+            <label>Zodiac</label>
+            <select id="zodiac">
+                <option value="Aries">Aries</option>
+                <option value="Taurus">Taurus</option>
+                <option value="Gemini">Gemini</option>
+                <option value="Cancer">Cancer</option>
+                <option value="Leo">Leo</option>
+                <option value="Virgo">Virgo</option>
+                <option value="Libra">Libra</option>
+                <option value="Scorpio">Scorpio</option>
+                <option value="Sagittarius">Sagittarius</option>
+                <option value="Capricorn">Capricorn</option>
+                <option value="Aquarius">Aquarius</option>
+                <option value="Pisces">Pisces</option>
+            </select>
         </div>
 
-        <div class="inner-content">
-            <h1>Seiren ID Generator</h1>
+        <button onclick="generateID()">💗 Generate ID 💗</button>
+
+        <div id="result">
+            <div class="id-card">
+                <div class="card-header">
+                    <span class="card-title">Seiren High School</span>
+                    <span class="card-title">ID: #<span id="id-num">000</span></span>
+                </div>
+                
+                <div class="avatar-box" id="avatar">🎀</div>
+                
+                <div class="card-name" id="animeName">Loading...</div>
+                
+                <div class="card-stats">
+                    <strong>Type:</strong> <span id="archetype"></span><br>
+                    <strong>Hair:</strong> <span id="hair"></span><br>
+                    <strong>Power:</strong> <span id="power"></span>
+                </div>
+
+                <div style="clear:both; margin-top:10px; font-size:0.75rem; color:#888; border-top:1px solid #eee; padding-top:5px;">
+                    <em>"<span id="quote"></span>"</em>
+                </div>
+            </div>
+
+            <div class="lucky-item-box">
+                <span class="item-icon" id="item-icon">🎁</span>
+                <div class="item-name" id="item-name">Mystery Gift</div>
+                <div class="item-desc" id="item-desc">Generated specially for you!</div>
+            </div>
             
-            <div class="input-group">
-                <label>Name</label>
-                <input type="text" id="username" placeholder="Enter your name...">
-                
-                <label>Age</label>
-                <input type="number" id="age" placeholder="18">
-                
-                <label>Zodiac</label>
-                <select id="zodiac">
-                    <option value="Aries">Aries</option>
-                    <option value="Taurus">Taurus</option>
-                    <option value="Gemini">Gemini</option>
-                    <option value="Cancer">Cancer</option>
-                    <option value="Leo">Leo</option>
-                    <option value="Virgo">Virgo</option>
-                    <option value="Libra">Libra</option>
-                    <option value="Scorpio">Scorpio</option>
-                    <option value="Sagittarius">Sagittarius</option>
-                    <option value="Capricorn">Capricorn</option>
-                    <option value="Aquarius">Aquarius</option>
-                    <option value="Pisces">Pisces</option>
-                </select>
-            </div>
-
-            <button onclick="generateCharacter()">✨ Transform ✨</button>
-
-            <div id="result">
-                <div class="badge">NEW!</div>
-                <div class="char-name" id="animeName"></div>
-
-                <div class="meter-container">
-                    <div class="meter-label">Seiren Cuteness Level</div>
-                    <div class="meter-bg"><div class="meter-fill" id="cutenessBar"></div></div>
-                </div>
-
-                <div class="data-grid">
-                    <div class="data-item"><strong>Hair:</strong> <span id="hairStyle"></span></div>
-                    <div class="data-item"><strong>Eyes:</strong> <span id="eyeColor"></span></div>
-                    <div class="data-item"><strong>Type:</strong> <span id="archetype"></span></div>
-                    <div class="data-item"><strong>Skill:</strong> <span id="attribute"></span></div>
-                </div>
-
-                <div class="description-box">
-                    <strong>Episode Plot:</strong><br>
-                    <span id="roleDescription"></span>
-                </div>
-
-                <div class="catchphrase">
-                    "<span id="quote"></span>"
-                </div>
-            </div>
+            <p style="font-size:0.7rem; color:#bbb; margin-top:15px;">Take a screenshot to save!</p>
         </div>
     </div>
 
     <script>
-        // PWA REGISTRATION
+        // PWA SETUP
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(req => console.log('Service Worker Registered'))
-                    .catch(err => console.log('Service Worker Failed', err));
-            });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
         }
 
-        // APP LOGIC
-        function generateCharacter() {
+        function generateID() {
             const name = document.getElementById('username').value;
             const age = parseInt(document.getElementById('age').value);
             const zodiac = document.getElementById('zodiac').value;
 
-            if (!name || !age) {
-                alert("Please enter details to generate your ID!");
-                return;
-            }
+            if (!name || !age) { alert("Enter info first!"); return; }
 
+            // SEED LOGIC
             let seed = age + name.length;
-            for (let i = 0; i < name.length; i++) {
-                seed += name.charCodeAt(i);
-            }
+            for (let i = 0; i < name.length; i++) seed += name.charCodeAt(i);
             const zodiacs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
-            seed += zodiacs.indexOf(zodiac) * 100;
+            seed += zodiacs.indexOf(zodiac) * 50;
 
-            const getItem = (array, modifier) => array[(seed + modifier) % array.length];
+            const get = (arr, mod) => arr[(seed + mod) % arr.length];
 
-            const prefixes = ["Mi", "Lu", "Fa", "Ko", "Ri", "Se", "Yu", "Po", "Ra", "Chi", "Ku", "E"];
-            const middles = ["ha", "ru", "na", "ka", "li", "mi", "no", "sa", "ki", "ya", "lu", "ko"];
-            const suffixes = ["-chan", "-pyon", "ren", "la", "ne", "ru", "ka", "na", "", ""];
-            const finalName = getItem(prefixes, 0) + getItem(middles, 5) + getItem(suffixes, 10);
+            // 1. NAME
+            const pre = ["Mi", "Lu", "Fa", "Ko", "Ri", "Se", "Yu", "Po"];
+            const mid = ["ha", "ru", "na", "ka", "li", "mi", "no", "sa"];
+            const suf = ["-chan", "-pyon", "ren", "la", "ne", "ru"];
+            const finalName = get(pre, 0) + get(mid, 3) + get(suf, 6);
 
-            const hairs = ["Pink Twin-tails", "Blue Short Bob", "Blonde Drill Curls", "Silver Long Straight", "Green Messy Bun", "Purple Ponytail"];
-            const eyes = ["Ruby Red", "Deep Ocean Blue", "Emerald Green", "Amethyst Purple", "Golden Amber"];
+            // 2. STATS
+            const types = ["Tsundere", "Dojikko", "Alien Princess", "Ghost", "Catgirl", "Class President"];
+            const hairs = ["Pink Twin-tails", "Blue Bob", "Blonde Drills", "Silver Long", "Green Bun"];
+            const powers = ["Explosive Sneezes", "Infinite Appetite", "Bad Luck", "Water Magic", "Pheromones"];
+            const quotes = ["It's not like I did it for you!", "Uwaaa! I tripped!", "Do you have any snacks?", "Humans are fascinating.", "My bath is ready!"];
             
-            const archetypes = [
-                "The Aggressive Tsundere", 
-                "The Clumsy Airhead (Dojikko)", 
-                "The Silent Mysterious Type", 
-                "The Big Sister (Onee-san)", 
-                "The Rich Snob (Ojou-sama)",
-                "The Always Hungry Alien"
+            // 3. AVATARS (Emojis based on Type)
+            const avatars = {
+                "Tsundere": "💢", "Dojikko": "🩹", "Alien Princess": "👑", 
+                "Ghost": "👻", "Catgirl": "🐱", "Class President": "👓"
+            };
+            const myType = get(types, 2);
+
+            // 4. LUCKY ITEM REWARD
+            const items = [
+                { name: "Melon Bread", icon: "🍞", desc: "Always fresh and slightly warm." },
+                { name: "Magical Flip Phone", icon: "📱", desc: "Can text other dimensions." },
+                { name: "Rubber Duck", icon: "🐤", desc: "Essential for Seiren baths." },
+                { name: "Curry Spoon", icon: "🥄", desc: "Makes any food taste spicy." },
+                { name: "Mysterious Potion", icon: "🧪", desc: "Don't drink it... probably." },
+                { name: "Hair Ribbon", icon: "🎀", desc: "Adds +10 Cuteness." }
             ];
+            const myItem = get(items, 9);
 
-            const attributes = ["Explosive Sneezes", "Super Strength", "Infinite Stomach", "Bad Luck Magnet", "Pheromone Dust", "Summoning Bathtubs"];
-
-            const roles = [
-                "You crash through the ceiling while the protagonist is taking a bath. You claim this is a 'Seiren Greeting' ritual.",
-                "You transfer to the school and immediately challenge the gym teacher to a duel for ownership of the cafeteria's melon bread.",
-                "You are working part-time at the curry shop, but you keep accidentally using magic to spice the food, causing customers to float.",
-                "You find a stray cat and decide to hide it in your backpack during class, but the cat is actually a space monster.",
-                "You shrink the main character to doll-size and carry him around in your pocket all day while shopping for cute outfits.",
-                "You open a portal in a vending machine. Anyone who buys a soda gets transported to a hot spring dimension."
-            ];
-
-            const quotes = [
-                "It's not like I did it for you or anything!",
-                "Uwaaa! I tripped on air again!",
-                "Does this food exist in extra-large size?",
-                "According to my calculations, you are 90% idiot.",
-                "Ara ara, look at you being cute.",
-                "My magic is perfect! ...Wait, why is it exploding?"
-            ];
-
-            let cuteness = (seed % 40) + 60;
-
+            // RENDER
+            document.getElementById('id-num').innerText = Math.floor(Math.random() * 900) + 100;
+            document.getElementById('avatar').innerText = avatars[myType] || "✨";
             document.getElementById('animeName').innerText = finalName;
-            document.getElementById('hairStyle').innerText = getItem(hairs, 3);
-            document.getElementById('eyeColor').innerText = getItem(eyes, 7);
-            document.getElementById('archetype').innerText = getItem(archetypes, 2);
-            document.getElementById('attribute').innerText = getItem(attributes, 9);
-            document.getElementById('roleDescription').innerText = getItem(roles, zodiacs.indexOf(zodiac));
-            document.getElementById('quote').innerText = getItem(quotes, 4);
+            document.getElementById('archetype').innerText = myType;
+            document.getElementById('hair').innerText = get(hairs, 4);
+            document.getElementById('power').innerText = get(powers, 5);
+            document.getElementById('quote').innerText = get(quotes, 1);
 
-            const bar = document.getElementById('cutenessBar');
-            bar.style.width = '0%';
-            setTimeout(() => { bar.style.width = cuteness + '%'; }, 100);
+            // RENDER ITEM
+            document.getElementById('item-icon').innerText = myItem.icon;
+            document.getElementById('item-name').innerText = myItem.name;
+            document.getElementById('item-desc').innerText = myItem.desc;
 
+            // SHOW
             document.getElementById('result').style.display = 'block';
         }
     </script>
