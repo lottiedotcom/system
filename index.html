@@ -22,7 +22,6 @@
         body {
             font-family: 'Verdana', sans-serif;
             background-color: #ffe4e1;
-            /* Gingham Pattern */
             background-image: 
                 linear-gradient(90deg, rgba(255,255,255,.5) 50%, transparent 50%),
                 linear-gradient(rgba(255,255,255,.5) 50%, transparent 50%);
@@ -35,7 +34,6 @@
             color: var(--text);
         }
 
-        /* SCANLINES */
         .scanlines {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.03) 50%);
@@ -65,30 +63,26 @@
         }
         @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-        /* SCROLLABLE CONTENT */
+        /* CONTENT */
         .content {
             flex: 1; 
             overflow-y: auto; 
-            overflow-x: hidden;
             padding: 20px;
-            padding-bottom: 100px; /* IMPORTANT: Space for navbar */
+            padding-bottom: 100px; 
             scroll-behavior: smooth;
         }
 
-        /* PAGE TRANSITIONS */
         .page { display: none; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .page.active { display: block; }
         @keyframes popIn { from {opacity:0; transform:scale(0.95);} to {opacity:1; transform:scale(1);} }
 
-        /* === 1. HOME: ID CARD === */
+        /* === HOME: ID CARD === */
         .id-card {
             background: #fff;
             border: 3px solid var(--blue); border-radius: 15px; padding: 15px;
             box-shadow: 5px 5px 0px rgba(79, 195, 247, 0.4);
             position: relative; overflow: hidden; margin-bottom: 25px;
         }
-        
-        /* Holographic overlay */
         .id-card::after {
             content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%);
@@ -100,14 +94,15 @@
         .avatar-box {
             width: 80px; height: 80px; background: var(--light-pink);
             border: 2px solid var(--pink); border-radius: 10px;
-            overflow: hidden; padding: 2px;
+            overflow: hidden; padding: 0;
         }
-        .avatar-box img { width: 100%; height: 100%; object-fit: contain; }
+        /* Fix for Pinterest images to center them */
+        .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
         
         .id-info h2 { margin: 0; color: var(--pink); font-size: 1.3rem; text-transform: uppercase; border-bottom: 1px dashed #ccc; }
         .id-stats { font-size: 0.75rem; color: #666; margin-top: 5px; line-height: 1.5; }
 
-        /* === 2. BUDDY LIST === */
+        /* === BUDDY LIST === */
         .buddy-window {
             background: white; border: 2px solid #ccc; border-radius: 8px;
             display: flex; flex-direction: column; min-height: 300px;
@@ -117,19 +112,18 @@
             padding: 8px; font-weight: bold; color: #444; font-size: 0.8rem;
             border-bottom: 1px solid #999; display: flex; justify-content: space-between;
         }
-        .buddy-list { padding: 10px; overflow-y: auto; }
         
         .buddy-row {
             display: flex; align-items: center; gap: 10px; padding: 8px;
             border-bottom: 1px dotted #eee; transition: 0.2s;
         }
         .buddy-row:hover { background: #f0f8ff; }
-        .buddy-row img { width: 35px; height: 35px; border-radius: 4px; border: 1px solid #ccc; }
+        .buddy-row img { width: 40px; height: 40px; border-radius: 5px; border: 1px solid #ccc; object-fit: cover; }
         .buddy-status { font-size: 0.7rem; color: #888; font-style: italic; }
 
         .add-buddy-form { display: flex; gap: 5px; margin-bottom: 15px; }
 
-        /* === 3. MIHARU PET === */
+        /* === PET === */
         .pet-container {
             background: white; border: 3px solid var(--pink); border-radius: 20px;
             padding: 20px; text-align: center; margin-bottom: 20px;
@@ -146,7 +140,7 @@
             border-bottom: 2px solid #eee;
         }
 
-        /* === 4. DIARY === */
+        /* === DIARY === */
         .diary-paper {
             background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -164,7 +158,7 @@
             font-size: 0.9rem;
         }
 
-        /* SHARED UI */
+        /* UI */
         input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family:inherit; }
         button { cursor: pointer; }
         .btn-pink {
@@ -175,7 +169,7 @@
         .btn-pink:active { transform: translateY(3px); box-shadow: none; }
         .btn-small { width: auto; font-size: 1.2rem; padding: 5px 15px; }
 
-        /* NAVBAR */
+        /* NAV */
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-top: 3px solid var(--pink);
@@ -199,7 +193,7 @@
 <div class="app-shell">
     <div class="marquee-container">
         <div class="marquee-text">
-            ★ SEIREN OS v7.0 ★ MOE SYSTEM ONLINE ★ FEED MIHARU ★ ADD YOUR FRIENDS ★ GIRLS BRAVO ★
+            ★ SEIREN OS v7.1 ★ MOE SYSTEM ONLINE ★ FEED MIHARU ★ ADD YOUR FRIENDS ★ GIRLS BRAVO ★
         </div>
     </div>
 
@@ -262,8 +256,7 @@
                     <span>Friends Online</span>
                     <span style="font-weight:normal;">_ □ X</span>
                 </div>
-                <div id="buddy-list" class="buddy-list">
-                    </div>
+                <div id="buddy-list" class="buddy-list"></div>
             </div>
         </div>
 
@@ -311,17 +304,18 @@
 </div>
 
 <script>
-    // === MOE AVATAR LINKS (Stable CDNs) ===
+    // === YOUR AVATAR LIST ===
+    // IMPORTANT: If these show as "Broken Icons", you need to replace them
+    // with the "Direct Image Link" (ending in .jpg or .png)
     const MOE_ICONS = [
-        "https://cdn-icons-png.flaticon.com/512/4140/4140048.png", // Pink hair
-        "https://cdn-icons-png.flaticon.com/512/4140/4140047.png", // Short hair
-        "https://cdn-icons-png.flaticon.com/512/4140/4140037.png", // Brown hair
-        "https://cdn-icons-png.flaticon.com/512/4140/4140051.png", // Blonde
-        "https://cdn-icons-png.flaticon.com/512/4140/4140040.png", // Glasses
-        "https://cdn-icons-png.flaticon.com/512/4140/4140061.png"  // Cat ears
+        "https://pin.it/6JIvCvYJR",
+        "https://pin.it/hSRuAKKEP",
+        "https://pin.it/2rUKEmLyX",
+        "https://pin.it/3hejYOeqB",
+        "https://pin.it/2C21xvl0G"
     ];
 
-    // === STATE ===
+    // === APP LOGIC ===
     const DB = {
         user: JSON.parse(localStorage.getItem('seiren_v7_user')) || null,
         buddies: JSON.parse(localStorage.getItem('seiren_v7_buddies')) || [],
@@ -331,26 +325,18 @@
     };
     let currentMood = '😊';
 
-    // === INIT ===
     function init() {
-        if(DB.user) {
-            renderID();
-            checkFortune();
-        } else {
-            document.getElementById('setup-screen').style.display = 'block';
-        }
-        renderBuddies();
-        renderPet();
-        renderDiary();
+        if(DB.user) { renderID(); checkFortune(); } 
+        else { document.getElementById('setup-screen').style.display = 'block'; }
+        renderBuddies(); renderPet(); renderDiary();
     }
 
-    // === 1. PROFILE ===
+    // 1. PROFILE
     function createProfile() {
         const name = document.getElementById('setup-name').value;
         const age = document.getElementById('setup-age').value;
         if(!name) return;
 
-        // Seiren Name Gen
         const seed = name.length + parseInt(age||0);
         const pres = ["Mi", "Lu", "Fa", "Ko", "Ri", "Yu"];
         const sufs = ["-chan", "-pyon", "ren", "la"];
@@ -359,7 +345,7 @@
         DB.user = {
             realName: name,
             seirenName: sName,
-            avatar: MOE_ICONS[seed % MOE_ICONS.length], // Pick Moe Icon
+            avatar: MOE_ICONS[seed % MOE_ICONS.length],
             type: ["Tsundere", "Dojikko", "Alien", "Idol"][seed % 4],
             pow: Math.floor(Math.random()*100),
             id: Math.floor(Math.random()*9000)+1000
@@ -378,13 +364,13 @@
         document.getElementById('my-avatar').src = DB.user.avatar;
     }
 
-    // === 2. FORTUNE ===
+    // 2. FORTUNE
     function checkFortune() {
         const today = new Date().toDateString();
-        const card = document.getElementById('card-inner');
         if(DB.fortune.date === today) {
             document.getElementById('fortune-icon').innerText = DB.fortune.icon;
             document.getElementById('fortune-title').innerText = DB.fortune.title;
+            const card = document.getElementById('card-inner');
             card.style.transition = 'none';
             card.style.transform = 'rotateY(180deg)';
         }
@@ -393,9 +379,7 @@
         const today = new Date().toDateString();
         if(DB.fortune.date === today) return;
 
-        const opts = [
-            {i:"⭐", t:"Lucky!"}, {i:"🛁", t:"Bath Portal!"}, {i:"🍛", t:"Curry Day!"}, {i:"💕", t:"Romance!"}
-        ];
+        const opts = [{i:"⭐", t:"Lucky!"}, {i:"🛁", t:"Bath Portal!"}, {i:"🍛", t:"Curry Day!"}, {i:"💕", t:"Romance!"}];
         const res = opts[Math.floor(Math.random()*opts.length)];
         
         DB.fortune = { date: today, icon: res.i, title: res.t };
@@ -407,12 +391,11 @@
         document.getElementById('card-inner').style.transform = 'rotateY(180deg)';
     }
 
-    // === 3. BUDDIES ===
+    // 3. BUDDIES
     function addBuddy() {
         const name = document.getElementById('buddy-input').value;
         if(!name) return;
         
-        // Pick random Moe Avatar for friend
         const rIcon = MOE_ICONS[Math.floor(Math.random() * MOE_ICONS.length)];
         const stats = ["Eating Curry", "Sleeping", "Online", "Away"];
         
@@ -432,12 +415,11 @@
                         <div style="font-weight:bold; font-size:0.9rem;">${b.name}</div>
                         <div class="buddy-status">~ ${b.status}</div>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
     }
 
-    // === 4. MIHARU ===
+    // 4. PET
     function renderPet() {
         const bar = document.getElementById('hunger-bar');
         bar.style.width = DB.pet.hunger + "%";
@@ -451,8 +433,7 @@
                 <div class="task-item">
                     <span>${t}</span>
                     <input type="checkbox" onclick="feed()">
-                </div>
-            `;
+                </div>`;
         });
     }
     function feed() {
@@ -470,7 +451,7 @@
         }
     }
 
-    // === 5. DIARY ===
+    // 5. DIARY
     function setMood(m, btn) {
         currentMood = m;
         document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
@@ -493,12 +474,10 @@
                     <span style="font-size:1.2rem;">${e.mood}</span> 
                     <span style="color:#aaa; font-size:0.7rem;">${e.date}</span><br>
                     ${e.text}
-                </div>
-            `;
+                </div>`;
         });
     }
 
-    // === NAV ===
     function nav(id, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById('tab-'+id).classList.add('active');
@@ -508,7 +487,6 @@
 
     init();
 
-    // PWA
     if('serviceWorker' in navigator) {
         window.addEventListener('load', ()=>navigator.serviceWorker.register('./sw.js'));
     }
