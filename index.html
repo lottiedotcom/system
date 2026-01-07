@@ -2,324 +2,469 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seiren ID Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Seiren OS</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ff69b4">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3461/3461877.png">
 
     <style>
-        /* --- 2004 AESTHETIC --- */
+        /* --- CORE 2000s AESTHETIC --- */
+        :root {
+            --pink: #ff69b4;
+            --blue: #00bfff;
+            --bg: #e0f7fa;
+            --glass: rgba(255, 255, 255, 0.9);
+        }
+
         body {
             font-family: 'Verdana', sans-serif;
-            background-color: #e0f7fa;
-            /* Cute gingham/grid pattern */
+            background-color: var(--bg);
             background-image: 
-                linear-gradient(rgba(255, 105, 180, 0.2) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(255, 105, 180, 0.2) 2px, transparent 2px);
+                linear-gradient(rgba(255, 105, 180, 0.1) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 105, 180, 0.1) 2px, transparent 2px);
             background-size: 30px 30px;
+            margin: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
-            border: 4px solid #ff69b4;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            position: relative;
+        /* SCANLINES OVERLAY */
+        .scanlines {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
+            background-size: 100% 4px; pointer-events: none; z-index: 999;
         }
 
-        h1 {
-            color: #ff69b4;
-            font-size: 1.8rem;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 0 #e0f7fa;
+        .app-shell {
+            width: 100%; max-width: 480px;
+            background: transparent;
+            display: flex; flex-direction: column;
+            position: relative; height: 100%;
         }
 
-        .subtitle {
-            font-size: 0.75rem;
-            color: #888;
-            margin-bottom: 20px;
-            font-style: italic;
+        /* HEADER */
+        .marquee-container {
+            background: var(--pink); color: white; padding: 5px 0;
+            white-space: nowrap; overflow: hidden; border-bottom: 2px solid #ff1493;
+            flex-shrink: 0;
+        }
+        .marquee-text {
+            display: inline-block; padding-left: 100%;
+            animation: marquee 15s linear infinite; font-weight: bold; font-size: 0.8rem;
+        }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+
+        /* CONTENT AREA */
+        .content {
+            flex: 1; overflow-y: auto; padding: 20px;
+            padding-bottom: 90px; /* Space for nav */
+            scroll-behavior: smooth;
         }
 
-        /* INPUTS */
-        .input-group {
-            background: #fff0f5;
-            padding: 15px;
-            border-radius: 15px;
-            border: 2px dashed #ffb7b2;
-            margin-bottom: 20px;
-        }
+        /* --- TABS/PAGES --- */
+        .page { display: none; animation: popIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes popIn { from {opacity: 0; transform: scale(0.95);} to {opacity: 1; transform: scale(1);} }
 
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0 10px 0;
-            border: 1px solid #ffcae5;
-            border-radius: 8px;
-            font-family: 'Verdana', sans-serif;
-            box-sizing: border-box;
-            background: white;
-        }
-
-        button {
-            background: linear-gradient(180deg, #ff69b4, #ff1493);
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #c71585;
-            transition: transform 0.1s;
-        }
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #c71585;
-        }
-
-        /* --- THE ID CARD RESULT --- */
-        #result {
-            display: none;
-            margin-top: 30px;
-            perspective: 1000px;
-        }
-
+        /* === PAGE 1: ID & FORTUNE === */
         .id-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
-            border: 2px solid #00bfff;
-            border-radius: 15px;
-            padding: 15px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            text-align: left;
+            border: 2px solid var(--blue); border-radius: 15px; padding: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative; overflow: hidden;
+            margin-bottom: 20px;
         }
-
-        /* Holographic Shine Effect */
         .id-card::before {
-            content: "";
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: linear-gradient(45deg, rgba(255,255,255,0) 40%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 60%);
-            transform: rotate(30deg);
-            pointer-events: none;
-            animation: shine 3s infinite;
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.6) 50%, transparent 60%);
+            transform: rotate(30deg); animation: shine 4s infinite; pointer-events: none;
         }
-
         @keyframes shine { 0% {top: -150%;} 100% {top: 150%;} }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 2px solid #00bfff;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
+        
+        .fortune-box {
+            background: #fffacd; border: 2px dashed #ffd700; border-radius: 10px;
+            padding: 15px; text-align: center; margin-top: 20px;
         }
 
-        .card-title {
-            font-weight: bold;
-            color: #00bfff;
-            font-size: 0.8rem;
-            text-transform: uppercase;
+        /* === PAGE 2: YEARBOOK === */
+        .friend-form {
+            background: var(--glass); padding: 15px; border-radius: 10px; border: 1px solid var(--pink);
+            margin-bottom: 20px;
+        }
+        .friend-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .friend-card {
+            background: white; border: 1px solid #ddd; border-radius: 8px; padding: 10px;
+            text-align: center; font-size: 0.8rem;
+            box-shadow: 2px 2px 0px #eee;
         }
 
-        .avatar-box {
-            float: right;
-            width: 60px;
-            height: 60px;
-            background: #ffebf5;
-            border: 2px solid #ff69b4;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2rem;
-            margin-left: 10px;
+        /* === PAGE 3: PET/HABITS === */
+        .pet-zone {
+            text-align: center; background: white; border-radius: 20px; padding: 20px;
+            border: 3px solid var(--blue); margin-bottom: 20px;
+        }
+        .miharu-avatar { font-size: 4rem; margin-bottom: 10px; display: inline-block; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-10px);} }
+        
+        .hunger-bar-bg { background: #ddd; height: 15px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .hunger-bar-fill { background: linear-gradient(90deg, #ff9a9e, #ff69b4); height: 100%; width: 50%; transition: width 0.5s; }
+        
+        .habit-item {
+            background: var(--glass); padding: 10px; margin-bottom: 8px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: space-between;
         }
 
-        .card-name {
-            font-size: 1.4rem;
-            color: #ff1493;
-            font-weight: bold;
-            margin-bottom: 5px;
+        /* === PAGE 4: DIARY === */
+        .diary-input {
+            width: 100%; height: 100px; padding: 10px; border: 2px solid var(--pink);
+            border-radius: 10px; font-family: 'Verdana'; box-sizing: border-box;
+            background: #fff0f5; margin-bottom: 10px;
+        }
+        .entry {
+            background: white; border-left: 4px solid var(--blue); padding: 10px;
+            margin-bottom: 10px; border-radius: 0 10px 10px 0; font-size: 0.9rem;
         }
 
-        .card-stats {
-            font-size: 0.8rem;
-            color: #555;
-            line-height: 1.6;
+        /* === SHARED UI === */
+        input[type="text"], input[type="number"] {
+            width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;
         }
-
-        .lucky-item-box {
-            margin-top: 15px;
-            background: #fffacd; /* Lemon Chiffon */
-            border: 2px dashed #ffd700;
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            animation: popIn 0.5s ease-out;
+        button.btn-pink {
+            background: var(--pink); color: white; border: none; padding: 10px; border-radius: 20px;
+            width: 100%; font-weight: bold; cursor: pointer;
         }
-
-        .item-icon { font-size: 2rem; display: block; margin-bottom: 5px; }
-        .item-name { font-weight: bold; color: #d2691e; font-size: 0.9rem; }
-        .item-desc { font-size: 0.75rem; color: #888; }
-
-        @keyframes popIn { 
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        
+        /* NAVBAR */
+        nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white; border-top: 3px solid var(--pink);
+            display: flex; justify-content: space-around; padding: 10px 0;
+            z-index: 100;
         }
+        .nav-btn {
+            background: none; border: none; font-size: 0.7rem; color: #888;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .nav-btn.active { color: var(--pink); font-weight: bold; }
+        .nav-icon { font-size: 1.5rem; margin-bottom: 2px; }
 
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Seiren ID Club</h1>
-        <div class="subtitle">Official Resident Registration</div>
+<div class="scanlines"></div>
 
-        <div class="input-group">
-            <label>Name</label>
-            <input type="text" id="username" placeholder="Your name...">
-            
-            <label>Age</label>
-            <input type="number" id="age" placeholder="18">
-            
-            <label>Zodiac</label>
-            <select id="zodiac">
-                <option value="Aries">Aries</option>
-                <option value="Taurus">Taurus</option>
-                <option value="Gemini">Gemini</option>
-                <option value="Cancer">Cancer</option>
-                <option value="Leo">Leo</option>
-                <option value="Virgo">Virgo</option>
-                <option value="Libra">Libra</option>
-                <option value="Scorpio">Scorpio</option>
-                <option value="Sagittarius">Sagittarius</option>
-                <option value="Capricorn">Capricorn</option>
-                <option value="Aquarius">Aquarius</option>
-                <option value="Pisces">Pisces</option>
-            </select>
-        </div>
-
-        <button onclick="generateID()">💗 Generate ID 💗</button>
-
-        <div id="result">
-            <div class="id-card">
-                <div class="card-header">
-                    <span class="card-title">Seiren High School</span>
-                    <span class="card-title">ID: #<span id="id-num">000</span></span>
-                </div>
-                
-                <div class="avatar-box" id="avatar">🎀</div>
-                
-                <div class="card-name" id="animeName">Loading...</div>
-                
-                <div class="card-stats">
-                    <strong>Type:</strong> <span id="archetype"></span><br>
-                    <strong>Hair:</strong> <span id="hair"></span><br>
-                    <strong>Power:</strong> <span id="power"></span>
-                </div>
-
-                <div style="clear:both; margin-top:10px; font-size:0.75rem; color:#888; border-top:1px solid #eee; padding-top:5px;">
-                    <em>"<span id="quote"></span>"</em>
-                </div>
-            </div>
-
-            <div class="lucky-item-box">
-                <span class="item-icon" id="item-icon">🎁</span>
-                <div class="item-name" id="item-name">Mystery Gift</div>
-                <div class="item-desc" id="item-desc">Generated specially for you!</div>
-            </div>
-            
-            <p style="font-size:0.7rem; color:#bbb; margin-top:15px;">Take a screenshot to save!</p>
+<div class="app-shell">
+    <div class="marquee-container">
+        <div class="marquee-text">
+            ★ SEIREN OS V1.0 ★ WELCOME USER ★ FEED MIHARU CURRY ★ DON'T FORGET YOUR HOMEWORK ★ GIRLS BRAVO ★
         </div>
     </div>
 
-    <script>
-        // PWA SETUP
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
-        }
+    <div class="content">
 
-        function generateID() {
-            const name = document.getElementById('username').value;
-            const age = parseInt(document.getElementById('age').value);
-            const zodiac = document.getElementById('zodiac').value;
+        <div id="tab-home" class="page active">
+            <div id="id-setup" style="text-align:center; display:none;">
+                <h2 style="color:var(--pink);">Register ID</h2>
+                <input type="text" id="my-name" placeholder="Name">
+                <input type="number" id="my-age" placeholder="Age">
+                <button class="btn-pink" onclick="createMyID()">GENERATE</button>
+            </div>
 
-            if (!name || !age) { alert("Enter info first!"); return; }
+            <div id="id-display" class="id-card">
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--blue); padding-bottom:5px; margin-bottom:10px;">
+                    <strong style="color:var(--blue);">STUDENT ID</strong>
+                    <span id="card-date">2004-01-01</span>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <div id="card-avatar" style="font-size:3rem; margin-right:15px; border:2px solid var(--pink); border-radius:50%; padding:5px;">✨</div>
+                    <div>
+                        <div id="card-name" style="font-size:1.5rem; font-weight:bold; color:var(--pink);">User</div>
+                        <div id="card-type" style="font-size:0.8rem; color:#666;">Unregistered</div>
+                    </div>
+                </div>
+            </div>
 
-            // SEED LOGIC
-            let seed = age + name.length;
-            for (let i = 0; i < name.length; i++) seed += name.charCodeAt(i);
-            const zodiacs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
-            seed += zodiacs.indexOf(zodiac) * 50;
+            <div class="fortune-box">
+                <h3 style="margin:0; color:#d2691e;">🔮 Daily Fortune</h3>
+                <div id="fortune-text" style="margin:10px 0; font-style:italic;">"Your lucky item today is Melon Bread."</div>
+                <button onclick="rollFortune()" style="background:orange; border:none; color:white; padding:5px 15px; border-radius:10px;">Reroll Magic</button>
+            </div>
+        </div>
 
-            const get = (arr, mod) => arr[(seed + mod) % arr.length];
-
-            // 1. NAME
-            const pre = ["Mi", "Lu", "Fa", "Ko", "Ri", "Se", "Yu", "Po"];
-            const mid = ["ha", "ru", "na", "ka", "li", "mi", "no", "sa"];
-            const suf = ["-chan", "-pyon", "ren", "la", "ne", "ru"];
-            const finalName = get(pre, 0) + get(mid, 3) + get(suf, 6);
-
-            // 2. STATS
-            const types = ["Tsundere", "Dojikko", "Alien Princess", "Ghost", "Catgirl", "Class President"];
-            const hairs = ["Pink Twin-tails", "Blue Bob", "Blonde Drills", "Silver Long", "Green Bun"];
-            const powers = ["Explosive Sneezes", "Infinite Appetite", "Bad Luck", "Water Magic", "Pheromones"];
-            const quotes = ["It's not like I did it for you!", "Uwaaa! I tripped!", "Do you have any snacks?", "Humans are fascinating.", "My bath is ready!"];
+        <div id="tab-friends" class="page">
+            <h2 style="color:var(--blue);">Class 2-B Yearbook</h2>
             
-            // 3. AVATARS (Emojis based on Type)
-            const avatars = {
-                "Tsundere": "💢", "Dojikko": "🩹", "Alien Princess": "👑", 
-                "Ghost": "👻", "Catgirl": "🐱", "Class President": "👓"
-            };
-            const myType = get(types, 2);
+            <div class="friend-form">
+                <strong>Add a Friend:</strong>
+                <input type="text" id="friend-name" placeholder="Friend's Name">
+                <button class="btn-pink" onclick="addFriend()">Add to Yearbook</button>
+            </div>
 
-            // 4. LUCKY ITEM REWARD
-            const items = [
-                { name: "Melon Bread", icon: "🍞", desc: "Always fresh and slightly warm." },
-                { name: "Magical Flip Phone", icon: "📱", desc: "Can text other dimensions." },
-                { name: "Rubber Duck", icon: "🐤", desc: "Essential for Seiren baths." },
-                { name: "Curry Spoon", icon: "🥄", desc: "Makes any food taste spicy." },
-                { name: "Mysterious Potion", icon: "🧪", desc: "Don't drink it... probably." },
-                { name: "Hair Ribbon", icon: "🎀", desc: "Adds +10 Cuteness." }
-            ];
-            const myItem = get(items, 9);
+            <div id="friend-grid" class="friend-list">
+                </div>
+            <button onclick="clearFriends()" style="margin-top:20px; width:100%; border:none; background:#eee; padding:10px; border-radius:10px;">Clear Yearbook</button>
+        </div>
 
-            // RENDER
-            document.getElementById('id-num').innerText = Math.floor(Math.random() * 900) + 100;
-            document.getElementById('avatar').innerText = avatars[myType] || "✨";
-            document.getElementById('animeName').innerText = finalName;
-            document.getElementById('archetype').innerText = myType;
-            document.getElementById('hair').innerText = get(hairs, 4);
-            document.getElementById('power').innerText = get(powers, 5);
-            document.getElementById('quote').innerText = get(quotes, 1);
+        <div id="tab-pet" class="page">
+            <div class="pet-zone">
+                <div id="miharu-face" class="miharu-avatar">😮</div>
+                <h3 style="margin:0; color:var(--pink);">Miharu</h3>
+                <div style="font-size:0.8rem; margin-top:5px;">Fullness Meter</div>
+                <div class="hunger-bar-bg">
+                    <div class="hunger-bar-fill" id="hunger-fill"></div>
+                </div>
+                <p id="pet-status" style="font-size:0.8rem; color:#666;">Miharu is hungry...</p>
+            </div>
 
-            // RENDER ITEM
-            document.getElementById('item-icon').innerText = myItem.icon;
-            document.getElementById('item-name').innerText = myItem.name;
-            document.getElementById('item-desc').innerText = myItem.desc;
+            <h3 style="color:var(--blue);">Daily Tasks (Feeds Pet)</h3>
+            <div id="habit-list">
+                </div>
+            <div style="margin-top:10px; display:flex; gap:5px;">
+                <input type="text" id="new-habit" placeholder="New task...">
+                <button onclick="addHabit()" style="background:var(--blue); color:white; border:none; border-radius:5px; width:40px;">+</button>
+            </div>
+        </div>
 
-            // SHOW
-            document.getElementById('result').style.display = 'block';
+        <div id="tab-diary" class="page">
+            <h2 style="color:var(--pink);">Secret Diary 🗝️</h2>
+            <textarea id="diary-text" class="diary-input" placeholder="Dear Diary... today I saw a bathtub portal..."></textarea>
+            <div style="margin-bottom:15px;">
+                Mood: 
+                <select id="diary-mood" style="padding:5px; border-radius:5px;">
+                    <option>Happy 😊</option>
+                    <option>Sad 😢</option>
+                    <option>Angry 💢</option>
+                    <option>In Love 😍</option>
+                </select>
+                <button class="btn-pink" style="width:auto; float:right;" onclick="saveEntry()">Save Entry</button>
+            </div>
+            
+            <div id="diary-history">
+                </div>
+        </div>
+
+    </div>
+
+    <nav>
+        <button class="nav-btn active" onclick="nav('home', this)">
+            <span class="nav-icon">🏠</span>ID Card
+        </button>
+        <button class="nav-btn" onclick="nav('friends', this)">
+            <span class="nav-icon">📖</span>Yearbook
+        </button>
+        <button class="nav-btn" onclick="nav('pet', this)">
+            <span class="nav-icon">🍛</span>Miharu
+        </button>
+        <button class="nav-btn" onclick="nav('diary', this)">
+            <span class="nav-icon">🔒</span>Diary
+        </button>
+    </nav>
+</div>
+
+<script>
+    // === DATA STORE ===
+    const DB = {
+        user: JSON.parse(localStorage.getItem('seiren_user')) || null,
+        friends: JSON.parse(localStorage.getItem('seiren_friends')) || [],
+        pet: JSON.parse(localStorage.getItem('seiren_pet')) || { hunger: 50, tasks: ["Drink Water", "Skincare"] },
+        diary: JSON.parse(localStorage.getItem('seiren_diary')) || []
+    };
+
+    // === INIT ===
+    function init() {
+        if(DB.user) renderID();
+        else document.getElementById('id-setup').style.display = 'block';
+        
+        renderFriends();
+        renderPet();
+        renderDiary();
+        rollFortune();
+    }
+
+    // === 1. ID LOGIC ===
+    function createMyID() {
+        const name = document.getElementById('my-name').value;
+        if(!name) return;
+        
+        // Generate Details
+        const types = ["Tsundere", "Alien", "Dojikko", "Princess"];
+        const avatars = ["👑", "🐱", "👻", "💢", "🎀"];
+        
+        DB.user = {
+            name: name,
+            type: types[Math.floor(Math.random()*types.length)],
+            avatar: avatars[Math.floor(Math.random()*avatars.length)],
+            date: new Date().toLocaleDateString()
+        };
+        
+        localStorage.setItem('seiren_user', JSON.stringify(DB.user));
+        document.getElementById('id-setup').style.display = 'none';
+        renderID();
+    }
+
+    function renderID() {
+        document.getElementById('id-display').style.display = 'block';
+        document.getElementById('card-name').innerText = DB.user.name;
+        document.getElementById('card-type').innerText = DB.user.type;
+        document.getElementById('card-avatar').innerText = DB.user.avatar;
+        document.getElementById('card-date').innerText = DB.user.date;
+    }
+
+    function rollFortune() {
+        const fortunes = [
+            "Great Luck! You will find money on the ground.",
+            "Bad Luck. Watch out for flying bathtubs.",
+            "Romantic Luck! Someone is thinking of you.",
+            "Curry Luck! You will eat something delicious."
+        ];
+        const items = ["Rubber Duck", "Flip Phone", "Ribbon", "Spoon"];
+        
+        const f = fortunes[Math.floor(Math.random()*fortunes.length)];
+        const i = items[Math.floor(Math.random()*items.length)];
+        
+        document.getElementById('fortune-text').innerHTML = `${f}<br><strong>Lucky Item: ${i}</strong>`;
+    }
+
+    // === 2. FRIENDS LOGIC ===
+    function addFriend() {
+        const name = document.getElementById('friend-name').value;
+        if(!name) return;
+
+        const emojis = ["🌸", "⭐", "🌙", "🍄", "🌷"];
+        const friend = {
+            name: name,
+            emoji: emojis[Math.floor(Math.random()*emojis.length)]
+        };
+
+        DB.friends.push(friend);
+        localStorage.setItem('seiren_friends', JSON.stringify(DB.friends));
+        document.getElementById('friend-name').value = "";
+        renderFriends();
+    }
+
+    function renderFriends() {
+        const grid = document.getElementById('friend-grid');
+        grid.innerHTML = "";
+        DB.friends.forEach(f => {
+            grid.innerHTML += `
+                <div class="friend-card">
+                    <div style="font-size:2rem;">${f.emoji}</div>
+                    <strong>${f.name}</strong>
+                </div>
+            `;
+        });
+    }
+
+    function clearFriends() {
+        if(confirm("Delete all friends?")) {
+            DB.friends = [];
+            localStorage.setItem('seiren_friends', JSON.stringify([]));
+            renderFriends();
         }
-    </script>
+    }
+
+    // === 3. PET LOGIC ===
+    function renderPet() {
+        const fill = document.getElementById('hunger-fill');
+        const face = document.getElementById('miharu-face');
+        const status = document.getElementById('pet-status');
+        
+        fill.style.width = DB.pet.hunger + "%";
+        
+        if(DB.pet.hunger > 80) { face.innerText = "😋"; status.innerText = "Miharu is so full!"; }
+        else if(DB.pet.hunger > 40) { face.innerText = "😮"; status.innerText = "Miharu could eat..."; }
+        else { face.innerText = "😫"; status.innerText = "FEED ME CURRY!"; }
+
+        // Render Tasks
+        const list = document.getElementById('habit-list');
+        list.innerHTML = "";
+        DB.pet.tasks.forEach(task => {
+            list.innerHTML += `
+                <div class="habit-item">
+                    <span>${task}</span>
+                    <input type="checkbox" onclick="feedPet(this)">
+                </div>
+            `;
+        });
+    }
+
+    function feedPet(checkbox) {
+        if(checkbox.checked) {
+            DB.pet.hunger = Math.min(100, DB.pet.hunger + 15);
+            savePet();
+            renderPet();
+        }
+    }
+
+    function addHabit() {
+        const txt = document.getElementById('new-habit').value;
+        if(txt) {
+            DB.pet.tasks.push(txt);
+            document.getElementById('new-habit').value = "";
+            savePet();
+            renderPet();
+        }
+    }
+
+    function savePet() {
+        localStorage.setItem('seiren_pet', JSON.stringify(DB.pet));
+    }
+
+    // === 4. DIARY LOGIC ===
+    function saveEntry() {
+        const txt = document.getElementById('diary-text').value;
+        const mood = document.getElementById('diary-mood').value;
+        if(!txt) return;
+
+        const entry = {
+            date: new Date().toLocaleDateString(),
+            text: txt,
+            mood: mood
+        };
+
+        DB.diary.unshift(entry); // Add to top
+        localStorage.setItem('seiren_diary', JSON.stringify(DB.diary));
+        document.getElementById('diary-text').value = "";
+        renderDiary();
+    }
+
+    function renderDiary() {
+        const div = document.getElementById('diary-history');
+        div.innerHTML = "";
+        DB.diary.forEach(e => {
+            div.innerHTML += `
+                <div class="entry">
+                    <div style="font-size:0.75rem; color:#888; display:flex; justify-content:space-between;">
+                        <span>${e.date}</span>
+                        <span>${e.mood}</span>
+                    </div>
+                    <div style="margin-top:5px;">${e.text}</div>
+                </div>
+            `;
+        });
+    }
+
+    // === NAVIGATION ===
+    function nav(id, btn) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-' + id).classList.add('active');
+        
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // Start
+    init();
+
+    // PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
+    }
+</script>
+
 </body>
 </html>
