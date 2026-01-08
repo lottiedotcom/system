@@ -78,6 +78,16 @@
             font-size: 0.7rem; font-weight: bold; color: var(--dark);
             background: rgba(255,255,255,0.8); border-bottom: 1px solid white;
         }
+        
+        /* LEVEL BADGE */
+        .lvl-badge {
+            position: fixed; top: 50px; left: 10px; z-index: 50;
+            background: white; border: 2px solid var(--main);
+            border-radius: 50%; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            animation: popIn 0.5s;
+        }
 
         .marquee-container {
             background: var(--main);
@@ -104,11 +114,19 @@
         .xp-track { height: 8px; background: #eee; border-radius: 4px; margin-top: 5px; overflow: hidden; }
         .xp-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #87cefa); width: 0%; transition: width 0.5s; }
 
+        /* ID CARD GLIMMER */
         .id-card-wrap {
             background: white; border: 4px solid var(--main); border-radius: 20px;
             padding: 5px; box-shadow: 5px 5px 0 rgba(255, 182, 193, 0.5);
             margin-bottom: 20px; position: relative; overflow: hidden;
         }
+        .id-card-wrap::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg); animation: shine 3s infinite; pointer-events: none;
+        }
+        @keyframes shine { 0% {left: -100%;} 20% {left: 200%;} 100% {left: 200%;} }
+
         .id-inner {
             background: var(--bg-light);
             background-image: radial-gradient(var(--bg-dark) 2px, transparent 2px); background-size: 15px 15px;
@@ -187,7 +205,8 @@
         .delete-wish-btn { position: absolute; top: -8px; right: -8px; background: red; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; z-index: 5; cursor: pointer; }
         .fab-btn { position: fixed; bottom: 90px; right: 25px; width: 60px; height: 60px; background: var(--main); color: white; border-radius: 50%; border: 3px solid white; font-size: 2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100; transition: transform 0.2s; }
         
-        .pet-box { background: white; border: 3px solid var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; }
+        .pet-box { background: white; border: 3px solid var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; }
+        .pet-hat { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font-size: 3rem; z-index: 10; pointer-events: none; }
         .ebi-img { width: 140px; transition: transform 0.2s; }
         .ebi-img.bounce { animation: bigBounce 0.5s ease; }
         @keyframes bigBounce { 0% {transform:scale(1);} 50% {transform:scale(1.2) translateY(-15px);} 100% {transform:scale(1);} }
@@ -223,6 +242,8 @@
 
 <div class="app-shell" id="main-app">
     
+    <div id="lvl-badge" class="lvl-badge">🌱</div>
+
     <div class="status-bar">
         <span id="clock">12:00</span>
         <span>🔋 100%</span>
@@ -292,9 +313,9 @@
                         <span class="dash-icon">👥</span>
                         <span class="dash-label">Switch</span>
                     </div>
-                    <div class="dash-btn" onclick="openRegistry()">
-                        <span class="dash-icon">📖</span>
-                        <span class="dash-label">Registry</span>
+                    <div class="dash-btn" onclick="openPortal()">
+                        <span class="dash-icon">🌀</span>
+                        <span class="dash-label">Portal</span>
                     </div>
                     <div class="dash-btn" onclick="saveToRegistry()">
                         <span class="dash-icon">💾</span>
@@ -344,7 +365,8 @@
         </div>
 
         <div id="tab-pet" class="page">
-            <div class="pet-box" style="margin-bottom:20px;">
+            <div class="pet-box" style="margin-bottom:20px;" id="pet-container">
+                <div class="pet-hat" id="ebi-hat"></div>
                 <img id="ebi-pet" src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="ebi-img">
                 <h3 style="color:var(--main);">Ebi</h3>
                 <div style="background:#eee; height:12px; border-radius:10px; overflow:hidden; margin:10px 0;">
@@ -352,6 +374,15 @@
                 </div>
                 <div id="ebi-msg" style="height:20px; font-size:0.7rem; color:#888; margin-bottom:10px;">I'm hungry...</div>
                 <button class="btn-main" style="width:auto; font-size:0.8rem; padding:8px;" onclick="feedPet()">Feed Snack (+XP)</button>
+                
+                <div style="margin-top:10px; border-top:1px dashed #eee; padding-top:5px;">
+                    <span style="font-size:0.7rem; color:#888;">Dress Ebi:</span><br>
+                    <button onclick="setHat('🎀')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">🎀</button>
+                    <button onclick="setHat('👑')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">👑</button>
+                    <button onclick="setHat('🧢')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">🧢</button>
+                    <button onclick="setHat('🌸')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">🌸</button>
+                    <button onclick="setHat('')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">❌</button>
+                </div>
             </div>
             <div style="margin-bottom:10px;">
                 <strong>To Do List</strong>
@@ -400,16 +431,27 @@
         </div>
     </div>
 
-    <div id="modal-registry" class="modal-overlay">
+    <div id="modal-portal" class="modal-overlay">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--main);">Registry Book</h3>
+            <h3 style="margin-top:0; color:var(--main);">🌀 Web Portal</h3>
+            
+            <p style="font-size:0.8rem; color:#666;">Bookmarks & Quizzes</p>
+            
+            <div id="link-list" style="margin-bottom:15px;"></div>
+            
             <div style="background:#f0f8ff; padding:10px; border-radius:10px; margin-bottom:10px;">
-                <input type="text" id="reg-name" placeholder="Name" style="margin-bottom:5px;">
-                <input type="text" id="reg-age" placeholder="Age">
-                <button class="btn-main" style="background:var(--blue); box-shadow:0 4px 0 #29b6f6;" onclick="addToRegistry()">Register</button>
+                <input type="text" id="link-name" placeholder="Title" style="margin-bottom:5px;">
+                <input type="text" id="link-url" placeholder="URL (https://...)">
+                <button class="btn-main" style="background:var(--blue); padding:5px;" onclick="addLink()">Add Link</button>
             </div>
-            <div id="reg-list" style="max-height:200px; overflow-y:auto;"></div>
-            <button class="btn-main" style="background:#ccc; margin-top:10px;" onclick="closeModals()">Close</button>
+
+            <div style="border-top:1px dashed #ccc; padding-top:10px; text-align:center;">
+                <h4 style="margin:0 0 10px 0;">System Backup</h4>
+                <button class="btn-main" style="background:#555; font-size:0.8rem;" onclick="exportData()">💾 Copy Save Data</button>
+                <button class="btn-main" style="background:#999; font-size:0.8rem; margin-top:5px;" onclick="importData()">📂 Import Save Data</button>
+            </div>
+
+            <button class="btn-main" style="background:#ccc; margin-top:15px;" onclick="closeModals()">Close</button>
         </div>
     </div>
 
@@ -434,19 +476,24 @@
 </div>
 
 <script>
-    // --- EXPANDED AVATARS (Unlockable by Level) ---
+    // --- NEW ASSETS ---
     const AVATARS = [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzYjS4GrT6U0nmcao3A-UnuzLyeh-2UR3jloaiM4z7_A&s=10", // Level 1
-        "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png", // Level 1
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10", // Level 2
-        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png/revision/latest?cb=20230827221913", // Level 3
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10", // Level 4
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10", // Level 5
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10", // Level 6
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"  // Level 7
+        "https://static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png/revision/latest?cb=20100719212245",
+        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg/revision/latest?cb=20090726063551",
+        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg/revision/latest?cb=20190927141754",
+        "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png", 
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
+        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png/revision/latest?cb=20230827221913",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzYjS4GrT6U0nmcao3A-UnuzLyeh-2UR3jloaiM4z7_A&s=10"
     ];
     
-    // FORTUNES
+    // LEVEL BADGES (1-10)
+    const BADGES = ["🌱","🐣","🎀","⭐","🌸","🍄","💎","👑","🧚‍♀️","🏰","🪐"];
+
     const FORTUNES = [
         {i:"🍞",t:"Toast Dash",d:"Running late but looking cute!"},
         {i:"🌟",t:"Super Star",d:"You are the main character today."},
@@ -465,22 +512,26 @@
     // --- STATE ---
     let DB = {
         profiles: [], activeIdx: 0, xp: 0, lvl: 1,
-        wish: [], pet: {hunger:50, tasks:[]}, 
-        bbs: [], frontLog: [], diary: [], registry: [],
+        wish: [], pet: {hunger:50, tasks:[], lastTask: Date.now()}, 
+        bbs: [], frontLog: [], diary: [], links: [],
         fortune: {date:'', i:'', t:'', d:''}
     };
     let mood = '😊';
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v33');
+        const saved = localStorage.getItem('seiren_v35');
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v32'));
+            const old = JSON.parse(localStorage.getItem('seiren_v34') || localStorage.getItem('seiren_v33'));
             if(old) { DB = old; save(); }
         }
+        
+        // Fix for missing lastTask
+        if(!DB.pet.lastTask) DB.pet.lastTask = Date.now();
+        if(!DB.links) DB.links = [];
 
         setInterval(() => {
             const d = new Date();
@@ -509,7 +560,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v33', JSON.stringify(DB));
+        localStorage.setItem('seiren_v35', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -547,7 +598,8 @@
             hair: ["Twin","Long","Bob","Short","Drills","Messy"][seed%6],
             wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs"][seed%7],
             hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized"][seed%7],
-            av: 0 // Always start with base avatar
+            av: 0,
+            hat: "" // New Hat feature
         };
     }
 
@@ -576,12 +628,16 @@
             document.getElementById('id-hair').innerText = u.hair;
             document.getElementById('id-hgt').innerText = u.hgt;
             document.getElementById('id-wgt').innerText = u.wgt;
-            // Avatar safety check
             const avIndex = (u.av || 0) % AVATARS.length;
             document.getElementById('id-pic').src = AVATARS[avIndex];
             document.getElementById('my-sig').innerText = u.name;
+            document.getElementById('ebi-hat').innerText = u.hat || "";
         }
         
+        // LEVEL BADGE
+        const badgeIdx = Math.min(DB.lvl-1, BADGES.length-1);
+        document.getElementById('lvl-badge').innerText = BADGES[Math.max(0, badgeIdx)];
+
         document.getElementById('lvl-num').innerText = DB.lvl;
         document.getElementById('xp-val').innerText = DB.xp;
         document.getElementById('xp-bar').style.width = DB.xp + "%";
@@ -595,6 +651,17 @@
         DB.wish.forEach((w,i)=> wList.innerHTML+=`<div class="polaroid"><div class="delete-wish-btn" onclick="delWish(${i})">x</div><img src="${w.img}"><div style="font-size:0.7rem;margin-top:5px;font-weight:bold;">${w.name}</div></div>`);
 
         document.getElementById('pet-bar').style.width = DB.pet.hunger+"%";
+        
+        // EBI SADNESS LOGIC
+        const hrsSince = (Date.now() - (DB.pet.lastTask || Date.now())) / (1000 * 60 * 60);
+        if(hrsSince > 24) {
+             document.getElementById('pet-container').style.background = "#e6f2ff";
+             document.getElementById('ebi-msg').innerText = "Ebi is lonely... (Do tasks!)";
+             playSnd('sad');
+        } else {
+             document.getElementById('pet-container').style.background = "white";
+        }
+
         const tList = document.getElementById('task-list'); tList.innerHTML="";
         DB.pet.tasks.forEach((t,i)=> tList.innerHTML+=`<div class="task-item"><span>${t}</span><input type="checkbox" onclick="doTask(${i})"></div>`);
 
@@ -605,27 +672,22 @@
 
         const df = document.getElementById('diary-feed'); df.innerHTML="";
         DB.diary.forEach(e => {
-            // Updated diary render to include emoji
             const emoji = e.m || '😊';
-            df.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:5px;border-radius:10px;border-bottom:2px solid #eee; display:flex; gap:10px; align-items:flex-start;"><span style="font-size:1.5rem;">${emoji}</span><span style="margin-top:5px;">${e.t}</span></div>`
+            const dateStr = e.d ? `<div style="font-size:0.6rem;color:#aaa;">${e.d}</div>` : '';
+            df.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:5px;border-radius:10px;border-bottom:2px solid #eee; display:flex; gap:10px; align-items:flex-start;"><span style="font-size:1.5rem;">${emoji}</span><div style="flex:1;">${dateStr}<span style="margin-top:5px;display:block;">${e.t}</span></div></div>`
         });
     }
 
-    // --- AVATAR LOGIC (LEVEL LOCKED) ---
     function rotateAvatar() {
         const u = DB.profiles[DB.activeIdx];
-        // Calculate limit based on Level. Level 1 = 2 avatars (0,1). Level 2 = 3 avatars.
         const unlockedLimit = Math.min(DB.lvl + 1, AVATARS.length);
-        
         const nextAv = (u.av + 1);
         if(nextAv >= unlockedLimit) {
-            u.av = 0; // Loop back to start
+            u.av = 0; 
             if(unlockedLimit < AVATARS.length) {
                 alert(`Reach Level ${DB.lvl + 1} to unlock the next avatar!`);
             }
-        } else {
-            u.av = nextAv;
-        }
+        } else { u.av = nextAv; }
         save(); refreshUI();
     }
 
@@ -668,13 +730,10 @@
         }
     }
 
-    // --- XP & REWARDS ---
     function addXP(amount) {
         DB.xp += amount;
         if(DB.xp >= 100) {
-            DB.xp -= 100;
-            DB.lvl++;
-            playSnd('bloop');
+            DB.xp -= 100; DB.lvl++; playSnd('chime');
             alert(`LEVEL UP! You are now Level ${DB.lvl}!\nNew Avatar Unlocked! 🎀`);
         }
         save(); refreshUI();
@@ -725,42 +784,80 @@
         document.getElementById('bbs-input').value=""; save(); refreshUI();
     }
 
-    // --- PET REWARDS ---
+    // --- PET ---
     function feedPet() { 
-        if(DB.pet.hunger >= 100) {
-            alert("Ebi is full! 🍤"); return;
-        }
-        // REWARD LOGIC
-        playSnd('bloop');
+        if(DB.pet.hunger >= 100) { alert("Ebi is full! 🍤"); return; }
+        playSnd('chime');
         const petImg = document.getElementById('ebi-pet');
         petImg.classList.remove('bounce');
-        void petImg.offsetWidth; 
-        petImg.classList.add('bounce');
+        void petImg.offsetWidth; petImg.classList.add('bounce');
         
         DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); 
-        
-        // Random bonus
-        const bonus = Math.random() > 0.7;
-        if(bonus) {
-            document.getElementById('ebi-msg').innerText = "Yummy! Found +10 Bonus XP!";
-            addXP(15); // 5 base + 10 bonus
-        } else {
-            document.getElementById('ebi-msg').innerText = "Delicious!";
-            addXP(5);
-        }
-        
+        document.getElementById('ebi-msg').innerText = "Yummy! So tasty! 🍤";
+        addXP(10);
         save(); refreshUI(); 
+    }
+    
+    function setHat(h) {
+        const u = DB.profiles[DB.activeIdx];
+        u.hat = h;
+        playSnd('bloop');
+        save(); refreshUI();
     }
     
     // --- DIARY (UPDATED) ---
     function postDiary() {
         const v = document.getElementById('diary-in').value; 
         if(v){
-            // Save Mood AND Text
-            DB.diary.unshift({t:v, m:mood}); 
+            DB.diary.unshift({t:v, m:mood, d: new Date().toLocaleString()}); 
             document.getElementById('diary-in').value=""; 
-            addXP(5); // Reward for journaling
+            addXP(5);
             save(); refreshUI();
+        }
+    }
+
+    // --- PORTAL (REPLACES REGISTRY) ---
+    function openPortal() {
+        const list = document.getElementById('link-list'); list.innerHTML="";
+        // VIBE CHECK BUTTON
+        list.innerHTML += `<a href="https://uquiz.com/" target="_blank" style="display:block; background:var(--main); color:white; padding:10px; border-radius:10px; text-decoration:none; text-align:center; font-weight:bold; margin-bottom:10px;">✨ Take a Vibe Check Quiz</a>`;
+        
+        if(DB.links) {
+            DB.links.forEach((l,i) => {
+                list.innerHTML += `<div style="background:#f9f9f9; padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                    <a href="${l.url}" target="_blank" style="text-decoration:none; color:var(--blue); font-weight:bold;">🔗 ${l.name}</a>
+                    <span onclick="delLink(${i})" style="color:red; cursor:pointer;">x</span>
+                </div>`;
+            });
+        }
+        document.getElementById('modal-portal').style.display='flex';
+    }
+    function addLink() {
+        const n = document.getElementById('link-name').value;
+        const u = document.getElementById('link-url').value;
+        if(n && u) {
+            if(!DB.links) DB.links = [];
+            DB.links.push({name:n, url:u});
+            save(); openPortal();
+            document.getElementById('link-name').value=""; document.getElementById('link-url').value="";
+        }
+    }
+    function delLink(i) { DB.links.splice(i,1); save(); openPortal(); }
+    
+    // TRUE SAVE (EXPORT)
+    function exportData() {
+        const data = JSON.stringify(DB);
+        navigator.clipboard.writeText(data).then(() => {
+            alert("Save Data copied to clipboard! Paste it in your Notes app to keep it safe forever.");
+        });
+    }
+    function importData() {
+        const data = prompt("Paste your Save Data here:");
+        if(data) {
+            try {
+                DB = JSON.parse(data);
+                save(); location.reload();
+            } catch(e) { alert("Invalid data code!"); }
         }
     }
 
@@ -774,20 +871,16 @@
     function delWish(i) { if(confirm("Delete?")) { DB.wish.splice(i,1); save(); refreshUI(); } }
 
     function addTask() { const v = document.getElementById('task-in').value; if(v){DB.pet.tasks.push(v); document.getElementById('task-in').value=""; save(); refreshUI();} }
-    function doTask(i) { DB.pet.tasks.splice(i,1); DB.pet.hunger = Math.min(100, DB.pet.hunger+10); addXP(10); save(); refreshUI(); }
+    function doTask(i) { 
+        DB.pet.tasks.splice(i,1); 
+        DB.pet.hunger = Math.min(100, DB.pet.hunger+10); 
+        DB.pet.lastTask = Date.now(); // Update last task time
+        addXP(10); save(); refreshUI(); 
+    }
 
-    function openRegistry() {
-        const list = document.getElementById('reg-list'); list.innerHTML="";
-        DB.registry.forEach((r,i)=> list.innerHTML+=`<div class="reg-item"><b>${r.realName}</b> <span class="reg-del" onclick="delReg(${i})">x</span></div>`);
-        document.getElementById('modal-registry').style.display='flex';
+    function saveToRegistry() { 
+        alert("This ID Card has been saved to your local storage!"); 
     }
-    function addToRegistry() {
-        const n = document.getElementById('reg-name').value;
-        const a = document.getElementById('reg-age').value;
-        if(n) { DB.registry.unshift(genID(n,a)); save(); document.getElementById('reg-name').value=""; openRegistry(); }
-    }
-    function delReg(i) { DB.registry.splice(i,1); save(); openRegistry(); }
-    function saveToRegistry() { DB.registry.unshift({...DB.profiles[DB.activeIdx]}); save(); alert("Saved!"); }
 
     // --- SOUND ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -795,26 +888,42 @@
         if(audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = type === 'bloop' ? 'sine' : 'triangle';
-        const freq = type === 'bloop' ? 800 : 1200;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(freq/2, audioCtx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        
+        if(type === 'sad') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+        } else if (type === 'chime') {
+             osc.type = 'sine';
+             osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+             osc.frequency.exponentialRampToValueAtTime(1800, audioCtx.currentTime + 0.1);
+             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+             osc.connect(gain); gain.connect(audioCtx.destination);
+             osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        } else {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
     }
 
     // --- NAV ---
     function go(id, btn) {
         let targetId = id;
         if(id === 'home') targetId = 'dash';
-
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
         document.getElementById('tab-'+targetId).classList.add('active');
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
-
         if(id === 'home') {
             if(DB.profiles.length > 0) {
                 document.getElementById('setup-view').style.display = 'none';
