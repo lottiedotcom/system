@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ff69b4">
-    <title>Seiren</title>
+    <title>Seiren OS</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
@@ -73,16 +73,6 @@
             background: rgba(255,255,255,0.6); border-bottom: 1px solid white;
         }
 
-        .marquee-container {
-            background: linear-gradient(90deg, var(--main), var(--dark));
-            color: white; padding: 5px 0; white-space: nowrap; overflow: hidden;
-        }
-        .marquee-text {
-            display: inline-block; padding-left: 100%;
-            animation: marquee 15s linear infinite; font-size: 0.7rem; letter-spacing: 1px;
-        }
-        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
-
         .content {
             flex: 1; overflow-y: auto; overflow-x: hidden;
             padding: 20px; padding-bottom: 100px; scroll-behavior: smooth;
@@ -91,10 +81,8 @@
         .page.active { display: block; }
         @keyframes slideUp { from {opacity:0; transform:translateY(15px);} to {opacity:1; transform:translateY(0);} }
 
-        /* --- DASHBOARD ELEMENTS --- */
+        /* --- DASHBOARD --- */
         .dash-header { text-align: center; margin-bottom: 20px; }
-        .greeting { font-size: 1.5rem; color: var(--dark); font-weight: bold; }
-        
         .xp-box { background: white; padding: 8px; border-radius: 12px; margin-bottom: 15px; border: 2px solid var(--blue); text-align: center; }
         .xp-track { height: 6px; background: #eee; border-radius: 4px; margin-top: 4px; overflow: hidden; }
         .xp-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #87cefa); width: 0%; transition: width 0.5s; }
@@ -153,8 +141,13 @@
         }
         .card-front { background: repeating-linear-gradient(45deg, var(--main), var(--main) 10px, #ffb7b2 10px, #ffb7b2 20px); }
         .card-back { background: white; transform: rotateY(180deg); padding: 10px; text-align: center; border: 2px solid var(--main); }
-        
-        .bbs-container { background: white; border: 2px solid var(--main); border-radius: 15px; height: 400px; display: flex; flex-direction: column; overflow: hidden; }
+        .new-day-btn {
+            background: #4fc3f7; color: white; border: none; padding: 8px 15px;
+            border-radius: 20px; font-size: 0.8rem; margin-top: 15px; cursor: pointer;
+            box-shadow: 0 3px 0 #29b6f6; font-weight: bold;
+        }
+
+        .bbs-container { background: white; border: 2px solid var(--main); border-radius: 15px; height: 100%; min-height: 400px; display: flex; flex-direction: column; overflow: hidden; }
         .bbs-messages { flex: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
         .bbs-msg { background: white; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.05); font-size: 0.8rem; border-left: 4px solid #ddd; }
         .bbs-meta { font-size: 0.6rem; color: #999; margin-bottom: 2px; display: flex; justify-content: space-between; }
@@ -194,7 +187,7 @@
         .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 50%; width: 40px; height: 40px; border: 2px solid transparent; cursor: pointer; }
         .mood-btn.selected { border-color: var(--main); background: var(--bg-light); }
         
-        /* MOOD TRACKER (NEW) */
+        /* MOOD TRACKER STYLES */
         .mood-tracker-box { background: white; border: 2px dashed var(--main); border-radius: 15px; padding: 15px; margin-top: 20px; text-align: center; }
         .mood-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 10px; }
         .mood-chip { background: var(--bg-light); border: 1px solid var(--main); border-radius: 20px; padding: 8px 12px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; color: var(--text); }
@@ -207,13 +200,13 @@
 </head>
 <body>
 
-<div class="scanlines"></div>
 <div id="toast" class="toast">💾 Saved!</div>
 
 <div id="welcome-layer">
     <div class="welcome-card">
         <div style="font-size:4rem; margin-bottom:10px;">🎀</div>
-        <h1 style="color:var(--dark); margin:0; letter-spacing:2px;">SEIREN</h1>
+        <h1 style="color:var(--dark); margin:0; letter-spacing:2px;">SEIREN OS</h1>
+        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">v28.0 (Corrected)</p>
         <button class="enter-btn" onclick="enterApp()">Enter World ♡</button>
     </div>
 </div>
@@ -223,12 +216,6 @@
     <div class="status-bar">
         <span id="clock">12:00</span>
         <span>🔋 100%</span>
-    </div>
-    
-    <div class="marquee-container">
-        <div class="marquee-text">
-            ★ SYSTEM ONLINE ★ WELCOME HOME ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
-        </div>
     </div>
 
     <div class="content">
@@ -474,12 +461,14 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v27');
+        const saved = localStorage.getItem('seiren_v28'); // Updated version
         if(saved) DB = JSON.parse(saved);
         
-        // Migration V26->V27
-        const oldP = JSON.parse(localStorage.getItem('seiren_v26'));
-        if(oldP && DB.profiles.length===0) { DB = oldP; save(); }
+        // MIGRATION V27->V28 (Transfer old data if exists)
+        if(!saved) {
+            const old = localStorage.getItem('seiren_v27');
+            if(old) { DB = JSON.parse(old); save(); }
+        }
 
         setInterval(() => {
             const d = new Date();
@@ -506,7 +495,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v27', JSON.stringify(DB));
+        localStorage.setItem('seiren_v28', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -730,6 +719,15 @@
     function delReg(i) { DB.registry.splice(i,1); save(); openRegistry(); }
     function saveToRegistry() { DB.registry.unshift({...DB.profiles[DB.activeIdx]}); save(); alert("Saved!"); }
 
+    function go(id, btn) {
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+        document.getElementById('tab-'+id).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
+    function setMood(m,b) { mood=m; document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }
+
     // --- SOUND ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSnd(type) {
@@ -745,15 +743,6 @@
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
-
-    function go(id, btn) {
-        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-        document.getElementById('tab-'+id).classList.add('active');
-        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
-    function setMood(m,b) { mood=m; document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }
 
     if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
