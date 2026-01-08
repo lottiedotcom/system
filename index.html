@@ -25,17 +25,19 @@
         body {
             font-family: 'Verdana', sans-serif;
             background-color: var(--bg-light);
-            background-image:
-                linear-gradient(45deg, var(--bg-dark) 25%, transparent 25%, transparent 75%, var(--bg-dark) 75%, var(--bg-dark)),
-                linear-gradient(45deg, var(--bg-dark) 25%, transparent 25%, transparent 75%, var(--bg-dark) 75%, var(--bg-dark));
+            /* NEW POLKA DOT PATTERN */
+            background-image: 
+                radial-gradient(var(--bg-dark) 20%, transparent 20%),
+                radial-gradient(var(--bg-dark) 20%, transparent 20%);
             background-position: 0 0, 10px 10px;
             background-size: 20px 20px;
+            
             margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
             color: var(--text); overscroll-behavior: none;
             transition: background-color 0.5s ease;
         }
 
-        /* --- WELCOME SCREEN (MATCHING YOUR IMAGE) --- */
+        /* --- WELCOME SCREEN --- */
         #welcome-layer {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
@@ -53,29 +55,15 @@
         @keyframes float { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-8px);} }
         
         .welcome-title {
-            color: #d12e87; 
-            font-size: 1.8rem; 
-            font-weight: 800; 
-            letter-spacing: 2px;
-            margin-top: 10px;
-            margin-bottom: 30px;
-            text-transform: uppercase;
+            color: #d12e87; font-size: 1.8rem; font-weight: 800; 
+            letter-spacing: 2px; margin-top: 10px; margin-bottom: 30px; text-transform: uppercase;
         }
 
         .enter-btn {
-            background: #ff69b4; 
-            color: white; 
-            border: none; 
-            padding: 15px 0; 
-            width: 100%;
-            border-radius: 50px; 
-            font-size: 1.1rem; 
-            font-weight: bold; 
-            cursor: pointer; 
+            background: #ff69b4; color: white; border: none; padding: 15px 0; width: 100%;
+            border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; 
             box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4); 
-            transition: transform 0.1s; 
-            letter-spacing: 2px;
-            line-height: 1.4;
+            transition: transform 0.1s; letter-spacing: 2px; line-height: 1.4;
         }
         .enter-btn:active { transform: scale(0.95); }
 
@@ -124,7 +112,7 @@
         .xp-track { height: 6px; background: #eee; border-radius: 4px; margin-top: 4px; overflow: hidden; }
         .xp-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #87cefa); width: 0%; transition: width 0.5s; }
 
-        /* INTRICATE ID CARD (RESTORED) */
+        /* INTRICATE ID CARD */
         .id-card-wrap {
             background: white; border: 3px solid var(--main); border-radius: 20px;
             padding: 5px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
@@ -150,7 +138,7 @@
         .stat-label { color: var(--main); font-weight: bold; }
         .signature { font-family: 'Brush Script MT', cursive; font-size: 1.2rem; color: var(--blue); transform: rotate(-5deg); display: inline-block; margin-right: 10px; }
 
-        /* MENU GRID (RESTORED) */
+        /* MENU GRID */
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .dash-btn {
             background: white; border-radius: 15px; padding: 10px 5px; text-align: center;
@@ -161,7 +149,7 @@
         .dash-icon { font-size: 1.5rem; display: block; margin-bottom: 3px; }
         .dash-label { font-size: 0.7rem; font-weight: bold; color: var(--text); }
 
-        /* FRONT LOG WIDGET */
+        /* FRONT LOG */
         .front-log-widget {
             background: white; border: 2px dashed var(--main); border-radius: 15px;
             padding: 10px; margin-bottom: 20px;
@@ -188,7 +176,7 @@
             box-shadow: 0 3px 0 #29b6f6; font-weight: bold;
         }
 
-        /* BBS (SYSTEM CHAT) */
+        /* BBS */
         .bbs-container { background: white; border: 2px solid var(--main); border-radius: 15px; height: 100%; min-height: 400px; display: flex; flex-direction: column; overflow: hidden; }
         .bbs-messages { flex: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
         .bbs-msg { background: white; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.05); font-size: 0.8rem; border-left: 4px solid #ddd; }
@@ -517,11 +505,11 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v28'); // Updated version check
+        const saved = localStorage.getItem('seiren_v31'); // New Version
         if(saved) DB = JSON.parse(saved);
         
-        // MIGRATION V27->V28
-        const oldP = JSON.parse(localStorage.getItem('seiren_v27'));
+        // MIGRATION V30->V31
+        const oldP = JSON.parse(localStorage.getItem('seiren_v30'));
         if(oldP && DB.profiles.length===0) { DB = oldP; save(); }
 
         setInterval(() => {
@@ -549,7 +537,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v28', JSON.stringify(DB));
+        localStorage.setItem('seiren_v31', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -580,11 +568,11 @@
             realName: name, age: age,
             color: color || "#ff69b4",
             id: Math.floor(Math.random()*9000)+1000,
-            sign: ["Aries","Leo","Virgo","Pisces"][seed%4],
+            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi"][seed%6],
             eyes: ["Pink","Blue","Gold","Red"][seed%4],
             hair: ["Twin","Long","Bob","Short"][seed%4],
-            wgt: ["3 Apples","Feather","45kg"][seed%3],
-            hgt: (140+(seed%30))+"cm",
+            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather"][seed%5],
+            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size"][seed%5],
             av: seed % AVATARS.length
         };
     }
@@ -789,11 +777,23 @@
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
 
+    // --- NAVIGATION FIX ---
     function go(id, btn) {
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
         document.getElementById('tab-'+id).classList.add('active');
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
+
+        // HOME BUTTON FIX: Force Dash view if profiles exist
+        if(id === 'home') {
+            if(DB.profiles.length > 0) {
+                document.getElementById('setup-view').style.display = 'none';
+                document.getElementById('dash-view').style.display = 'block';
+            } else {
+                document.getElementById('setup-view').style.display = 'block';
+                document.getElementById('dash-view').style.display = 'none';
+            }
+        }
     }
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
     function setMood(m,b) { mood=m; document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }
