@@ -265,6 +265,12 @@
         .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 15px; height: 40px; border: 2px outset #eee; cursor: pointer; display:flex; align-items:center; justify-content:center; }
         .mood-btn.selected { border-color: var(--main); background: var(--bg-light); border-style: inset; }
         
+        /* QUICK MOOD RECEIPT STYLE */
+        .quick-mood-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+        .qm-btn { background: white; border: 2px solid var(--main); border-radius: 10px; padding: 10px; font-size: 1.2rem; cursor: pointer; transition: transform 0.1s; }
+        .qm-btn:active { transform: scale(0.9); }
+        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; }
+        
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 9999; font-weight:bold; }
         .toast.show { opacity: 1; top: 30px; }
 
@@ -336,7 +342,7 @@
                             <span style="font-size:0.6rem; color:#aaa; font-weight:bold;">ID CARD</span>
                         </div>
                         <div class="id-body">
-                            <img id="id-pic" class="id-photo" src="" onclick="rotateAvatar()" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3233/3233508.png'">
+                            <img id="id-pic" class="id-photo" src="" referrerpolicy="no-referrer" onclick="rotateAvatar()" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3233/3233508.png'">
                             <div class="id-data">
                                 <div id="id-name" style="font-size:1.3rem; font-weight:bold; color:var(--dark); line-height:1;">User</div>
                                 <div id="id-real" style="font-size:0.7rem; font-style:italic; color:#888; margin-bottom:8px;">aka ???</div>
@@ -431,6 +437,24 @@
                     <button class="btn-main" style="width:auto;" onclick="addTask()">+</button>
                 </div>
                 <div id="task-list"></div>
+            </div>
+            
+            <div style="margin-top:20px; border-top:2px dashed #ccc; padding-top:10px;">
+                <strong style="color:var(--dark);">Quick Mood Check</strong>
+                <div class="quick-mood-board">
+                    <button class="qm-btn" onclick="logMoodQuick('😊')">😊</button>
+                    <button class="qm-btn" onclick="logMoodQuick('😢')">😢</button>
+                    <button class="qm-btn" onclick="logMoodQuick('😡')">😡</button>
+                    <button class="qm-btn" onclick="logMoodQuick('💖')">💖</button>
+                    <button class="qm-btn" onclick="logMoodQuick('💤')">💤</button>
+                    <button class="qm-btn" onclick="logMoodQuick('🌀')">🌀</button>
+                    <button class="qm-btn" onclick="logMoodQuick('💀')">💀</button>
+                    <button class="qm-btn" onclick="logMoodQuick('✨')">✨</button>
+                </div>
+                <div id="receipt-log" class="receipt-log">
+                    *** MOOD RECEIPT ***<br>
+                    Waiting for input...
+                </div>
             </div>
         </div>
 
@@ -543,20 +567,20 @@
 </div>
 
 <script>
-    // --- PROXIED AVATAR LINKS (FIXED) ---
+    // --- DIRECT IMAGE LINKS (REVERTING PROXY TO FIX HOTLINKING PROTECTION VIA HTML TAG) ---
     const AVATARS = [
-        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg&w=200&h=200&output=webp", 
-        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png&w=200&h=200&output=webp",
-        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg&w=200&h=200&output=webp",
-        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png&w=200&h=200&output=webp",
-        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png&w=200&h=200&output=webp",
-        "https://images.weserv.nl/?url=upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png&w=200&h=200&output=webp", 
-        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
-        "https://images.weserv.nl/?url=static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png&w=200&h=200&output=webp",
-        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
-        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
-        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
-        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
+        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg", 
+        "https://static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png",
+        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg",
+        "https://static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png",
+        "https://static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png",
+        "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png", 
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
+        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
     ];
     
     // GACHA POOLS
@@ -564,7 +588,7 @@
         cute: ["🎀","👑","🩰","🧁","🧸","💖","🍓","🍭"],
         dark: ["🕸️","🕷️","💀","🥀","🖤","🦇","🗡️","⛓️"],
         nature: ["🍄","🌱","🌵","🌸","🌻","🐸","🍃","🪵"],
-        decor: ["bg-hearts", "bg-dots-blue", "bg-check-green", "bg-clouds"] // Wallpaper pool
+        decor: ["bg-hearts", "bg-dots-blue", "bg-check-green", "bg-clouds"] 
     };
 
     const BADGES = ["🌱","🐣","🎀","⭐","🌸","🍄","💎","👑","🧚‍♀️","🏰","🪐"];
@@ -591,11 +615,11 @@
         inventory: [], 
         bbs: [], frontLog: [], diary: [], links: [],
         fortune: {date:'', i:'', t:'', d:''},
-        wallpaper: "" // Stores currently active wallpaper class
+        wallpaper: "" 
     };
     let mood = '😊';
 
-    // --- SAVE REMINDER (BROWSER POPUP) ---
+    // --- SAVE REMINDER ---
     window.addEventListener('beforeunload', (event) => {
         event.preventDefault();
         event.returnValue = ''; 
@@ -603,16 +627,15 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v43'); // Updated Version
+        const saved = localStorage.getItem('seiren_v44'); // Updated Version
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v42') || localStorage.getItem('seiren_v41'));
+            const old = JSON.parse(localStorage.getItem('seiren_v43') || localStorage.getItem('seiren_v42'));
             if(old) { DB = old; save(); }
         }
         
-        // Data Checks
         if(!DB.pet.lastTask) DB.pet.lastTask = Date.now();
         if(!DB.links) DB.links = [];
         if(!DB.inventory) DB.inventory = [];
@@ -646,7 +669,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v43', JSON.stringify(DB));
+        localStorage.setItem('seiren_v44', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -716,19 +739,17 @@
             document.getElementById('id-wgt').innerText = u.wgt;
             
             const avIndex = (u.av || 0) % AVATARS.length;
-            // Add a time param to force refresh if stuck
-            document.getElementById('id-pic').src = AVATARS[avIndex] + "&t=" + Date.now(); 
+            // Removed cache buster to let the browser handle standard caching with no-referrer
+            document.getElementById('id-pic').src = AVATARS[avIndex];
             
             document.getElementById('my-sig').innerText = u.name;
             
-            // SMART HAT PLACEMENT
             const hat = u.hat || "";
             const el = document.getElementById('ebi-hat');
             el.innerText = hat;
-            el.className = getAccType(hat); // Apply smart class
+            el.className = getAccType(hat); 
         }
         
-        // WALLPAPER
         document.getElementById('pet-container').className = `pet-box ${DB.wallpaper || ''}`;
 
         const badgeIdx = Math.min(DB.lvl-1, BADGES.length-1);
@@ -739,13 +760,11 @@
         document.getElementById('xp-bar').style.width = DB.xp + "%";
         document.getElementById('credit-val').innerText = DB.credits;
 
-        // INVENTORY RENDER (IN BACKPACK)
         const invGrid = document.getElementById('inv-grid');
         while(invGrid.children.length > 1) { invGrid.removeChild(invGrid.lastChild); }
         DB.inventory.forEach(item => {
             const span = document.createElement('span');
             span.className = 'inv-item';
-            // Check if it is a wallpaper (starts with bg-)
             if(item.startsWith('bg-')) {
                 span.innerText = "🖼️";
                 span.onclick = () => setWallpaper(item);
@@ -768,7 +787,6 @@
         
         const hrsSince = (Date.now() - (DB.pet.lastTask || Date.now())) / (1000 * 60 * 60);
         if(hrsSince > 24) {
-             // document.getElementById('pet-container').style.background = "#e6f2ff"; // Removed to support wallpapers
              document.getElementById('ebi-msg').innerText = "Ebi is lonely... (Do tasks!)";
         }
 
@@ -830,11 +848,8 @@
         const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         DB.frontLog.unshift({ name: user.realName, time: time });
         if(DB.frontLog.length > 20) DB.frontLog.pop();
-        
         addXP(10); 
-        DB.credits += 10; 
         alert("Switched! +10 Credits earned.");
-        
         applyTheme(user); save(); closeModals(); refreshUI();
     }
 
@@ -847,22 +862,35 @@
         }
     }
 
-    // --- AUTO-UPDATE AVATAR ON LEVEL UP ---
     function addXP(amount) {
         DB.xp += amount;
         DB.credits += amount; 
         if(DB.xp >= 100) {
-            DB.xp -= 100; 
-            DB.lvl++; 
-            playSnd('chime');
-            
-            // AUTO UPDATE AVATAR
+            DB.xp -= 100; DB.lvl++; playSnd('chime');
             if(DB.lvl < AVATARS.length) {
                 DB.profiles[DB.activeIdx].av = DB.lvl; 
                 alert(`LEVEL UP! You are now Level ${DB.lvl}! New Avatar Unlocked & Equipped! 🎀`);
             } else {
                 alert(`LEVEL UP! You are now Level ${DB.lvl}!`);
             }
+        }
+        save(); refreshUI();
+    }
+
+    // --- QUICK MOOD TRACKER ---
+    function logMoodQuick(m) {
+        playSnd('bloop');
+        addXP(10);
+        // Log to Receipt
+        const receipt = document.getElementById('receipt-log');
+        const line = document.createElement('div');
+        line.innerText = `${m}.............1.....+10₵`;
+        receipt.appendChild(line);
+        receipt.scrollTop = receipt.scrollHeight;
+        
+        // Also feed pet slightly
+        if(DB.pet.hunger < 100) {
+            DB.pet.hunger = Math.min(100, DB.pet.hunger + 5);
         }
         save(); refreshUI();
     }
@@ -882,10 +910,8 @@
         if(DB.fortune && DB.fortune.date === t) return;
         const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
         DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
-        
         addXP(50); 
         alert("Fortune Read! +50 Credits earned.");
-        
         save();
         renderFortuneCard(DB.fortune);
         const card = document.getElementById('fortune-card');
@@ -918,17 +944,15 @@
     // --- BACKPACK & PET LOGIC ---
     function openBackpack() {
         document.getElementById('modal-backpack').style.display='flex';
-        refreshUI(); // Ensure inventory renders
+        refreshUI();
     }
 
     function playGacha(type) {
         if(DB.credits < 50) { alert("Need 50 Credits! (Earn by doing tasks/diary)"); return; }
-        
         DB.credits -= 50;
         playSnd('chime');
         const pool = GACHA[type];
         const item = pool[Math.floor(Math.random() * pool.length)];
-        
         if(!DB.inventory.includes(item)) {
             DB.inventory.push(item);
             alert(`You got: ${item.startsWith('bg') ? 'Wallpaper' : item}! Added to inventory.`);
@@ -945,7 +969,6 @@
         const petImg = document.getElementById('ebi-pet');
         petImg.classList.remove('bounce');
         void petImg.offsetWidth; petImg.classList.add('bounce');
-        
         DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); 
         document.getElementById('ebi-msg').innerText = "Yummy! So tasty! 🍤";
         save(); refreshUI();
@@ -965,11 +988,9 @@
         alert("Room redecorated!");
     }
     
-    // SMART ACCESSORY LOGIC
     function getAccType(item) {
         const heads = ["🎀","👑","🧢","🌸","🌱","🍃","🕸️","🎩","🥀"];
         const masks = ["🐸","🕶️","👓","👺","🤡"];
-        // Default to side for everything else
         if(heads.includes(item)) return "acc-head";
         if(masks.includes(item)) return "acc-mask";
         return "acc-side";
