@@ -37,6 +37,17 @@
             transition: background-color 0.5s ease;
         }
 
+        /* --- DREAMY GRAIN OVERLAY --- */
+        .dream-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999;
+            /* SVG Noise Pattern */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            opacity: 0.6;
+            backdrop-filter: blur(0.5px); /* Soft focus effect */
+            mix-blend-mode: overlay;
+        }
+
         /* --- APP SHELL --- */
         #welcome-layer {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -206,7 +217,7 @@
         .fab-btn { position: fixed; bottom: 90px; right: 25px; width: 60px; height: 60px; background: var(--main); color: white; border-radius: 50%; border: 3px solid white; font-size: 2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100; transition: transform 0.2s; }
         
         .pet-box { background: white; border: 3px solid var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; }
-        .pet-hat { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font-size: 3rem; z-index: 10; pointer-events: none; }
+        .pet-hat { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 3rem; z-index: 10; pointer-events: none; }
         .ebi-img { width: 140px; transition: transform 0.2s; }
         .ebi-img.bounce { animation: bigBounce 0.5s ease; }
         @keyframes bigBounce { 0% {transform:scale(1);} 50% {transform:scale(1.2) translateY(-15px);} 100% {transform:scale(1);} }
@@ -226,6 +237,7 @@
 </head>
 <body>
 
+<div class="dream-overlay"></div>
 <div class="scanlines"></div>
 <div id="toast" class="toast">💾 Saved!</div>
 
@@ -372,15 +384,18 @@
                 <div style="background:#eee; height:12px; border-radius:10px; overflow:hidden; margin:10px 0;">
                     <div id="pet-bar" style="width:50%; height:100%; background:var(--main); transition:width 0.5s;"></div>
                 </div>
-                <div id="ebi-msg" style="height:20px; font-size:0.7rem; color:#888; margin-bottom:10px;">I'm hungry...</div>
-                <button class="btn-main" style="width:auto; font-size:0.8rem; padding:8px;" onclick="feedPet()">Feed Snack (+XP)</button>
+                <div id="ebi-msg" style="height:20px; font-size:0.7rem; color:#888; margin-bottom:10px;">Do tasks to feed me!</div>
                 
                 <div style="margin-top:10px; border-top:1px dashed #eee; padding-top:5px;">
-                    <span style="font-size:0.7rem; color:#888;">Dress Ebi:</span><br>
+                    <span style="font-size:0.7rem; color:#888;">Accessorize:</span><br>
                     <button onclick="setHat('🎀')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">🎀</button>
                     <button onclick="setHat('👑')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">👑</button>
                     <button onclick="setHat('🧢')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">🧢</button>
                     <button onclick="setHat('🌸')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">🌸</button>
+                    <button onclick="setHat('🌱')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">🌱</button>
+                    <button onclick="setHat('🍄')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">🍄</button>
+                    <button onclick="setHat('🌵')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">🌵</button>
+                    <button onclick="setHat('🕶️')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">🕶️</button>
                     <button onclick="setHat('')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">❌</button>
                 </div>
             </div>
@@ -478,8 +493,7 @@
 </div>
 
 <script>
-    // --- STABLE AVATARS (Cleaned Links) ---
-    // If an image breaks, the onError event in the HTML will auto-replace it with a default icon.
+    // --- STABLE AVATARS ---
     const AVATARS = [
         "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg", 
         "https://static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png",
@@ -524,16 +538,15 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v36'); // Updated to v36
+        const saved = localStorage.getItem('seiren_v37');
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v35') || localStorage.getItem('seiren_v34'));
+            const old = JSON.parse(localStorage.getItem('seiren_v36') || localStorage.getItem('seiren_v35'));
             if(old) { DB = old; save(); }
         }
         
-        // Fix for missing lastTask
         if(!DB.pet.lastTask) DB.pet.lastTask = Date.now();
         if(!DB.links) DB.links = [];
 
@@ -564,7 +577,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v36', JSON.stringify(DB));
+        localStorage.setItem('seiren_v37', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -602,7 +615,7 @@
             hair: ["Twin","Long","Bob","Short","Drills","Messy"][seed%6],
             wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs"][seed%7],
             hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized"][seed%7],
-            av: 0,
+            av: Math.floor(Math.random() * AVATARS.length), // RANDOM AVATAR
             hat: "" 
         };
     }
@@ -661,8 +674,6 @@
         if(hrsSince > 24) {
              document.getElementById('pet-container').style.background = "#e6f2ff";
              document.getElementById('ebi-msg').innerText = "Ebi is lonely... (Do tasks!)";
-             // Play sound once if active page
-             // playSnd('sad'); 
         } else {
              document.getElementById('pet-container').style.background = "white";
         }
@@ -790,8 +801,9 @@
     }
 
     // --- PET ---
-    function feedPet() { 
-        if(DB.pet.hunger >= 100) { alert("Ebi is full! 🍤"); return; }
+    // Feeding triggers reward, only callable via Tasks/Diary now internally
+    function triggerFeedReward() {
+        if(DB.pet.hunger >= 100) return;
         playSnd('chime');
         const petImg = document.getElementById('ebi-pet');
         petImg.classList.remove('bounce');
@@ -800,7 +812,7 @@
         DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); 
         document.getElementById('ebi-msg').innerText = "Yummy! So tasty! 🍤";
         addXP(10);
-        save(); refreshUI(); 
+        save(); refreshUI();
     }
     
     function setHat(h) {
@@ -810,21 +822,21 @@
         save(); refreshUI();
     }
     
-    // --- DIARY (UPDATED) ---
+    // --- DIARY ---
     function postDiary() {
         const v = document.getElementById('diary-in').value; 
         if(v){
             DB.diary.unshift({t:v, m:mood, d: new Date().toLocaleString()}); 
             document.getElementById('diary-in').value=""; 
             addXP(5);
+            triggerFeedReward(); // Diary feeds pet
             save(); refreshUI();
         }
     }
 
-    // --- PORTAL (REPLACES REGISTRY) ---
+    // --- PORTAL ---
     function openPortal() {
         const list = document.getElementById('link-list'); list.innerHTML="";
-        // QUOTEV EMBED HERE IS ALREADY IN HTML, THIS JUST LISTS USER LINKS
         if(DB.links) {
             DB.links.forEach((l,i) => {
                 list.innerHTML += `<div style="background:#f9f9f9; padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
@@ -847,7 +859,7 @@
     }
     function delLink(i) { DB.links.splice(i,1); save(); openPortal(); }
     
-    // TRUE SAVE (EXPORT)
+    // EXPORT
     function exportData() {
         const data = JSON.stringify(DB);
         navigator.clipboard.writeText(data).then(() => {
@@ -876,9 +888,9 @@
     function addTask() { const v = document.getElementById('task-in').value; if(v){DB.pet.tasks.push(v); document.getElementById('task-in').value=""; save(); refreshUI();} }
     function doTask(i) { 
         DB.pet.tasks.splice(i,1); 
-        DB.pet.hunger = Math.min(100, DB.pet.hunger+10); 
         DB.pet.lastTask = Date.now(); 
-        addXP(10); save(); refreshUI(); 
+        triggerFeedReward(); // Tasks feed pet
+        save(); refreshUI(); 
     }
 
     function saveToRegistry() { 
