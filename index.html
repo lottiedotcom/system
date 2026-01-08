@@ -66,8 +66,13 @@
 
         /* CONTENT */
         .content {
-            flex: 1; overflow-y: auto; overflow-x: hidden;
-            padding: 20px; padding-bottom: 100px; scroll-behavior: smooth;
+            flex: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden;
+            padding: 20px; 
+            /* Increased padding so scrolling clears the nav bar */
+            padding-bottom: 150px; 
+            scroll-behavior: smooth;
         }
         .page { display: none; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .page.active { display: block; }
@@ -140,12 +145,15 @@
         /* === 3. WISHLIST === */
         .corkboard {
             background: #e6d7c3; border: 5px solid #8b5a2b; border-radius: 10px; padding: 15px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.1); min-height: 300px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1); min-height: 400px;
         }
-        .wish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .wish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        /* Clickable Polaroid */
+        .polaroid-link { text-decoration: none; color: inherit; display: block; }
         .polaroid {
             background: white; padding: 6px 6px 20px 6px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-            text-align: center; transform: rotate(-2deg); transition: 0.2s;
+            text-align: center; transform: rotate(-2deg); transition: 0.2s; position: relative;
         }
         .polaroid:nth-child(even) { transform: rotate(2deg); }
         .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
@@ -166,7 +174,6 @@
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px solid #eee; transition: all 0.4s ease;
         }
-        /* Style for when task is finished */
         .task-item.completed {
             text-decoration: line-through; color: #aaa;
             opacity: 0; transform: translateX(50px);
@@ -213,7 +220,7 @@
 <div class="app-shell">
     <div class="marquee-container">
         <div class="marquee-text">
-            ★ SEIREN OS v10.0 ★ OFFICIAL CITIZEN SYSTEM ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
+            ★ SEIREN OS v11.0 ★ OFFICIAL CITIZEN SYSTEM ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
         </div>
     </div>
 
@@ -282,7 +289,8 @@
             <h2 style="color:var(--blue);">My Wishlist</h2>
             <div style="background:white; padding:15px; border-radius:15px; margin-bottom:15px;">
                 <input type="text" id="wish-name" placeholder="Item Name">
-                <input type="text" id="wish-img" placeholder="Image Link">
+                <input type="text" id="wish-img" placeholder="Image Link (Pinterest/Google)">
+                <input type="text" id="wish-link" placeholder="Item Link (Where to buy) - Optional">
                 <button class="btn-main" onclick="addWish()">Pin It!</button>
             </div>
             <div class="corkboard"><div id="wish-grid" class="wish-grid"></div></div>
@@ -363,13 +371,13 @@
 
     // === DATA ===
     const DB = {
-        user: JSON.parse(localStorage.getItem('v10_user')) || null,
-        wish: JSON.parse(localStorage.getItem('v10_wish')) || [],
-        pet: JSON.parse(localStorage.getItem('v10_pet')) || { hunger: 50, tasks: ['Drink Water'] },
-        diary: JSON.parse(localStorage.getItem('v10_diary')) || [],
-        fortune: JSON.parse(localStorage.getItem('v10_fortune')) || { date: '', icon: '', title: '', desc: '' },
-        xp: parseInt(localStorage.getItem('v10_xp')) || 0,
-        lvl: parseInt(localStorage.getItem('v10_lvl')) || 1
+        user: JSON.parse(localStorage.getItem('v11_user')) || null,
+        wish: JSON.parse(localStorage.getItem('v11_wish')) || [],
+        pet: JSON.parse(localStorage.getItem('v11_pet')) || { hunger: 50, tasks: ['Drink Water'] },
+        diary: JSON.parse(localStorage.getItem('v11_diary')) || [],
+        fortune: JSON.parse(localStorage.getItem('v11_fortune')) || { date: '', icon: '', title: '', desc: '' },
+        xp: parseInt(localStorage.getItem('v11_xp')) || 0,
+        lvl: parseInt(localStorage.getItem('v11_lvl')) || 1
     };
     let mood = '😊';
 
@@ -400,7 +408,7 @@
     function addXP(n) {
         DB.xp += n;
         if(DB.xp >= 100) { DB.xp -= 100; DB.lvl++; playSnd('spark'); alert("LEVEL UP!"); }
-        localStorage.setItem('v10_xp', DB.xp); localStorage.setItem('v10_lvl', DB.lvl);
+        localStorage.setItem('v11_xp', DB.xp); localStorage.setItem('v11_lvl', DB.lvl);
         updateXP();
     }
     function updateXP() {
@@ -421,7 +429,7 @@
             type: ["Tsundere", "Dojikko", "Alien", "Idol"][seed % 4],
             id: Math.floor(Math.random()*9000)+1000
         };
-        localStorage.setItem('v10_user', JSON.stringify(DB.user));
+        localStorage.setItem('v11_user', JSON.stringify(DB.user));
         document.getElementById('setup-screen').style.display='none';
         renderID();
     }
@@ -437,11 +445,11 @@
         if(DB.lvl < 2 && DB.user.avatarIdx === 0) return alert("Level up to unlock avatars!");
         const limit = Math.min(DB.lvl + 1, AVATARS.length);
         DB.user.avatarIdx = (DB.user.avatarIdx + 1) % limit;
-        localStorage.setItem('v10_user', JSON.stringify(DB.user));
+        localStorage.setItem('v11_user', JSON.stringify(DB.user));
         renderID();
     }
 
-    // FORTUNE
+    // FORTUNE (FIXED - Variable Naming)
     function checkFortune() {
         const today = new Date().toDateString();
         const card = document.getElementById('fortune-card');
@@ -465,14 +473,17 @@
             {i:"💖",t:"Doki Doki",d:"Your senpai might notice you!"}
         ];
         const res = opts[Math.floor(Math.random()*opts.length)];
-        DB.fortune = { date: today, icon: res.i, title: res.t, desc: res.d };
-        localStorage.setItem('v10_fortune', JSON.stringify(DB.fortune));
+        
+        // SAVE DATA WITH CORRECT KEYS
+        const newFortune = { date: today, icon: res.i, title: res.t, desc: res.d };
+        DB.fortune = newFortune;
+        localStorage.setItem('v11_fortune', JSON.stringify(DB.fortune));
         addXP(20);
         
-        renderFData(res);
+        renderFData(newFortune);
         const card = document.getElementById('fortune-card');
         card.style.transition = 'transform 0.8s'; 
-        void card.offsetWidth; // force reflow
+        void card.offsetWidth; 
         card.classList.add('flipped');
     }
     function renderFData(d) {
@@ -481,26 +492,44 @@
         document.getElementById('fortune-desc').innerText = d.desc;
     }
 
-    // WISHLIST
+    // WISHLIST (WITH LINKS)
     function addWish() {
         const n = document.getElementById('wish-name').value;
         const i = document.getElementById('wish-img').value;
+        const l = document.getElementById('wish-link').value;
         if(!n) return;
         playSnd('bloop');
-        DB.wish.push({name:n, img:i || "https://cdn-icons-png.flaticon.com/512/3209/3209955.png"});
-        localStorage.setItem('v10_wish', JSON.stringify(DB.wish));
-        document.getElementById('wish-name').value=""; document.getElementById('wish-img').value="";
+        DB.wish.push({
+            name:n, 
+            img:i || "https://cdn-icons-png.flaticon.com/512/3209/3209955.png",
+            link: l || "#"
+        });
+        localStorage.setItem('v11_wish', JSON.stringify(DB.wish));
+        document.getElementById('wish-name').value=""; 
+        document.getElementById('wish-img').value="";
+        document.getElementById('wish-link').value="";
         renderWish();
     }
     function renderWish() {
         const g = document.getElementById('wish-grid');
         g.innerHTML="";
         DB.wish.forEach(w=>{
-            g.innerHTML+=`<div class="polaroid"><div class="pin"></div><img src="${w.img}"><div style="font-size:0.7rem;margin-top:5px;">${w.name}</div></div>`;
+            let content = `
+                <div class="polaroid">
+                    <div class="pin"></div>
+                    <img src="${w.img}">
+                    <div style="font-size:0.7rem;margin-top:5px;">${w.name}</div>
+                </div>`;
+                
+            // If link exists, wrap in anchor tag
+            if(w.link && w.link !== "#") {
+                content = `<a href="${w.link}" target="_blank" class="polaroid-link">${content}</a>`;
+            }
+            g.innerHTML += content;
         });
     }
 
-    // === PET & TASKS (UPDATED!) ===
+    // PET & TASKS
     function renderPet() {
         document.getElementById('hunger-bar').style.width = DB.pet.hunger+"%";
         document.getElementById('pet-msg').innerText = DB.pet.hunger>50 ? "Ebi is happy!" : "Hungry...";
@@ -516,31 +545,24 @@
     }
     
     function finishTask(index, checkbox) {
-        // Prevent double clicking
         checkbox.disabled = true;
-        
-        // 1. Play Sound & Reward
         playSnd('bloop');
         DB.pet.hunger = Math.min(100, DB.pet.hunger + 15);
         addXP(10);
-        
-        // 2. Visual Animation
         const row = document.getElementById(`task-${index}`);
         row.classList.add('completed');
-        
-        // 3. Remove Data after delay
         setTimeout(() => {
             DB.pet.tasks.splice(index, 1);
-            localStorage.setItem('v10_pet', JSON.stringify(DB.pet));
-            renderPet(); // Re-render list
-        }, 500); // 0.5s delay to match CSS transition
+            localStorage.setItem('v11_pet', JSON.stringify(DB.pet));
+            renderPet(); 
+        }, 500); 
     }
 
     function addTask() {
         const v = document.getElementById('task-input').value;
         if(v) { 
             DB.pet.tasks.push(v); 
-            localStorage.setItem('v10_pet', JSON.stringify(DB.pet)); 
+            localStorage.setItem('v11_pet', JSON.stringify(DB.pet)); 
             document.getElementById('task-input').value=""; 
             renderPet(); 
         }
@@ -555,10 +577,10 @@
     function saveDiary() {
         const t = document.getElementById('diary-text').value;
         if(!t) return;
-        playSnd('bloop');
+        playSnd('spark');
         DB.diary.unshift({d: new Date().toLocaleDateString(), m: mood, t: t});
         addXP(10);
-        localStorage.setItem('v10_diary', JSON.stringify(DB.diary));
+        localStorage.setItem('v11_diary', JSON.stringify(DB.diary));
         document.getElementById('diary-text').value=""; renderDiary();
     }
     function renderDiary() {
