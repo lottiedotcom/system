@@ -343,7 +343,7 @@
                             <span style="font-size:0.6rem; color:#aaa; font-weight:bold;">ID CARD</span>
                         </div>
                         <div class="id-body">
-                            <img id="id-pic" class="id-photo" src="" onclick="rotateAvatar()" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3233/3233508.png'">
+                            <img id="id-pic" class="id-photo" src="" referrerpolicy="no-referrer" onclick="rotateAvatar()" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3233/3233508.png'">
                             <div class="id-data">
                                 <div id="id-name" style="font-size:1.3rem; font-weight:bold; color:var(--dark); line-height:1;">User</div>
                                 <div id="id-real" style="font-size:0.7rem; font-style:italic; color:#888; margin-bottom:8px;">aka ???</div>
@@ -630,13 +630,16 @@
     });
 
     // --- INIT ---
+    let soundEnabled = false; // Flag to ensure audio context is resumed
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v46'); // Updated Version
+        const saved = localStorage.getItem('seiren_v47'); // Updated Version
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v45') || localStorage.getItem('seiren_v44'));
+            const old = JSON.parse(localStorage.getItem('seiren_v46') || localStorage.getItem('seiren_v45'));
             if(old) { DB = old; save(); }
         }
         
@@ -653,6 +656,11 @@
     });
 
     function enterApp() {
+        // RESUME AUDIO CONTEXT ON FIRST CLICK
+        if(audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => { soundEnabled = true; });
+        }
+
         document.getElementById('welcome-layer').style.opacity = '0';
         setTimeout(() => {
             document.getElementById('welcome-layer').style.display = 'none';
@@ -673,7 +681,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v46', JSON.stringify(DB));
+        localStorage.setItem('seiren_v47', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -695,23 +703,24 @@
         return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
     }
 
-    // --- GIRLS BRAVO GENERATOR ---
+    // --- GIRLS BRAVO GENERATOR (EXPANDED) ---
     function genID(name, age, color) {
         const seed = name.length + parseInt(age||0) + Math.floor(Math.random()*100);
-        const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To"];
-        const nameS = ["-chan","-ren","-la","-ru","-ka","-na","-ho"];
+        const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To","Ami","Rina"];
+        const nameS = ["-chan","-ren","-la","-ru","-ka","-na","-ho","-chi","-mi"];
         
         return {
             name: nameP[seed%nameP.length] + nameS[seed%nameS.length],
             realName: name, age: age,
             color: color || "#ff69b4",
             id: Math.floor(Math.random()*9000)+1000,
-            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka"][seed%9],
-            eyes: ["Pink","Blue","Gold","Red","Violet","Teal"][seed%6],
-            hair: ["Twin","Long","Bob","Short","Drills","Messy"][seed%6],
-            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs"][seed%7],
-            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized"][seed%7],
-            av: Math.floor(Math.random() * AVATARS.length),
+            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka","Ghost","Angel","Witch","Space Cadet"][seed%13],
+            eyes: ["Pink","Blue","Gold","Red","Violet","Teal","Starry","Heterochromia","Void"][seed%9],
+            hair: ["Twin","Long","Bob","Short","Drills","Messy","Hime Cut","Bald","Ponytail","Buns"][seed%10],
+            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs","1000 Cookies","Light as air","Heavy Metal"][seed%10],
+            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized", "Skyscraper", "Bean sized", "Tall"][seed%10],
+            // STRICT LEVEL LOCK: New profile starts with unlocked avatar
+            av: Math.min(DB.lvl, AVATARS.length-1),
             hat: "" 
         };
     }
@@ -743,7 +752,6 @@
             document.getElementById('id-wgt').innerText = u.wgt;
             
             const avIndex = (u.av || 0) % AVATARS.length;
-            // No cache buster needed for direct stable links
             document.getElementById('id-pic').src = AVATARS[avIndex];
             
             document.getElementById('my-sig').innerText = u.name;
@@ -810,15 +818,18 @@
         });
     }
 
-    // --- LOCKED AVATAR LOGIC ---
+    // --- LOCKED AVATAR LOGIC (STRICT) ---
     function rotateAvatar() {
         const u = DB.profiles[DB.activeIdx];
+        
+        // Strict locking: Cannot go beyond level index
         const maxIndex = Math.min(DB.lvl, AVATARS.length - 1);
         let nextAv = u.av + 1;
+        
         if(nextAv > maxIndex) {
-            nextAv = 0; 
+            nextAv = 0; // Wrap around to start
             if(maxIndex < AVATARS.length - 1) {
-                alert(`LOCKED: Reach Level ${nextAv + 1} to unlock this avatar!`);
+                alert(`LOCKED: Reach Level ${nextAv + 1} to unlock next avatar!`);
             }
         }
         u.av = nextAv;
@@ -827,6 +838,7 @@
 
     // --- PROFILES ---
     function openProfileManager() {
+        playSnd('bloop');
         const list = document.getElementById('profile-list'); list.innerHTML="";
         DB.profiles.forEach((p,i) => {
             const active = i===DB.activeIdx ? "active-slot" : "";
@@ -852,8 +864,10 @@
         const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         DB.frontLog.unshift({ name: user.realName, time: time });
         if(DB.frontLog.length > 20) DB.frontLog.pop();
+        
         addXP(10); 
         alert("Switched! +10 Credits earned.");
+        
         applyTheme(user); save(); closeModals(); refreshUI();
     }
 
@@ -912,8 +926,10 @@
         if(DB.fortune && DB.fortune.date === t) return;
         const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
         DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
+        
         addXP(50); 
         alert("Fortune Read! +50 Credits earned.");
+        
         save();
         renderFortuneCard(DB.fortune);
         const card = document.getElementById('fortune-card');
@@ -945,6 +961,7 @@
 
     // --- BACKPACK & PET LOGIC ---
     function openBackpack() {
+        playSnd('bloop');
         document.getElementById('modal-backpack').style.display='flex';
         refreshUI();
     }
@@ -1012,6 +1029,7 @@
 
     // --- PORTAL ---
     function openPortal() {
+        playSnd('bloop');
         const list = document.getElementById('link-list'); list.innerHTML="";
         if(DB.links) {
             DB.links.forEach((l,i) => {
@@ -1069,16 +1087,18 @@
         save(); refreshUI(); 
     }
 
-    // --- SOUND ENGINE (UPDATED TO WHITE NOISE) ---
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function saveToRegistry() { 
+        alert("This ID Card has been saved to your local storage!"); 
+    }
+
+    // --- NEW SOUND ENGINE (WHITE NOISE RECEIPT) ---
     function playSnd(type) {
         if(audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         
         if (type === 'print') {
-            // WHITE NOISE GENERATION FOR RECEIPT SOUND
-            const bufferSize = audioCtx.sampleRate * 0.1; // 0.1 seconds
+            // White Noise Generation
+            const bufferSize = audioCtx.sampleRate * 0.15; 
             const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             const data = buffer.getChannelData(0);
             for (let i = 0; i < bufferSize; i++) {
@@ -1088,30 +1108,45 @@
             noise.buffer = buffer;
             noise.connect(gain);
             gain.connect(audioCtx.destination);
-            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            // Envelope to sound crisp
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
             noise.start();
-        } else if (type === 'chime') {
-             osc.type = 'sine';
-             osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-             osc.frequency.exponentialRampToValueAtTime(1800, audioCtx.currentTime + 0.1);
-             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-             osc.connect(gain); gain.connect(audioCtx.destination);
-             osc.start(); osc.stop(audioCtx.currentTime + 0.3);
         } else {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            // Standard bloops/chimes
+            const osc = audioCtx.createOscillator();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if(type === 'sad') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'chime') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } else {
+                // Default 'bloop'
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            }
         }
     }
 
     // --- NAV ---
     function go(id, btn) {
+        playSnd('bloop');
         let targetId = id;
         if(id === 'home') targetId = 'dash';
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
