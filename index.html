@@ -45,7 +45,6 @@
         }
         .welcome-card {
             background: rgba(255,255,255,0.95); padding: 50px 40px; border-radius: 40px;
-            /* Soft shadow */
             box-shadow: 0 20px 50px rgba(255, 105, 180, 0.2);
             text-align: center; backdrop-filter: blur(5px);
             width: 80%; max-width: 320px;
@@ -518,11 +517,11 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v29');
+        const saved = localStorage.getItem('seiren_v28'); // Updated version check
         if(saved) DB = JSON.parse(saved);
         
-        // Migration V28->V29
-        const oldP = JSON.parse(localStorage.getItem('seiren_v28'));
+        // MIGRATION V27->V28
+        const oldP = JSON.parse(localStorage.getItem('seiren_v27'));
         if(oldP && DB.profiles.length===0) { DB = oldP; save(); }
 
         setInterval(() => {
@@ -550,7 +549,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v29', JSON.stringify(DB));
+        localStorage.setItem('seiren_v28', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
