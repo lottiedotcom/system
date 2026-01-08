@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seiren-os-v32';
+const CACHE_NAME = 'seiren-os-v34'; // Changed to v34
 const ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,7 @@ const ASSETS = [
 
 // Install: Cache files
 self.addEventListener('install', (e) => {
-  self.skipWaiting(); // Force new SW to take over immediately
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
@@ -28,16 +28,14 @@ self.addEventListener('activate', (e) => {
       );
     })
   );
-  self.clients.claim(); // Control all clients immediately
+  self.clients.claim();
 });
 
-// Fetch: Network First, fall back to Cache
-// This ensures you always see updates when online!
+// Fetch: Network First
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(e.request)
       .then((res) => {
-        // Update cache with new version
         const clone = res.clone();
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(e.request, clone);
