@@ -7,8 +7,8 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ff69b4">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/9373/9373479.png">
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/9373/9373479.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
 
     <style>
         /* --- 2004 MOE AESTHETIC --- */
@@ -76,7 +76,7 @@
         .page.active { display: block; }
         @keyframes popIn { from {opacity:0; transform:scale(0.95);} to {opacity:1; transform:scale(1);} }
 
-        /* === 1. SUPER CUTE ID CARD (RE-DESIGN) === */
+        /* === 1. SUPER CUTE ID CARD === */
         .id-card-wrap {
             background: #fff;
             border: 4px solid var(--pink);
@@ -85,7 +85,6 @@
             box-shadow: 5px 5px 0 rgba(255, 182, 193, 0.5);
             margin-bottom: 15px; position: relative; overflow: hidden;
         }
-        
         .id-inner {
             background-color: #fff0f5;
             background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.7) 10px, rgba(255,255,255,0.7) 20px);
@@ -93,42 +92,32 @@
             border-radius: 15px; padding: 15px;
             position: relative;
         }
-
-        /* Decorative Bow */
         .deco-bow {
             position: absolute; top: -5px; right: -5px; font-size: 2rem;
             transform: rotate(15deg); text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
             z-index: 5;
         }
-
         .id-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--pink); padding-bottom: 5px; margin-bottom: 10px; }
         .id-logo { font-size: 0.8rem; font-weight: bold; color: var(--deep-pink); letter-spacing: 1px; }
-        
         .id-body { display: flex; gap: 15px; align-items: center; }
-        
         .id-photo-zone { position: relative; }
         .id-photo { 
             width: 80px; height: 80px; border-radius: 50%; 
             border: 4px solid white; outline: 3px solid var(--blue);
             object-fit: cover; background: white;
         }
-        
         .id-data { flex: 1; }
         .id-main-name { font-size: 1.4rem; font-weight: bold; color: var(--deep-pink); line-height: 1; margin-bottom: 2px; text-shadow: 1px 1px 0 white; }
         .id-sub-name { font-size: 0.7rem; color: #888; font-style: italic; margin-bottom: 8px; }
-        
         .id-stats-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.7rem;
             background: rgba(255,255,255,0.6); padding: 5px; border-radius: 5px;
         }
         .stat-label { color: var(--blue); font-weight: bold; }
-        
         .id-footer {
             margin-top: 10px; text-align: right; font-family: 'Courier New', monospace;
             font-size: 0.6rem; color: var(--pink); border-top: 1px dotted var(--pink); padding-top: 5px;
         }
-        
-        /* Signature */
         .signature {
             font-family: 'Brush Script MT', cursive; font-size: 1.2rem; color: var(--blue);
             transform: rotate(-5deg); display: inline-block; margin-right: 10px;
@@ -154,9 +143,17 @@
             padding: 20px; max-height: 80vh; overflow-y: auto; animation: popIn 0.3s;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
+        .reg-input-group {
+            background: #f0f8ff; padding: 10px; border-radius: 10px; margin-bottom: 15px;
+            border: 2px dashed #87cefa;
+        }
+        .reg-input-row { display: flex; gap: 5px; }
         .reg-item {
-            background: #f9f9f9; border-radius: 10px; padding: 10px; margin-bottom: 8px;
-            border-left: 4px solid var(--blue); display: flex; justify-content: space-between;
+            background: #fff0f5; border-radius: 10px; padding: 10px; margin-bottom: 8px;
+            border-left: 4px solid var(--pink); display: flex; justify-content: space-between; align-items: center;
+        }
+        .reg-del {
+            color: red; font-weight: bold; cursor: pointer; padding: 5px; font-size: 1.2rem;
         }
 
         /* XP BAR */
@@ -183,7 +180,6 @@
             border-radius: 20px; font-size: 0.8rem; margin-top: 15px; cursor: pointer;
             box-shadow: 0 3px 0 #29b6f6; font-weight: bold;
         }
-        .new-day-btn:active { transform: translateY(3px); box-shadow: none; }
 
         /* === 3. WISHLIST === */
         .corkboard {
@@ -284,7 +280,7 @@
 <div class="app-shell">
     <div class="marquee-container">
         <div class="marquee-text">
-            ★ SEIREN OS v16.0 ★ SUPER KAWAII EDITION ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
+            ★ SEIREN OS v17.0 ★ OFFICIAL CITIZEN SYSTEM ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
         </div>
     </div>
 
@@ -417,6 +413,16 @@
     <div class="modal-overlay" id="registry-modal" onclick="closeRegistry(event)">
         <div class="modal-box">
             <h2 style="color:var(--pink); margin-top:0;">📖 Registry Book</h2>
+            
+            <div class="reg-input-group">
+                <div style="font-size:0.7rem; font-weight:bold; color:var(--blue); margin-bottom:5px;">ADD NEW ENTRY</div>
+                <div class="reg-input-row">
+                    <input type="text" id="reg-new-name" placeholder="Name" style="margin:0;">
+                    <input type="text" id="reg-new-age" placeholder="Age" style="margin:0; width:60px;">
+                </div>
+                <button class="btn-main" style="margin-top:5px; padding:8px;" onclick="addNewToRegistry()">Register New</button>
+            </div>
+
             <div id="registry-list">
                 </div>
             <button class="btn-main" onclick="document.getElementById('registry-modal').style.display='none'">Close</button>
@@ -463,20 +469,18 @@
     }
 
     // === DATA & PERSISTENCE ===
-    // We load from LocalStorage immediately.
     const DB = {
-        user: JSON.parse(localStorage.getItem('v16_user')) || null,
-        wish: JSON.parse(localStorage.getItem('v16_wish')) || [],
-        pet: JSON.parse(localStorage.getItem('v16_pet')) || { hunger: 50, tasks: ['Drink Water'] },
-        diary: JSON.parse(localStorage.getItem('v16_diary')) || [],
-        fortune: JSON.parse(localStorage.getItem('v16_fortune')) || { date: '', icon: '', title: '', desc: '' },
-        registry: JSON.parse(localStorage.getItem('v16_registry')) || [],
-        xp: parseInt(localStorage.getItem('v16_xp')) || 0,
-        lvl: parseInt(localStorage.getItem('v16_lvl')) || 1
+        user: JSON.parse(localStorage.getItem('v17_user')) || null,
+        wish: JSON.parse(localStorage.getItem('v17_wish')) || [],
+        pet: JSON.parse(localStorage.getItem('v17_pet')) || { hunger: 50, tasks: ['Drink Water'] },
+        diary: JSON.parse(localStorage.getItem('v17_diary')) || [],
+        fortune: JSON.parse(localStorage.getItem('v17_fortune')) || { date: '', icon: '', title: '', desc: '' },
+        registry: JSON.parse(localStorage.getItem('v17_registry')) || [],
+        xp: parseInt(localStorage.getItem('v17_xp')) || 0,
+        lvl: parseInt(localStorage.getItem('v17_lvl')) || 1
     };
     let mood = '😊';
 
-    // Helper: Shows "Saving..." Toast
     function showSaveToast() {
         const t = document.getElementById('toast');
         t.classList.add('show');
@@ -485,14 +489,14 @@
 
     function init() {
         if(DB.user) { 
-            // Migration check
             if(!DB.user.eyes) {
+                // Migration
                 const seed = DB.user.name.length;
                 DB.user.eyes = ["Pink", "Blue", "Red", "Gold", "Purple"][seed%5];
                 DB.user.hair = ["Twin-tails", "Long", "Bob", "Drills"][seed%4];
                 DB.user.wgt = ["3 Apples", "5 Mochis", "40kg", "Feather"][seed%4];
                 DB.user.sign = ["Aries", "Leo", "Libra", "Pisces"][seed%4];
-                localStorage.setItem('v16_user', JSON.stringify(DB.user));
+                localStorage.setItem('v17_user', JSON.stringify(DB.user));
             }
             renderID(); checkFortune(); updateXP(); 
         } 
@@ -504,7 +508,7 @@
     function addXP(n) {
         DB.xp += n;
         if(DB.xp >= 100) { DB.xp -= 100; DB.lvl++; playSnd('spark'); alert("LEVEL UP!"); }
-        localStorage.setItem('v16_xp', DB.xp); localStorage.setItem('v16_lvl', DB.lvl);
+        localStorage.setItem('v17_xp', DB.xp); localStorage.setItem('v17_lvl', DB.lvl);
         updateXP();
     }
     function updateXP() {
@@ -513,27 +517,36 @@
         document.getElementById('xp-bar').style.width = DB.xp + "%";
     }
 
+    // HELPER GENERATOR
+    function generateStats(name, age) {
+        const seed = name.length + parseInt(age || 0);
+        const pres = ["Mi", "Lu", "Fa", "Ko", "Ri", "Yu"];
+        const sufs = ["-chan", "-pyon", "ren", "la"];
+        const sName = pres[seed % pres.length] + sufs[(seed*3) % sufs.length];
+        
+        return {
+            name: sName, realName: name, age: age || "?",
+            type: ["Tsundere", "Dojikko", "Alien", "Idol"][seed % 4],
+            id: Math.floor(Math.random()*9000)+1000,
+            eyes: ["Pink", "Blue", "Red", "Gold", "Purple"][seed%5],
+            hair: ["Twin-tails", "Long", "Bob", "Drills"][seed%4],
+            wgt: ["3 Apples", "5 Mochis", "40kg", "Feather"][seed%4],
+            sign: ["Aries", "Leo", "Libra", "Pisces"][seed%4],
+            avatarIdx: seed % AVATARS.length
+        };
+    }
+
     // ID
     function createProfile() {
         const name = document.getElementById('setup-name').value;
         const age = document.getElementById('setup-age').value;
         if(!name) return;
         playSnd('bloop');
-        const seed = name.length;
-        const pres = ["Mi", "Lu", "Fa", "Ko", "Ri", "Yu"];
-        const sufs = ["-chan", "-pyon", "ren", "la"];
-        const sName = pres[seed % pres.length] + sufs[(seed*3) % sufs.length];
-
-        DB.user = {
-            name: sName, realName: name, age: age || "?", avatarIdx: 0,
-            type: ["Tsundere", "Dojikko", "Alien", "Idol"][seed % 4],
-            id: Math.floor(Math.random()*9000)+1000,
-            eyes: ["Pink", "Blue", "Red", "Gold", "Purple"][seed%5],
-            hair: ["Twin-tails", "Long", "Bob", "Drills"][seed%4],
-            wgt: ["3 Apples", "5 Mochis", "40kg", "Feather"][seed%4],
-            sign: ["Aries", "Leo", "Libra", "Pisces"][seed%4]
-        };
-        localStorage.setItem('v16_user', JSON.stringify(DB.user));
+        
+        DB.user = generateStats(name, age);
+        DB.user.avatarIdx = 0; // Main user starts at 0
+        
+        localStorage.setItem('v17_user', JSON.stringify(DB.user));
         document.getElementById('setup-screen').style.display='none';
         renderID();
     }
@@ -551,10 +564,9 @@
     }
     function changeAvatar() {
         playSnd('bloop');
-        if(DB.lvl < 2 && DB.user.avatarIdx === 0) return alert("Level up to unlock avatars!");
         const limit = Math.min(DB.lvl + 1, AVATARS.length);
         DB.user.avatarIdx = (DB.user.avatarIdx + 1) % limit;
-        localStorage.setItem('v16_user', JSON.stringify(DB.user));
+        localStorage.setItem('v17_user', JSON.stringify(DB.user));
         renderID();
         showSaveToast();
     }
@@ -562,11 +574,36 @@
     // REGISTRY
     function saveToRegistry() {
         playSnd('bloop');
-        DB.registry.unshift({...DB.user}); // Clone current ID
-        localStorage.setItem('v16_registry', JSON.stringify(DB.registry));
+        DB.registry.unshift({...DB.user});
+        localStorage.setItem('v17_registry', JSON.stringify(DB.registry));
         showSaveToast();
-        alert("ID Saved to Registry!");
+        alert("Current ID Saved!");
     }
+    
+    function addNewToRegistry() {
+        const name = document.getElementById('reg-new-name').value;
+        const age = document.getElementById('reg-new-age').value;
+        if(!name) return;
+        
+        playSnd('spark');
+        const newIdentity = generateStats(name, age);
+        DB.registry.unshift(newIdentity);
+        localStorage.setItem('v17_registry', JSON.stringify(DB.registry));
+        
+        document.getElementById('reg-new-name').value = "";
+        document.getElementById('reg-new-age').value = "";
+        openRegistry(); // Refresh view
+        showSaveToast();
+    }
+
+    function removeRegistryItem(index) {
+        if(confirm("Delete this entry?")) {
+            DB.registry.splice(index, 1);
+            localStorage.setItem('v17_registry', JSON.stringify(DB.registry));
+            openRegistry(); // Refresh view
+        }
+    }
+
     function openRegistry() {
         playSnd('bloop');
         const list = document.getElementById('registry-list');
@@ -576,11 +613,14 @@
         DB.registry.forEach((entry, idx) => {
             list.innerHTML += `
                 <div class="reg-item">
-                    <div class="reg-info">
+                    <div>
                         <div style="font-weight:bold;color:var(--pink);">${entry.name}</div>
                         <div style="font-size:0.7rem;">${entry.realName} (Age: ${entry.age})</div>
                     </div>
-                    <div style="background:var(--blue);color:white;padding:2px 6px;border-radius:10px;font-size:0.6rem;height:fit-content;">${entry.type}</div>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <div style="background:var(--blue);color:white;padding:2px 6px;border-radius:10px;font-size:0.6rem;">${entry.type}</div>
+                        <span class="reg-del" onclick="removeRegistryItem(${idx})">x</span>
+                    </div>
                 </div>
             `;
         });
@@ -590,7 +630,7 @@
         if(e.target.id === 'registry-modal') e.target.style.display = 'none';
     }
 
-    // FORTUNE (13 TYPES)
+    // FORTUNE
     function checkFortune() {
         const today = new Date().toDateString();
         const card = document.getElementById('fortune-card');
@@ -622,7 +662,7 @@
         ];
         const res = opts[Math.floor(Math.random()*opts.length)];
         DB.fortune = { date: today, icon: res.i, title: res.t, desc: res.d };
-        localStorage.setItem('v16_fortune', JSON.stringify(DB.fortune));
+        localStorage.setItem('v17_fortune', JSON.stringify(DB.fortune));
         addXP(20);
         renderFData(DB.fortune);
         const card = document.getElementById('fortune-card');
@@ -632,7 +672,7 @@
     }
     function resetFortune() {
         if(confirm("Start a new day?")) {
-            DB.fortune.date = ""; localStorage.setItem('v16_fortune', JSON.stringify(DB.fortune));
+            DB.fortune.date = ""; localStorage.setItem('v17_fortune', JSON.stringify(DB.fortune));
             const card = document.getElementById('fortune-card');
             card.style.transition = 'none'; card.classList.remove('flipped');
         }
@@ -643,7 +683,7 @@
         document.getElementById('fortune-desc').innerText = d.desc;
     }
 
-    // WISHLIST (CLEAN)
+    // WISHLIST
     function toggleWishPanel() {
         const p = document.getElementById('wish-panel');
         p.style.display = p.style.display === 'block' ? 'none' : 'block';
@@ -656,7 +696,7 @@
         playSnd('bloop');
         let defaultImg = WISH_ICONS[Math.floor(Math.random()*WISH_ICONS.length)];
         DB.wish.push({name:n, img: i || defaultImg, link: l || "#"});
-        localStorage.setItem('v16_wish', JSON.stringify(DB.wish));
+        localStorage.setItem('v17_wish', JSON.stringify(DB.wish));
         document.getElementById('wish-name').value=""; document.getElementById('wish-img').value=""; document.getElementById('wish-link').value="";
         toggleWishPanel();
         renderWish();
@@ -666,7 +706,7 @@
         playSnd('bloop');
         if(confirm("Remove this wish?")) {
             DB.wish.splice(index, 1);
-            localStorage.setItem('v16_wish', JSON.stringify(DB.wish));
+            localStorage.setItem('v17_wish', JSON.stringify(DB.wish));
             renderWish();
             showSaveToast();
         }
@@ -688,7 +728,7 @@
         });
     }
 
-    // PET & TASKS
+    // PET
     function renderPet() {
         document.getElementById('hunger-bar').style.width = DB.pet.hunger+"%";
         document.getElementById('pet-msg').innerText = DB.pet.hunger>50 ? "Ebi is happy!" : "Hungry...";
@@ -701,12 +741,12 @@
         checkbox.disabled = true; playSnd('bloop'); DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); addXP(10);
         document.getElementById(`task-${index}`).classList.add('completed');
         setTimeout(() => {
-            DB.pet.tasks.splice(index, 1); localStorage.setItem('v16_pet', JSON.stringify(DB.pet)); renderPet(); showSaveToast();
+            DB.pet.tasks.splice(index, 1); localStorage.setItem('v17_pet', JSON.stringify(DB.pet)); renderPet(); showSaveToast();
         }, 500); 
     }
     function addTask() {
         const v = document.getElementById('task-input').value;
-        if(v) { DB.pet.tasks.push(v); localStorage.setItem('v16_pet', JSON.stringify(DB.pet)); document.getElementById('task-input').value=""; renderPet(); showSaveToast(); }
+        if(v) { DB.pet.tasks.push(v); localStorage.setItem('v17_pet', JSON.stringify(DB.pet)); document.getElementById('task-input').value=""; renderPet(); showSaveToast(); }
     }
 
     // DIARY
@@ -717,7 +757,7 @@
         playSnd('spark');
         DB.diary.unshift({d: new Date().toLocaleDateString(), m: mood, t: t});
         addXP(10);
-        localStorage.setItem('v16_diary', JSON.stringify(DB.diary));
+        localStorage.setItem('v17_diary', JSON.stringify(DB.diary));
         document.getElementById('diary-text').value=""; renderDiary();
         showSaveToast();
     }
