@@ -222,17 +222,37 @@
         
         .pet-box { background: white; border: 3px ridge var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; }
         
-        /* FIXED ACCESSORY POS */
-        .pet-hat { 
+        /* ACCESSORY POSITIONS */
+        .pet-acc-container { position: absolute; width: 100%; height: 100%; top:0; left:0; pointer-events: none; }
+        /* HEAD: Hats, Bows, Sprouts */
+        .acc-head { 
             position: absolute; 
-            top: 40px; /* LOWERED TO SIT ON HEAD */
+            top: 5px; 
             left: 50%; 
             transform: translateX(-50%); 
-            font-size: 4rem; 
+            font-size: 3.5rem; 
             z-index: 10; 
-            pointer-events: none;
             text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
+        /* MASK: Glasses, Animal Faces */
+        .acc-mask {
+            position: absolute;
+            top: 40px; /* Over face */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            z-index: 10;
+        }
+        /* SIDE: Objects, Food, Bears */
+        .acc-side {
+            position: absolute;
+            bottom: 20px;
+            right: 15px; /* Next to Ebi */
+            font-size: 2.5rem;
+            z-index: 10;
+            animation: float 3s infinite ease-in-out;
+        }
+
         .ebi-img { width: 140px; transition: transform 0.2s; margin-top:10px; }
         .ebi-img.bounce { animation: bigBounce 0.5s ease; }
         @keyframes bigBounce { 0% {transform:scale(1);} 50% {transform:scale(1.2) translateY(-15px);} 100% {transform:scale(1);} }
@@ -403,7 +423,9 @@
 
         <div id="tab-pet" class="page">
             <div class="pet-box" style="margin-bottom:20px;" id="pet-container">
-                <div class="pet-hat" id="ebi-hat"></div>
+                <div class="pet-acc-container">
+                    <div id="ebi-hat" class="acc-head"></div>
+                </div>
                 <img id="ebi-pet" src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="ebi-img">
                 <h3 style="color:var(--main);">Ebi</h3>
                 <div style="background:#eee; height:12px; border-radius:10px; overflow:hidden; margin:10px 0;">
@@ -531,18 +553,18 @@
 <script>
     // --- PROXIED AVATAR LINKS (FIXED) ---
     const AVATARS = [
-        "https://wsrv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg&w=200&h=200&output=webp", 
-        "https://wsrv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png&w=200&h=200&output=webp",
-        "https://wsrv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg&w=200&h=200&output=webp",
-        "https://wsrv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png&w=200&h=200&output=webp",
-        "https://wsrv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png&w=200&h=200&output=webp",
-        "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png&w=200&h=200&output=webp", 
-        "https://wsrv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
-        "https://wsrv.nl/?url=static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png&w=200&h=200&output=webp",
-        "https://wsrv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
-        "https://wsrv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
-        "https://wsrv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
-        "https://wsrv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg&w=200&h=200&output=webp", 
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png&w=200&h=200&output=webp",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg&w=200&h=200&output=webp",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png&w=200&h=200&output=webp",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png&w=200&h=200&output=webp",
+        "https://images.weserv.nl/?url=upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png&w=200&h=200&output=webp", 
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png&w=200&h=200&output=webp",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
     ];
     
     // GACHA POOLS
@@ -587,12 +609,12 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v41'); // Updated Version
+        const saved = localStorage.getItem('seiren_v42'); // Updated Version
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v40') || localStorage.getItem('seiren_v39'));
+            const old = JSON.parse(localStorage.getItem('seiren_v41') || localStorage.getItem('seiren_v40'));
             if(old) { DB = old; save(); }
         }
         
@@ -629,7 +651,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v41', JSON.stringify(DB));
+        localStorage.setItem('seiren_v42', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -703,7 +725,12 @@
             document.getElementById('id-pic').src = AVATARS[avIndex] + "&t=" + Date.now(); 
             
             document.getElementById('my-sig').innerText = u.name;
-            document.getElementById('ebi-hat').innerText = u.hat || "";
+            
+            // SMART HAT PLACEMENT
+            const hat = u.hat || "";
+            const el = document.getElementById('ebi-hat');
+            el.innerText = hat;
+            el.className = getAccType(hat); // Apply smart class
         }
         
         const badgeIdx = Math.min(DB.lvl-1, BADGES.length-1);
@@ -917,6 +944,16 @@
         u.hat = h;
         playSnd('bloop');
         save(); refreshUI();
+    }
+    
+    // SMART ACCESSORY LOGIC
+    function getAccType(item) {
+        const heads = ["🎀","👑","🧢","🌸","🌱","🍃","🕸️","🎩","🥀"];
+        const masks = ["🐸","🕶️","👓","👺","🤡"];
+        // Default to side for everything else
+        if(heads.includes(item)) return "acc-head";
+        if(masks.includes(item)) return "acc-mask";
+        return "acc-side";
     }
     
     // --- DIARY ---
