@@ -12,52 +12,50 @@
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
 
     <style>
-        /* --- DYNAMIC THEME VARIABLES --- */
+        /* --- DYNAMIC THEME ENGINE --- */
         :root {
-            /* Default Pink Theme */
-            --main: #ff69b4;
-            --bg: #ffe4e1;
-            --dark: #d12e87;
+            --main: #ff69b4;       /* Primary Color */
+            --bg-light: #ffe4e1;   /* Background Base */
+            --bg-dark: #ffb7b2;    /* Background Pattern */
+            --dark: #d12e87;       /* Text/Borders */
             --glass: rgba(255, 255, 255, 0.9);
             --text: #555;
         }
 
         body {
             font-family: 'Verdana', sans-serif;
-            background-color: var(--bg);
-            /* Dynamic Background Pattern */
-            background-image: 
-                linear-gradient(45deg, var(--main) 25%, transparent 25%, transparent 75%, var(--main) 75%, var(--main)),
-                linear-gradient(45deg, var(--main) 25%, transparent 25%, transparent 75%, var(--main) 75%, var(--main));
+            background-color: var(--bg-light);
+            /* V23 Gingham Pattern RESTORED */
+            background-image:
+                linear-gradient(45deg, var(--bg-dark) 25%, transparent 25%, transparent 75%, var(--bg-dark) 75%, var(--bg-dark)),
+                linear-gradient(45deg, var(--bg-dark) 25%, transparent 25%, transparent 75%, var(--bg-dark) 75%, var(--bg-dark));
             background-position: 0 0, 10px 10px;
             background-size: 20px 20px;
-            /* Fade effect when switching themes */
-            transition: background-color 0.5s ease;
             margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
             color: var(--text); overscroll-behavior: none;
+            transition: background-color 0.5s ease;
         }
 
         /* --- WELCOME SCREEN --- */
         #welcome-layer {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, var(--bg), #fff);
+            background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
             z-index: 9999; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             transition: opacity 0.5s ease-out;
         }
         .welcome-card {
             background: rgba(255,255,255,0.9); padding: 40px; border-radius: 40px;
-            border: 6px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 6px solid white; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             text-align: center; backdrop-filter: blur(5px);
             animation: float 3s ease-in-out infinite;
         }
         @keyframes float { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-10px);} }
         
         .enter-btn {
-            background: var(--main);
-            color: white; border: 4px solid white; padding: 15px 40px; border-radius: 50px;
-            font-size: 1.3rem; font-weight: bold; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15); 
+            background: var(--main); color: white; border: 4px solid white; 
+            padding: 15px 40px; border-radius: 50px; font-size: 1.3rem; font-weight: bold; 
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
             transition: transform 0.1s; text-transform: uppercase; letter-spacing: 2px;
             margin-top: 25px; display: inline-block;
         }
@@ -70,127 +68,122 @@
             box-shadow: 0 0 50px rgba(0,0,0,0.1); z-index: 10;
         }
 
-        .scanlines {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.02) 50%);
-            background-size: 100% 4px; pointer-events: none; z-index: 998;
+        .status-bar {
+            display: flex; justify-content: space-between; padding: 8px 15px;
+            font-size: 0.7rem; font-weight: bold; color: var(--dark);
+            background: rgba(255,255,255,0.6); border-bottom: 1px solid white;
         }
 
-        .status-bar {
-            display: flex; justify-content: space-between; padding: 12px 20px;
-            font-size: 0.8rem; font-weight: bold; color: var(--dark);
-            background: rgba(255,255,255,0.6); backdrop-filter: blur(5px);
+        .marquee-container {
+            background: linear-gradient(90deg, var(--main), var(--dark));
+            color: white; padding: 5px 0; white-space: nowrap; overflow: hidden;
         }
+        .marquee-text {
+            display: inline-block; padding-left: 100%;
+            animation: marquee 15s linear infinite; font-size: 0.7rem; letter-spacing: 1px;
+        }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
         .content {
             flex: 1; overflow-y: auto; overflow-x: hidden;
-            padding: 20px; padding-bottom: 120px; scroll-behavior: smooth;
+            padding: 20px; padding-bottom: 100px; scroll-behavior: smooth;
         }
         .page { display: none; animation: slideUp 0.3s ease; }
         .page.active { display: block; }
         @keyframes slideUp { from {opacity:0; transform:translateY(15px);} to {opacity:1; transform:translateY(0);} }
 
-        /* DASHBOARD */
+        /* --- DASHBOARD ELEMENTS --- */
         .dash-header { text-align: center; margin-bottom: 20px; }
-        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .dash-btn {
-            background: white; border-radius: 20px; padding: 15px; text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s;
-            border: 2px solid white;
-        }
-        .dash-btn:active { transform: scale(0.95); border-color: var(--main); }
-        .dash-icon { font-size: 2rem; display: block; margin-bottom: 5px; }
+        .greeting { font-size: 1.5rem; color: var(--dark); font-weight: bold; }
+        
+        .xp-box { background: white; padding: 8px; border-radius: 12px; margin-bottom: 15px; border: 2px solid var(--blue); text-align: center; }
+        .xp-track { height: 6px; background: #eee; border-radius: 4px; margin-top: 4px; overflow: hidden; }
+        .xp-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #87cefa); width: 0%; transition: width 0.5s; }
 
-        /* FRONT LOG WIDGET (NEW) */
-        .front-log-widget {
-            background: white; border: 2px dashed var(--main); border-radius: 15px;
-            padding: 10px; margin-bottom: 20px;
-        }
-        .log-entry-mini {
-            display: flex; justify-content: space-between; font-size: 0.75rem; 
-            padding: 5px 0; border-bottom: 1px dotted #eee;
-        }
-
-        /* ID CARD (INTRICATE) */
+        /* INTRICATE ID CARD (RESTORED) */
         .id-card-wrap {
             background: white; border: 3px solid var(--main); border-radius: 20px;
             padding: 5px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
             margin-bottom: 20px; position: relative; overflow: hidden;
         }
         .id-inner {
-            background: var(--bg);
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.5) 10px, rgba(255,255,255,0.5) 20px);
+            background: var(--bg-light);
+            background-image: radial-gradient(var(--bg-dark) 2px, transparent 2px); background-size: 15px 15px;
             border: 2px dashed var(--dark); border-radius: 15px; padding: 15px;
         }
-        .id-body { display: flex; gap: 15px; align-items: center; }
+        .deco-bow { position: absolute; top: -5px; right: -5px; font-size: 2rem; transform: rotate(15deg); z-index: 5; }
+        .id-top { display: flex; justify-content: space-between; border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; }
+        .id-body { display: flex; gap: 10px; align-items: center; }
         .id-photo { 
-            width: 80px; height: 80px; border-radius: 50%; border: 4px solid white; 
+            width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; 
             outline: 3px solid var(--main); object-fit: cover; background: white;
         }
+        .id-data { flex: 1; }
         .id-stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.7rem;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.65rem;
             background: rgba(255,255,255,0.7); padding: 5px; border-radius: 5px; margin-top:5px;
         }
         .stat-label { color: var(--main); font-weight: bold; }
+        .signature { font-family: 'Brush Script MT', cursive; font-size: 1.2rem; color: var(--blue); transform: rotate(-5deg); display: inline-block; margin-right: 10px; }
 
-        /* BBS / CHAT (NEW) */
-        .bbs-container {
-            background: white; border: 2px solid var(--main); border-radius: 15px;
-            height: 400px; display: flex; flex-direction: column; overflow: hidden;
+        /* MENU GRID (RESTORED) */
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .dash-btn {
+            background: white; border-radius: 15px; padding: 10px 5px; text-align: center;
+            box-shadow: 0 4px 5px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s;
+            border: 2px solid transparent;
         }
+        .dash-btn:active { transform: scale(0.95); border-color: var(--main); }
+        .dash-icon { font-size: 1.5rem; display: block; margin-bottom: 3px; }
+        .dash-label { font-size: 0.7rem; font-weight: bold; color: var(--text); }
+
+        /* FRONT LOG WIDGET */
+        .front-log-widget {
+            background: white; border: 2px dashed var(--main); border-radius: 15px;
+            padding: 10px; margin-bottom: 20px;
+        }
+        .log-entry-mini { display: flex; justify-content: space-between; font-size: 0.7rem; padding: 4px 0; border-bottom: 1px dotted #eee; }
+
+        /* BBS (SYSTEM CHAT) */
+        .bbs-container { background: white; border: 2px solid var(--main); border-radius: 15px; height: 400px; display: flex; flex-direction: column; overflow: hidden; }
         .bbs-messages { flex: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
-        .bbs-msg { 
-            background: white; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px;
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.05); font-size: 0.85rem;
-            border-left: 4px solid #ddd;
-        }
-        .bbs-meta { font-size: 0.65rem; color: #999; margin-bottom: 2px; display: flex; justify-content: space-between; }
+        .bbs-msg { background: white; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.05); font-size: 0.8rem; border-left: 4px solid #ddd; }
+        .bbs-meta { font-size: 0.6rem; color: #999; margin-bottom: 2px; display: flex; justify-content: space-between; }
         .bbs-input-area { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 5px; }
 
-        /* GLOBAL UI */
-        input, select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 15px; box-sizing: border-box; font-family:inherit; margin-bottom: 10px; outline:none; }
+        /* UI ELEMENTS */
+        input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 15px; box-sizing: border-box; font-family:inherit; margin-bottom: 10px; outline:none; }
         input:focus { border-color: var(--main); background: #fff; }
-        
-        .btn-main {
-            background: var(--main); color: white; border: none; padding: 12px; width: 100%;
-            border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-        }
+        .btn-main { background: var(--main); color: white; border: none; padding: 12px; width: 100%; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
         .btn-main:active { transform: translateY(4px); box-shadow: none; }
 
-        .modal-overlay {
-            position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); z-index: 2000;
-            display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px);
-        }
-        .modal-box {
-            background: white; width: 85%; max-width: 400px; border-radius: 25px; 
-            border: 4px solid var(--main); padding: 20px; max-height: 80vh; overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideUp 0.3s;
-        }
+        /* MODALS */
+        .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+        .modal-box { background: white; width: 85%; max-width: 400px; border-radius: 25px; border: 4px solid var(--main); padding: 20px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideUp 0.3s; }
+        .slot-card { background: #fdf2f8; border: 2px solid #eee; border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .slot-card.active-slot { border-color: var(--main); background: var(--bg-light); }
 
-        /* SLOT CARD (UNLIMITED) */
-        .slot-card {
-            background: #fff; border: 2px solid #eee; border-radius: 12px; padding: 10px; 
-            margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .slot-card.active-slot { border-color: var(--main); background: var(--bg); }
+        /* NAV */
+        nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 100; border: 2px solid white; }
+        .nav-btn { background: none; border: none; color: #ccc; font-size: 1.5rem; transition: 0.2s; display: flex; flex-direction:column; align-items: center; }
+        .nav-label { font-size: 0.6rem; margin-top:2px; font-weight:bold; }
+        .nav-btn.active { color: var(--main); transform: scale(1.1); }
 
-        nav {
-            position: fixed; bottom: 20px; left: 20px; right: 20px;
-            background: rgba(255,255,255,0.95); border-radius: 40px;
-            display: flex; justify-content: space-around; padding: 15px 0;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 100; border: 2px solid white;
-        }
-        .nav-btn { background: none; border: none; color: #ccc; font-size: 1.5rem; transition: 0.2s; }
-        .nav-btn.active { color: var(--main); transform: scale(1.2); }
-
-        /* Helper for other tabs */
+        /* LEISURE STYLES */
         .corkboard { background: #e6d7c3; border: 5px solid #8b5a2b; border-radius: 10px; padding: 15px; min-height: 400px; }
-        .polaroid { background: white; padding: 6px; text-align: center; margin-bottom:10px; transform: rotate(-1deg); box-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
+        .polaroid { background: white; padding: 6px; text-align: center; margin-bottom:10px; transform: rotate(-1deg); box-shadow: 2px 2px 5px rgba(0,0,0,0.2); position:relative; }
         .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border: 1px solid #ccc; }
+        .delete-wish-btn { position: absolute; top: -5px; right: -5px; background: red; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; }
         .pet-box { background: white; border: 3px solid var(--main); border-radius: 20px; padding: 20px; text-align: center; }
         .ebi-img { width: 120px; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% {transform:translateY(0);} 50% {transform:translateY(-8px);} }
-        .task-item.completed { text-decoration: line-through; color: #aaa; opacity: 0; transform: translateX(50px); }
+        .task-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
+        .task-item.completed { text-decoration: line-through; color: #aaa; opacity: 0.5; }
+        .diary-box { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .mood-bar { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 50%; width: 40px; height: 40px; border: 2px solid transparent; cursor: pointer; }
+        .mood-btn.selected { border-color: var(--main); background: var(--bg-light); }
+        
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 9999; }
         .toast.show { opacity: 1; top: 30px; }
 
@@ -205,7 +198,7 @@
     <div class="welcome-card">
         <div style="font-size:4rem; margin-bottom:10px;">🎀</div>
         <h1 style="color:var(--dark); margin:0; letter-spacing:2px;">SEIREN OS</h1>
-        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">System Companion v24.0</p>
+        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">System Companion v25.0</p>
         <button class="enter-btn" onclick="enterApp()">Enter World ♡</button>
     </div>
 </div>
@@ -215,6 +208,12 @@
     <div class="status-bar">
         <span id="clock">12:00</span>
         <span>🔋 100%</span>
+    </div>
+    
+    <div class="marquee-container">
+        <div class="marquee-text">
+            ★ SYSTEM ONLINE ★ WELCOME HOME ★ EBI IS HUNGRY ★ CHECK MESSAGES ★ GIRLS BRAVO FOREVER ★
+        </div>
     </div>
 
     <div class="content">
@@ -232,7 +231,15 @@
             <div id="dash-view" style="display:none;">
                 <div class="dash-header">
                     <h2 style="margin:0; color:var(--dark);" id="dash-greet">Hello!</h2>
-                    <span style="font-size:0.8rem; color:#888;">Welcome back to Seiren.</span>
+                    <span style="font-size:0.8rem; color:#888;">System Dashboard</span>
+                </div>
+
+                <div class="xp-box">
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:var(--blue);">
+                        <span>Level <span id="lvl-num">1</span></span>
+                        <span><span id="xp-val">0</span>/100 XP</span>
+                    </div>
+                    <div class="xp-track"><div id="xp-bar" class="xp-fill"></div></div>
                 </div>
 
                 <div class="id-card-wrap">
@@ -252,8 +259,13 @@
                                     <span><b>Sign:</b> <span id="id-sign">?</span></span>
                                     <span><b>Eyes:</b> <span id="id-eyes">?</span></span>
                                     <span><b>Hair:</b> <span id="id-hair">?</span></span>
+                                    <span><b>Hgt:</b> <span id="id-hgt">?</span></span>
+                                    <span><b>Wgt:</b> <span id="id-wgt">?</span></span>
                                 </div>
                             </div>
+                        </div>
+                        <div class="id-footer">
+                            AUTHORIZED SIGNATURE: <span class="signature" id="my-sig">User</span>
                         </div>
                     </div>
                 </div>
@@ -261,11 +273,15 @@
                 <div class="dash-grid">
                     <div class="dash-btn" onclick="openProfileManager()">
                         <span class="dash-icon">👥</span>
-                        <span>Profiles</span>
+                        <span class="dash-label">Switch</span>
                     </div>
                     <div class="dash-btn" onclick="openRegistry()">
                         <span class="dash-icon">📖</span>
-                        <span>Registry</span>
+                        <span class="dash-label">Registry</span>
+                    </div>
+                    <div class="dash-btn" onclick="saveToRegistry()">
+                        <span class="dash-icon">💾</span>
+                        <span class="dash-label">Save ID</span>
                     </div>
                 </div>
 
@@ -277,7 +293,7 @@
                 <div style="text-align:center; background:white; padding:15px; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
                     <div style="font-size:2.5rem;" id="fortune-icon">?</div>
                     <strong style="color:var(--main);" id="fortune-title">Daily Fortune</strong>
-                    <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.8rem; margin-top:10px;" onclick="drawFortune()">Draw Card</button>
+                    <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.8rem; margin-top:10px;" onclick="drawFortune()">Draw</button>
                 </div>
             </div>
         </div>
@@ -298,11 +314,20 @@
             
             <div class="pet-box" style="margin-bottom:20px;">
                 <img src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="ebi-img">
-                <h3>Ebi</h3>
+                <h3 style="color:var(--main);">Ebi</h3>
                 <div style="background:#eee; height:12px; border-radius:10px; overflow:hidden; margin:10px 0;">
                     <div id="pet-bar" style="width:50%; height:100%; background:var(--main);"></div>
                 </div>
                 <button class="btn-main" style="width:auto; font-size:0.8rem; padding:8px;" onclick="feedPet()">Feed Snack</button>
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <strong>Tasks</strong>
+                <div style="display:flex; gap:5px;">
+                    <input type="text" id="task-in" placeholder="Task...">
+                    <button class="btn-main" style="width:auto;" onclick="addTask()">+</button>
+                </div>
+                <div id="task-list"></div>
             </div>
 
             <div class="corkboard">
@@ -311,6 +336,21 @@
                     <button class="btn-main" style="width:50px; height:50px; border-radius:50%; font-size:1.5rem;" onclick="openWishModal()">+</button>
                 </div>
             </div>
+        </div>
+
+        <div id="tab-diary" class="page">
+            <h2 style="color:var(--main);">Secret Diary</h2>
+            <div class="diary-box">
+                <div class="mood-bar">
+                    <button class="mood-btn selected" onclick="setMood('😊', this)">😊</button>
+                    <button class="mood-btn" onclick="setMood('😢', this)">😢</button>
+                    <button class="mood-btn" onclick="setMood('😡', this)">😡</button>
+                    <button class="mood-btn" onclick="setMood('💖', this)">💖</button>
+                </div>
+                <textarea id="diary-in" style="width:100%; height:80px; padding:10px; border:2px solid #eee; border-radius:10px; resize:none;" placeholder="Write something..."></textarea>
+                <button class="btn-main" onclick="postDiary()">Save Entry</button>
+            </div>
+            <div id="diary-feed" style="margin-top:20px;"></div>
         </div>
 
     </div>
@@ -325,9 +365,22 @@
                 <input type="text" id="new-p-name" placeholder="Name">
                 <input type="number" id="new-p-age" placeholder="Age">
                 <label style="font-size:0.8rem; font-weight:bold;">Theme Color:</label>
-                <input type="color" id="new-p-color" value="#ff69b4" style="height:40px; padding:0; border:none; width:100%;">
+                <input type="color" id="new-p-color" value="#ff69b4" style="height:40px; padding:0; border:none; width:100%; border-radius:10px; margin-bottom:10px;">
                 <button class="btn-main" onclick="addProfile()">Create</button>
             </div>
+            <button class="btn-main" style="background:#ccc; margin-top:10px; box-shadow:none;" onclick="closeModals()">Close</button>
+        </div>
+    </div>
+
+    <div id="modal-registry" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-top:0; color:var(--main);">Registry Book</h3>
+            <div style="background:#f0f8ff; padding:10px; border-radius:10px; margin-bottom:10px;">
+                <input type="text" id="reg-name" placeholder="Name" style="margin-bottom:5px;">
+                <input type="text" id="reg-age" placeholder="Age">
+                <button class="btn-main" style="background:var(--blue); box-shadow:0 4px 0 #29b6f6;" onclick="addToRegistry()">Register</button>
+            </div>
+            <div id="reg-list" style="max-height:200px; overflow-y:auto;"></div>
             <button class="btn-main" style="background:#ccc; margin-top:10px; box-shadow:none;" onclick="closeModals()">Close</button>
         </div>
     </div>
@@ -343,9 +396,10 @@
     </div>
 
     <nav>
-        <button class="nav-btn active" onclick="go('dash', this)">🏠</button>
-        <button class="nav-btn" onclick="go('bbs', this)">💬</button>
-        <button class="nav-btn" onclick="go('tools', this)">🎒</button>
+        <button class="nav-btn active" onclick="go('dash', this)"><span>🏠</span><span class="nav-label">Home</span></button>
+        <button class="nav-btn" onclick="go('bbs', this)"><span>💬</span><span class="nav-label">Chat</span></button>
+        <button class="nav-btn" onclick="go('tools', this)"><span>🎒</span><span class="nav-label">Tools</span></button>
+        <button class="nav-btn" onclick="go('diary', this)"><span>📓</span><span class="nav-label">Diary</span></button>
     </nav>
 
 </div>
@@ -354,29 +408,34 @@
     // --- ASSETS ---
     const AVATARS = [
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzYjS4GrT6U0nmcao3A-UnuzLyeh-2UR3jloaiM4z7_A&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
         "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png",
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
         "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png/revision/latest?cb=20230827221913"
     ];
 
     // --- STATE ---
-    // Note: profiles is now an array of objects, NO LIMIT
     let DB = {
-        profiles: [], // Dynamic array
+        profiles: [], // Unlimited
         activeIdx: 0,
         xp: 0, lvl: 1,
-        wish: [], pet: {hunger:50}, 
-        bbs: [], // System Chat
-        frontLog: [] // History
+        wish: [], pet: {hunger:50, tasks:[]}, 
+        bbs: [], frontLog: [], diary: [], registry: []
     };
+    let mood = '😊';
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v24');
+        const saved = localStorage.getItem('seiren_v25');
         if(saved) DB = JSON.parse(saved);
         
-        // MIGRATION: Convert old null array to empty array if needed
-        if(DB.profiles.length === 5 && DB.profiles[0] === null) DB.profiles = [];
+        // MIGRATION: V20 to V25
+        const oldP = JSON.parse(localStorage.getItem('v20_profiles'));
+        if(oldP && DB.profiles.length === 0) {
+            DB.profiles = oldP.filter(p => p !== null); // Clean nulls
+            if(DB.profiles.length > 0) DB.activeIdx = 0;
+            localStorage.setItem('seiren_v25', JSON.stringify(DB));
+        }
 
         setInterval(() => {
             const d = new Date();
@@ -403,34 +462,30 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v24', JSON.stringify(DB));
+        localStorage.setItem('seiren_v25', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
     }
 
-    // --- THEME ENGINE ---
+    // --- THEME ---
     function applyTheme(user) {
-        if(!user) return;
-        const color = user.color || "#ff69b4";
-        const root = document.documentElement;
-        
-        root.style.setProperty('--pink', color);
-        root.style.setProperty('--main', color);
-        root.style.setProperty('--dark', adjustColor(color, -40));
-        root.style.setProperty('--pastel-pink', adjustColor(color, 160)); // Very light version
-        root.style.setProperty('--bg', adjustColor(color, 160));
+        const color = user ? (user.color || "#ff69b4") : "#ff69b4";
+        const r = document.documentElement;
+        r.style.setProperty('--main', color);
+        r.style.setProperty('--dark', adjustColor(color, -40));
+        r.style.setProperty('--bg-light', adjustColor(color, 160));
+        r.style.setProperty('--bg-dark', adjustColor(color, 120));
     }
-
     function adjustColor(col, amt) {
         var usePound = false;
         if (col[0] == "#") { col = col.slice(1); usePound = true; }
         var num = parseInt(col,16);
         var r = (num >> 16) + amt;
-        if (r > 255) r = 255; else if  (r < 0) r = 0;
         var b = ((num >> 8) & 0x00FF) + amt;
-        if (b > 255) b = 255; else if  (b < 0) b = 0;
         var g = (num & 0x0000FF) + amt;
+        if (r > 255) r = 255; else if (r < 0) r = 0;
+        if (b > 255) b = 255; else if (b < 0) b = 0;
         if (g > 255) g = 255; else if (g < 0) g = 0;
         return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
     }
@@ -465,7 +520,6 @@
     }
 
     function refreshUI() {
-        // ID Card
         const u = DB.profiles[DB.activeIdx];
         if(u) {
             document.getElementById('dash-greet').innerText = `Hello, ${u.realName}`;
@@ -475,29 +529,40 @@
             document.getElementById('id-sign').innerText = u.sign;
             document.getElementById('id-eyes').innerText = u.eyes;
             document.getElementById('id-hair').innerText = u.hair;
+            document.getElementById('id-hgt').innerText = u.hgt;
+            document.getElementById('id-wgt').innerText = u.wgt;
             document.getElementById('id-pic').src = AVATARS[u.av % AVATARS.length];
+            document.getElementById('my-sig').innerText = u.name;
         }
-        // XP
+        
         document.getElementById('lvl-num').innerText = DB.lvl;
         document.getElementById('xp-val').innerText = DB.xp;
         document.getElementById('xp-bar').style.width = DB.xp + "%";
-        
+
         // Log
-        const mini = document.getElementById('mini-log');
-        mini.innerHTML = "";
+        const mini = document.getElementById('mini-log'); mini.innerHTML = "";
         DB.frontLog.slice(0, 3).forEach(l => {
             mini.innerHTML += `<div class="log-entry-mini"><span>${l.name}</span><span>${l.time}</span></div>`;
         });
 
         // Wish
         const wList = document.getElementById('wish-list'); wList.innerHTML="";
-        DB.wish.forEach((w,i)=> wList.innerHTML+=`<div class="polaroid"><img src="${w.img}" style="width:100%"><div style="font-size:0.7rem;">${w.name}</div></div>`);
-        
+        DB.wish.forEach((w,i)=> wList.innerHTML+=`<div class="polaroid"><div class="delete-wish-btn" onclick="delWish(${i})">x</div><img src="${w.img}"><div style="font-size:0.7rem;">${w.name}</div></div>`);
+
+        // Pet/Tasks
+        document.getElementById('pet-bar').style.width = DB.pet.hunger+"%";
+        const tList = document.getElementById('task-list'); tList.innerHTML="";
+        DB.pet.tasks.forEach((t,i)=> tList.innerHTML+=`<div class="task-item"><span>${t}</span><input type="checkbox" onclick="doTask(${i})"></div>`);
+
         // BBS
         const bbs = document.getElementById('bbs-feed'); bbs.innerHTML="";
         DB.bbs.slice().reverse().forEach(m => {
             bbs.innerHTML += `<div class="bbs-msg" style="border-left-color:${m.color}"><div class="bbs-meta"><span style="color:${m.color};font-weight:bold;">${m.sender}</span><span>${m.time}</span></div>${m.text}</div>`;
         });
+
+        // Diary
+        const df = document.getElementById('diary-feed'); df.innerHTML="";
+        DB.diary.forEach(e => df.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:5px;border-radius:10px;border-bottom:2px solid #eee;">${e.t}</div>`);
     }
 
     function rotateAvatar() {
@@ -515,7 +580,7 @@
                 <div class="slot-card ${active}">
                     <div><b>${p.realName}</b> (${p.name})</div>
                     <div>
-                        ${i!==DB.activeIdx ? `<button class="btn-main" style="width:auto;padding:5px;" onclick="swap(${i})">Switch</button>` : 'Active'}
+                        ${i!==DB.activeIdx ? `<button class="slot-btn btn-switch" onclick="swap(${i})">Switch</button>` : 'Active'}
                         <button style="color:red;border:none;background:none;font-weight:bold;" onclick="delProf(${i})">x</button>
                     </div>
                 </div>`;
@@ -528,11 +593,8 @@
         const a = document.getElementById('new-p-age').value;
         const c = document.getElementById('new-p-color').value;
         if(!n) return;
-        
         DB.profiles.push(genID(n, a, c));
-        // Auto switch to new
         swap(DB.profiles.length - 1);
-        
         document.getElementById('new-p-name').value="";
         closeModals();
     }
@@ -540,16 +602,10 @@
     function swap(i) {
         DB.activeIdx = i;
         const user = DB.profiles[i];
-        
-        // Log it
         const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         DB.frontLog.unshift({ name: user.realName, time: time });
         if(DB.frontLog.length > 20) DB.frontLog.pop();
-        
-        applyTheme(user);
-        save();
-        closeModals();
-        refreshUI();
+        applyTheme(user); save(); closeModals(); refreshUI();
     }
 
     function delProf(i) {
@@ -561,31 +617,46 @@
         }
     }
 
-    // --- BBS ---
+    // --- OTHERS ---
     function postBBS() {
         const txt = document.getElementById('bbs-input').value;
         if(!txt) return;
-        const user = DB.profiles[DB.activeIdx];
-        const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        DB.bbs.push({ sender: user.realName, color: user.color, text: txt, time: time });
-        document.getElementById('bbs-input').value="";
-        save(); refreshUI();
+        const u = DB.profiles[DB.activeIdx];
+        const t = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        DB.bbs.push({ sender: u.realName, color: u.color, text: txt, time: t });
+        document.getElementById('bbs-input').value=""; save(); refreshUI();
     }
 
-    // --- TOOLS ---
-    function feedPet() { DB.pet.hunger = Math.min(100, DB.pet.hunger + 10); save(); document.getElementById('pet-bar').style.width = DB.pet.hunger+"%"; }
-    
+    function addTask() { const v = document.getElementById('task-in').value; if(v){DB.pet.tasks.push(v); document.getElementById('task-in').value=""; save(); refreshUI();} }
+    function doTask(i) { DB.pet.tasks.splice(i,1); DB.pet.hunger = Math.min(100, DB.pet.hunger+10); DB.xp+=10; save(); refreshUI(); }
+    function feedPet() { DB.pet.hunger = Math.min(100, DB.pet.hunger+10); save(); refreshUI(); }
+
+    function postDiary() {
+        const v = document.getElementById('diary-in').value; if(v){DB.diary.unshift({t:v}); document.getElementById('diary-in').value=""; save(); refreshUI();}
+    }
+
     function openWishModal() { document.getElementById('modal-wish').style.display='flex'; }
     function submitWish() {
         const n = document.getElementById('w-name').value;
         const i = document.getElementById('w-img').value || "https://cdn-icons-png.flaticon.com/512/3209/3209955.png";
         if(n) { DB.wish.push({name:n, img:i}); save(); closeModals(); refreshUI(); }
     }
+    function delWish(i) { if(confirm("Delete?")) { DB.wish.splice(i,1); save(); refreshUI(); } }
 
-    function drawFortune() {
-        const opts = ["Good Luck!", "Stay Hydrated", "Switch Soon?", "Nap Time"];
-        document.getElementById('fortune-title').innerText = opts[Math.floor(Math.random()*opts.length)];
+    function openRegistry() {
+        const l = document.getElementById('reg-list'); l.innerHTML="";
+        DB.registry.forEach((r,i)=> l.innerHTML+=`<div class="reg-item"><b>${r.realName}</b> <span style="color:red;cursor:pointer;" onclick="delReg(${i})">x</span></div>`);
+        document.getElementById('modal-registry').style.display='flex';
     }
+    function addToRegistry() {
+        const n = document.getElementById('reg-name').value;
+        const a = document.getElementById('reg-age').value;
+        if(n) { DB.registry.unshift(genID(n,a)); save(); document.getElementById('reg-name').value=""; openRegistry(); }
+    }
+    function delReg(i) { DB.registry.splice(i,1); save(); openRegistry(); }
+    function saveToRegistry() { DB.registry.unshift({...DB.profiles[DB.activeIdx]}); save(); alert("Saved!"); }
+
+    function drawFortune() { alert(["Good Luck", "Stay Safe", "Have Fun"][Math.floor(Math.random()*3)]); DB.xp+=10; save(); refreshUI(); }
 
     function go(id, btn) {
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -594,8 +665,8 @@
         btn.classList.add('active');
     }
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
+    function setMood(m,b) { mood=m; document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }
 
-    // SERVICE WORKER
     if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
 </body>
