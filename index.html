@@ -143,6 +143,7 @@
         .id-photo { 
             width: 80px; height: 80px; border-radius: 50%; border: 3px outset white; 
             outline: 3px solid var(--main); object-fit: cover; background: white;
+            animation: float 4s ease-in-out infinite; /* CUTE BOBBING ANIMATION */
         }
         .id-data { flex: 1; }
         .id-stats-grid {
@@ -228,10 +229,10 @@
         .bg-check-green { background-color: #f1f8e9 !important; background-image: repeating-linear-gradient(45deg, #c5e1a5 25%, transparent 25%, transparent 75%, #c5e1a5 75%, #c5e1a5), repeating-linear-gradient(45deg, #c5e1a5 25%, #f1f8e9 25%, #f1f8e9 75%, #c5e1a5 75%, #c5e1a5) !important; background-size: 20px 20px !important; }
         .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }
 
-        /* FIXED ACCESSORY POS */
+        /* ADJUSTED HAT POSITION (LOWERED) */
         .pet-hat { 
             position: absolute; 
-            top: 40px; 
+            top: 45px; /* Sits lower on forehead */
             left: 50%; 
             transform: translateX(-50%); 
             font-size: 4rem; 
@@ -240,9 +241,9 @@
             text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
-        .acc-head { top: 15px; } /* Sits on head */
-        .acc-mask { top: 50px; } /* Over face */
-        .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; transform: none; } /* Beside */
+        .acc-head { top: 25px; } /* Lowered head */
+        .acc-mask { top: 55px; } /* Lowered mask */
+        .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; transform: none; }
 
         .ebi-img { width: 140px; transition: transform 0.2s; margin-top:10px; }
         .ebi-img.bounce { animation: bigBounce 0.5s ease; }
@@ -269,7 +270,7 @@
         .quick-mood-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
         .qm-btn { background: white; border: 2px solid var(--main); border-radius: 10px; padding: 10px; font-size: 1.2rem; cursor: pointer; transition: transform 0.1s; }
         .qm-btn:active { transform: scale(0.9); }
-        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; }
+        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; white-space: pre-wrap; }
         
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 9999; font-weight:bold; }
         .toast.show { opacity: 1; top: 30px; }
@@ -450,6 +451,10 @@
                     <button class="qm-btn" onclick="logMoodQuick('🌀')">🌀</button>
                     <button class="qm-btn" onclick="logMoodQuick('💀')">💀</button>
                     <button class="qm-btn" onclick="logMoodQuick('✨')">✨</button>
+                    <button class="qm-btn" onclick="logMoodQuick('😰')">😰</button>
+                    <button class="qm-btn" onclick="logMoodQuick('⚡')">⚡</button>
+                    <button class="qm-btn" onclick="logMoodQuick('😶')">😶</button>
+                    <button class="qm-btn" onclick="logMoodQuick('☁️')">☁️</button>
                 </div>
                 <div id="receipt-log" class="receipt-log">
                     *** MOOD RECEIPT ***<br>
@@ -569,18 +574,18 @@
 <script>
     // --- DIRECT IMAGE LINKS (REVERTING PROXY TO FIX HOTLINKING PROTECTION VIA HTML TAG) ---
     const AVATARS = [
-        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg", 
-        "https://static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png",
-        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg",
-        "https://static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png",
-        "https://static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png",
-        "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png", 
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
-        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg&w=200&h=200&output=webp", 
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png&w=200&h=200&output=webp",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg&w=200&h=200&output=webp",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png&w=200&h=200&output=webp",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png&w=200&h=200&output=webp",
+        "https://images.weserv.nl/?url=upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png&w=200&h=200&output=webp", 
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png&w=200&h=200&output=webp",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
     ];
     
     // GACHA POOLS
@@ -627,12 +632,12 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v44'); // Updated Version
+        const saved = localStorage.getItem('seiren_v45'); // Updated Version
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v43') || localStorage.getItem('seiren_v42'));
+            const old = JSON.parse(localStorage.getItem('seiren_v44') || localStorage.getItem('seiren_v43'));
             if(old) { DB = old; save(); }
         }
         
@@ -669,7 +674,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v44', JSON.stringify(DB));
+        localStorage.setItem('seiren_v45', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -691,22 +696,22 @@
         return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
     }
 
-    // --- GIRLS BRAVO GENERATOR ---
+    // --- GIRLS BRAVO GENERATOR (EXPANDED) ---
     function genID(name, age, color) {
         const seed = name.length + parseInt(age||0) + Math.floor(Math.random()*100);
-        const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To"];
-        const nameS = ["-chan","-ren","-la","-ru","-ka","-na","-ho"];
+        const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To","Ami","Rina"];
+        const nameS = ["-chan","-ren","-la","-ru","-ka","-na","-ho","-chi","-mi"];
         
         return {
             name: nameP[seed%nameP.length] + nameS[seed%nameS.length],
             realName: name, age: age,
             color: color || "#ff69b4",
             id: Math.floor(Math.random()*9000)+1000,
-            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka"][seed%9],
-            eyes: ["Pink","Blue","Gold","Red","Violet","Teal"][seed%6],
-            hair: ["Twin","Long","Bob","Short","Drills","Messy"][seed%6],
-            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs"][seed%7],
-            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized"][seed%7],
+            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka","Ghost","Angel","Witch","Space Cadet"][seed%13],
+            eyes: ["Pink","Blue","Gold","Red","Violet","Teal","Starry","Heterochromia","Void"][seed%9],
+            hair: ["Twin","Long","Bob","Short","Drills","Messy","Hime Cut","Bald","Ponytail","Buns"][seed%10],
+            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs","1000 Cookies","Light as air","Heavy Metal"][seed%10],
+            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized", "Skyscraper", "Bean sized", "Tall"][seed%10],
             av: Math.floor(Math.random() * AVATARS.length),
             hat: "" 
         };
@@ -739,8 +744,8 @@
             document.getElementById('id-wgt').innerText = u.wgt;
             
             const avIndex = (u.av || 0) % AVATARS.length;
-            // Removed cache buster to let the browser handle standard caching with no-referrer
-            document.getElementById('id-pic').src = AVATARS[avIndex];
+            // Add a time param to force refresh if stuck
+            document.getElementById('id-pic').src = AVATARS[avIndex] + "&t=" + Date.now(); 
             
             document.getElementById('my-sig').innerText = u.name;
             
@@ -879,16 +884,14 @@
 
     // --- QUICK MOOD TRACKER ---
     function logMoodQuick(m) {
-        playSnd('bloop');
+        playSnd('print'); // CHANGED TO PRINT SOUND
         addXP(10);
-        // Log to Receipt
         const receipt = document.getElementById('receipt-log');
         const line = document.createElement('div');
         line.innerText = `${m}.............1.....+10₵`;
         receipt.appendChild(line);
         receipt.scrollTop = receipt.scrollHeight;
         
-        // Also feed pet slightly
         if(DB.pet.hunger < 100) {
             DB.pet.hunger = Math.min(100, DB.pet.hunger + 5);
         }
@@ -1090,6 +1093,14 @@
              gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
              osc.connect(gain); gain.connect(audioCtx.destination);
              osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'print') { // NEW RECEIPT SOUND
+             osc.type = 'sawtooth';
+             osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+             osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.1); // Quick zip
+             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+             gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+             osc.connect(gain); gain.connect(audioCtx.destination);
+             osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         } else {
             osc.type = 'sine';
             osc.frequency.setValueAtTime(800, audioCtx.currentTime);
