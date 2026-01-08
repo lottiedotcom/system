@@ -25,12 +25,12 @@
         }
 
         /* 2004 SCROLLBAR */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: #ffe4e1; border-left: 1px solid #ffb7b2; }
-        ::-webkit-scrollbar-thumb { background: #ff69b4; border: 2px outset #ffb7b2; }
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #e0e0e0; border-left: 1px solid #ccc; }
+        ::-webkit-scrollbar-thumb { background: #ff69b4; border: 2px outset #ff9eb5; }
 
         body {
-            font-family: 'Verdana', 'Tahoma', sans-serif; /* 2004 Fonts */
+            font-family: 'Verdana', 'Tahoma', sans-serif; /* True 2004 Fonts */
             background-color: var(--bg-light);
             background-image: 
                 radial-gradient(var(--bg-dark) 15%, transparent 16%),
@@ -46,7 +46,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 9999;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            opacity: 0.6;
+            opacity: 0.5;
             backdrop-filter: blur(0.5px);
             mix-blend-mode: overlay;
         }
@@ -63,15 +63,15 @@
             background: rgba(255,255,255,0.9); padding: 40px; border-radius: 40px;
             box-shadow: 0 10px 40px rgba(255, 105, 180, 0.3);
             text-align: center; backdrop-filter: blur(5px);
-            width: 80%; max-width: 320px; border: 4px ridge white; /* 2004 Border */
+            width: 80%; max-width: 320px; border: 4px ridge white;
         }
         .enter-btn {
             background: #ff69b4; color: white; border: 3px outset #ffb7b2; padding: 15px 0; width: 100%;
             border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; 
-            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4); 
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1); 
             transition: transform 0.1s; letter-spacing: 1px;
         }
-        .enter-btn:active { transform: scale(0.95); border-style: inset; }
+        .enter-btn:active { transform: scale(0.98); border-style: inset; }
 
         .app-shell {
             width: 100%; max-width: 480px; background: var(--glass);
@@ -87,10 +87,10 @@
         
         .lvl-badge {
             position: fixed; top: 50px; left: 10px; z-index: 50;
-            background: white; border: 2px solid var(--main);
+            background: white; border: 2px outset #ff69b4;
             border-radius: 50%; width: 40px; height: 40px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 1.5rem; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
             animation: popIn 0.5s;
         }
 
@@ -116,13 +116,13 @@
         /* DASHBOARD */
         .dash-header { text-align: center; margin-bottom: 20px; }
         .xp-box { background: white; padding: 10px; border-radius: 12px; margin-bottom: 15px; border: 2px inset var(--blue); text-align: center; }
-        .xp-track { height: 8px; background: #eee; border-radius: 4px; margin-top: 5px; overflow: hidden; border: 1px solid #ccc; }
+        .xp-track { height: 8px; background: #eee; border-radius: 4px; margin-top: 5px; overflow: hidden; border: 1px inset #ccc; }
         .xp-fill { height: 100%; background: repeating-linear-gradient(45deg, var(--blue), var(--blue) 5px, #87cefa 5px, #87cefa 10px); width: 0%; transition: width 0.5s; }
 
-        /* ID CARD GLIMMER */
+        /* ID CARD */
         .id-card-wrap {
             background: white; border: 4px ridge var(--main); border-radius: 20px;
-            padding: 5px; box-shadow: 5px 5px 0 rgba(255, 182, 193, 0.5);
+            padding: 5px; box-shadow: 3px 3px 0 #ffb7b2;
             margin-bottom: 20px; position: relative; overflow: hidden;
         }
         .id-card-wrap::after {
@@ -141,7 +141,7 @@
         .id-top { display: flex; justify-content: space-between; border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; }
         .id-body { display: flex; gap: 10px; align-items: center; }
         .id-photo { 
-            width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; 
+            width: 80px; height: 80px; border-radius: 50%; border: 3px outset white; 
             outline: 3px solid var(--main); object-fit: cover; background: white;
         }
         .id-data { flex: 1; }
@@ -154,8 +154,8 @@
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .dash-btn {
             background: white; border-radius: 15px; padding: 10px 5px; text-align: center;
-            box-shadow: 0 4px 5px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s;
-            border: 2px outset #eee; /* 2004 Button */
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s;
+            border: 2px outset #eee;
         }
         .dash-btn:active { transform: scale(0.95); border-style: inset; }
         .dash-icon { font-size: 1.5rem; display: block; margin-bottom: 3px; }
@@ -175,7 +175,7 @@
         }
         .card-front { background: repeating-linear-gradient(45deg, var(--main), var(--main) 10px, #ffb7b2 10px, #ffb7b2 20px); }
         .card-back { background: white; transform: rotateY(180deg); padding: 10px; text-align: center; border: 2px solid var(--main); }
-        .new-day-btn { background: #4fc3f7; color: white; border: 2px outset #81d4fa; padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; margin-top: 15px; cursor: pointer; box-shadow: 0 3px 0 #29b6f6; font-weight: bold; }
+        .new-day-btn { background: #4fc3f7; color: white; border: 2px outset #81d4fa; padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; margin-top: 15px; cursor: pointer; box-shadow: 2px 2px 0 #29b6f6; font-weight: bold; }
         .new-day-btn:active { border-style: inset; transform: translateY(2px); box-shadow:none; }
 
         /* BBS & UI */
@@ -187,7 +187,7 @@
         
         input { width: 100%; padding: 12px; border: 2px inset #ddd; border-radius: 15px; box-sizing: border-box; font-family:inherit; margin-bottom: 10px; outline:none; background: #fffdfd; }
         input:focus { border-color: var(--main); background: #fff; }
-        .btn-main { background: var(--main); color: white; border: 2px outset #ff9eb5; padding: 12px; width: 100%; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
+        .btn-main { background: var(--main); color: white; border: 2px outset #ff9eb5; padding: 12px; width: 100%; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
         .btn-main:active { transform: translateY(2px); box-shadow: none; border-style: inset; }
 
         /* MODALS */
@@ -214,6 +214,8 @@
         /* WISH & PET */
         .corkboard { background: #e6d7c3; border: 5px ridge #8b5a2b; border-radius: 10px; padding: 15px; min-height: 400px; position: relative; }
         .polaroid { background: white; padding: 6px; text-align: center; margin-bottom:15px; transform: rotate(-2deg); box-shadow: 3px 3px 6px rgba(0,0,0,0.1); position:relative; transition: transform 0.2s; display: inline-block; width: 45%; margin: 2%; vertical-align: top; }
+        .polaroid:nth-child(even) { transform: rotate(2deg); }
+        .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
         .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border: 1px solid #eee; }
         .delete-wish-btn { position: absolute; top: -8px; right: -8px; background: red; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; z-index: 5; cursor: pointer; }
         .fab-btn { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; background: var(--main); color: white; border-radius: 50%; border: 3px outset white; font-size: 2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100; transition: transform 0.2s; }
@@ -510,19 +512,21 @@
 </div>
 
 <script>
+    // --- PROXIED AVATAR LINKS (FIXED) ---
+    // Using weserv.nl proxy to bypass 403 Forbidden errors
     const AVATARS = [
-        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg", 
-        "https://static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png",
-        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg",
-        "https://static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png",
-        "https://static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png",
-        "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png", 
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
-        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg", 
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png",
+        "https://images.weserv.nl/?url=upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png", 
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
+        "https://images.weserv.nl/?url=static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
+        "https://images.weserv.nl/?url=encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
     ];
     
     // GACHA POOLS
@@ -561,12 +565,12 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v38');
+        const saved = localStorage.getItem('seiren_v39'); // Updated Version
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v37') || localStorage.getItem('seiren_v36'));
+            const old = JSON.parse(localStorage.getItem('seiren_v38') || localStorage.getItem('seiren_v37'));
             if(old) { DB = old; save(); }
         }
         
@@ -603,7 +607,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v38', JSON.stringify(DB));
+        localStorage.setItem('seiren_v39', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -687,7 +691,6 @@
 
         // INVENTORY RENDER
         const invGrid = document.getElementById('inv-grid');
-        // Clear except first child (Remove button)
         while(invGrid.children.length > 1) { invGrid.removeChild(invGrid.lastChild); }
         DB.inventory.forEach(item => {
             const span = document.createElement('span');
@@ -734,10 +737,7 @@
     // --- LOCKED AVATAR LOGIC ---
     function rotateAvatar() {
         const u = DB.profiles[DB.activeIdx];
-        // Cannot select higher than Level.
-        // Array index 0 is always unlocked. Level 1 unlocks index 1, etc.
         const maxIndex = Math.min(DB.lvl, AVATARS.length - 1);
-        
         let nextAv = u.av + 1;
         if(nextAv > maxIndex) {
             nextAv = 0; // Loop back
@@ -776,7 +776,12 @@
         const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         DB.frontLog.unshift({ name: user.realName, time: time });
         if(DB.frontLog.length > 20) DB.frontLog.pop();
-        addXP(10); // Switching earns XP/Coins now
+        
+        // REWARD FOR SWITCHING
+        addXP(10); // +10 XP
+        DB.credits += 10; // +10 Credits (Bonus)
+        alert("Switched! +10 Credits earned.");
+        
         applyTheme(user); save(); closeModals(); refreshUI();
     }
 
@@ -791,7 +796,7 @@
 
     function addXP(amount) {
         DB.xp += amount;
-        DB.credits += amount; // XP = Credits
+        DB.credits += amount; 
         if(DB.xp >= 100) {
             DB.xp -= 100; DB.lvl++; playSnd('chime');
             alert(`LEVEL UP! You are now Level ${DB.lvl}! New Avatar Unlocked! 🎀`);
@@ -814,7 +819,11 @@
         if(DB.fortune && DB.fortune.date === t) return;
         const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
         DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
-        addXP(20);
+        
+        // REWARD FOR FORTUNE
+        addXP(50); // +50 Credits!
+        alert("Fortune Read! +50 Credits earned.");
+        
         save();
         renderFortuneCard(DB.fortune);
         const card = document.getElementById('fortune-card');
@@ -845,7 +854,6 @@
     }
 
     // --- PET LOGIC ---
-    // GACHA SYSTEM
     function playGacha(type) {
         if(DB.credits < 50) { alert("Need 50 Credits! (Earn by doing tasks/diary)"); return; }
         
@@ -873,7 +881,6 @@
         
         DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); 
         document.getElementById('ebi-msg').innerText = "Yummy! So tasty! 🍤";
-        // No extra XP here, XP comes from the task/diary itself
         save(); refreshUI();
     }
     
@@ -890,7 +897,7 @@
         if(v){
             DB.diary.unshift({t:v, m:mood, d: new Date().toLocaleString()}); 
             document.getElementById('diary-in').value=""; 
-            addXP(15); // Increased Diary XP
+            addXP(15); 
             triggerFeedReward(); 
             save(); refreshUI();
         }
@@ -921,7 +928,6 @@
     }
     function delLink(i) { DB.links.splice(i,1); save(); openPortal(); }
     
-    // EXPORT
     function exportData() {
         const data = JSON.stringify(DB);
         navigator.clipboard.writeText(data).then(() => {
@@ -951,7 +957,7 @@
     function doTask(i) { 
         DB.pet.tasks.splice(i,1); 
         DB.pet.lastTask = Date.now(); 
-        addXP(10); // Task = XP + Coin
+        addXP(10); 
         triggerFeedReward(); 
         save(); refreshUI(); 
     }
