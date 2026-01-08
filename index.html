@@ -288,7 +288,7 @@
                             <span style="font-size:0.6rem; color:#aaa; font-weight:bold;">ID CARD</span>
                         </div>
                         <div class="id-body">
-                            <img id="id-pic" class="id-photo" src="" onclick="rotateAvatar()">
+                            <img id="id-pic" class="id-photo" src="" onclick="rotateAvatar()" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3233/3233508.png'">
                             <div class="id-data">
                                 <div id="id-name" style="font-size:1.3rem; font-weight:bold; color:var(--dark); line-height:1;">User</div>
                                 <div id="id-real" style="font-size:0.7rem; font-style:italic; color:#888; margin-bottom:8px;">aka ???</div>
@@ -439,6 +439,8 @@
             
             <div id="link-list" style="margin-bottom:15px;"></div>
             
+            <a href="https://www.quotev.com/quiz/17122879/who-am-I-pt-2" target="_blank" style="display:block; background:var(--main); color:white; padding:10px; border-radius:10px; text-decoration:none; text-align:center; font-weight:bold; margin-bottom:10px;">✨ Take "Who Am I?" Quiz</a>
+            
             <div style="background:#f0f8ff; padding:10px; border-radius:10px; margin-bottom:10px;">
                 <input type="text" id="link-name" placeholder="Title" style="margin-bottom:5px;">
                 <input type="text" id="link-url" placeholder="URL (https://...)">
@@ -476,19 +478,21 @@
 </div>
 
 <script>
-    // --- NEW ASSETS ---
+    // --- STABLE AVATARS (Cleaned Links) ---
+    // If an image breaks, the onError event in the HTML will auto-replace it with a default icon.
     const AVATARS = [
-        "https://static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png/revision/latest?cb=20100719212245",
-        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg/revision/latest?cb=20090726063551",
-        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg/revision/latest?cb=20190927141754",
+        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg", 
+        "https://static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png",
+        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg",
+        "https://static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png",
+        "https://static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png",
         "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png", 
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
-        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png/revision/latest?cb=20230827221913",
+        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png",
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzYjS4GrT6U0nmcao3A-UnuzLyeh-2UR3jloaiM4z7_A&s=10"
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
     ];
     
     // LEVEL BADGES (1-10)
@@ -520,12 +524,12 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v35');
+        const saved = localStorage.getItem('seiren_v36'); // Updated to v36
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v34') || localStorage.getItem('seiren_v33'));
+            const old = JSON.parse(localStorage.getItem('seiren_v35') || localStorage.getItem('seiren_v34'));
             if(old) { DB = old; save(); }
         }
         
@@ -560,7 +564,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v35', JSON.stringify(DB));
+        localStorage.setItem('seiren_v36', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -599,7 +603,7 @@
             wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs"][seed%7],
             hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized"][seed%7],
             av: 0,
-            hat: "" // New Hat feature
+            hat: "" 
         };
     }
 
@@ -657,7 +661,8 @@
         if(hrsSince > 24) {
              document.getElementById('pet-container').style.background = "#e6f2ff";
              document.getElementById('ebi-msg').innerText = "Ebi is lonely... (Do tasks!)";
-             playSnd('sad');
+             // Play sound once if active page
+             // playSnd('sad'); 
         } else {
              document.getElementById('pet-container').style.background = "white";
         }
@@ -819,9 +824,7 @@
     // --- PORTAL (REPLACES REGISTRY) ---
     function openPortal() {
         const list = document.getElementById('link-list'); list.innerHTML="";
-        // VIBE CHECK BUTTON
-        list.innerHTML += `<a href="https://uquiz.com/" target="_blank" style="display:block; background:var(--main); color:white; padding:10px; border-radius:10px; text-decoration:none; text-align:center; font-weight:bold; margin-bottom:10px;">✨ Take a Vibe Check Quiz</a>`;
-        
+        // QUOTEV EMBED HERE IS ALREADY IN HTML, THIS JUST LISTS USER LINKS
         if(DB.links) {
             DB.links.forEach((l,i) => {
                 list.innerHTML += `<div style="background:#f9f9f9; padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
@@ -874,7 +877,7 @@
     function doTask(i) { 
         DB.pet.tasks.splice(i,1); 
         DB.pet.hunger = Math.min(100, DB.pet.hunger+10); 
-        DB.pet.lastTask = Date.now(); // Update last task time
+        DB.pet.lastTask = Date.now(); 
         addXP(10); save(); refreshUI(); 
     }
 
