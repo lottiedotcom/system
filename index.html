@@ -220,38 +220,29 @@
         .delete-wish-btn { position: absolute; top: -8px; right: -8px; background: red; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; z-index: 5; cursor: pointer; }
         .fab-btn { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; background: var(--main); color: white; border-radius: 50%; border: 3px outset white; font-size: 2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100; transition: transform 0.2s; }
         
-        .pet-box { background: white; border: 3px ridge var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; }
+        .pet-box { background: white; border: 3px ridge var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; transition: background 0.3s; }
         
-        /* ACCESSORY POSITIONS */
-        .pet-acc-container { position: absolute; width: 100%; height: 100%; top:0; left:0; pointer-events: none; }
-        /* HEAD: Hats, Bows, Sprouts */
-        .acc-head { 
+        /* WALLPAPER PATTERNS */
+        .bg-hearts { background-color: #ffe4e1 !important; background-image: radial-gradient(#ff69b4 2px, transparent 2px), radial-gradient(#ff69b4 2px, transparent 2px) !important; background-size: 20px 20px !important; background-position: 0 0, 10px 10px !important; }
+        .bg-dots-blue { background-color: #e0f7fa !important; background-image: radial-gradient(#4fc3f7 2px, transparent 2px) !important; background-size: 15px 15px !important; }
+        .bg-check-green { background-color: #f1f8e9 !important; background-image: repeating-linear-gradient(45deg, #c5e1a5 25%, transparent 25%, transparent 75%, #c5e1a5 75%, #c5e1a5), repeating-linear-gradient(45deg, #c5e1a5 25%, #f1f8e9 25%, #f1f8e9 75%, #c5e1a5 75%, #c5e1a5) !important; background-size: 20px 20px !important; }
+        .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }
+
+        /* FIXED ACCESSORY POS */
+        .pet-hat { 
             position: absolute; 
-            top: 5px; 
+            top: 40px; 
             left: 50%; 
             transform: translateX(-50%); 
-            font-size: 3.5rem; 
+            font-size: 4rem; 
             z-index: 10; 
+            pointer-events: none;
             text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        /* MASK: Glasses, Animal Faces */
-        .acc-mask {
-            position: absolute;
-            top: 40px; /* Over face */
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 3rem;
-            z-index: 10;
-        }
-        /* SIDE: Objects, Food, Bears */
-        .acc-side {
-            position: absolute;
-            bottom: 20px;
-            right: 15px; /* Next to Ebi */
-            font-size: 2.5rem;
-            z-index: 10;
-            animation: float 3s infinite ease-in-out;
-        }
+        
+        .acc-head { top: 15px; } /* Sits on head */
+        .acc-mask { top: 50px; } /* Over face */
+        .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; transform: none; } /* Beside */
 
         .ebi-img { width: 140px; transition: transform 0.2s; margin-top:10px; }
         .ebi-img.bounce { animation: bigBounce 0.5s ease; }
@@ -424,7 +415,7 @@
         <div id="tab-pet" class="page">
             <div class="pet-box" style="margin-bottom:20px;" id="pet-container">
                 <div class="pet-acc-container">
-                    <div id="ebi-hat" class="acc-head"></div>
+                    <div id="ebi-hat" class="pet-hat"></div>
                 </div>
                 <img id="ebi-pet" src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="ebi-img">
                 <h3 style="color:var(--main);">Ebi</h3>
@@ -492,6 +483,7 @@
                     <button class="gacha-btn" onclick="playGacha('cute')">🎀 Cute</button>
                     <button class="gacha-btn" onclick="playGacha('dark')">🕸️ Dark</button>
                     <button class="gacha-btn" onclick="playGacha('nature')">🍄 Nature</button>
+                    <button class="gacha-btn" onclick="playGacha('decor')">🖼️ Decor</button>
                 </div>
             </div>
 
@@ -571,7 +563,8 @@
     const GACHA = {
         cute: ["🎀","👑","🩰","🧁","🧸","💖","🍓","🍭"],
         dark: ["🕸️","🕷️","💀","🥀","🖤","🦇","🗡️","⛓️"],
-        nature: ["🍄","🌱","🌵","🌸","🌻","🐸","🍃","🪵"]
+        nature: ["🍄","🌱","🌵","🌸","🌻","🐸","🍃","🪵"],
+        decor: ["bg-hearts", "bg-dots-blue", "bg-check-green", "bg-clouds"] // Wallpaper pool
     };
 
     const BADGES = ["🌱","🐣","🎀","⭐","🌸","🍄","💎","👑","🧚‍♀️","🏰","🪐"];
@@ -597,7 +590,8 @@
         wish: [], pet: {hunger:50, tasks:[], lastTask: Date.now()}, 
         inventory: [], 
         bbs: [], frontLog: [], diary: [], links: [],
-        fortune: {date:'', i:'', t:'', d:''}
+        fortune: {date:'', i:'', t:'', d:''},
+        wallpaper: "" // Stores currently active wallpaper class
     };
     let mood = '😊';
 
@@ -609,12 +603,12 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v42'); // Updated Version
+        const saved = localStorage.getItem('seiren_v43'); // Updated Version
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v41') || localStorage.getItem('seiren_v40'));
+            const old = JSON.parse(localStorage.getItem('seiren_v42') || localStorage.getItem('seiren_v41'));
             if(old) { DB = old; save(); }
         }
         
@@ -623,6 +617,7 @@
         if(!DB.links) DB.links = [];
         if(!DB.inventory) DB.inventory = [];
         if(DB.credits === undefined) DB.credits = 0;
+        if(!DB.wallpaper) DB.wallpaper = "";
 
         setInterval(() => {
             const d = new Date();
@@ -651,7 +646,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v42', JSON.stringify(DB));
+        localStorage.setItem('seiren_v43', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -733,6 +728,9 @@
             el.className = getAccType(hat); // Apply smart class
         }
         
+        // WALLPAPER
+        document.getElementById('pet-container').className = `pet-box ${DB.wallpaper || ''}`;
+
         const badgeIdx = Math.min(DB.lvl-1, BADGES.length-1);
         document.getElementById('lvl-badge').innerText = BADGES[Math.max(0, badgeIdx)];
 
@@ -747,8 +745,14 @@
         DB.inventory.forEach(item => {
             const span = document.createElement('span');
             span.className = 'inv-item';
-            span.innerText = item;
-            span.onclick = () => setHat(item);
+            // Check if it is a wallpaper (starts with bg-)
+            if(item.startsWith('bg-')) {
+                span.innerText = "🖼️";
+                span.onclick = () => setWallpaper(item);
+            } else {
+                span.innerText = item;
+                span.onclick = () => setHat(item);
+            }
             invGrid.appendChild(span);
         });
 
@@ -764,10 +768,8 @@
         
         const hrsSince = (Date.now() - (DB.pet.lastTask || Date.now())) / (1000 * 60 * 60);
         if(hrsSince > 24) {
-             document.getElementById('pet-container').style.background = "#e6f2ff";
+             // document.getElementById('pet-container').style.background = "#e6f2ff"; // Removed to support wallpapers
              document.getElementById('ebi-msg').innerText = "Ebi is lonely... (Do tasks!)";
-        } else {
-             document.getElementById('pet-container').style.background = "white";
         }
 
         const tList = document.getElementById('task-list'); tList.innerHTML="";
@@ -845,12 +847,22 @@
         }
     }
 
+    // --- AUTO-UPDATE AVATAR ON LEVEL UP ---
     function addXP(amount) {
         DB.xp += amount;
         DB.credits += amount; 
         if(DB.xp >= 100) {
-            DB.xp -= 100; DB.lvl++; playSnd('chime');
-            alert(`LEVEL UP! You are now Level ${DB.lvl}! New Avatar Unlocked! 🎀`);
+            DB.xp -= 100; 
+            DB.lvl++; 
+            playSnd('chime');
+            
+            // AUTO UPDATE AVATAR
+            if(DB.lvl < AVATARS.length) {
+                DB.profiles[DB.activeIdx].av = DB.lvl; 
+                alert(`LEVEL UP! You are now Level ${DB.lvl}! New Avatar Unlocked & Equipped! 🎀`);
+            } else {
+                alert(`LEVEL UP! You are now Level ${DB.lvl}!`);
+            }
         }
         save(); refreshUI();
     }
@@ -919,9 +931,9 @@
         
         if(!DB.inventory.includes(item)) {
             DB.inventory.push(item);
-            alert(`You got: ${item}! Added to inventory.`);
+            alert(`You got: ${item.startsWith('bg') ? 'Wallpaper' : item}! Added to inventory.`);
         } else {
-            alert(`You got: ${item} (Duplicate). Refunded 10 credits.`);
+            alert(`You got: ${item.startsWith('bg') ? 'Wallpaper' : item} (Duplicate). Refunded 10 credits.`);
             DB.credits += 10;
         }
         save(); refreshUI();
@@ -944,6 +956,13 @@
         u.hat = h;
         playSnd('bloop');
         save(); refreshUI();
+    }
+
+    function setWallpaper(w) {
+        DB.wallpaper = w;
+        playSnd('bloop');
+        save(); refreshUI();
+        alert("Room redecorated!");
     }
     
     // SMART ACCESSORY LOGIC
@@ -1025,10 +1044,6 @@
         addXP(10); 
         triggerFeedReward(); 
         save(); refreshUI(); 
-    }
-
-    function saveToRegistry() { 
-        alert("This ID Card has been saved to your local storage!"); 
     }
 
     // --- SOUND ---
