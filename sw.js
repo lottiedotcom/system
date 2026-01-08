@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seiren-os-v31-polka';
+const CACHE_NAME = 'seiren-os-v32-fix';
 const urlsToCache = ['./', './index.html', './manifest.json'];
 
 // FORCE DELETE OLD CACHES
