@@ -9,7 +9,6 @@
     <title>Seiren OS</title>
     
     <link rel="manifest" href="manifest.json">
-    
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
 
@@ -28,19 +27,17 @@
         body {
             font-family: 'Verdana', sans-serif;
             background-color: var(--bg-light);
-            /* POLKA DOT PATTERN */
             background-image: 
                 radial-gradient(var(--bg-dark) 15%, transparent 16%),
                 radial-gradient(var(--bg-dark) 15%, transparent 16%);
             background-size: 20px 20px;
             background-position: 0 0, 10px 10px;
-            
             margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
             color: var(--text); overscroll-behavior: none;
             transition: background-color 0.5s ease;
         }
 
-        /* --- WELCOME SCREEN --- */
+        /* --- APP SHELL --- */
         #welcome-layer {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
@@ -56,12 +53,6 @@
             animation: float 3s ease-in-out infinite;
         }
         @keyframes float { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-8px);} }
-        
-        .welcome-title {
-            color: #d12e87; font-size: 2rem; font-weight: 800; 
-            letter-spacing: 2px; margin-top: 10px; margin-bottom: 20px;
-        }
-
         .enter-btn {
             background: #ff69b4; color: white; border: 3px solid white; padding: 15px 0; width: 100%;
             border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; 
@@ -70,7 +61,6 @@
         }
         .enter-btn:active { transform: scale(0.95); }
 
-        /* --- APP SHELL --- */
         .app-shell {
             width: 100%; max-width: 480px; background: var(--glass);
             display: none; flex-direction: column; position: relative; height: 100%;
@@ -108,14 +98,12 @@
         .page.active { display: block; }
         @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }
 
-        /* --- DASHBOARD ELEMENTS --- */
+        /* DASHBOARD */
         .dash-header { text-align: center; margin-bottom: 20px; }
-        
         .xp-box { background: white; padding: 10px; border-radius: 12px; margin-bottom: 15px; border: 2px solid var(--blue); text-align: center; }
         .xp-track { height: 8px; background: #eee; border-radius: 4px; margin-top: 5px; overflow: hidden; }
         .xp-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #87cefa); width: 0%; transition: width 0.5s; }
 
-        /* INTRICATE ID CARD */
         .id-card-wrap {
             background: white; border: 4px solid var(--main); border-radius: 20px;
             padding: 5px; box-shadow: 5px 5px 0 rgba(255, 182, 193, 0.5);
@@ -138,10 +126,8 @@
             display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.65rem;
             background: rgba(255,255,255,0.8); padding: 5px; border-radius: 5px; margin-top:5px;
         }
-        .stat-label { color: var(--main); font-weight: bold; }
         .signature { font-family: 'Brush Script MT', cursive; font-size: 1.2rem; color: var(--blue); transform: rotate(-5deg); display: inline-block; margin-right: 10px; }
 
-        /* MENU GRID */
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .dash-btn {
             background: white; border-radius: 15px; padding: 10px 5px; text-align: center;
@@ -152,7 +138,7 @@
         .dash-icon { font-size: 1.5rem; display: block; margin-bottom: 3px; }
         .dash-label { font-size: 0.7rem; font-weight: bold; color: var(--text); }
 
-        /* FORTUNE ANIMATION */
+        /* FORTUNE */
         .fortune-stage { perspective: 1000px; width: 140px; height: 200px; margin: 0 auto; cursor: pointer; }
         .card-wrapper {
             width: 100%; height: 100%; position: relative;
@@ -166,20 +152,15 @@
         }
         .card-front { background: repeating-linear-gradient(45deg, var(--main), var(--main) 10px, #ffb7b2 10px, #ffb7b2 20px); }
         .card-back { background: white; transform: rotateY(180deg); padding: 10px; text-align: center; border: 2px solid var(--main); }
-        .new-day-btn {
-            background: #4fc3f7; color: white; border: none; padding: 8px 15px;
-            border-radius: 20px; font-size: 0.8rem; margin-top: 15px; cursor: pointer;
-            box-shadow: 0 3px 0 #29b6f6; font-weight: bold;
-        }
+        .new-day-btn { background: #4fc3f7; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; margin-top: 15px; cursor: pointer; box-shadow: 0 3px 0 #29b6f6; font-weight: bold; }
 
-        /* BBS */
+        /* BBS & UI */
         .bbs-container { background: white; border: 2px solid var(--main); border-radius: 15px; height: 100%; min-height: 400px; display: flex; flex-direction: column; overflow: hidden; }
         .bbs-messages { flex: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
         .bbs-msg { background: white; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.05); font-size: 0.8rem; border-left: 4px solid #ddd; }
         .bbs-meta { font-size: 0.6rem; color: #999; margin-bottom: 2px; display: flex; justify-content: space-between; }
         .bbs-input-area { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 5px; }
-
-        /* UI ELEMENTS */
+        
         input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 15px; box-sizing: border-box; font-family:inherit; margin-bottom: 10px; outline:none; }
         input:focus { border-color: var(--main); background: #fff; }
         .btn-main { background: var(--main); color: white; border: none; padding: 12px; width: 100%; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
@@ -197,7 +178,7 @@
         .nav-label { font-size: 0.55rem; margin-top:2px; font-weight:bold; }
         .nav-btn.active { color: var(--main); transform: scale(1.1); }
 
-        /* LEISURE STYLES */
+        /* WISH & PET */
         .corkboard { background: #e6d7c3; border: 5px solid #8b5a2b; border-radius: 10px; padding: 15px; min-height: 400px; position: relative; }
         .polaroid { background: white; padding: 6px; text-align: center; margin-bottom:15px; transform: rotate(-2deg); box-shadow: 3px 3px 6px rgba(0,0,0,0.1); position:relative; transition: transform 0.2s; display: inline-block; width: 45%; margin: 2%; vertical-align: top; }
         .polaroid:nth-child(even) { transform: rotate(2deg); }
@@ -205,24 +186,20 @@
         .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border: 1px solid #eee; }
         .delete-wish-btn { position: absolute; top: -8px; right: -8px; background: red; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; z-index: 5; cursor: pointer; }
         .fab-btn { position: fixed; bottom: 90px; right: 25px; width: 60px; height: 60px; background: var(--main); color: white; border-radius: 50%; border: 3px solid white; font-size: 2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100; transition: transform 0.2s; }
-        .fab-btn:active { transform: scale(0.9); }
-
+        
         .pet-box { background: white; border: 3px solid var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; }
-        .ebi-img { width: 140px; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% {transform:translateY(0);} 50% {transform:translateY(-8px);} }
+        .ebi-img { width: 140px; transition: transform 0.2s; }
+        .ebi-img.bounce { animation: bigBounce 0.5s ease; }
+        @keyframes bigBounce { 0% {transform:scale(1);} 50% {transform:scale(1.2) translateY(-15px);} 100% {transform:scale(1);} }
         .task-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
         .task-item.completed { text-decoration: line-through; color: #aaa; opacity: 0.5; }
         
+        /* DIARY EXPANSION */
         .diary-box { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .mood-bar { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 50%; width: 40px; height: 40px; border: 2px solid transparent; cursor: pointer; }
-        .mood-btn.selected { border-color: var(--main); background: var(--bg-light); }
+        .mood-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+        .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 15px; height: 40px; border: 2px solid transparent; cursor: pointer; display:flex; align-items:center; justify-content:center; }
+        .mood-btn.selected { border-color: var(--main); background: var(--bg-light); transform: scale(1.1); }
         
-        .mood-tracker-box { background: white; border: 2px dashed var(--main); border-radius: 15px; padding: 15px; margin-top: 20px; text-align: center; }
-        .mood-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 10px; }
-        .mood-chip { background: var(--bg-light); border: 1px solid var(--main); border-radius: 20px; padding: 8px 12px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; color: var(--text); }
-        .mood-chip:active { transform: scale(0.9); background: var(--main); color: white; }
-
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 9999; font-weight:bold; }
         .toast.show { opacity: 1; top: 30px; }
 
@@ -368,12 +345,13 @@
 
         <div id="tab-pet" class="page">
             <div class="pet-box" style="margin-bottom:20px;">
-                <img src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="ebi-img">
+                <img id="ebi-pet" src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="ebi-img">
                 <h3 style="color:var(--main);">Ebi</h3>
                 <div style="background:#eee; height:12px; border-radius:10px; overflow:hidden; margin:10px 0;">
-                    <div id="pet-bar" style="width:50%; height:100%; background:var(--main);"></div>
+                    <div id="pet-bar" style="width:50%; height:100%; background:var(--main); transition:width 0.5s;"></div>
                 </div>
-                <button class="btn-main" style="width:auto; font-size:0.8rem; padding:8px;" onclick="feedPet()">Feed Snack</button>
+                <div id="ebi-msg" style="height:20px; font-size:0.7rem; color:#888; margin-bottom:10px;">I'm hungry...</div>
+                <button class="btn-main" style="width:auto; font-size:0.8rem; padding:8px;" onclick="feedPet()">Feed Snack (+XP)</button>
             </div>
             <div style="margin-bottom:10px;">
                 <strong>To Do List</strong>
@@ -382,19 +360,6 @@
                     <button class="btn-main" style="width:auto;" onclick="addTask()">+</button>
                 </div>
                 <div id="task-list"></div>
-            </div>
-
-            <div class="mood-tracker-box">
-                <strong style="color:var(--main);">Mood Tracker (+5 XP)</strong>
-                <div class="mood-grid">
-                    <button class="mood-chip" onclick="logMood('Happy')">😄 Happy</button>
-                    <button class="mood-chip" onclick="logMood('Calm')">😌 Calm</button>
-                    <button class="mood-chip" onclick="logMood('Tired')">😴 Tired</button>
-                    <button class="mood-chip" onclick="logMood('Sad')">😢 Sad</button>
-                    <button class="mood-chip" onclick="logMood('Angry')">😡 Angry</button>
-                    <button class="mood-chip" onclick="logMood('Spacey')">🌀 Spacey</button>
-                </div>
-                <div id="last-mood" style="font-size:0.7rem; color:#aaa; margin-top:10px;"></div>
             </div>
         </div>
 
@@ -406,6 +371,10 @@
                     <button class="mood-btn" onclick="setMood('😢', this)">😢</button>
                     <button class="mood-btn" onclick="setMood('😡', this)">😡</button>
                     <button class="mood-btn" onclick="setMood('💖', this)">💖</button>
+                    <button class="mood-btn" onclick="setMood('🌧️', this)">🌧️</button>
+                    <button class="mood-btn" onclick="setMood('💤', this)">💤</button>
+                    <button class="mood-btn" onclick="setMood('✨', this)">✨</button>
+                    <button class="mood-btn" onclick="setMood('💀', this)">💀</button>
                 </div>
                 <textarea id="diary-in" style="width:100%; height:80px; padding:10px; border:2px solid #eee; border-radius:10px; resize:none;" placeholder="Write something..."></textarea>
                 <button class="btn-main" onclick="postDiary()">Save Entry</button>
@@ -465,15 +434,19 @@
 </div>
 
 <script>
-    // --- ASSETS ---
+    // --- EXPANDED AVATARS (Unlockable by Level) ---
     const AVATARS = [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzYjS4GrT6U0nmcao3A-UnuzLyeh-2UR3jloaiM4z7_A&s=10",
-        "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
-        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png/revision/latest?cb=20230827221913"
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzYjS4GrT6U0nmcao3A-UnuzLyeh-2UR3jloaiM4z7_A&s=10", // Level 1
+        "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png", // Level 1
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10", // Level 2
+        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png/revision/latest?cb=20230827221913", // Level 3
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10", // Level 4
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10", // Level 5
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10", // Level 6
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"  // Level 7
     ];
     
-    // 30 FORTUNES
+    // FORTUNES
     const FORTUNES = [
         {i:"🍞",t:"Toast Dash",d:"Running late but looking cute!"},
         {i:"🌟",t:"Super Star",d:"You are the main character today."},
@@ -500,13 +473,13 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v32');
+        const saved = localStorage.getItem('seiren_v33');
         if(saved) DB = JSON.parse(saved);
         
-        // AUTO MIGRATION FROM OLD VERSIONS
+        // MIGRATION
         if(DB.profiles.length === 0) {
-            const v31 = JSON.parse(localStorage.getItem('seiren_v31'));
-            if(v31) { DB = v31; save(); }
+            const old = JSON.parse(localStorage.getItem('seiren_v32'));
+            if(old) { DB = old; save(); }
         }
 
         setInterval(() => {
@@ -522,7 +495,6 @@
             document.getElementById('main-app').style.display = 'flex';
             setTimeout(() => {
                 document.getElementById('main-app').style.opacity = '1';
-                // Force check on load
                 if(DB.profiles.length > 0) {
                     applyTheme(DB.profiles[DB.activeIdx]);
                     document.getElementById('dash-view').style.display = 'block';
@@ -537,13 +509,12 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v32', JSON.stringify(DB));
+        localStorage.setItem('seiren_v33', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
     }
 
-    // --- THEME ---
     function applyTheme(user) {
         const color = user ? (user.color || "#ff69b4") : "#ff69b4";
         const r = document.documentElement;
@@ -560,21 +531,23 @@
         return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
     }
 
-    // --- LOGIC ---
+    // --- GIRLS BRAVO GENERATOR ---
     function genID(name, age, color) {
-        const seed = name.length + parseInt(age||0);
+        const seed = name.length + parseInt(age||0) + Math.floor(Math.random()*100);
+        const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To"];
+        const nameS = ["-chan","-ren","-la","-ru","-ka","-na","-ho"];
+        
         return {
-            name: ["Mi","Lu","Fa","Ko"][seed%4] + ["chan","ren","la"][seed%3],
+            name: nameP[seed%nameP.length] + nameS[seed%nameS.length],
             realName: name, age: age,
             color: color || "#ff69b4",
             id: Math.floor(Math.random()*9000)+1000,
-            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi"][seed%6],
-            eyes: ["Pink","Blue","Gold","Red"][seed%4],
-            hair: ["Twin","Long","Bob","Short"][seed%4],
-            // GIRLS BRAVO STYLE WEIGHT/HEIGHT
-            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples"][seed%6],
-            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm"][seed%6],
-            av: seed % AVATARS.length
+            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka"][seed%9],
+            eyes: ["Pink","Blue","Gold","Red","Violet","Teal"][seed%6],
+            hair: ["Twin","Long","Bob","Short","Drills","Messy"][seed%6],
+            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs"][seed%7],
+            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized"][seed%7],
+            av: 0 // Always start with base avatar
         };
     }
 
@@ -590,6 +563,7 @@
         refreshUI();
     }
 
+    // --- MAIN RENDER ---
     function refreshUI() {
         const u = DB.profiles[DB.activeIdx];
         if(u) {
@@ -602,7 +576,9 @@
             document.getElementById('id-hair').innerText = u.hair;
             document.getElementById('id-hgt').innerText = u.hgt;
             document.getElementById('id-wgt').innerText = u.wgt;
-            document.getElementById('id-pic').src = AVATARS[u.av % AVATARS.length];
+            // Avatar safety check
+            const avIndex = (u.av || 0) % AVATARS.length;
+            document.getElementById('id-pic').src = AVATARS[avIndex];
             document.getElementById('my-sig').innerText = u.name;
         }
         
@@ -628,12 +604,28 @@
         });
 
         const df = document.getElementById('diary-feed'); df.innerHTML="";
-        DB.diary.forEach(e => df.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:5px;border-radius:10px;border-bottom:2px solid #eee;">${e.t}</div>`);
+        DB.diary.forEach(e => {
+            // Updated diary render to include emoji
+            const emoji = e.m || '😊';
+            df.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:5px;border-radius:10px;border-bottom:2px solid #eee; display:flex; gap:10px; align-items:flex-start;"><span style="font-size:1.5rem;">${emoji}</span><span style="margin-top:5px;">${e.t}</span></div>`
+        });
     }
 
+    // --- AVATAR LOGIC (LEVEL LOCKED) ---
     function rotateAvatar() {
         const u = DB.profiles[DB.activeIdx];
-        u.av = (u.av + 1) % AVATARS.length;
+        // Calculate limit based on Level. Level 1 = 2 avatars (0,1). Level 2 = 3 avatars.
+        const unlockedLimit = Math.min(DB.lvl + 1, AVATARS.length);
+        
+        const nextAv = (u.av + 1);
+        if(nextAv >= unlockedLimit) {
+            u.av = 0; // Loop back to start
+            if(unlockedLimit < AVATARS.length) {
+                alert(`Reach Level ${DB.lvl + 1} to unlock the next avatar!`);
+            }
+        } else {
+            u.av = nextAv;
+        }
         save(); refreshUI();
     }
 
@@ -676,6 +668,18 @@
         }
     }
 
+    // --- XP & REWARDS ---
+    function addXP(amount) {
+        DB.xp += amount;
+        if(DB.xp >= 100) {
+            DB.xp -= 100;
+            DB.lvl++;
+            playSnd('bloop');
+            alert(`LEVEL UP! You are now Level ${DB.lvl}!\nNew Avatar Unlocked! 🎀`);
+        }
+        save(); refreshUI();
+    }
+
     // --- FORTUNE ---
     function checkFortune() {
         const t = new Date().toDateString();
@@ -691,7 +695,7 @@
         if(DB.fortune && DB.fortune.date === t) return;
         const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
         DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
-        DB.xp += 20;
+        addXP(20);
         save();
         renderFortuneCard(DB.fortune);
         const card = document.getElementById('fortune-card');
@@ -721,9 +725,46 @@
         document.getElementById('bbs-input').value=""; save(); refreshUI();
     }
 
-    // --- TOOLS ---
-    function feedPet() { DB.pet.hunger = Math.min(100, DB.pet.hunger + 10); save(); refreshUI(); }
+    // --- PET REWARDS ---
+    function feedPet() { 
+        if(DB.pet.hunger >= 100) {
+            alert("Ebi is full! 🍤"); return;
+        }
+        // REWARD LOGIC
+        playSnd('bloop');
+        const petImg = document.getElementById('ebi-pet');
+        petImg.classList.remove('bounce');
+        void petImg.offsetWidth; 
+        petImg.classList.add('bounce');
+        
+        DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); 
+        
+        // Random bonus
+        const bonus = Math.random() > 0.7;
+        if(bonus) {
+            document.getElementById('ebi-msg').innerText = "Yummy! Found +10 Bonus XP!";
+            addXP(15); // 5 base + 10 bonus
+        } else {
+            document.getElementById('ebi-msg').innerText = "Delicious!";
+            addXP(5);
+        }
+        
+        save(); refreshUI(); 
+    }
     
+    // --- DIARY (UPDATED) ---
+    function postDiary() {
+        const v = document.getElementById('diary-in').value; 
+        if(v){
+            // Save Mood AND Text
+            DB.diary.unshift({t:v, m:mood}); 
+            document.getElementById('diary-in').value=""; 
+            addXP(5); // Reward for journaling
+            save(); refreshUI();
+        }
+    }
+
+    // --- TOOLS ---
     function openWishModal() { document.getElementById('modal-wish').style.display='flex'; }
     function submitWish() {
         const n = document.getElementById('w-name').value;
@@ -733,22 +774,8 @@
     function delWish(i) { if(confirm("Delete?")) { DB.wish.splice(i,1); save(); refreshUI(); } }
 
     function addTask() { const v = document.getElementById('task-in').value; if(v){DB.pet.tasks.push(v); document.getElementById('task-in').value=""; save(); refreshUI();} }
-    function doTask(i) { DB.pet.tasks.splice(i,1); DB.pet.hunger = Math.min(100, DB.pet.hunger+10); DB.xp+=10; save(); refreshUI(); }
+    function doTask(i) { DB.pet.tasks.splice(i,1); DB.pet.hunger = Math.min(100, DB.pet.hunger+10); addXP(10); save(); refreshUI(); }
 
-    function logMood(m) {
-        playSnd('bloop');
-        DB.pet.hunger = Math.min(100, DB.pet.hunger + 5);
-        DB.xp += 5;
-        document.getElementById('last-mood').innerText = `Logged: ${m} @ ${new Date().toLocaleTimeString()}`;
-        save(); refreshUI();
-        alert("Mood logged! +5 XP");
-    }
-
-    function postDiary() {
-        const v = document.getElementById('diary-in').value; if(v){DB.diary.unshift({t:v}); document.getElementById('diary-in').value=""; save(); refreshUI();}
-    }
-
-    // --- REGISTRY ---
     function openRegistry() {
         const list = document.getElementById('reg-list'); list.innerHTML="";
         DB.registry.forEach((r,i)=> list.innerHTML+=`<div class="reg-item"><b>${r.realName}</b> <span class="reg-del" onclick="delReg(${i})">x</span></div>`);
@@ -778,9 +805,8 @@
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
 
-    // --- NAVIGATION FIXED ---
+    // --- NAV ---
     function go(id, btn) {
-        // Fix for ID mismatch: button says 'home', tab says 'tab-dash'
         let targetId = id;
         if(id === 'home') targetId = 'dash';
 
@@ -789,12 +815,11 @@
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
 
-        // CRITICAL FIX FOR BLANK HOME SCREEN
         if(id === 'home') {
             if(DB.profiles.length > 0) {
                 document.getElementById('setup-view').style.display = 'none';
                 document.getElementById('dash-view').style.display = 'block';
-                refreshUI(); // Ensure data is shown
+                refreshUI();
             } else {
                 document.getElementById('setup-view').style.display = 'block';
                 document.getElementById('dash-view').style.display = 'none';
