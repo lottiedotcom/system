@@ -1,11 +1,10 @@
-const CACHE_NAME = 'seiren-os-v34'; // Changed to v34
+const CACHE_NAME = 'seiren-os-v35'; // Updated Version
 const ASSETS = [
   './',
   './index.html',
   'https://cdn-icons-png.flaticon.com/512/2919/2919573.png'
 ];
 
-// Install: Cache files
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
@@ -15,7 +14,6 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// Activate: Clean up old caches
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keyList) => {
@@ -31,7 +29,6 @@ self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
-// Fetch: Network First
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(e.request)
