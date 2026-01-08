@@ -6,530 +6,422 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ff69b4">
-    
-    <title>Seiren System</title>
+    <title>Seiren OS</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
 
     <style>
-        /* --- 2004 SYSTEM AESTHETIC --- */
+        /* --- DYNAMIC THEME VARIABLES --- */
         :root {
-            /* These variables update via Javascript based on the Fronter */
-            --theme-main: #ff69b4;       /* Main Pink */
-            --theme-light: #fff0f5;      /* Light BG */
-            --theme-border: #d12e87;     /* Darker Border */
-            --theme-text: #555;
-            --glass: rgba(255, 255, 255, 0.92);
+            /* Default Pink Theme */
+            --main: #ff69b4;
+            --bg: #ffe4e1;
+            --dark: #d12e87;
+            --glass: rgba(255, 255, 255, 0.9);
+            --text: #555;
         }
-
-        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Verdana', 'MS PGothic', sans-serif;
-            background-color: var(--theme-light);
-            /* Retro Dot Pattern */
-            background-image: radial-gradient(var(--theme-main) 15%, transparent 16%), 
-                              radial-gradient(var(--theme-main) 15%, transparent 16%);
-            background-size: 20px 20px;
+            font-family: 'Verdana', sans-serif;
+            background-color: var(--bg);
+            /* Dynamic Background Pattern */
+            background-image: 
+                linear-gradient(45deg, var(--main) 25%, transparent 25%, transparent 75%, var(--main) 75%, var(--main)),
+                linear-gradient(45deg, var(--main) 25%, transparent 25%, transparent 75%, var(--main) 75%, var(--main));
             background-position: 0 0, 10px 10px;
-            margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
-            color: var(--theme-text);
+            background-size: 20px 20px;
+            /* Fade effect when switching themes */
             transition: background-color 0.5s ease;
+            margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
+            color: var(--text); overscroll-behavior: none;
         }
 
-        /* Scanlines for CRT effect */
+        /* --- WELCOME SCREEN --- */
+        #welcome-layer {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, var(--bg), #fff);
+            z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
+        .welcome-card {
+            background: rgba(255,255,255,0.9); padding: 40px; border-radius: 40px;
+            border: 6px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center; backdrop-filter: blur(5px);
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-10px);} }
+        
+        .enter-btn {
+            background: var(--main);
+            color: white; border: 4px solid white; padding: 15px 40px; border-radius: 50px;
+            font-size: 1.3rem; font-weight: bold; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15); 
+            transition: transform 0.1s; text-transform: uppercase; letter-spacing: 2px;
+            margin-top: 25px; display: inline-block;
+        }
+        .enter-btn:active { transform: scale(0.95); }
+
+        /* --- APP SHELL --- */
+        .app-shell {
+            width: 100%; max-width: 480px; background: var(--glass);
+            display: none; flex-direction: column; position: relative; height: 100%;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1); z-index: 10;
+        }
+
         .scanlines {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.03) 50%);
-            background-size: 100% 3px; pointer-events: none; z-index: 999;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.02) 50%);
+            background-size: 100% 4px; pointer-events: none; z-index: 998;
         }
 
-        /* --- APP CONTAINER --- */
-        .app-shell {
-            width: 100%; max-width: 480px;
-            background: var(--glass);
-            display: none; /* Hidden until loaded */
-            flex-direction: column; height: 100%;
-            box-shadow: 0 0 40px rgba(0,0,0,0.2);
-            z-index: 10;
-            transition: all 0.5s ease;
+        .status-bar {
+            display: flex; justify-content: space-between; padding: 12px 20px;
+            font-size: 0.8rem; font-weight: bold; color: var(--dark);
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(5px);
         }
 
-        /* HEADER */
-        .system-header {
-            background: linear-gradient(90deg, var(--theme-main), var(--theme-border));
-            color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .sys-title { font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
-        .sys-clock { font-family: 'Courier New', monospace; font-size: 0.8rem; }
-
-        /* CONTENT AREA */
         .content {
-            flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px;
-            scroll-behavior: smooth;
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            padding: 20px; padding-bottom: 120px; scroll-behavior: smooth;
         }
-        
-        .page { display: none; animation: fadeUp 0.3s ease; }
+        .page { display: none; animation: slideUp 0.3s ease; }
         .page.active { display: block; }
-        @keyframes fadeUp { from {opacity:0; transform:translateY(5px);} to {opacity:1; transform:translateY(0);} }
+        @keyframes slideUp { from {opacity:0; transform:translateY(15px);} to {opacity:1; transform:translateY(0);} }
 
-        /* --- 1. ID CARD (RPG STYLE) --- */
-        .id-card {
-            background: white; border: 2px solid var(--theme-main); border-radius: 15px;
-            padding: 5px; box-shadow: 4px 4px 0 rgba(0,0,0,0.1); margin-bottom: 15px;
+        /* DASHBOARD */
+        .dash-header { text-align: center; margin-bottom: 20px; }
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .dash-btn {
+            background: white; border-radius: 20px; padding: 15px; text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s;
+            border: 2px solid white;
+        }
+        .dash-btn:active { transform: scale(0.95); border-color: var(--main); }
+        .dash-icon { font-size: 2rem; display: block; margin-bottom: 5px; }
+
+        /* FRONT LOG WIDGET (NEW) */
+        .front-log-widget {
+            background: white; border: 2px dashed var(--main); border-radius: 15px;
+            padding: 10px; margin-bottom: 20px;
+        }
+        .log-entry-mini {
+            display: flex; justify-content: space-between; font-size: 0.75rem; 
+            padding: 5px 0; border-bottom: 1px dotted #eee;
+        }
+
+        /* ID CARD (INTRICATE) */
+        .id-card-wrap {
+            background: white; border: 3px solid var(--main); border-radius: 20px;
+            padding: 5px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+            margin-bottom: 20px; position: relative; overflow: hidden;
         }
         .id-inner {
-            background: var(--theme-light); border: 1px dashed var(--theme-border);
-            border-radius: 10px; padding: 15px; display: flex; gap: 15px; position: relative;
+            background: var(--bg);
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.5) 10px, rgba(255,255,255,0.5) 20px);
+            border: 2px dashed var(--dark); border-radius: 15px; padding: 15px;
         }
-        .current-tag {
-            position: absolute; top: -10px; right: 10px; background: var(--theme-border);
-            color: white; font-size: 0.6rem; padding: 2px 8px; border-radius: 10px; font-weight: bold;
-        }
+        .id-body { display: flex; gap: 15px; align-items: center; }
         .id-photo { 
-            width: 80px; height: 80px; border-radius: 10px; border: 3px solid white; 
-            outline: 2px solid var(--theme-main); object-fit: cover; background: white;
+            width: 80px; height: 80px; border-radius: 50%; border: 4px solid white; 
+            outline: 3px solid var(--main); object-fit: cover; background: white;
         }
-        .id-info h2 { margin: 0; color: var(--theme-border); font-size: 1.2rem; }
-        .id-info p { margin: 2px 0; font-size: 0.7rem; }
-        .stats-row { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
-        .stat-badge { 
-            background: white; border: 1px solid var(--theme-main); padding: 2px 6px; 
-            border-radius: 4px; font-size: 0.6rem; color: var(--theme-border);
+        .id-stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.7rem;
+            background: rgba(255,255,255,0.7); padding: 5px; border-radius: 5px; margin-top:5px;
         }
+        .stat-label { color: var(--main); font-weight: bold; }
 
-        /* --- 2. SYSTEM BBS (CHAT) --- */
+        /* BBS / CHAT (NEW) */
         .bbs-container {
-            background: white; border: 2px solid var(--theme-main); border-radius: 10px;
-            height: 300px; display: flex; flex-direction: column; overflow: hidden;
+            background: white; border: 2px solid var(--main); border-radius: 15px;
+            height: 400px; display: flex; flex-direction: column; overflow: hidden;
         }
-        .bbs-header {
-            background: var(--theme-light); padding: 5px 10px; border-bottom: 1px solid var(--theme-main);
-            font-size: 0.7rem; font-weight: bold; color: var(--theme-border);
+        .bbs-messages { flex: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
+        .bbs-msg { 
+            background: white; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.05); font-size: 0.85rem;
+            border-left: 4px solid #ddd;
         }
-        .bbs-messages { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .msg { font-size: 0.8rem; background: #f9f9f9; padding: 8px; border-radius: 5px; border-left: 3px solid var(--theme-border); }
-        .msg-meta { font-size: 0.6rem; color: #999; margin-bottom: 2px; display: flex; justify-content: space-between; }
-        .bbs-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 5px; }
+        .bbs-meta { font-size: 0.65rem; color: #999; margin-bottom: 2px; display: flex; justify-content: space-between; }
+        .bbs-input-area { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 5px; }
 
-        /* --- 3. MEMBER LIST (UNLIMITED) --- */
-        .member-list { display: grid; gap: 10px; }
-        .member-row {
-            background: white; padding: 10px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 2px solid var(--theme-light); transition: 0.2s;
-        }
-        .member-row:hover { transform: translateX(2px); border-color: var(--theme-main); }
-        .mem-left { display: flex; align-items: center; gap: 10px; }
-        .mem-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--theme-main); }
-        .mem-actions button { font-size: 0.7rem; padding: 4px 8px; margin-left: 2px; }
-
-        /* --- 4. FRONT LOG --- */
-        .log-entry { font-size: 0.75rem; padding: 8px; border-bottom: 1px dashed #ccc; display: flex; justify-content: space-between; }
-        .log-time { color: #888; font-family: 'Courier New', monospace; }
-
-        /* UI ELEMENTS */
-        button { cursor: pointer; font-family: inherit; }
+        /* GLOBAL UI */
+        input, select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 15px; box-sizing: border-box; font-family:inherit; margin-bottom: 10px; outline:none; }
+        input:focus { border-color: var(--main); background: #fff; }
+        
         .btn-main {
-            background: var(--theme-main); color: white; border: none; padding: 10px;
-            border-radius: 20px; width: 100%; font-weight: bold; box-shadow: 0 3px 0 rgba(0,0,0,0.1);
+            background: var(--main); color: white; border: none; padding: 12px; width: 100%;
+            border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
         }
-        .btn-main:active { transform: translateY(3px); box-shadow: none; }
-        
-        .btn-small { background: white; border: 1px solid var(--theme-main); color: var(--theme-main); border-radius: 5px; }
-        
-        input, select {
-            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;
-            font-family: inherit; outline: none;
-        }
-        input:focus { border-color: var(--theme-main); }
+        .btn-main:active { transform: translateY(4px); box-shadow: none; }
 
-        /* NAVIGATION */
+        .modal-overlay {
+            position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); z-index: 2000;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px);
+        }
+        .modal-box {
+            background: white; width: 85%; max-width: 400px; border-radius: 25px; 
+            border: 4px solid var(--main); padding: 20px; max-height: 80vh; overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideUp 0.3s;
+        }
+
+        /* SLOT CARD (UNLIMITED) */
+        .slot-card {
+            background: #fff; border: 2px solid #eee; border-radius: 12px; padding: 10px; 
+            margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .slot-card.active-slot { border-color: var(--main); background: var(--bg); }
+
         nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255,255,255,0.95); border-top: 2px solid var(--theme-main);
-            display: flex; justify-content: space-around; padding: 10px 0;
-            padding-bottom: max(10px, env(safe-area-inset-bottom)); z-index: 100;
+            position: fixed; bottom: 20px; left: 20px; right: 20px;
+            background: rgba(255,255,255,0.95); border-radius: 40px;
+            display: flex; justify-content: space-around; padding: 15px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 100; border: 2px solid white;
         }
-        .nav-btn { background: none; border: none; color: #aaa; display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; }
-        .nav-btn span { font-size: 1.4rem; margin-bottom: 2px; }
-        .nav-btn.active { color: var(--theme-main); transform: scale(1.1); font-weight: bold; }
+        .nav-btn { background: none; border: none; color: #ccc; font-size: 1.5rem; transition: 0.2s; }
+        .nav-btn.active { color: var(--main); transform: scale(1.2); }
 
-        /* WELCOME SCREEN */
-        #welcome-screen {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: #fff0f5; z-index: 2000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s;
-        }
-        .enter-card {
-            background: white; padding: 30px; border-radius: 20px; text-align: center;
-            border: 4px dashed #ff69b4; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        /* MODALS */
-        .modal { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); z-index: 1500; display: none; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 90%; max-width: 400px; padding: 20px; border-radius: 15px; border: 2px solid var(--theme-main); }
+        /* Helper for other tabs */
+        .corkboard { background: #e6d7c3; border: 5px solid #8b5a2b; border-radius: 10px; padding: 15px; min-height: 400px; }
+        .polaroid { background: white; padding: 6px; text-align: center; margin-bottom:10px; transform: rotate(-1deg); box-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
+        .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border: 1px solid #ccc; }
+        .pet-box { background: white; border: 3px solid var(--main); border-radius: 20px; padding: 20px; text-align: center; }
+        .ebi-img { width: 120px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% {transform:translateY(0);} 50% {transform:translateY(-8px);} }
+        .task-item.completed { text-decoration: line-through; color: #aaa; opacity: 0; transform: translateX(50px); }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 9999; }
+        .toast.show { opacity: 1; top: 30px; }
 
     </style>
 </head>
 <body>
 
 <div class="scanlines"></div>
+<div id="toast" class="toast">💾 Saved!</div>
 
-<div id="welcome-screen">
-    <div class="enter-card">
-        <h1 style="color:#ff69b4; margin-bottom:5px;">SEIREN SYSTEM</h1>
-        <p style="font-size:0.8rem; color:#888;">OS v1.0 // System Companion</p>
-        <button class="btn-main" style="margin-top:20px; background:#ff69b4;" onclick="enterApp()">START UP</button>
+<div id="welcome-layer">
+    <div class="welcome-card">
+        <div style="font-size:4rem; margin-bottom:10px;">🎀</div>
+        <h1 style="color:var(--dark); margin:0; letter-spacing:2px;">SEIREN OS</h1>
+        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">System Companion v24.0</p>
+        <button class="enter-btn" onclick="enterApp()">Enter World ♡</button>
     </div>
 </div>
 
-<div class="app-shell" id="app-shell">
+<div class="app-shell" id="main-app">
     
-    <div class="system-header">
-        <span class="sys-title">SYSTEM ONLINE</span>
-        <span class="sys-clock" id="clock">00:00</span>
+    <div class="status-bar">
+        <span id="clock">12:00</span>
+        <span>🔋 100%</span>
     </div>
 
     <div class="content">
 
         <div id="tab-dash" class="page active">
-            <div id="fronter-card-area"></div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-                <button class="btn-main" onclick="openModal('switch-modal')">↔ Switch</button>
-                <button class="btn-main" style="background:#87cefa;" onclick="nav('members')">👥 Members</button>
+            
+            <div id="setup-view" style="text-align:center; padding:30px; display:none;">
+                <h2 style="color:var(--main);">New System?</h2>
+                <p>Register your first member.</p>
+                <input type="text" id="setup-name" placeholder="Name">
+                <input type="number" id="setup-age" placeholder="Age">
+                <button class="btn-main" onclick="initFirstProfile()">Create ID</button>
             </div>
 
-            <fieldset style="border: 2px dashed var(--theme-border); border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-                <legend style="color:var(--theme-border); font-weight:bold; font-size:0.8rem; padding: 0 5px;">Recent Activity</legend>
-                <div id="mini-log" style="font-size:0.7rem;"></div>
-            </fieldset>
+            <div id="dash-view" style="display:none;">
+                <div class="dash-header">
+                    <h2 style="margin:0; color:var(--dark);" id="dash-greet">Hello!</h2>
+                    <span style="font-size:0.8rem; color:#888;">Welcome back to Seiren.</span>
+                </div>
 
-            <div style="background:white; padding:10px; border-radius:10px; text-align:center; border:1px solid #ddd;">
-                <span style="font-size:0.8rem; font-weight:bold; color:var(--theme-text);">Daily Fortune</span><br>
-                <button class="btn-small" style="margin-top:5px;" onclick="flipFortune()">Draw Card</button>
-                <div id="fortune-result" style="margin-top:5px; font-size:0.8rem;"></div>
+                <div class="id-card-wrap">
+                    <div class="id-inner">
+                        <div class="deco-bow">🎀</div>
+                        <div class="id-top">
+                            <span style="font-size:0.7rem; font-weight:bold; color:var(--dark);">SEIREN GOV</span>
+                            <span style="font-size:0.6rem; color:#aaa; font-weight:bold;">ID CARD</span>
+                        </div>
+                        <div class="id-body">
+                            <img id="id-pic" class="id-photo" src="" onclick="rotateAvatar()">
+                            <div class="id-data">
+                                <div id="id-name" style="font-size:1.3rem; font-weight:bold; color:var(--dark); line-height:1;">User</div>
+                                <div id="id-real" style="font-size:0.7rem; font-style:italic; color:#888; margin-bottom:8px;">aka ???</div>
+                                <div class="id-stats-grid">
+                                    <span><b>ID:</b> <span id="id-num">000</span></span>
+                                    <span><b>Sign:</b> <span id="id-sign">?</span></span>
+                                    <span><b>Eyes:</b> <span id="id-eyes">?</span></span>
+                                    <span><b>Hair:</b> <span id="id-hair">?</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dash-grid">
+                    <div class="dash-btn" onclick="openProfileManager()">
+                        <span class="dash-icon">👥</span>
+                        <span>Profiles</span>
+                    </div>
+                    <div class="dash-btn" onclick="openRegistry()">
+                        <span class="dash-icon">📖</span>
+                        <span>Registry</span>
+                    </div>
+                </div>
+
+                <div class="front-log-widget">
+                    <strong style="color:var(--main); font-size:0.8rem;">Recent Activity</strong>
+                    <div id="mini-log"></div>
+                </div>
+
+                <div style="text-align:center; background:white; padding:15px; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+                    <div style="font-size:2.5rem;" id="fortune-icon">?</div>
+                    <strong style="color:var(--main);" id="fortune-title">Daily Fortune</strong>
+                    <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.8rem; margin-top:10px;" onclick="drawFortune()">Draw Card</button>
+                </div>
             </div>
-        </div>
-
-        <div id="tab-members" class="page">
-            <h2 style="color:var(--theme-border);">Member Registry</h2>
-            <button class="btn-main" style="margin-bottom:15px;" onclick="openModal('create-modal')">+ Register New</button>
-            <div id="member-list" class="member-list"></div>
         </div>
 
         <div id="tab-bbs" class="page">
-            <h2 style="color:var(--theme-border);">System BBS</h2>
+            <h2 style="color:var(--main);">System BBS</h2>
             <div class="bbs-container">
-                <div class="bbs-header">Topic: General Chat</div>
-                <div id="bbs-messages" class="bbs-messages"></div>
+                <div class="bbs-messages" id="bbs-feed"></div>
                 <div class="bbs-input-area">
-                    <input type="text" id="bbs-input" placeholder="Leave a note...">
-                    <button class="btn-small" onclick="postMessage()">Post</button>
+                    <input type="text" id="bbs-input" placeholder="Message..." style="margin:0;">
+                    <button class="btn-main" style="width:auto; padding:10px;" onclick="postBBS()">Send</button>
                 </div>
             </div>
         </div>
 
         <div id="tab-tools" class="page">
-            <h2 style="color:var(--theme-border);">Tools</h2>
+            <h2 style="color:var(--main);">Tools</h2>
             
-            <div style="background:white; padding:15px; border-radius:15px; border:2px solid var(--theme-main); text-align:center; margin-bottom:20px;">
-                <div style="font-size:3rem;">🦐</div>
-                <strong>Ebi</strong>
-                <div style="background:#eee; height:10px; border-radius:5px; margin:5px 0;">
-                    <div id="pet-hunger" style="width:50%; height:100%; background:var(--theme-main);"></div>
+            <div class="pet-box" style="margin-bottom:20px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="ebi-img">
+                <h3>Ebi</h3>
+                <div style="background:#eee; height:12px; border-radius:10px; overflow:hidden; margin:10px 0;">
+                    <div id="pet-bar" style="width:50%; height:100%; background:var(--main);"></div>
                 </div>
-                <button class="btn-small" onclick="feedPet()">Feed Snack</button>
+                <button class="btn-main" style="width:auto; font-size:0.8rem; padding:8px;" onclick="feedPet()">Feed Snack</button>
             </div>
 
-            <div style="background:#fffbeb; padding:15px; border:2px dashed #ffd700; border-radius:15px;">
-                <strong>Wishlist</strong>
-                <div style="display:flex; gap:5px; margin:10px 0;">
-                    <input type="text" id="wish-input" placeholder="Item...">
-                    <button class="btn-small" onclick="addWish()">Add</button>
+            <div class="corkboard">
+                <div id="wish-list"></div>
+                <div style="text-align:center; margin-top:20px;">
+                    <button class="btn-main" style="width:50px; height:50px; border-radius:50%; font-size:1.5rem;" onclick="openWishModal()">+</button>
                 </div>
-                <ul id="wish-list" style="padding-left:20px; font-size:0.8rem;"></ul>
             </div>
         </div>
 
     </div>
 
-    <div id="switch-modal" class="modal">
-        <div class="modal-content">
-            <h3>Who is fronting?</h3>
-            <div id="switch-list" style="max-height:200px; overflow-y:auto; margin-bottom:15px;"></div>
-            <button class="btn-main" style="background:#ccc;" onclick="closeModals()">Cancel</button>
+    <div id="modal-profiles" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-top:0; color:var(--main);">Select Fronter</h3>
+            <div id="profile-list" style="max-height:200px; overflow-y:auto; margin-bottom:15px;"></div>
+            
+            <div style="border-top:2px dashed #eee; padding-top:10px;">
+                <h4 style="margin:0 0 10px 0;">New Identity</h4>
+                <input type="text" id="new-p-name" placeholder="Name">
+                <input type="number" id="new-p-age" placeholder="Age">
+                <label style="font-size:0.8rem; font-weight:bold;">Theme Color:</label>
+                <input type="color" id="new-p-color" value="#ff69b4" style="height:40px; padding:0; border:none; width:100%;">
+                <button class="btn-main" onclick="addProfile()">Create</button>
+            </div>
+            <button class="btn-main" style="background:#ccc; margin-top:10px; box-shadow:none;" onclick="closeModals()">Close</button>
         </div>
     </div>
 
-    <div id="create-modal" class="modal">
-        <div class="modal-content">
-            <h3>New Registration</h3>
-            <input type="text" id="new-name" placeholder="Name" style="margin-bottom:10px;">
-            <input type="text" id="new-role" placeholder="Role (e.g. Protector)" style="margin-bottom:10px;">
-            <label style="font-size:0.8rem;">Theme Color:</label>
-            <input type="color" id="new-color" value="#ff69b4" style="height:40px; margin-bottom:10px;">
-            <button class="btn-main" onclick="registerMember()">Save ID</button>
-            <button class="btn-small" style="width:100%; margin-top:5px; border:none;" onclick="closeModals()">Cancel</button>
+    <div id="modal-wish" class="modal-overlay">
+        <div class="modal-box">
+            <h3>New Wish</h3>
+            <input type="text" id="w-name" placeholder="Item Name">
+            <input type="text" id="w-img" placeholder="Image Link">
+            <button class="btn-main" onclick="submitWish()">Pin It</button>
+            <button class="btn-main" style="background:#ccc; margin-top:10px;" onclick="closeModals()">Close</button>
         </div>
     </div>
 
     <nav>
-        <button class="nav-btn active" onclick="nav('dash', this)"><span>🏠</span>Home</button>
-        <button class="nav-btn" onclick="nav('members', this)"><span>👥</span>Mem</button>
-        <button class="nav-btn" onclick="nav('bbs', this)"><span>💬</span>BBS</button>
-        <button class="nav-btn" onclick="nav('tools', this)"><span>🎒</span>Tools</button>
+        <button class="nav-btn active" onclick="go('dash', this)">🏠</button>
+        <button class="nav-btn" onclick="go('bbs', this)">💬</button>
+        <button class="nav-btn" onclick="go('tools', this)">🎒</button>
     </nav>
 
 </div>
 
 <script>
-    // --- AVATAR ASSETS ---
+    // --- ASSETS ---
     const AVATARS = [
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzYjS4GrT6U0nmcao3A-UnuzLyeh-2UR3jloaiM4z7_A&s=10",
         "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10"
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
+        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png/revision/latest?cb=20230827221913"
     ];
 
-    // --- DATA STORE ---
-    const DB = {
-        members: JSON.parse(localStorage.getItem('sys_members')) || [],
-        currentFront: JSON.parse(localStorage.getItem('sys_front')) || null, // Stores index
-        log: JSON.parse(localStorage.getItem('sys_log')) || [],
-        bbs: JSON.parse(localStorage.getItem('sys_bbs')) || [],
-        wish: JSON.parse(localStorage.getItem('sys_wish')) || [],
-        pet: JSON.parse(localStorage.getItem('sys_pet')) || { hunger: 50 }
+    // --- STATE ---
+    // Note: profiles is now an array of objects, NO LIMIT
+    let DB = {
+        profiles: [], // Dynamic array
+        activeIdx: 0,
+        xp: 0, lvl: 1,
+        wish: [], pet: {hunger:50}, 
+        bbs: [], // System Chat
+        frontLog: [] // History
     };
 
     // --- INIT ---
-    function init() {
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }, 1000);
+    window.addEventListener('load', () => {
+        const saved = localStorage.getItem('seiren_v24');
+        if(saved) DB = JSON.parse(saved);
+        
+        // MIGRATION: Convert old null array to empty array if needed
+        if(DB.profiles.length === 5 && DB.profiles[0] === null) DB.profiles = [];
 
-        if (DB.members.length === 0) {
-            // First time setup: Create a default member
-            DB.members.push({
-                name: "Host",
-                role: "Core",
-                color: "#ff69b4",
-                id: "0001",
-                avatar: AVATARS[0]
-            });
-            DB.currentFront = 0;
-            saveData();
-        }
-    }
+        setInterval(() => {
+            const d = new Date();
+            document.getElementById('clock').innerText = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        }, 1000);
+    });
 
     function enterApp() {
-        document.getElementById('welcome-screen').style.opacity = '0';
+        document.getElementById('welcome-layer').style.opacity = '0';
         setTimeout(() => {
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('app-shell').style.display = 'flex';
-            renderAll();
+            document.getElementById('welcome-layer').style.display = 'none';
+            document.getElementById('main-app').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('main-app').style.opacity = '1';
+                if(DB.profiles.length > 0) {
+                    applyTheme(DB.profiles[DB.activeIdx]);
+                    document.getElementById('dash-view').style.display = 'block';
+                    refreshUI();
+                } else {
+                    document.getElementById('setup-view').style.display = 'block';
+                }
+            }, 50);
         }, 500);
     }
 
-    // --- RENDER FUNCTIONS ---
-    function renderAll() {
-        applyTheme();
-        renderFronter();
-        renderLog();
-        renderMembers();
-        renderBBS();
-        renderTools();
+    function save() {
+        localStorage.setItem('seiren_v24', JSON.stringify(DB));
+        const t = document.getElementById('toast');
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 1000);
     }
 
-    function applyTheme() {
-        const fronter = DB.members[DB.currentFront];
-        const color = fronter ? fronter.color : '#ff69b4';
-        
-        // CSS Variable Update
+    // --- THEME ENGINE ---
+    function applyTheme(user) {
+        if(!user) return;
+        const color = user.color || "#ff69b4";
         const root = document.documentElement;
-        root.style.setProperty('--theme-main', color);
         
-        // Calculate darker border
-        root.style.setProperty('--theme-border', adjustColor(color, -40));
-        root.style.setProperty('--theme-light', adjustColor(color, 150)); // Very light tint
+        root.style.setProperty('--pink', color);
+        root.style.setProperty('--main', color);
+        root.style.setProperty('--dark', adjustColor(color, -40));
+        root.style.setProperty('--pastel-pink', adjustColor(color, 160)); // Very light version
+        root.style.setProperty('--bg', adjustColor(color, 160));
     }
 
-    function renderFronter() {
-        const user = DB.members[DB.currentFront];
-        const html = `
-            <div class="id-card">
-                <div class="id-inner">
-                    <div class="current-tag">CURRENT FRONTER</div>
-                    <img src="${user.avatar}" class="id-photo">
-                    <div class="id-info">
-                        <h2>${user.name}</h2>
-                        <p>${user.role}</p>
-                        <p style="font-family:monospace;">ID: ${user.id}</p>
-                        <div class="stats-row">
-                            <span class="stat-badge">HP: 100</span>
-                            <span class="stat-badge">MP: 100</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.getElementById('fronter-card-area').innerHTML = html;
-    }
-
-    function renderMembers() {
-        const list = document.getElementById('member-list');
-        list.innerHTML = "";
-        DB.members.forEach((m, idx) => {
-            list.innerHTML += `
-                <div class="member-row" style="border-left: 4px solid ${m.color}">
-                    <div class="mem-left">
-                        <img src="${m.avatar}" class="mem-img">
-                        <div>
-                            <div style="font-weight:bold;">${m.name}</div>
-                            <div style="font-size:0.7rem;">${m.role}</div>
-                        </div>
-                    </div>
-                    <div class="mem-actions">
-                        ${idx !== DB.currentFront ? `<button class="btn-small" onclick="switchFront(${idx})">Front</button>` : '<span style="font-size:0.7rem; font-weight:bold;">Active</span>'}
-                        <button style="color:red; background:none; border:none;" onclick="deleteMember(${idx})">x</button>
-                    </div>
-                </div>
-            `;
-        });
-
-        // Also update Switch Modal list
-        const switchList = document.getElementById('switch-list');
-        switchList.innerHTML = "";
-        DB.members.forEach((m, idx) => {
-            switchList.innerHTML += `
-                <div class="member-row" onclick="switchFront(${idx})" style="cursor:pointer;">
-                    <div class="mem-left">
-                        <img src="${m.avatar}" class="mem-img">
-                        <span style="font-weight:bold;">${m.name}</span>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    // --- LOGIC ---
-    function registerMember() {
-        const name = document.getElementById('new-name').value;
-        const role = document.getElementById('new-role').value;
-        const color = document.getElementById('new-color').value;
-        
-        if(!name) return;
-
-        DB.members.push({
-            name: name,
-            role: role || "Member",
-            color: color,
-            id: Math.floor(Math.random()*9000)+1000,
-            avatar: AVATARS[Math.floor(Math.random()*AVATARS.length)]
-        });
-        saveData();
-        closeModals();
-        renderMembers();
-    }
-
-    function switchFront(index) {
-        DB.currentFront = index;
-        const user = DB.members[index];
-        
-        // Add to log
-        const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        DB.log.unshift({ text: `${user.name} switched in`, time: time });
-        if(DB.log.length > 20) DB.log.pop(); // Keep log short
-
-        saveData();
-        closeModals();
-        renderAll();
-    }
-
-    function deleteMember(index) {
-        if(confirm("Delete this member?")) {
-            DB.members.splice(index, 1);
-            if(DB.currentFront >= index) DB.currentFront = 0; // Fallback
-            saveData();
-            renderMembers();
-        }
-    }
-
-    function postMessage() {
-        const txt = document.getElementById('bbs-input').value;
-        if(!txt) return;
-        const user = DB.members[DB.currentFront];
-        const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        
-        DB.bbs.push({
-            sender: user.name,
-            color: user.color,
-            text: txt,
-            time: time
-        });
-        saveData();
-        document.getElementById('bbs-input').value = "";
-        renderBBS();
-    }
-
-    function renderBBS() {
-        const container = document.getElementById('bbs-messages');
-        container.innerHTML = "";
-        DB.bbs.slice().reverse().forEach(msg => {
-            container.innerHTML += `
-                <div class="msg" style="border-left-color:${msg.color}">
-                    <div class="msg-meta">
-                        <span style="font-weight:bold; color:${msg.color}">${msg.sender}</span>
-                        <span>${msg.time}</span>
-                    </div>
-                    <div>${msg.text}</div>
-                </div>
-            `;
-        });
-    }
-
-    function renderLog() {
-        const mini = document.getElementById('mini-log');
-        mini.innerHTML = "";
-        DB.log.slice(0, 3).forEach(l => {
-            mini.innerHTML += `<div class="log-entry"><span>${l.text}</span> <span class="log-time">${l.time}</span></div>`;
-        });
-    }
-
-    // --- LEISURE ---
-    function feedPet() {
-        DB.pet.hunger = Math.min(100, DB.pet.hunger + 10);
-        saveData(); renderTools();
-    }
-    function addWish() {
-        const txt = document.getElementById('wish-input').value;
-        if(txt) { DB.wish.push(txt); saveData(); document.getElementById('wish-input').value=""; renderTools(); }
-    }
-    function renderTools() {
-        document.getElementById('pet-hunger').style.width = DB.pet.hunger + "%";
-        const wList = document.getElementById('wish-list');
-        wList.innerHTML = "";
-        DB.wish.forEach(w => wList.innerHTML += `<li>${w}</li>`);
-    }
-    function flipFortune() {
-        const opts = ["Great Luck!", "Caution in Water", "Love is near", "Check your pockets"];
-        document.getElementById('fortune-result').innerText = opts[Math.floor(Math.random()*opts.length)];
-    }
-
-    // --- UTILS ---
-    function saveData() {
-        localStorage.setItem('sys_members', JSON.stringify(DB.members));
-        localStorage.setItem('sys_front', DB.currentFront);
-        localStorage.setItem('sys_log', JSON.stringify(DB.log));
-        localStorage.setItem('sys_bbs', JSON.stringify(DB.bbs));
-        localStorage.setItem('sys_wish', JSON.stringify(DB.wish));
-        localStorage.setItem('sys_pet', JSON.stringify(DB.pet));
-    }
-
-    // Color Hex Adjustment Helper
     function adjustColor(col, amt) {
         var usePound = false;
         if (col[0] == "#") { col = col.slice(1); usePound = true; }
@@ -543,20 +435,167 @@
         return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
     }
 
-    // UI
-    function nav(id, btn) {
-        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-        document.getElementById('tab-'+id).classList.add('active');
-        if(btn) {
-            document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-            btn.classList.add('active');
+    // --- LOGIC ---
+    function genID(name, age, color) {
+        const seed = name.length + parseInt(age||0);
+        return {
+            name: ["Mi","Lu","Fa","Ko"][seed%4] + ["chan","ren","la"][seed%3],
+            realName: name, age: age,
+            color: color || "#ff69b4",
+            id: Math.floor(Math.random()*9000)+1000,
+            sign: ["Aries","Leo","Virgo","Pisces"][seed%4],
+            eyes: ["Pink","Blue","Gold","Red"][seed%4],
+            hair: ["Twin","Long","Bob","Short"][seed%4],
+            wgt: ["3 Apples","Feather","45kg"][seed%3],
+            hgt: (140+(seed%30))+"cm",
+            av: seed % AVATARS.length
+        };
+    }
+
+    function initFirstProfile() {
+        const n = document.getElementById('setup-name').value;
+        const a = document.getElementById('setup-age').value;
+        if(!n) return;
+        DB.profiles.push(genID(n, a, "#ff69b4"));
+        DB.activeIdx = 0;
+        save();
+        document.getElementById('setup-view').style.display='none';
+        document.getElementById('dash-view').style.display='block';
+        refreshUI();
+    }
+
+    function refreshUI() {
+        // ID Card
+        const u = DB.profiles[DB.activeIdx];
+        if(u) {
+            document.getElementById('dash-greet').innerText = `Hello, ${u.realName}`;
+            document.getElementById('id-name').innerText = u.name;
+            document.getElementById('id-real').innerText = `aka ${u.realName}`;
+            document.getElementById('id-num').innerText = u.id;
+            document.getElementById('id-sign').innerText = u.sign;
+            document.getElementById('id-eyes').innerText = u.eyes;
+            document.getElementById('id-hair').innerText = u.hair;
+            document.getElementById('id-pic').src = AVATARS[u.av % AVATARS.length];
+        }
+        // XP
+        document.getElementById('lvl-num').innerText = DB.lvl;
+        document.getElementById('xp-val').innerText = DB.xp;
+        document.getElementById('xp-bar').style.width = DB.xp + "%";
+        
+        // Log
+        const mini = document.getElementById('mini-log');
+        mini.innerHTML = "";
+        DB.frontLog.slice(0, 3).forEach(l => {
+            mini.innerHTML += `<div class="log-entry-mini"><span>${l.name}</span><span>${l.time}</span></div>`;
+        });
+
+        // Wish
+        const wList = document.getElementById('wish-list'); wList.innerHTML="";
+        DB.wish.forEach((w,i)=> wList.innerHTML+=`<div class="polaroid"><img src="${w.img}" style="width:100%"><div style="font-size:0.7rem;">${w.name}</div></div>`);
+        
+        // BBS
+        const bbs = document.getElementById('bbs-feed'); bbs.innerHTML="";
+        DB.bbs.slice().reverse().forEach(m => {
+            bbs.innerHTML += `<div class="bbs-msg" style="border-left-color:${m.color}"><div class="bbs-meta"><span style="color:${m.color};font-weight:bold;">${m.sender}</span><span>${m.time}</span></div>${m.text}</div>`;
+        });
+    }
+
+    function rotateAvatar() {
+        const u = DB.profiles[DB.activeIdx];
+        u.av = (u.av + 1) % AVATARS.length;
+        save(); refreshUI();
+    }
+
+    // --- PROFILES ---
+    function openProfileManager() {
+        const list = document.getElementById('profile-list'); list.innerHTML="";
+        DB.profiles.forEach((p,i) => {
+            const active = i===DB.activeIdx ? "active-slot" : "";
+            list.innerHTML += `
+                <div class="slot-card ${active}">
+                    <div><b>${p.realName}</b> (${p.name})</div>
+                    <div>
+                        ${i!==DB.activeIdx ? `<button class="btn-main" style="width:auto;padding:5px;" onclick="swap(${i})">Switch</button>` : 'Active'}
+                        <button style="color:red;border:none;background:none;font-weight:bold;" onclick="delProf(${i})">x</button>
+                    </div>
+                </div>`;
+        });
+        document.getElementById('modal-profiles').style.display='flex';
+    }
+    
+    function addProfile() {
+        const n = document.getElementById('new-p-name').value;
+        const a = document.getElementById('new-p-age').value;
+        const c = document.getElementById('new-p-color').value;
+        if(!n) return;
+        
+        DB.profiles.push(genID(n, a, c));
+        // Auto switch to new
+        swap(DB.profiles.length - 1);
+        
+        document.getElementById('new-p-name').value="";
+        closeModals();
+    }
+
+    function swap(i) {
+        DB.activeIdx = i;
+        const user = DB.profiles[i];
+        
+        // Log it
+        const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        DB.frontLog.unshift({ name: user.realName, time: time });
+        if(DB.frontLog.length > 20) DB.frontLog.pop();
+        
+        applyTheme(user);
+        save();
+        closeModals();
+        refreshUI();
+    }
+
+    function delProf(i) {
+        if(confirm("Delete?")) {
+            DB.profiles.splice(i, 1);
+            if(DB.activeIdx >= i && DB.activeIdx > 0) DB.activeIdx--;
+            if(DB.profiles.length === 0) location.reload();
+            save(); openProfileManager();
         }
     }
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
 
-    // BOOT
-    init();
+    // --- BBS ---
+    function postBBS() {
+        const txt = document.getElementById('bbs-input').value;
+        if(!txt) return;
+        const user = DB.profiles[DB.activeIdx];
+        const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        DB.bbs.push({ sender: user.realName, color: user.color, text: txt, time: time });
+        document.getElementById('bbs-input').value="";
+        save(); refreshUI();
+    }
+
+    // --- TOOLS ---
+    function feedPet() { DB.pet.hunger = Math.min(100, DB.pet.hunger + 10); save(); document.getElementById('pet-bar').style.width = DB.pet.hunger+"%"; }
+    
+    function openWishModal() { document.getElementById('modal-wish').style.display='flex'; }
+    function submitWish() {
+        const n = document.getElementById('w-name').value;
+        const i = document.getElementById('w-img').value || "https://cdn-icons-png.flaticon.com/512/3209/3209955.png";
+        if(n) { DB.wish.push({name:n, img:i}); save(); closeModals(); refreshUI(); }
+    }
+
+    function drawFortune() {
+        const opts = ["Good Luck!", "Stay Hydrated", "Switch Soon?", "Nap Time"];
+        document.getElementById('fortune-title').innerText = opts[Math.floor(Math.random()*opts.length)];
+    }
+
+    function go(id, btn) {
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+        document.getElementById('tab-'+id).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
+
+    // SERVICE WORKER
     if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
 </body>
