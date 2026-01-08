@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ff69b4">
-    <title>Seiren</title>
+    <title>Seiren OS</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
@@ -35,7 +35,7 @@
             transition: background-color 0.5s ease;
         }
 
-        /* --- WELCOME SCREEN --- */
+        /* --- WELCOME SCREEN (MATCHING YOUR IMAGE) --- */
         #welcome-layer {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
@@ -44,19 +44,39 @@
             transition: opacity 0.5s ease-out;
         }
         .welcome-card {
-            background: rgba(255,255,255,0.9); padding: 40px; border-radius: 40px;
-            border: 6px solid white; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.95); padding: 50px 40px; border-radius: 40px;
+            /* Soft shadow */
+            box-shadow: 0 20px 50px rgba(255, 105, 180, 0.2);
             text-align: center; backdrop-filter: blur(5px);
+            width: 80%; max-width: 320px;
             animation: float 3s ease-in-out infinite;
         }
-        @keyframes float { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-10px);} }
+        @keyframes float { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-8px);} }
         
+        .welcome-title {
+            color: #d12e87; 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            letter-spacing: 2px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
         .enter-btn {
-            background: var(--main); color: white; border: 4px solid white; 
-            padding: 15px 40px; border-radius: 50px; font-size: 1.3rem; font-weight: bold; 
-            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
-            transition: transform 0.1s; text-transform: uppercase; letter-spacing: 2px;
-            margin-top: 25px; display: inline-block;
+            background: #ff69b4; 
+            color: white; 
+            border: none; 
+            padding: 15px 0; 
+            width: 100%;
+            border-radius: 50px; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4); 
+            transition: transform 0.1s; 
+            letter-spacing: 2px;
+            line-height: 1.4;
         }
         .enter-btn:active { transform: scale(0.95); }
 
@@ -67,11 +87,27 @@
             box-shadow: 0 0 50px rgba(0,0,0,0.1); z-index: 10;
         }
 
+        .scanlines {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.02) 50%);
+            background-size: 100% 4px; pointer-events: none; z-index: 998;
+        }
+
         .status-bar {
             display: flex; justify-content: space-between; padding: 8px 15px;
             font-size: 0.7rem; font-weight: bold; color: var(--dark);
             background: rgba(255,255,255,0.6); border-bottom: 1px solid white;
         }
+
+        .marquee-container {
+            background: linear-gradient(90deg, var(--main), var(--dark));
+            color: white; padding: 5px 0; white-space: nowrap; overflow: hidden;
+        }
+        .marquee-text {
+            display: inline-block; padding-left: 100%;
+            animation: marquee 15s linear infinite; font-size: 0.7rem; letter-spacing: 1px;
+        }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
         .content {
             flex: 1; overflow-y: auto; overflow-x: hidden;
@@ -81,12 +117,15 @@
         .page.active { display: block; }
         @keyframes slideUp { from {opacity:0; transform:translateY(15px);} to {opacity:1; transform:translateY(0);} }
 
-        /* --- DASHBOARD --- */
+        /* --- DASHBOARD ELEMENTS --- */
         .dash-header { text-align: center; margin-bottom: 20px; }
+        .greeting { font-size: 1.5rem; color: var(--dark); font-weight: bold; }
+        
         .xp-box { background: white; padding: 8px; border-radius: 12px; margin-bottom: 15px; border: 2px solid var(--blue); text-align: center; }
         .xp-track { height: 6px; background: #eee; border-radius: 4px; margin-top: 4px; overflow: hidden; }
         .xp-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #87cefa); width: 0%; transition: width 0.5s; }
 
+        /* INTRICATE ID CARD (RESTORED) */
         .id-card-wrap {
             background: white; border: 3px solid var(--main); border-radius: 20px;
             padding: 5px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
@@ -112,6 +151,7 @@
         .stat-label { color: var(--main); font-weight: bold; }
         .signature { font-family: 'Brush Script MT', cursive; font-size: 1.2rem; color: var(--blue); transform: rotate(-5deg); display: inline-block; margin-right: 10px; }
 
+        /* MENU GRID (RESTORED) */
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .dash-btn {
             background: white; border-radius: 15px; padding: 10px 5px; text-align: center;
@@ -122,12 +162,14 @@
         .dash-icon { font-size: 1.5rem; display: block; margin-bottom: 3px; }
         .dash-label { font-size: 0.7rem; font-weight: bold; color: var(--text); }
 
+        /* FRONT LOG WIDGET */
         .front-log-widget {
             background: white; border: 2px dashed var(--main); border-radius: 15px;
             padding: 10px; margin-bottom: 20px;
         }
         .log-entry-mini { display: flex; justify-content: space-between; font-size: 0.7rem; padding: 4px 0; border-bottom: 1px dotted #eee; }
 
+        /* FORTUNE ANIMATION */
         .fortune-stage { perspective: 1000px; width: 140px; height: 200px; margin: 0 auto; cursor: pointer; }
         .card-wrapper {
             width: 100%; height: 100%; position: relative;
@@ -147,27 +189,32 @@
             box-shadow: 0 3px 0 #29b6f6; font-weight: bold;
         }
 
+        /* BBS (SYSTEM CHAT) */
         .bbs-container { background: white; border: 2px solid var(--main); border-radius: 15px; height: 100%; min-height: 400px; display: flex; flex-direction: column; overflow: hidden; }
         .bbs-messages { flex: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
         .bbs-msg { background: white; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.05); font-size: 0.8rem; border-left: 4px solid #ddd; }
         .bbs-meta { font-size: 0.6rem; color: #999; margin-bottom: 2px; display: flex; justify-content: space-between; }
         .bbs-input-area { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 5px; }
 
+        /* UI ELEMENTS */
         input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 15px; box-sizing: border-box; font-family:inherit; margin-bottom: 10px; outline:none; }
         input:focus { border-color: var(--main); background: #fff; }
         .btn-main { background: var(--main); color: white; border: none; padding: 12px; width: 100%; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
         .btn-main:active { transform: translateY(4px); box-shadow: none; }
 
+        /* MODALS */
         .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
         .modal-box { background: white; width: 85%; max-width: 400px; border-radius: 25px; border: 4px solid var(--main); padding: 20px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideUp 0.3s; }
         .slot-card { background: #fdf2f8; border: 2px solid #eee; border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .slot-card.active-slot { border-color: var(--main); background: var(--bg-light); }
 
+        /* NAV */
         nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 100; border: 2px solid white; }
         .nav-btn { background: none; border: none; color: #ccc; font-size: 1.4rem; transition: 0.2s; display: flex; flex-direction:column; align-items: center; }
         .nav-label { font-size: 0.55rem; margin-top:2px; font-weight:bold; }
         .nav-btn.active { color: var(--main); transform: scale(1.1); }
 
+        /* LEISURE STYLES */
         .corkboard { background: #e6d7c3; border: 5px solid #8b5a2b; border-radius: 10px; padding: 15px; min-height: 400px; }
         .polaroid { background: white; padding: 6px; text-align: center; margin-bottom:10px; transform: rotate(-1deg); box-shadow: 2px 2px 5px rgba(0,0,0,0.2); position:relative; transition: transform 0.2s; }
         .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
@@ -200,13 +247,18 @@
 </head>
 <body>
 
+<div class="scanlines"></div>
 <div id="toast" class="toast">💾 Saved!</div>
 
 <div id="welcome-layer">
     <div class="welcome-card">
         <div style="font-size:4rem; margin-bottom:10px;">🎀</div>
-        <h1 style="color:var(--dark); margin:0; letter-spacing:2px;">SEIREN</h1>
-        <button class="enter-btn" onclick="enterApp()">Enter World ♡</button>
+        <h1 class="welcome-title">SEIREN</h1>
+        
+        <button class="enter-btn" onclick="enterApp()">
+            ENTER WORLD<br>
+            <span style="font-size:1rem;">♡</span>
+        </button>
     </div>
 </div>
 
@@ -215,6 +267,12 @@
     <div class="status-bar">
         <span id="clock">12:00</span>
         <span>🔋 100%</span>
+    </div>
+    
+    <div class="marquee-container">
+        <div class="marquee-text">
+            ★ SYSTEM ONLINE ★ WELCOME HOME ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
+        </div>
     </div>
 
     <div class="content">
@@ -460,14 +518,12 @@
 
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v28'); // Updated version
+        const saved = localStorage.getItem('seiren_v29');
         if(saved) DB = JSON.parse(saved);
         
-        // MIGRATION V27->V28 (Transfer old data if exists)
-        if(!saved) {
-            const old = localStorage.getItem('seiren_v27');
-            if(old) { DB = JSON.parse(old); save(); }
-        }
+        // Migration V28->V29
+        const oldP = JSON.parse(localStorage.getItem('seiren_v28'));
+        if(oldP && DB.profiles.length===0) { DB = oldP; save(); }
 
         setInterval(() => {
             const d = new Date();
@@ -494,7 +550,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v28', JSON.stringify(DB));
+        localStorage.setItem('seiren_v29', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -718,15 +774,6 @@
     function delReg(i) { DB.registry.splice(i,1); save(); openRegistry(); }
     function saveToRegistry() { DB.registry.unshift({...DB.profiles[DB.activeIdx]}); save(); alert("Saved!"); }
 
-    function go(id, btn) {
-        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-        document.getElementById('tab-'+id).classList.add('active');
-        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
-    function setMood(m,b) { mood=m; document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }
-
     // --- SOUND ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSnd(type) {
@@ -742,6 +789,15 @@
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
+
+    function go(id, btn) {
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+        document.getElementById('tab-'+id).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
+    function setMood(m,b) { mood=m; document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }
 
     if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
