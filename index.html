@@ -37,6 +37,29 @@
             color: var(--text);
         }
 
+        /* WELCOME SCREEN OVERLAY */
+        #welcome-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #ffc0cb, #e6e6fa);
+            z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .welcome-box {
+            background: rgba(255,255,255,0.8); padding: 40px; border-radius: 30px;
+            border: 4px solid white; box-shadow: 0 0 30px var(--pink);
+            text-align: center; backdrop-filter: blur(5px);
+        }
+        .welcome-title { font-size: 2rem; color: var(--deep-pink); font-weight: bold; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        .enter-btn {
+            background: linear-gradient(90deg, var(--pink), var(--blue));
+            color: white; border: none; padding: 15px 40px; border-radius: 50px;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
+
+        /* SCANLINES */
         .scanlines {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.03) 50%);
@@ -49,7 +72,7 @@
             display: flex; flex-direction: column;
             position: relative; height: 100%;
             box-shadow: 0 0 30px rgba(255, 105, 180, 0.4);
-            z-index: 10;
+            z-index: 10; opacity: 0; transition: opacity 0.5s; /* Hidden until welcome click */
         }
 
         /* HEADER */
@@ -76,7 +99,7 @@
         .page.active { display: block; }
         @keyframes popIn { from {opacity:0; transform:scale(0.95);} to {opacity:1; transform:scale(1);} }
 
-        /* === 1. INTRICATE ID CARD (RESTORED) === */
+        /* === 1. INTRICATE ID CARD === */
         .id-card-wrap {
             background: #fff;
             border: 4px solid var(--pink); border-radius: 20px;
@@ -168,6 +191,21 @@
             box-shadow: 0 3px 0 #29b6f6; font-weight: bold;
         }
 
+        /* REGISTRY BUTTONS */
+        .registry-btn-row { display: flex; gap: 15px; margin-bottom: 20px; justify-content: center; }
+        .icon-btn { 
+            background: linear-gradient(180deg, #fff, #fff0f5); 
+            border: 2px solid var(--pink); border-radius: 15px; 
+            padding: 8px 20px; font-weight: bold; color: var(--deep-pink);
+            font-size: 0.9rem; display: flex; align-items: center; gap: 5px;
+            box-shadow: 0 4px 0 #ffb7b2; transition: 0.1s; cursor: pointer;
+        }
+        .icon-btn:active { transform: translateY(4px); box-shadow: none; }
+        .reg-item {
+            border-bottom: 1px dashed #ccc; padding: 10px 0; display: flex; justify-content: space-between; align-items: center;
+        }
+        .reg-del { color: red; font-weight: bold; cursor: pointer; padding: 5px; font-size: 1.2rem; }
+
         /* UI ELEMENTS */
         input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family:inherit; margin-bottom: 5px; }
         input:focus { outline: none; border-color: var(--pink); background: #fff0f5; }
@@ -178,17 +216,8 @@
             font-weight: bold; box-shadow: 0 4px 0 #9e1b61; cursor: pointer; margin-top: 10px;
         }
         .btn-main:active { transform: translateY(4px); box-shadow: none; }
-        
-        .icon-btn { 
-            background: linear-gradient(180deg, #fff, #fff0f5); 
-            border: 2px solid var(--pink); border-radius: 15px; 
-            padding: 8px 20px; font-weight: bold; color: var(--deep-pink);
-            font-size: 0.9rem; display: flex; align-items: center; gap: 5px;
-            box-shadow: 0 4px 0 #ffb7b2; transition: 0.1s; cursor: pointer;
-        }
-        .icon-btn:active { transform: translateY(4px); box-shadow: none; }
 
-        /* OTHER TABS */
+        /* OTHER TABS (WISHLIST, PET, DIARY) */
         .corkboard {
             background: #e6d7c3; border: 5px solid #8b5a2b; border-radius: 10px; padding: 15px;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.1); min-height: 500px; position: relative;
@@ -199,13 +228,16 @@
             text-align: center; transform: rotate(-2deg); transition: 0.2s; position: relative;
         }
         .polaroid:nth-child(even) { transform: rotate(2deg); }
+        .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
         .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; border: 1px solid #ccc; }
+        .polaroid-link { text-decoration: none; color: inherit; display: block; }
         .delete-wish-btn {
             position: absolute; top: -8px; right: -8px; width: 22px; height: 22px;
             background: #ff4d4d; color: white; border: 2px solid white; border-radius: 50%;
             font-size: 14px; font-weight: bold; cursor: pointer; display: flex; 
             align-items: center; justify-content: center; z-index: 20; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
+        
         .fab-btn {
             position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px;
             background: var(--pink); color: white; border-radius: 50%; border: 3px solid white;
@@ -257,10 +289,19 @@
 <div class="scanlines"></div>
 <div id="toast" class="toast">💾 Saved!</div>
 
-<div class="app-shell">
+<div id="welcome-screen" style="display:none;">
+    <div class="welcome-box">
+        <div class="welcome-title">SEIREN OS</div>
+        <div style="font-size:3rem; margin-bottom:20px;">🎀</div>
+        <button class="enter-btn" onclick="enterApp()">ENTER SYSTEM</button>
+        <div style="margin-top:10px; font-size:0.8rem; color:#888;">System Ready...</div>
+    </div>
+</div>
+
+<div class="app-shell" id="app-shell">
     <div class="marquee-container">
         <div class="marquee-text">
-            ★ SEIREN OS v18.0 ★ SYSTEM PROFILE MANAGER ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
+            ★ SEIREN OS v19.0 ★ WELCOME HOME ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
         </div>
     </div>
 
@@ -273,7 +314,7 @@
                 <p style="font-size:0.8rem; color:#666; margin-bottom:10px;">Create your first profile.</p>
                 <input type="text" id="setup-name" placeholder="Name">
                 <input type="number" id="setup-age" placeholder="Age">
-                <button class="btn-main" onclick="createNewProfile(0)">Create ID</button>
+                <button class="btn-main" onclick="createProfile()">Create ID</button>
             </div>
 
             <div id="id-display" style="display:none;">
@@ -322,6 +363,11 @@
                     <button class="icon-btn" onclick="openProfileManager()" style="margin:0 auto;">
                         👥 Profiles (Switch ID)
                     </button>
+                </div>
+
+                <div class="registry-btn-row">
+                    <button class="icon-btn" onclick="saveToRegistry()">💾 Save to Book</button>
+                    <button class="icon-btn" onclick="openRegistry()">📖 Registry Book</button>
                 </div>
 
                 <div style="text-align:center;">
@@ -397,8 +443,7 @@
         <div class="modal-box">
             <h2 style="color:var(--pink); margin-top:0;">👥 Select Profile</h2>
             <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">Switch your active ID Card.</p>
-            <div id="profile-slots">
-                </div>
+            <div id="profile-slots"></div>
             
             <div id="modal-create-form" style="display:none; margin-top:20px; border-top:2px dashed #ddd; padding-top:10px;">
                 <h3 style="margin:0 0 10px 0; color:var(--blue);">New Profile</h3>
@@ -406,8 +451,23 @@
                 <input type="number" id="new-slot-age" placeholder="Age">
                 <button class="btn-main" onclick="confirmCreateProfile()">Create</button>
             </div>
-
             <button class="btn-main" style="background:#888; margin-top:10px;" onclick="document.getElementById('profile-modal').style.display='none'">Close</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="registry-modal" onclick="closeRegistry(event)">
+        <div class="modal-box">
+            <h2 style="color:var(--pink); margin-top:0;">📖 Registry Book</h2>
+            <div class="reg-input-group" style="background:#f0f8ff; padding:10px; border-radius:10px; margin-bottom:15px;">
+                <div style="font-size:0.7rem; font-weight:bold; color:var(--blue); margin-bottom:5px;">ADD NEW ENTRY</div>
+                <div style="display:flex; gap:5px;">
+                    <input type="text" id="reg-new-name" placeholder="Name" style="margin:0;">
+                    <input type="text" id="reg-new-age" placeholder="Age" style="margin:0; width:60px;">
+                </div>
+                <button class="btn-main" style="margin-top:5px; padding:8px;" onclick="addNewToRegistry()">Register New</button>
+            </div>
+            <div id="registry-list"></div>
+            <button class="btn-main" onclick="document.getElementById('registry-modal').style.display='none'">Close</button>
         </div>
     </div>
 
@@ -450,16 +510,16 @@
     }
 
     // === DATA STORE ===
-    // We now have 'profiles' array (max 5)
     const DB = {
-        profiles: JSON.parse(localStorage.getItem('v18_profiles')) || [null, null, null, null, null],
-        activeSlot: parseInt(localStorage.getItem('v18_activeSlot')) || 0,
-        wish: JSON.parse(localStorage.getItem('v18_wish')) || [],
-        pet: JSON.parse(localStorage.getItem('v18_pet')) || { hunger: 50, tasks: ['Drink Water'] },
-        diary: JSON.parse(localStorage.getItem('v18_diary')) || [],
-        fortune: JSON.parse(localStorage.getItem('v18_fortune')) || { date: '', icon: '', title: '', desc: '' },
-        xp: parseInt(localStorage.getItem('v18_xp')) || 0,
-        lvl: parseInt(localStorage.getItem('v18_lvl')) || 1
+        profiles: JSON.parse(localStorage.getItem('v19_profiles')) || [null, null, null, null, null],
+        activeSlot: parseInt(localStorage.getItem('v19_activeSlot')) || 0,
+        wish: JSON.parse(localStorage.getItem('v19_wish')) || [],
+        pet: JSON.parse(localStorage.getItem('v19_pet')) || { hunger: 50, tasks: ['Drink Water'] },
+        diary: JSON.parse(localStorage.getItem('v19_diary')) || [],
+        fortune: JSON.parse(localStorage.getItem('v19_fortune')) || { date: '', icon: '', title: '', desc: '' },
+        registry: JSON.parse(localStorage.getItem('v19_registry')) || [],
+        xp: parseInt(localStorage.getItem('v19_xp')) || 0,
+        lvl: parseInt(localStorage.getItem('v19_lvl')) || 1
     };
     let mood = '😊';
     let creatingSlot = -1;
@@ -471,23 +531,38 @@
     }
 
     function init() {
-        // MIGRATION: If old v17 user exists but v18 empty, move to slot 0
-        const oldUser = JSON.parse(localStorage.getItem('v17_user'));
-        if(oldUser && !DB.profiles[0]) {
-            DB.profiles[0] = oldUser;
-            localStorage.setItem('v18_profiles', JSON.stringify(DB.profiles));
+        // MIGRATION: v18 to v19
+        const oldProfiles = JSON.parse(localStorage.getItem('v18_profiles'));
+        if(oldProfiles && !DB.profiles[0]) {
+            DB.profiles = oldProfiles;
+            DB.activeSlot = parseInt(localStorage.getItem('v18_activeSlot')) || 0;
+            localStorage.setItem('v19_profiles', JSON.stringify(DB.profiles));
         }
 
-        if(DB.profiles[DB.activeSlot]) { 
-            renderID(); checkFortune(); updateXP(); 
-        } else { 
-            // If active slot is empty (fresh start), show setup
-            document.getElementById('setup-screen').style.display='block'; 
+        // Logic for Welcome Screen
+        const hasUser = DB.profiles.some(p => p !== null);
+        if(hasUser) {
+            document.getElementById('welcome-screen').style.display = 'flex';
+        } else {
+            // First time user: Skip welcome, show setup
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('app-shell').style.opacity = '1';
+            document.getElementById('setup-screen').style.display = 'block';
         }
-        renderWish(); renderPet(); renderDiary();
     }
 
-    // === ID GENERATOR ===
+    function enterApp() {
+        playSnd('spark');
+        document.getElementById('welcome-screen').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('app-shell').style.opacity = '1';
+            renderID(); checkFortune(); updateXP(); 
+            renderWish(); renderPet(); renderDiary();
+        }, 500);
+    }
+
+    // === GENERATOR ===
     function generateStats(name, age) {
         const seed = name.length + parseInt(age || 0);
         const pres = ["Mi", "Lu", "Fa", "Ko", "Ri", "Yu", "Se"];
@@ -507,9 +582,8 @@
         };
     }
 
-    // === PROFILE MANAGEMENT ===
+    // === PROFILES ===
     function createProfile() {
-        // This is for the Initial Setup screen only (Slot 0)
         const name = document.getElementById('setup-name').value;
         const age = document.getElementById('setup-age').value;
         if(!name) return;
@@ -517,14 +591,14 @@
         
         DB.profiles[0] = generateStats(name, age);
         DB.activeSlot = 0;
-        
         saveProfiles();
+        
         document.getElementById('setup-screen').style.display='none';
-        renderID();
+        document.getElementById('id-display').style.display='block'; // Show ID immediately
+        renderID(); renderWish(); renderPet(); renderDiary();
     }
 
     function createNewProfile(slotIndex) {
-        // Prepare the modal form for a specific slot
         creatingSlot = slotIndex;
         document.getElementById('modal-create-form').style.display = 'block';
         document.getElementById('new-slot-name').focus();
@@ -537,15 +611,13 @@
         playSnd('spark');
 
         DB.profiles[creatingSlot] = generateStats(name, age);
-        DB.activeSlot = creatingSlot; // Switch to it immediately
+        DB.activeSlot = creatingSlot;
         saveProfiles();
         
-        // Reset and close
         document.getElementById('new-slot-name').value = "";
         document.getElementById('new-slot-age').value = "";
         document.getElementById('modal-create-form').style.display = 'none';
         document.getElementById('profile-modal').style.display = 'none';
-        
         renderID();
         showSaveToast();
     }
@@ -553,32 +625,28 @@
     function switchProfile(index) {
         playSnd('bloop');
         DB.activeSlot = index;
-        localStorage.setItem('v18_activeSlot', DB.activeSlot);
+        localStorage.setItem('v19_activeSlot', DB.activeSlot);
         document.getElementById('profile-modal').style.display = 'none';
         renderID();
         showSaveToast();
     }
 
     function deleteProfile(index) {
-        if(confirm("Delete this profile? This cannot be undone.")) {
+        if(confirm("Delete this profile?")) {
             DB.profiles[index] = null;
-            // If we deleted the active one, try to find another, or show setup if all empty
             if(index === DB.activeSlot) {
-                const nextAlive = DB.profiles.findIndex(p => p !== null);
-                if(nextAlive !== -1) {
-                    DB.activeSlot = nextAlive;
-                } else {
-                    location.reload(); // Will trigger setup screen
-                }
+                const next = DB.profiles.findIndex(p => p !== null);
+                if(next !== -1) DB.activeSlot = next;
+                else location.reload();
             }
             saveProfiles();
-            openProfileManager(); // Refresh list
+            openProfileManager();
         }
     }
 
     function saveProfiles() {
-        localStorage.setItem('v18_profiles', JSON.stringify(DB.profiles));
-        localStorage.setItem('v18_activeSlot', DB.activeSlot);
+        localStorage.setItem('v19_profiles', JSON.stringify(DB.profiles));
+        localStorage.setItem('v19_activeSlot', DB.activeSlot);
     }
 
     function openProfileManager() {
@@ -589,40 +657,27 @@
 
         DB.profiles.forEach((p, idx) => {
             if(p) {
-                // Occupied Slot
                 const isActive = idx === DB.activeSlot ? 'active-slot' : '';
-                const btnLabel = idx === DB.activeSlot ? 'Active' : 'Switch';
                 list.innerHTML += `
                     <div class="slot-card ${isActive}">
-                        <div class="slot-info">
-                            <div class="slot-name">Slot ${idx+1}: ${p.name}</div>
-                            <div>${p.realName} • ${p.type}</div>
-                        </div>
+                        <div class="slot-info"><div class="slot-name">Slot ${idx+1}: ${p.name}</div><div>${p.realName}</div></div>
                         <div class="slot-actions">
                             ${idx !== DB.activeSlot ? `<button class="slot-btn btn-switch" onclick="switchProfile(${idx})">Switch</button>` : ''}
                             <button class="slot-btn btn-del" onclick="deleteProfile(${idx})">x</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             } else {
-                // Empty Slot
-                list.innerHTML += `
-                    <div class="slot-card" style="border-style:dashed; justify-content:center;">
-                        <button class="slot-btn" onclick="createNewProfile(${idx})">+ Create New (Slot ${idx+1})</button>
-                    </div>
-                `;
+                list.innerHTML += `<div class="slot-card" style="border-style:dashed;justify-content:center;"><button class="slot-btn" onclick="createNewProfile(${idx})">+ New Profile</button></div>`;
             }
         });
         document.getElementById('profile-modal').style.display = 'flex';
     }
-    function closeProfileManager(e) {
-        if(e.target.id === 'profile-modal') e.target.style.display = 'none';
-    }
+    function closeProfileManager(e) { if(e.target.id === 'profile-modal') e.target.style.display = 'none'; }
 
     // RENDER ID
     function renderID() {
         const user = DB.profiles[DB.activeSlot];
-        if(!user) return; // Should not happen unless error
+        if(!user) return; 
 
         document.getElementById('id-display').style.display='block';
         document.getElementById('my-name').innerText = user.name;
@@ -634,27 +689,65 @@
         document.getElementById('my-sign').innerText = user.sign;
         document.getElementById('my-hgt').innerText = user.hgt;
         document.getElementById('my-wgt').innerText = user.wgt;
-        document.getElementById('my-type').innerText = user.type;
         document.getElementById('my-avatar').src = AVATARS[user.avatarIdx % AVATARS.length];
         updateXP();
     }
     function changeAvatar() {
         playSnd('bloop');
         if(DB.lvl < 2) return alert("Level up to unlock avatars!");
-        
         const user = DB.profiles[DB.activeSlot];
         const limit = Math.min(DB.lvl + 1, AVATARS.length);
         user.avatarIdx = (user.avatarIdx + 1) % limit;
-        
-        saveProfiles();
-        renderID();
+        saveProfiles(); renderID();
     }
+
+    // REGISTRY
+    function saveToRegistry() {
+        playSnd('bloop');
+        const current = DB.profiles[DB.activeSlot];
+        DB.registry.unshift({...current});
+        localStorage.setItem('v19_registry', JSON.stringify(DB.registry));
+        showSaveToast();
+        alert("Saved to Registry!");
+    }
+    function addNewToRegistry() {
+        const name = document.getElementById('reg-new-name').value;
+        const age = document.getElementById('reg-new-age').value;
+        if(!name) return;
+        playSnd('spark');
+        DB.registry.unshift(generateStats(name, age));
+        localStorage.setItem('v19_registry', JSON.stringify(DB.registry));
+        document.getElementById('reg-new-name').value=""; document.getElementById('reg-new-age').value="";
+        openRegistry(); showSaveToast();
+    }
+    function removeRegistryItem(index) {
+        if(confirm("Delete this entry?")) {
+            DB.registry.splice(index, 1);
+            localStorage.setItem('v19_registry', JSON.stringify(DB.registry));
+            openRegistry();
+        }
+    }
+    function openRegistry() {
+        playSnd('bloop');
+        const list = document.getElementById('registry-list');
+        list.innerHTML = "";
+        if(DB.registry.length === 0) list.innerHTML = "<p style='text-align:center;color:#aaa;'>Empty.</p>";
+        DB.registry.forEach((entry, idx) => {
+            list.innerHTML += `
+                <div class="reg-item">
+                    <div><div style="font-weight:bold;color:var(--pink);">${entry.name}</div><div style="font-size:0.7rem;">${entry.realName} (${entry.age})</div></div>
+                    <div style="display:flex;align-items:center;gap:5px;"><div style="background:var(--blue);color:white;padding:2px 6px;border-radius:10px;font-size:0.6rem;">${entry.type}</div><span class="reg-del" onclick="removeRegistryItem(${idx})">x</span></div>
+                </div>`;
+        });
+        document.getElementById('registry-modal').style.display = 'flex';
+    }
+    function closeRegistry(e) { if(e.target.id === 'registry-modal') e.target.style.display = 'none'; }
 
     // XP
     function addXP(n) {
         DB.xp += n;
         if(DB.xp >= 100) { DB.xp -= 100; DB.lvl++; playSnd('spark'); alert("LEVEL UP!"); }
-        localStorage.setItem('v18_xp', DB.xp); localStorage.setItem('v18_lvl', DB.lvl);
+        localStorage.setItem('v19_xp', DB.xp); localStorage.setItem('v19_lvl', DB.lvl);
         updateXP();
     }
     function updateXP() {
@@ -677,35 +770,19 @@
         const today = new Date().toDateString();
         if(DB.fortune.date === today) return;
         playSnd('spark');
-        
-        const opts = [
-            {i:"🍞",t:"Toast Dash",d:"You will be late but look cute doing it."},
-            {i:"🛁",t:"Bath Portal",d:"The tub is a gateway to another world today."},
-            {i:"👽",t:"Alien Signal",d:"Your phone will beep with a message from space."},
-            {i:"💖",t:"Doki Doki",d:"Your senpai might notice you!"},
-            {i:"🍮",t:"Pudding Theft",d:"Someone is eyeing your dessert. Guard it."},
-            {i:"🤧",t:"Sneeze Warning",d:"If you sneeze, something magical happens."},
-            {i:"♨️",t:"Hot Spring Trip",d:"You will soon find relaxation."},
-            {i:"🪄",t:"Transformation",d:"You feel like a magical girl today."},
-            {i:"📚",t:"Homework Doom",d:"You forgot something important!"},
-            {i:"⚔️",t:"Rival Encounter",d:"A friendly rival will challenge you."},
-            {i:"🐱",t:"Neko Ears",d:"You are feeling extra cat-like today."},
-            {i:"💌",t:"Love Letter",d:"Check your shoe locker (or inbox)."},
-            {i:"🏖️",t:"Beach Episode",d:"Sunny vibes are coming your way."}
-        ];
+        const opts = [{i:"🍞",t:"Toast Dash",d:"You will be late!"},{i:"🛁",t:"Bath Portal",d:"Teleport risk high."},{i:"👽",t:"Alien Signal",d:"Check your phone."},{i:"💖",t:"Doki Doki",d:"Love is in the air!"}];
         const res = opts[Math.floor(Math.random()*opts.length)];
         DB.fortune = { date: today, icon: res.i, title: res.t, desc: res.d };
-        localStorage.setItem('v18_fortune', JSON.stringify(DB.fortune));
+        localStorage.setItem('v19_fortune', JSON.stringify(DB.fortune));
         addXP(20);
         renderFData(DB.fortune);
         const card = document.getElementById('fortune-card');
-        card.style.transition = 'transform 0.8s'; 
-        void card.offsetWidth; card.classList.add('flipped');
+        card.style.transition = 'transform 0.8s'; void card.offsetWidth; card.classList.add('flipped');
         showSaveToast();
     }
     function resetFortune() {
         if(confirm("Start a new day?")) {
-            DB.fortune.date = ""; localStorage.setItem('v18_fortune', JSON.stringify(DB.fortune));
+            DB.fortune.date = ""; localStorage.setItem('v19_fortune', JSON.stringify(DB.fortune));
             const card = document.getElementById('fortune-card');
             card.style.transition = 'none'; card.classList.remove('flipped');
         }
@@ -717,10 +794,7 @@
     }
 
     // WISHLIST
-    function toggleWishPanel() {
-        const p = document.getElementById('wish-panel');
-        p.style.display = p.style.display === 'block' ? 'none' : 'block';
-    }
+    function toggleWishPanel() { const p = document.getElementById('wish-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
     function addWish() {
         const n = document.getElementById('wish-name').value;
         const i = document.getElementById('wish-img').value;
@@ -729,39 +803,29 @@
         playSnd('bloop');
         let defaultImg = WISH_ICONS[Math.floor(Math.random()*WISH_ICONS.length)];
         DB.wish.push({name:n, img: i || defaultImg, link: l || "#"});
-        localStorage.setItem('v18_wish', JSON.stringify(DB.wish));
+        localStorage.setItem('v19_wish', JSON.stringify(DB.wish));
         document.getElementById('wish-name').value=""; document.getElementById('wish-img').value=""; document.getElementById('wish-link').value="";
-        toggleWishPanel();
-        renderWish();
-        showSaveToast();
+        toggleWishPanel(); renderWish(); showSaveToast();
     }
     function deleteWish(index) {
         playSnd('bloop');
-        if(confirm("Remove this wish?")) {
+        if(confirm("Remove?")) {
             DB.wish.splice(index, 1);
-            localStorage.setItem('v18_wish', JSON.stringify(DB.wish));
-            renderWish();
-            showSaveToast();
+            localStorage.setItem('v19_wish', JSON.stringify(DB.wish));
+            renderWish(); showSaveToast();
         }
     }
     function renderWish() {
-        const g = document.getElementById('wish-grid');
-        g.innerHTML="";
+        const g = document.getElementById('wish-grid'); g.innerHTML="";
         const backupIcon = "https://cdn-icons-png.flaticon.com/512/3209/3209955.png";
         DB.wish.forEach((w, idx)=>{
-            let content = `
-                <div class="polaroid">
-                    <button class="delete-wish-btn" onclick="event.preventDefault(); deleteWish(${idx})">x</button>
-                    <div class="pin"></div>
-                    <img src="${w.img}" onerror="this.src='${backupIcon}'">
-                    <div style="font-size:0.7rem;margin-top:5px;">${w.name}</div>
-                </div>`;
+            let content = `<div class="polaroid"><button class="delete-wish-btn" onclick="event.preventDefault(); deleteWish(${idx})">x</button><div class="pin"></div><img src="${w.img}" onerror="this.src='${backupIcon}'"><div style="font-size:0.7rem;margin-top:5px;">${w.name}</div></div>`;
             if(w.link && w.link !== "#") { content = `<a href="${w.link}" target="_blank" class="polaroid-link">${content}</a>`; }
             g.innerHTML += content;
         });
     }
 
-    // PET & TASKS
+    // PET
     function renderPet() {
         document.getElementById('hunger-bar').style.width = DB.pet.hunger+"%";
         document.getElementById('pet-msg').innerText = DB.pet.hunger>50 ? "Ebi is happy!" : "Hungry...";
@@ -774,25 +838,22 @@
         checkbox.disabled = true; playSnd('bloop'); DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); addXP(10);
         document.getElementById(`task-${index}`).classList.add('completed');
         setTimeout(() => {
-            DB.pet.tasks.splice(index, 1); localStorage.setItem('v18_pet', JSON.stringify(DB.pet)); renderPet(); showSaveToast();
+            DB.pet.tasks.splice(index, 1); localStorage.setItem('v19_pet', JSON.stringify(DB.pet)); renderPet(); showSaveToast();
         }, 500); 
     }
     function addTask() {
         const v = document.getElementById('task-input').value;
-        if(v) { DB.pet.tasks.push(v); localStorage.setItem('v18_pet', JSON.stringify(DB.pet)); document.getElementById('task-input').value=""; renderPet(); showSaveToast(); }
+        if(v) { DB.pet.tasks.push(v); localStorage.setItem('v19_pet', JSON.stringify(DB.pet)); document.getElementById('task-input').value=""; renderPet(); showSaveToast(); }
     }
 
     // DIARY
     function setMood(m,b) { playSnd('bloop'); mood=m; document.querySelectorAll('.mood-btn').forEach(btn=>btn.classList.remove('selected')); b.classList.add('selected'); }
     function saveDiary() {
-        const t = document.getElementById('diary-text').value;
-        if(!t) return;
+        const t = document.getElementById('diary-text').value; if(!t) return;
         playSnd('spark');
         DB.diary.unshift({d: new Date().toLocaleDateString(), m: mood, t: t});
-        addXP(10);
-        localStorage.setItem('v18_diary', JSON.stringify(DB.diary));
-        document.getElementById('diary-text').value=""; renderDiary();
-        showSaveToast();
+        addXP(10); localStorage.setItem('v19_diary', JSON.stringify(DB.diary));
+        document.getElementById('diary-text').value=""; renderDiary(); showSaveToast();
     }
     function renderDiary() {
         const h = document.getElementById('diary-history'); h.innerHTML="";
