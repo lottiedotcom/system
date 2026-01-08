@@ -30,7 +30,7 @@
         ::-webkit-scrollbar-thumb { background: #ff69b4; border: 2px outset #ff9eb5; }
 
         body {
-            font-family: 'Verdana', 'Tahoma', sans-serif; /* True 2004 Fonts */
+            font-family: 'Verdana', 'Tahoma', sans-serif;
             background-color: var(--bg-light);
             background-image: 
                 radial-gradient(var(--bg-dark) 15%, transparent 16%),
@@ -221,8 +221,18 @@
         .fab-btn { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; background: var(--main); color: white; border-radius: 50%; border: 3px outset white; font-size: 2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100; transition: transform 0.2s; }
         
         .pet-box { background: white; border: 3px ridge var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; }
-        .pet-hat { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 3rem; z-index: 10; pointer-events: none; }
-        .ebi-img { width: 140px; transition: transform 0.2s; }
+        /* FIXED ACCESSORY POS */
+        .pet-hat { 
+            position: absolute; 
+            top: 15px; /* Sits on head */
+            left: 50%; 
+            transform: translateX(-50%); 
+            font-size: 4rem; 
+            z-index: 10; 
+            pointer-events: none;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .ebi-img { width: 140px; transition: transform 0.2s; margin-top:10px; }
         .ebi-img.bounce { animation: bigBounce 0.5s ease; }
         @keyframes bigBounce { 0% {transform:scale(1);} 50% {transform:scale(1.2) translateY(-15px);} 100% {transform:scale(1);} }
         .task-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
@@ -234,8 +244,8 @@
         .gacha-btn:active { border-style: inset; transform: translateY(2px); }
 
         .inventory-grid { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 10px; background: #f0f0f0; padding: 10px; border: 2px inset #ccc; border-radius: 10px; }
-        .inv-item { font-size: 1.5rem; cursor: pointer; padding: 5px; border: 1px solid transparent; border-radius: 5px; }
-        .inv-item:hover { background: white; border-color: #ddd; }
+        .inv-item { font-size: 1.5rem; cursor: pointer; padding: 8px; border: 1px solid #ddd; background: white; border-radius: 5px; min-width: 30px; text-align: center; }
+        .inv-item:hover { background: #e0f7fa; border-color: var(--blue); }
 
         /* DIARY EXPANSION */
         .diary-box { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -343,9 +353,9 @@
                         <span class="dash-icon">🌀</span>
                         <span class="dash-label">Portal</span>
                     </div>
-                    <div class="dash-btn" onclick="saveToRegistry()">
-                        <span class="dash-icon">💾</span>
-                        <span class="dash-label">Save ID</span>
+                    <div class="dash-btn" onclick="openBackpack()">
+                        <span class="dash-icon">🎒</span>
+                        <span class="dash-label">Backpack</span>
                     </div>
                 </div>
 
@@ -399,22 +409,6 @@
                     <div id="pet-bar" style="width:50%; height:100%; background:var(--main); transition:width 0.5s;"></div>
                 </div>
                 <div id="ebi-msg" style="height:20px; font-size:0.7rem; color:#888; margin-bottom:10px;">Do tasks to feed me!</div>
-                
-                <div style="margin-top:15px; border-top:2px dashed #eee; padding-top:10px;">
-                    <div style="font-size:0.8rem; font-weight:bold; color:var(--dark);">Ebi's Gacha Shop</div>
-                    <div style="font-size:0.7rem; color:#666;">Cost: 50 ₵ per pull</div>
-                    
-                    <div class="gacha-btn-group">
-                        <button class="gacha-btn" onclick="playGacha('cute')">🎀 Cute</button>
-                        <button class="gacha-btn" onclick="playGacha('dark')">🕸️ Dark</button>
-                        <button class="gacha-btn" onclick="playGacha('nature')">🍄 Nature</button>
-                    </div>
-
-                    <div style="margin-top:10px; font-size:0.7rem; font-weight:bold;">Your Inventory:</div>
-                    <div class="inventory-grid" id="inv-grid">
-                        <span class="inv-item" onclick="setHat('')">❌</span>
-                        </div>
-                </div>
             </div>
             <div style="margin-bottom:10px;">
                 <strong>To Do List</strong>
@@ -462,6 +456,28 @@
                 <button class="btn-main" onclick="addProfile()">Create</button>
             </div>
             <button class="btn-main" style="background:#ccc; margin-top:10px;" onclick="closeModals()">Close</button>
+        </div>
+    </div>
+
+    <div id="modal-backpack" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-top:0; color:var(--main);">🎒 Ebi's Backpack</h3>
+            
+            <div style="background:#f9f9f9; border:2px inset #eee; padding:10px; border-radius:10px; margin-bottom:15px;">
+                <div style="font-size:0.8rem; font-weight:bold; color:var(--dark);">Gacha Shop (50 ₵)</div>
+                <div class="gacha-btn-group">
+                    <button class="gacha-btn" onclick="playGacha('cute')">🎀 Cute</button>
+                    <button class="gacha-btn" onclick="playGacha('dark')">🕸️ Dark</button>
+                    <button class="gacha-btn" onclick="playGacha('nature')">🍄 Nature</button>
+                </div>
+            </div>
+
+            <div style="font-size:0.8rem; font-weight:bold;">Inventory (Click to equip):</div>
+            <div class="inventory-grid" id="inv-grid">
+                <span class="inv-item" onclick="setHat('')">❌</span>
+                </div>
+
+            <button class="btn-main" style="background:#ccc; margin-top:15px;" onclick="closeModals()">Close</button>
         </div>
     </div>
 
@@ -513,7 +529,6 @@
 
 <script>
     // --- PROXIED AVATAR LINKS (FIXED) ---
-    // Using weserv.nl proxy to bypass 403 Forbidden errors
     const AVATARS = [
         "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg", 
         "https://images.weserv.nl/?url=static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png",
@@ -557,20 +572,26 @@
     let DB = {
         profiles: [], activeIdx: 0, xp: 0, credits: 0, lvl: 1,
         wish: [], pet: {hunger:50, tasks:[], lastTask: Date.now()}, 
-        inventory: [], // Stores unlocked hats
+        inventory: [], 
         bbs: [], frontLog: [], diary: [], links: [],
         fortune: {date:'', i:'', t:'', d:''}
     };
     let mood = '😊';
 
+    // --- SAVE REMINDER (BROWSER POPUP) ---
+    window.addEventListener('beforeunload', (event) => {
+        event.preventDefault();
+        event.returnValue = ''; 
+    });
+
     // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v39'); // Updated Version
+        const saved = localStorage.getItem('seiren_v40'); // Updated Version
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v38') || localStorage.getItem('seiren_v37'));
+            const old = JSON.parse(localStorage.getItem('seiren_v39') || localStorage.getItem('seiren_v38'));
             if(old) { DB = old; save(); }
         }
         
@@ -607,7 +628,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v39', JSON.stringify(DB));
+        localStorage.setItem('seiren_v40', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -675,8 +696,11 @@
             document.getElementById('id-hair').innerText = u.hair;
             document.getElementById('id-hgt').innerText = u.hgt;
             document.getElementById('id-wgt').innerText = u.wgt;
+            
             const avIndex = (u.av || 0) % AVATARS.length;
-            document.getElementById('id-pic').src = AVATARS[avIndex];
+            // Add a time param to force refresh if stuck
+            document.getElementById('id-pic').src = AVATARS[avIndex] + "?t=" + Date.now(); 
+            
             document.getElementById('my-sig').innerText = u.name;
             document.getElementById('ebi-hat').innerText = u.hat || "";
         }
@@ -689,7 +713,7 @@
         document.getElementById('xp-bar').style.width = DB.xp + "%";
         document.getElementById('credit-val').innerText = DB.credits;
 
-        // INVENTORY RENDER
+        // INVENTORY RENDER (IN BACKPACK)
         const invGrid = document.getElementById('inv-grid');
         while(invGrid.children.length > 1) { invGrid.removeChild(invGrid.lastChild); }
         DB.inventory.forEach(item => {
@@ -740,7 +764,7 @@
         const maxIndex = Math.min(DB.lvl, AVATARS.length - 1);
         let nextAv = u.av + 1;
         if(nextAv > maxIndex) {
-            nextAv = 0; // Loop back
+            nextAv = 0; 
             if(maxIndex < AVATARS.length - 1) {
                 alert(`LOCKED: Reach Level ${nextAv + 1} to unlock this avatar!`);
             }
@@ -777,9 +801,8 @@
         DB.frontLog.unshift({ name: user.realName, time: time });
         if(DB.frontLog.length > 20) DB.frontLog.pop();
         
-        // REWARD FOR SWITCHING
-        addXP(10); // +10 XP
-        DB.credits += 10; // +10 Credits (Bonus)
+        addXP(10); 
+        DB.credits += 10; 
         alert("Switched! +10 Credits earned.");
         
         applyTheme(user); save(); closeModals(); refreshUI();
@@ -820,8 +843,7 @@
         const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
         DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
         
-        // REWARD FOR FORTUNE
-        addXP(50); // +50 Credits!
+        addXP(50); 
         alert("Fortune Read! +50 Credits earned.");
         
         save();
@@ -853,7 +875,12 @@
         document.getElementById('bbs-input').value=""; save(); refreshUI();
     }
 
-    // --- PET LOGIC ---
+    // --- BACKPACK & PET LOGIC ---
+    function openBackpack() {
+        document.getElementById('modal-backpack').style.display='flex';
+        refreshUI(); // Ensure inventory renders
+    }
+
     function playGacha(type) {
         if(DB.credits < 50) { alert("Need 50 Credits! (Earn by doing tasks/diary)"); return; }
         
@@ -960,10 +987,6 @@
         addXP(10); 
         triggerFeedReward(); 
         save(); refreshUI(); 
-    }
-
-    function saveToRegistry() { 
-        alert("This ID Card has been saved to your local storage!"); 
     }
 
     // --- SOUND ---
