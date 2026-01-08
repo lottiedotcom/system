@@ -10,12 +10,11 @@
     
     <title>Seiren OS</title>
     <link rel="manifest" href="manifest.json">
-    
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
 
     <style>
-        /* --- 2004 MOE AESTHETIC --- */
+        /* --- CORE AESTHETICS --- */
         :root {
             --pink: #ff69b4;
             --pastel-pink: #ffe4e1;
@@ -39,45 +38,52 @@
             height: 100vh;
             overflow: hidden;
             color: var(--text);
-            /* Prevent scrolling on body, only inside content */
             overscroll-behavior: none;
         }
 
-        /* WELCOME SCREEN */
+        /* 1. WELCOME SCREEN (STARTUP) */
         #welcome-screen {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, #ffc0cb, #e6e6fa);
-            z-index: 9999; display: flex; flex-direction: column;
+            z-index: 9999; 
+            display: flex; /* Flex by default */
+            flex-direction: column;
             align-items: center; justify-content: center;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.5s ease;
         }
         .welcome-box {
-            background: rgba(255,255,255,0.85); padding: 40px; border-radius: 30px;
-            border: 4px solid white; box-shadow: 0 0 30px rgba(255, 105, 180, 0.6);
+            background: rgba(255,255,255,0.9); padding: 40px; border-radius: 30px;
+            border: 5px solid white; box-shadow: 0 0 40px rgba(255, 105, 180, 0.6);
             text-align: center; backdrop-filter: blur(5px);
+            animation: float 3s ease-in-out infinite;
         }
+        @keyframes float { 0% {transform: translateY(0px);} 50% {transform: translateY(-10px);} 100% {transform: translateY(0px);} }
+        
         .enter-btn {
             background: linear-gradient(90deg, var(--pink), var(--blue));
-            color: white; border: none; padding: 15px 40px; border-radius: 50px;
-            font-size: 1.2rem; font-weight: bold; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); animation: pulse 2s infinite; margin-top: 20px;
+            color: white; border: none; padding: 15px 50px; border-radius: 50px;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+            transition: transform 0.2s;
         }
-        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
+        .enter-btn:active { transform: scale(0.95); }
 
-        /* MAIN APP SHELL */
+        /* 2. MAIN APP SHELL (HIDDEN AT START) */
         .app-shell {
             width: 100%; max-width: 480px;
             background: var(--glass);
-            display: flex; flex-direction: column;
+            display: none; /* HIDDEN INITIALLY */
+            flex-direction: column;
             position: relative; height: 100%;
             box-shadow: 0 0 30px rgba(255, 105, 180, 0.4);
             z-index: 10; opacity: 0; transition: opacity 0.5s;
         }
 
+        /* GLOBAL STYLES */
         .scanlines {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.03) 50%);
-            background-size: 100% 3px; pointer-events: none; z-index: 999;
+            background-size: 100% 3px; pointer-events: none; z-index: 998;
         }
 
         .marquee-container {
@@ -119,6 +125,7 @@
             width: 80px; height: 80px; border-radius: 50%; border: 4px solid white; 
             outline: 3px solid var(--blue); object-fit: cover; background: white;
         }
+        .id-data { flex: 1; }
         .id-main-name { font-size: 1.4rem; font-weight: bold; color: var(--deep-pink); line-height: 1; }
         .id-sub-name { font-size: 0.7rem; color: #888; font-style: italic; margin-bottom: 8px; }
         .id-stats-grid {
@@ -203,13 +210,16 @@
             text-align: center; transform: rotate(-2deg); transition: 0.2s; position: relative;
         }
         .polaroid:nth-child(even) { transform: rotate(2deg); }
+        .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
         .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; border: 1px solid #ccc; }
+        .polaroid-link { text-decoration: none; color: inherit; display: block; }
         .delete-wish-btn {
             position: absolute; top: -8px; right: -8px; width: 22px; height: 22px;
             background: #ff4d4d; color: white; border: 2px solid white; border-radius: 50%;
             font-size: 14px; font-weight: bold; cursor: pointer; display: flex; 
             align-items: center; justify-content: center; z-index: 20; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
+        
         .fab-btn {
             position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px;
             background: var(--pink); color: white; border-radius: 50%; border: 3px solid white;
@@ -222,6 +232,17 @@
             padding: 15px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 99; animation: slideUp 0.3s;
         }
         @keyframes slideUp { from {transform: translateY(20px); opacity:0;} to {transform: translateY(0); opacity:1;} }
+
+        .pet-box { background: white; border: 3px solid var(--pink); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; }
+        .ebi-img { width: 120px; animation: bounce 2s infinite; filter: drop-shadow(0 5px 0 rgba(0,0,0,0.1)); }
+        @keyframes bounce { 0%, 100% {transform:translateY(0);} 50% {transform:translateY(-5px);} }
+        .task-item { background: white; padding: 12px; margin-bottom: 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; }
+        .task-item.completed { text-decoration: line-through; color: #aaa; opacity: 0; transform: translateX(50px); transition: all 0.4s; }
+
+        .diary-box { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .mood-bar { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 50%; width: 40px; height: 40px; border: 2px solid transparent; cursor: pointer; }
+        .mood-btn.selected { background: var(--pastel-pink); border-color: var(--pink); transform: scale(1.1); }
 
         /* UI HELPER */
         input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family:inherit; margin-bottom: 5px; }
@@ -238,7 +259,6 @@
         }
         .toast.show { opacity: 1; top: 30px; }
 
-        /* NAV */
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-top: 3px solid var(--pink);
@@ -253,9 +273,10 @@
 </head>
 <body>
 
+<div class="scanlines"></div>
 <div id="toast" class="toast">💾 Saved!</div>
 
-<div id="welcome-screen" style="display:none;">
+<div id="welcome-screen">
     <div class="welcome-box">
         <div style="font-size:2rem; color:#d12e87; font-weight:bold; text-transform:uppercase; letter-spacing:2px;">SEIREN OS</div>
         <div style="font-size:4rem; margin:20px 0;">🎀</div>
@@ -267,7 +288,7 @@
 <div class="app-shell" id="app-shell">
     <div class="marquee-container">
         <div class="marquee-text">
-            ★ SEIREN OS v20.0 ★ OFFICIAL CITIZEN SYSTEM ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
+            ★ SEIREN OS v21.0 ★ OFFICIAL CITIZEN SYSTEM ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
         </div>
     </div>
 
@@ -284,6 +305,7 @@
             </div>
 
             <div id="id-display" style="display:none;">
+                
                 <div class="xp-box">
                     <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:var(--blue);">
                         <span>Level <span id="lvl-num">1</span></span>
@@ -378,7 +400,6 @@
                 </div>
                 <p id="pet-msg" style="font-size:0.8rem; color:#888; margin-top:5px;">Feed me snacks!</p>
             </div>
-            
             <h3>My Tasks</h3>
             <div style="display:flex; gap:10px; margin-bottom:15px;">
                 <input type="text" id="task-input" placeholder="New Task...">
@@ -472,7 +493,6 @@
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
 
-    // === DATA STORE ===
     const DB = {
         profiles: JSON.parse(localStorage.getItem('v20_profiles')) || [null, null, null, null, null],
         activeSlot: parseInt(localStorage.getItem('v20_activeSlot')) || 0,
@@ -494,39 +514,41 @@
     }
 
     function init() {
-        // MIGRATION V19 -> V20
-        const oldProfiles = JSON.parse(localStorage.getItem('v19_profiles'));
-        if(oldProfiles && !DB.profiles[0]) {
-            DB.profiles = oldProfiles;
+        // MIGRATION FROM V19
+        const oldP = JSON.parse(localStorage.getItem('v19_profiles'));
+        if(oldP && !DB.profiles[0]) {
+            DB.profiles = oldP;
             DB.activeSlot = parseInt(localStorage.getItem('v19_activeSlot')) || 0;
             localStorage.setItem('v20_profiles', JSON.stringify(DB.profiles));
         }
 
-        // Logic for Welcome Screen
-        const hasUser = DB.profiles.some(p => p !== null);
-        if(hasUser) {
-            document.getElementById('welcome-screen').style.display = 'flex';
-        } else {
-            // First time user: Skip welcome, show setup
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('app-shell').style.opacity = '1';
-            document.getElementById('setup-screen').style.display = 'block';
-        }
+        // Logic handled in enterApp() mainly, init just sets up data
+        // If user already exists, they wait at welcome screen.
+        // If NO user exists at all, we can skip welcome or just show setup inside app.
     }
 
+    // MAIN ENTRY POINT
     function enterApp() {
         playSnd('spark');
+        // Hide Welcome
         document.getElementById('welcome-screen').style.opacity = '0';
         setTimeout(() => {
             document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('app-shell').style.opacity = '1';
-            // Ensure ID is rendered if user exists
-            if(DB.profiles[DB.activeSlot]) {
-                renderID(); checkFortune(); updateXP(); 
-                renderWish(); renderPet(); renderDiary();
-            } else {
-                document.getElementById('setup-screen').style.display = 'block';
-            }
+            document.getElementById('app-shell').style.display = 'flex';
+            // Trigger reflow for transition
+            setTimeout(() => {
+                document.getElementById('app-shell').style.opacity = '1';
+                
+                // Check if we need setup
+                const hasUser = DB.profiles.some(p => p !== null);
+                if(hasUser) {
+                    document.getElementById('id-display').style.display = 'block';
+                    renderID(); checkFortune(); updateXP(); 
+                    renderWish(); renderPet(); renderDiary();
+                } else {
+                    document.getElementById('setup-screen').style.display = 'block';
+                }
+            }, 50);
         }, 500);
     }
 
@@ -626,14 +648,7 @@
         DB.profiles.forEach((p, idx) => {
             if(p) {
                 const isActive = idx === DB.activeSlot ? 'active-slot' : '';
-                list.innerHTML += `
-                    <div class="slot-card ${isActive}">
-                        <div class="slot-info"><div class="slot-name">Slot ${idx+1}: ${p.name}</div><div>${p.realName}</div></div>
-                        <div class="slot-actions">
-                            ${idx !== DB.activeSlot ? `<button class="slot-btn btn-switch" onclick="switchProfile(${idx})">Switch</button>` : ''}
-                            <button class="slot-btn btn-del" onclick="deleteProfile(${idx})">x</button>
-                        </div>
-                    </div>`;
+                list.innerHTML += `<div class="slot-card ${isActive}"><div class="slot-info"><div class="slot-name">Slot ${idx+1}: ${p.name}</div><div>${p.realName}</div></div><div class="slot-actions">${idx !== DB.activeSlot ? `<button class="slot-btn btn-switch" onclick="switchProfile(${idx})">Switch</button>` : ''}<button class="slot-btn btn-del" onclick="deleteProfile(${idx})">x</button></div></div>`;
             } else {
                 list.innerHTML += `<div class="slot-card" style="border-style:dashed;justify-content:center;"><button class="slot-btn" onclick="createNewProfile(${idx})">+ New Profile</button></div>`;
             }
@@ -647,7 +662,6 @@
         const user = DB.profiles[DB.activeSlot];
         if(!user) return; 
 
-        document.getElementById('id-display').style.display='block';
         document.getElementById('my-name').innerText = user.name;
         document.getElementById('my-realname').innerText = "aka " + user.realName;
         document.getElementById('my-sig').innerText = user.name;
@@ -701,11 +715,7 @@
         list.innerHTML = "";
         if(DB.registry.length === 0) list.innerHTML = "<p style='text-align:center;color:#aaa;'>Empty.</p>";
         DB.registry.forEach((entry, idx) => {
-            list.innerHTML += `
-                <div class="reg-item">
-                    <div><div style="font-weight:bold;color:var(--pink);">${entry.name}</div><div style="font-size:0.7rem;">${entry.realName} (${entry.age})</div></div>
-                    <div style="display:flex;align-items:center;gap:5px;"><div style="background:var(--blue);color:white;padding:2px 6px;border-radius:10px;font-size:0.6rem;">${entry.type}</div><span class="reg-del" onclick="removeRegistryItem(${idx})">x</span></div>
-                </div>`;
+            list.innerHTML += `<div class="reg-item"><div><div style="font-weight:bold;color:var(--pink);">${entry.name}</div><div style="font-size:0.7rem;">${entry.realName} (${entry.age})</div></div><div style="display:flex;align-items:center;gap:5px;"><div style="background:var(--blue);color:white;padding:2px 6px;border-radius:10px;font-size:0.6rem;">${entry.type}</div><span class="reg-del" onclick="removeRegistryItem(${idx})">x</span></div></div>`;
         });
         document.getElementById('registry-modal').style.display = 'flex';
     }
@@ -793,7 +803,7 @@
         });
     }
 
-    // PET
+    // PET & TASKS
     function renderPet() {
         document.getElementById('hunger-bar').style.width = DB.pet.hunger+"%";
         document.getElementById('pet-msg').innerText = DB.pet.hunger>50 ? "Ebi is happy!" : "Hungry...";
@@ -836,6 +846,7 @@
         btn.classList.add('active');
     }
 
+    // LOAD
     init();
     if('serviceWorker' in navigator) window.addEventListener('load', ()=>navigator.serviceWorker.register('./sw.js'));
 </script>
