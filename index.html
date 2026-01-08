@@ -7,7 +7,8 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ff69b4">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3461/3461877.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/9373/9373479.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/9373/9373479.png">
 
     <style>
         /* --- 2004 MOE AESTHETIC --- */
@@ -77,7 +78,7 @@
             background: linear-gradient(135deg, #fceaf3 0%, #e6e6fa 100%);
             border: 2px solid var(--pink); border-radius: 12px;
             padding: 5px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
-            margin-bottom: 25px; position: relative; overflow: hidden;
+            margin-bottom: 15px; position: relative; overflow: hidden;
         }
         .id-card-wrap::after {
             content: ""; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
@@ -96,12 +97,6 @@
         .id-body { display: flex; gap: 12px; margin-top: 5px; }
         .id-photo-zone { width: 90px; }
         .id-photo { width: 90px; height: 110px; background: #eee; border: 2px solid var(--blue); object-fit: cover; border-radius: 6px; }
-        .id-stamp {
-            width: 60px; height: 60px; border: 3px double var(--pink); border-radius: 50%;
-            color: var(--pink); position: absolute; bottom: 10px; right: 10px;
-            font-size: 0.6rem; font-weight: bold; display: flex; align-items: center; 
-            justify-content: center; text-align: center; transform: rotate(-15deg); opacity: 0.6;
-        }
         .id-data { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .id-main-name { font-size: 1.1rem; font-weight: bold; color: #d12e87; text-transform: uppercase; line-height: 1.1; }
         .id-sub-name { font-size: 0.7rem; color: #888; margin-bottom: 5px; }
@@ -110,17 +105,33 @@
         .id-val { color: #555; }
         .id-barcode { height: 20px; background: repeating-linear-gradient(90deg, #333 0px, #333 2px, transparent 2px, transparent 4px); margin-top: 5px; opacity: 0.8; }
 
+        /* REGISTRY BOOK MODAL */
+        .registry-btn-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .icon-btn { 
+            background: white; border: 2px solid var(--pink); border-radius: 50%; width: 45px; height: 45px;
+            font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 4px 0 #ffc0cb; transition: 0.1s;
+        }
+        .icon-btn:active { transform: translateY(4px); box-shadow: none; }
+        
+        .modal-overlay {
+            position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); z-index: 50;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: white; width: 85%; max-width: 400px; border-radius: 15px; border: 4px solid var(--pink);
+            padding: 15px; max-height: 80vh; overflow-y: auto; animation: popIn 0.3s;
+        }
+        .reg-item {
+            border-bottom: 1px dashed #ccc; padding: 10px 0; display: flex; justify-content: space-between; align-items: center;
+        }
+        .reg-info { font-size: 0.8rem; }
+        .reg-name { font-weight: bold; color: var(--blue); }
+
         /* XP BAR */
-        .xp-box { background: white; padding: 10px; border-radius: 12px; margin-bottom: 10px; border: 2px solid var(--blue); text-align: center; }
+        .xp-box { background: white; padding: 10px; border-radius: 12px; margin-bottom: 20px; border: 2px solid var(--blue); text-align: center; }
         .xp-track { height: 8px; background: #eee; border-radius: 4px; margin-top: 5px; overflow: hidden; }
         .xp-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #00bfff); width: 0%; transition: width 0.5s; }
-
-        /* TROPHY SHELF */
-        .trophy-shelf {
-            background: #fff0f5; border: 2px dashed #ffb7b2; border-radius: 10px;
-            padding: 10px; margin-bottom: 20px; min-height: 40px; display: flex; gap: 5px; flex-wrap: wrap;
-        }
-        .trophy { font-size: 1.5rem; background: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); cursor: help; }
 
         /* === 2. FORTUNE CARD === */
         .fortune-stage { perspective: 1000px; width: 160px; height: 220px; margin: 0 auto; cursor: pointer; }
@@ -145,10 +156,9 @@
         /* === 3. WISHLIST === */
         .corkboard {
             background: #e6d7c3; border: 5px solid #8b5a2b; border-radius: 10px; padding: 15px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.1); min-height: 400px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1); min-height: 500px; position: relative;
         }
         .wish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .polaroid-link { text-decoration: none; color: inherit; display: block; }
         .polaroid {
             background: white; padding: 6px 6px 20px 6px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
             text-align: center; transform: rotate(-2deg); transition: 0.2s; position: relative;
@@ -156,13 +166,27 @@
         .polaroid:nth-child(even) { transform: rotate(2deg); }
         .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
         .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; border: 1px solid #ccc; }
-        .pin { width: 10px; height: 10px; border-radius: 50%; background: red; margin: -10px auto 5px auto; box-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
         .delete-wish-btn {
             position: absolute; top: -5px; right: -5px; width: 20px; height: 20px;
             background: red; color: white; border: 2px solid white; border-radius: 50%;
             font-size: 12px; font-weight: bold; cursor: pointer; display: flex; 
             align-items: center; justify-content: center; z-index: 20;
         }
+        
+        /* Floating Wish Button & Panel */
+        .fab-btn {
+            position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px;
+            background: var(--pink); color: white; border-radius: 50%; border: 3px solid white;
+            font-size: 2rem; font-weight: bold; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100;
+        }
+        .wish-panel {
+            position: absolute; bottom: 90px; right: 20px; left: 20px;
+            background: white; border: 2px solid var(--blue); border-radius: 15px;
+            padding: 15px; display: none; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 99;
+            animation: slideUp 0.3s;
+        }
+        @keyframes slideUp { from {transform: translateY(20px); opacity:0;} to {transform: translateY(0); opacity:1;} }
 
         /* === 4. EBI PET === */
         .pet-box {
@@ -196,15 +220,7 @@
         .btn-main:active { transform: translateY(4px); box-shadow: none; }
         .btn-sm { width: auto; display: inline-block; padding: 8px 15px; }
 
-        /* TOAST NOTIFICATION */
-        .toast {
-            position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.7); color: white; padding: 8px 15px;
-            border-radius: 20px; font-size: 0.8rem; pointer-events: none;
-            opacity: 0; transition: 0.3s; z-index: 9999;
-        }
-        .toast.show { opacity: 1; top: 70px; }
-
+        /* NAV */
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-top: 3px solid var(--pink);
@@ -220,12 +236,11 @@
 <body>
 
 <div class="scanlines"></div>
-<div id="toast" class="toast">💾 Saving...</div>
 
 <div class="app-shell">
     <div class="marquee-container">
         <div class="marquee-text">
-            ★ SEIREN OS v14.0 ★ SYSTEM ONLINE ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
+            ★ SEIREN OS v15.0 ★ OFFICIAL CITIZEN SYSTEM ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
         </div>
     </div>
 
@@ -249,10 +264,6 @@
                     </div>
                     <div class="xp-track"><div id="xp-bar" class="xp-fill"></div></div>
                 </div>
-
-                <div style="font-size:0.7rem; color:#aaa; margin-left:5px;">TROPHIES</div>
-                <div class="trophy-shelf" id="trophy-shelf">
-                    </div>
 
                 <div class="id-card-wrap">
                     <div class="id-inner">
@@ -280,8 +291,12 @@
                             </div>
                         </div>
                         <div class="id-barcode"></div>
-                        <div class="id-stamp">SEIREN<br>PASSED</div>
                     </div>
+                </div>
+
+                <div class="registry-btn-row" style="justify-content:center;">
+                    <button class="icon-btn" onclick="saveToRegistry()" title="Save Current ID to Book">💾</button>
+                    <button class="icon-btn" onclick="openRegistry()" title="Open Registry Book">📖</button>
                 </div>
 
                 <div style="text-align:center; margin-top:30px;">
@@ -305,13 +320,18 @@
 
         <div id="tab-wish" class="page">
             <h2 style="color:var(--blue);">My Wishlist</h2>
-            <div style="background:white; padding:15px; border-radius:15px; margin-bottom:15px;">
-                <input type="text" id="wish-name" placeholder="Item Name">
-                <input type="text" id="wish-img" placeholder="Image Link (Pinterest/Google)">
-                <input type="text" id="wish-link" placeholder="Item Link (Where to buy)">
-                <button class="btn-main" onclick="addWish()">Pin It!</button>
+            <div class="corkboard">
+                <div id="wish-grid" class="wish-grid"></div>
+                
+                <button class="fab-btn" onclick="toggleWishPanel()">+</button>
+                <div class="wish-panel" id="wish-panel">
+                    <strong style="color:var(--pink);">New Wish</strong>
+                    <input type="text" id="wish-name" placeholder="Item Name">
+                    <input type="text" id="wish-img" placeholder="Image Link (Optional)">
+                    <input type="text" id="wish-link" placeholder="Link to Buy (Optional)">
+                    <button class="btn-main" onclick="addWish()">Pin It!</button>
+                </div>
             </div>
-            <div class="corkboard"><div id="wish-grid" class="wish-grid"></div></div>
         </div>
 
         <div id="tab-pet" class="page">
@@ -349,6 +369,15 @@
 
     </div>
 
+    <div class="modal-overlay" id="registry-modal" onclick="closeRegistry(event)">
+        <div class="modal-box">
+            <h2 style="color:var(--pink); margin-top:0;">📖 Registry Book</h2>
+            <div id="registry-list">
+                </div>
+            <button class="btn-main" onclick="document.getElementById('registry-modal').style.display='none'">Close</button>
+        </div>
+    </div>
+
     <nav>
         <button class="nav-btn active" onclick="nav('home', this)"><span>🏠</span>Home</button>
         <button class="nav-btn" onclick="nav('wish', this)"><span>📌</span>Wishes</button>
@@ -371,10 +400,8 @@
         "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png/revision/latest?cb=20230827221913"
     ];
     
-    // === WISH FALLBACK ICONS ===
     const WISH_ICONS = ["https://cdn-icons-png.flaticon.com/512/3209/3209955.png", "https://cdn-icons-png.flaticon.com/512/2855/2855734.png", "https://cdn-icons-png.flaticon.com/512/2763/2763268.png", "https://cdn-icons-png.flaticon.com/512/2763/2763444.png", "https://cdn-icons-png.flaticon.com/512/2965/2965228.png"];
 
-    // === AUDIO ENGINE ===
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSnd(type) {
         if(audioCtx.state === 'suspended') audioCtx.resume();
@@ -390,78 +417,44 @@
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
 
-    // === DATA ===
     const DB = {
-        user: JSON.parse(localStorage.getItem('v14_user')) || null,
-        wish: JSON.parse(localStorage.getItem('v14_wish')) || [],
-        pet: JSON.parse(localStorage.getItem('v14_pet')) || { hunger: 50, tasks: ['Drink Water'] },
-        diary: JSON.parse(localStorage.getItem('v14_diary')) || [],
-        fortune: JSON.parse(localStorage.getItem('v14_fortune')) || { date: '', icon: '', title: '', desc: '' },
-        xp: parseInt(localStorage.getItem('v14_xp')) || 0,
-        lvl: parseInt(localStorage.getItem('v14_lvl')) || 1,
-        trophies: JSON.parse(localStorage.getItem('v14_trophies')) || []
+        user: JSON.parse(localStorage.getItem('v15_user')) || null,
+        wish: JSON.parse(localStorage.getItem('v15_wish')) || [],
+        pet: JSON.parse(localStorage.getItem('v15_pet')) || { hunger: 50, tasks: ['Drink Water'] },
+        diary: JSON.parse(localStorage.getItem('v15_diary')) || [],
+        fortune: JSON.parse(localStorage.getItem('v15_fortune')) || { date: '', icon: '', title: '', desc: '' },
+        registry: JSON.parse(localStorage.getItem('v15_registry')) || [],
+        xp: parseInt(localStorage.getItem('v15_xp')) || 0,
+        lvl: parseInt(localStorage.getItem('v15_lvl')) || 1
     };
     let mood = '😊';
 
     function init() {
-        if(DB.user) { 
-            // Migration
-            if(!DB.user.eyes) {
-                const seed = DB.user.name.length;
-                DB.user.eyes = ["Pink", "Blue", "Red", "Gold", "Purple"][seed%5];
-                DB.user.hair = ["Twin-tails", "Long", "Bob", "Drills"][seed%4];
-                DB.user.wgt = ["3 Apples", "5 Mochis", "40kg", "Feather"][seed%4];
-                localStorage.setItem('v14_user', JSON.stringify(DB.user));
-            }
-            renderID(); checkFortune(); updateXP(); renderTrophies();
-        } 
+        if(DB.user) { renderID(); checkFortune(); updateXP(); } 
         else { document.getElementById('setup-screen').style.display='block'; }
         renderWish(); renderPet(); renderDiary();
     }
 
-    // XP & TITLES
+    // XP
     function addXP(n) {
         DB.xp += n;
-        if(DB.xp >= 100) { DB.xp -= 100; DB.lvl++; playSnd('spark'); alert("LEVEL UP! New Title Unlocked!"); }
-        localStorage.setItem('v14_xp', DB.xp); localStorage.setItem('v14_lvl', DB.lvl);
+        if(DB.xp >= 100) { DB.xp -= 100; DB.lvl++; playSnd('spark'); alert("LEVEL UP!"); }
+        localStorage.setItem('v15_xp', DB.xp); localStorage.setItem('v15_lvl', DB.lvl);
         updateXP();
-        saveToast();
     }
     function updateXP() {
         document.getElementById('lvl-num').innerText = DB.lvl;
         document.getElementById('xp-val').innerText = DB.xp;
         document.getElementById('xp-bar').style.width = DB.xp + "%";
-        
-        // Titles based on Level
         let title = "Resident";
-        if(DB.lvl >= 3) title = "Traveler";
-        if(DB.lvl >= 5) title = "Guardian";
-        if(DB.lvl >= 10) title = "Royalty";
+        if(DB.lvl >= 3) title = "Traveler"; if(DB.lvl >= 5) title = "Guardian"; if(DB.lvl >= 10) title = "Royalty";
         document.getElementById('my-rank').innerText = title;
-    }
-    function addTrophy(icon) {
-        if(!DB.trophies.includes(icon)) {
-            DB.trophies.push(icon);
-            localStorage.setItem('v14_trophies', JSON.stringify(DB.trophies));
-            renderTrophies();
-            alert("New Trophy Unlocked: " + icon);
-        }
-    }
-    function renderTrophies() {
-        const shelf = document.getElementById('trophy-shelf');
-        shelf.innerHTML = DB.trophies.map(t => `<div class="trophy">${t}</div>`).join('');
-    }
-
-    // UTILS
-    function saveToast() {
-        const t = document.getElementById('toast');
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 1500);
     }
 
     // ID
     function createProfile() {
         const name = document.getElementById('setup-name').value;
+        const age = document.getElementById('setup-age').value;
         if(!name) return;
         playSnd('bloop');
         const seed = name.length;
@@ -470,14 +463,14 @@
         const sName = pres[seed % pres.length] + sufs[(seed*3) % sufs.length];
 
         DB.user = {
-            name: sName, realName: name, avatarIdx: 0,
+            name: sName, realName: name, age: age || "?", avatarIdx: 0,
             type: ["Tsundere", "Dojikko", "Alien", "Idol"][seed % 4],
             id: Math.floor(Math.random()*9000)+1000,
             eyes: ["Pink", "Blue", "Red", "Gold", "Purple"][seed%5],
             hair: ["Twin-tails", "Long", "Bob", "Drills"][seed%4],
             wgt: ["3 Apples", "5 Mochis", "40kg", "Feather"][seed%4]
         };
-        localStorage.setItem('v14_user', JSON.stringify(DB.user));
+        localStorage.setItem('v15_user', JSON.stringify(DB.user));
         document.getElementById('setup-screen').style.display='none';
         renderID();
     }
@@ -498,11 +491,41 @@
         if(DB.lvl < 2 && DB.user.avatarIdx === 0) return alert("Level up to unlock avatars!");
         const limit = Math.min(DB.lvl + 1, AVATARS.length);
         DB.user.avatarIdx = (DB.user.avatarIdx + 1) % limit;
-        localStorage.setItem('v14_user', JSON.stringify(DB.user));
+        localStorage.setItem('v15_user', JSON.stringify(DB.user));
         renderID();
     }
 
-    // FORTUNE
+    // REGISTRY
+    function saveToRegistry() {
+        playSnd('bloop');
+        DB.registry.unshift({...DB.user}); // Clone current ID
+        localStorage.setItem('v15_registry', JSON.stringify(DB.registry));
+        alert("ID Saved to Registry!");
+    }
+    function openRegistry() {
+        playSnd('bloop');
+        const list = document.getElementById('registry-list');
+        list.innerHTML = "";
+        if(DB.registry.length === 0) list.innerHTML = "<p style='text-align:center;color:#aaa;'>Book is empty.</p>";
+        
+        DB.registry.forEach((entry, idx) => {
+            list.innerHTML += `
+                <div class="reg-item">
+                    <div class="reg-info">
+                        <div class="reg-name">${entry.name}</div>
+                        <div>${entry.realName} (Age: ${entry.age})</div>
+                    </div>
+                    <div class="stat-badge">${entry.type}</div>
+                </div>
+            `;
+        });
+        document.getElementById('registry-modal').style.display = 'flex';
+    }
+    function closeRegistry(e) {
+        if(e.target.id === 'registry-modal') e.target.style.display = 'none';
+    }
+
+    // FORTUNE (13 TYPES)
     function checkFortune() {
         const today = new Date().toDateString();
         const card = document.getElementById('fortune-card');
@@ -510,9 +533,7 @@
             renderFData(DB.fortune);
             card.classList.add('flipped');
             card.style.transition = 'none';
-        } else {
-            card.classList.remove('flipped');
-        }
+        } else { card.classList.remove('flipped'); }
     }
     function flipFortune() {
         const today = new Date().toDateString();
@@ -523,28 +544,31 @@
             {i:"🍞",t:"Toast Dash",d:"You will be late but look cute doing it."},
             {i:"🛁",t:"Bath Portal",d:"The tub is a gateway to another world today."},
             {i:"👽",t:"Alien Signal",d:"Your phone will beep with a message from space."},
-            {i:"💖",t:"Doki Doki",d:"Your senpai might notice you!"}
+            {i:"💖",t:"Doki Doki",d:"Your senpai might notice you!"},
+            {i:"🍮",t:"Pudding Theft",d:"Someone is eyeing your dessert. Guard it."},
+            {i:"🤧",t:"Sneeze Warning",d:"If you sneeze, something magical happens."},
+            {i:"♨️",t:"Hot Spring Trip",d:"You will soon find relaxation."},
+            {i:"🪄",t:"Transformation",d:"You feel like a magical girl today."},
+            {i:"📚",t:"Homework Doom",d:"You forgot something important!"},
+            {i:"⚔️",t:"Rival Encounter",d:"A friendly rival will challenge you."},
+            {i:"🐱",t:"Neko Ears",d:"You are feeling extra cat-like today."},
+            {i:"💌",t:"Love Letter",d:"Check your shoe locker (or inbox)."},
+            {i:"🏖️",t:"Beach Episode",d:"Sunny vibes are coming your way."}
         ];
         const res = opts[Math.floor(Math.random()*opts.length)];
-        
         DB.fortune = { date: today, icon: res.i, title: res.t, desc: res.d };
-        localStorage.setItem('v14_fortune', JSON.stringify(DB.fortune));
+        localStorage.setItem('v15_fortune', JSON.stringify(DB.fortune));
         addXP(20);
-        
         renderFData(DB.fortune);
         const card = document.getElementById('fortune-card');
         card.style.transition = 'transform 0.8s'; 
-        void card.offsetWidth; 
-        card.classList.add('flipped');
+        void card.offsetWidth; card.classList.add('flipped');
     }
     function resetFortune() {
-        if(confirm("Start a new day? (Simulated)")) {
-            DB.fortune.date = ""; // Reset date
-            localStorage.setItem('v14_fortune', JSON.stringify(DB.fortune));
+        if(confirm("Start a new day?")) {
+            DB.fortune.date = ""; localStorage.setItem('v15_fortune', JSON.stringify(DB.fortune));
             const card = document.getElementById('fortune-card');
-            card.style.transition = 'none';
-            card.classList.remove('flipped');
-            alert("It's a new day! Draw again.");
+            card.style.transition = 'none'; card.classList.remove('flipped');
         }
     }
     function renderFData(d) {
@@ -553,7 +577,11 @@
         document.getElementById('fortune-desc').innerText = d.desc;
     }
 
-    // WISHLIST
+    // WISHLIST (CLEAN)
+    function toggleWishPanel() {
+        const p = document.getElementById('wish-panel');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    }
     function addWish() {
         const n = document.getElementById('wish-name').value;
         const i = document.getElementById('wish-img').value;
@@ -562,17 +590,16 @@
         playSnd('bloop');
         let defaultImg = WISH_ICONS[Math.floor(Math.random()*WISH_ICONS.length)];
         DB.wish.push({name:n, img: i || defaultImg, link: l || "#"});
-        localStorage.setItem('v14_wish', JSON.stringify(DB.wish));
+        localStorage.setItem('v15_wish', JSON.stringify(DB.wish));
         document.getElementById('wish-name').value=""; document.getElementById('wish-img').value=""; document.getElementById('wish-link').value="";
+        toggleWishPanel();
         renderWish();
-        if(DB.wish.length >= 5) addTrophy("🛍️");
-        saveToast();
     }
     function deleteWish(index) {
         playSnd('bloop');
         if(confirm("Remove this wish?")) {
             DB.wish.splice(index, 1);
-            localStorage.setItem('v14_wish', JSON.stringify(DB.wish));
+            localStorage.setItem('v15_wish', JSON.stringify(DB.wish));
             renderWish();
         }
     }
@@ -593,31 +620,25 @@
         });
     }
 
-    // PET
+    // PET & TASKS
     function renderPet() {
         document.getElementById('hunger-bar').style.width = DB.pet.hunger+"%";
         document.getElementById('pet-msg').innerText = DB.pet.hunger>50 ? "Ebi is happy!" : "Hungry...";
-        const l = document.getElementById('task-list'); 
-        l.innerHTML="";
+        const l = document.getElementById('task-list'); l.innerHTML="";
         DB.pet.tasks.forEach((t, index)=>{
             l.innerHTML+=`<div class="task-item" id="task-${index}"><span>${t}</span><input type="checkbox" onclick="finishTask(${index}, this)"></div>`;
         });
     }
     function finishTask(index, checkbox) {
-        checkbox.disabled = true; playSnd('bloop');
-        DB.pet.hunger = Math.min(100, DB.pet.hunger + 15);
-        addXP(10);
+        checkbox.disabled = true; playSnd('bloop'); DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); addXP(10);
         document.getElementById(`task-${index}`).classList.add('completed');
         setTimeout(() => {
-            DB.pet.tasks.splice(index, 1);
-            localStorage.setItem('v14_pet', JSON.stringify(DB.pet));
-            renderPet();
-            if(DB.lvl >= 5) addTrophy("⭐");
+            DB.pet.tasks.splice(index, 1); localStorage.setItem('v15_pet', JSON.stringify(DB.pet)); renderPet(); 
         }, 500); 
     }
     function addTask() {
         const v = document.getElementById('task-input').value;
-        if(v) { DB.pet.tasks.push(v); localStorage.setItem('v14_pet', JSON.stringify(DB.pet)); document.getElementById('task-input').value=""; renderPet(); }
+        if(v) { DB.pet.tasks.push(v); localStorage.setItem('v15_pet', JSON.stringify(DB.pet)); document.getElementById('task-input').value=""; renderPet(); }
     }
 
     // DIARY
@@ -628,9 +649,8 @@
         playSnd('spark');
         DB.diary.unshift({d: new Date().toLocaleDateString(), m: mood, t: t});
         addXP(10);
-        localStorage.setItem('v14_diary', JSON.stringify(DB.diary));
+        localStorage.setItem('v15_diary', JSON.stringify(DB.diary));
         document.getElementById('diary-text').value=""; renderDiary();
-        if(DB.diary.length >= 3) addTrophy("📓");
     }
     function renderDiary() {
         const h = document.getElementById('diary-history'); h.innerHTML="";
