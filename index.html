@@ -33,7 +33,6 @@
             color: var(--text);
         }
 
-        /* SCANLINES */
         .scanlines {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.03) 50%);
@@ -66,91 +65,94 @@
 
         /* CONTENT */
         .content {
-            flex: 1; 
-            overflow-y: auto; 
-            overflow-x: hidden;
-            padding: 20px; 
-            /* Increased padding so scrolling clears the nav bar */
-            padding-bottom: 150px; 
-            scroll-behavior: smooth;
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            padding: 20px; padding-bottom: 150px; scroll-behavior: smooth;
         }
         .page { display: none; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .page.active { display: block; }
         @keyframes popIn { from {opacity:0; transform:scale(0.95);} to {opacity:1; transform:scale(1);} }
 
-        /* === 1. SUPER CUTE ID CARD === */
-        .id-card-container {
-            background: linear-gradient(135deg, #ffc0cb 0%, #ff69b4 100%);
-            border-radius: 15px; padding: 8px;
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
-            margin-bottom: 25px; position: relative;
+        /* === 1. INTRICATE ID CARD (UPDATED) === */
+        .id-card-wrap {
+            background: linear-gradient(135deg, #fceaf3 0%, #e6e6fa 100%);
+            border: 2px solid var(--pink); border-radius: 12px;
+            padding: 5px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+            margin-bottom: 25px; position: relative; overflow: hidden;
         }
-        .id-card-inner {
-            background: white; border: 2px dashed var(--pink); border-radius: 10px;
-            padding: 15px; position: relative; overflow: hidden;
+        
+        /* Holographic Shine */
+        .id-card-wrap::after {
+            content: ""; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
+            background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.4) 55%, transparent 60%);
+            animation: shine 4s infinite linear; pointer-events: none;
         }
-        .official-stamp {
-            position: absolute; bottom: -10px; right: -10px;
-            width: 80px; height: 80px; border: 3px double var(--blue);
-            border-radius: 50%; color: var(--blue); font-size: 0.6rem;
-            display: flex; align-items: center; justify-content: center; text-align: center;
-            transform: rotate(-15deg); opacity: 0.3; font-weight: bold; text-transform: uppercase;
-            pointer-events: none;
+        @keyframes shine { 0% {transform: translate(-50%, -50%) rotate(0deg);} 100% {transform: translate(50%, 50%) rotate(0deg);} }
+
+        .id-inner {
+            background: rgba(255,255,255,0.9); border: 1px solid #ddd; border-radius: 8px;
+            padding: 10px; display: flex; flex-direction: column; gap: 8px;
         }
-        .id-header {
-            display: flex; justify-content: space-between; border-bottom: 2px solid var(--pastel-pink);
-            padding-bottom: 5px; margin-bottom: 10px;
+
+        .id-top { display: flex; justify-content: space-between; border-bottom: 2px solid var(--pink); padding-bottom: 5px; }
+        .id-logo { font-size: 0.7rem; font-weight: bold; color: var(--pink); letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
+        .id-chip { width: 30px; height: 20px; background: linear-gradient(45deg, #ffd700, #daa520); border-radius: 4px; border: 1px solid #b8860b; }
+
+        .id-body { display: flex; gap: 12px; margin-top: 5px; }
+        
+        .id-photo-zone { width: 90px; }
+        .id-photo { 
+            width: 90px; height: 110px; background: #eee; border: 2px solid var(--blue); 
+            object-fit: cover; border-radius: 6px; 
         }
-        .id-title { font-size: 0.7rem; font-weight: bold; color: var(--pink); letter-spacing: 1px; }
-        .id-content { display: flex; gap: 15px; align-items: center; }
-        .avatar-frame {
-            width: 80px; height: 80px; border-radius: 10px;
-            background: var(--pastel-pink); padding: 3px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1); transform: rotate(-3deg);
+        .id-stamp {
+            width: 60px; height: 60px; border: 3px double var(--pink); border-radius: 50%;
+            color: var(--pink); position: absolute; bottom: 10px; right: 10px;
+            font-size: 0.6rem; font-weight: bold; display: flex; align-items: center; 
+            justify-content: center; text-align: center; transform: rotate(-15deg); opacity: 0.6;
         }
-        .avatar-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; background: white; }
-        .id-details h2 { margin: 0; color: #d12e87; font-size: 1.4rem; }
-        .stat-badge {
-            display: inline-block; background: var(--blue); color: white;
-            font-size: 0.6rem; padding: 2px 6px; border-radius: 10px; margin-top: 5px;
+
+        .id-data { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .id-main-name { font-size: 1.1rem; font-weight: bold; color: #d12e87; text-transform: uppercase; line-height: 1.1; }
+        .id-sub-name { font-size: 0.7rem; color: #888; margin-bottom: 5px; }
+        
+        .id-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4px; 
+            font-size: 0.65rem; background: #f9f9f9; padding: 5px; border-radius: 5px;
         }
-        .change-lnk { font-size: 0.6rem; color: #aaa; text-decoration: underline; cursor: pointer; display: block; margin-top: 5px; }
+        .id-label { color: var(--blue); font-weight: bold; }
+        .id-val { color: #555; }
+
+        .id-barcode {
+            height: 20px; background: repeating-linear-gradient(90deg, #333 0px, #333 2px, transparent 2px, transparent 4px);
+            margin-top: 5px; opacity: 0.8;
+        }
 
         /* XP BAR */
-        .xp-box {
-            background: white; padding: 10px; border-radius: 12px; margin-bottom: 20px;
-            border: 2px solid var(--blue); text-align: center;
-        }
+        .xp-box { background: white; padding: 10px; border-radius: 12px; margin-bottom: 20px; border: 2px solid var(--blue); text-align: center; }
         .xp-track { height: 8px; background: #eee; border-radius: 4px; margin-top: 5px; overflow: hidden; }
         .xp-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #00bfff); width: 0%; transition: width 0.5s; }
 
         /* === 2. FORTUNE CARD === */
-        .fortune-stage {
-            perspective: 1000px; width: 160px; height: 220px; margin: 0 auto; cursor: pointer;
-        }
+        .fortune-stage { perspective: 1000px; width: 160px; height: 220px; margin: 0 auto; cursor: pointer; }
         .card-wrapper {
             width: 100%; height: 100%; position: relative;
             transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .card-wrapper.flipped { transform: rotateY(180deg); }
         .card-face {
-            position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 12px;
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.15); border: 4px solid white;
         }
         .card-front { background: repeating-linear-gradient(45deg, var(--pink), var(--pink) 10px, #ff9eb5 10px, #ff9eb5 20px); }
         .card-back { background: white; transform: rotateY(180deg); padding: 10px; text-align: center; border-color: var(--pink); }
 
-        /* === 3. WISHLIST === */
+        /* === 3. WISHLIST (UPDATED) === */
         .corkboard {
             background: #e6d7c3; border: 5px solid #8b5a2b; border-radius: 10px; padding: 15px;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.1); min-height: 400px;
         }
         .wish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        
-        /* Clickable Polaroid */
-        .polaroid-link { text-decoration: none; color: inherit; display: block; }
         .polaroid {
             background: white; padding: 6px 6px 20px 6px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
             text-align: center; transform: rotate(-2deg); transition: 0.2s; position: relative;
@@ -158,7 +160,15 @@
         .polaroid:nth-child(even) { transform: rotate(2deg); }
         .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
         .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; border: 1px solid #ccc; }
+        .polaroid-link { text-decoration: none; color: inherit; display: block; }
         .pin { width: 10px; height: 10px; border-radius: 50%; background: red; margin: -10px auto 5px auto; box-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+        
+        .delete-wish-btn {
+            position: absolute; top: -5px; right: -5px; width: 20px; height: 20px;
+            background: red; color: white; border: 2px solid white; border-radius: 50%;
+            font-size: 12px; font-weight: bold; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center; z-index: 20;
+        }
 
         /* === 4. EBI PET === */
         .pet-box {
@@ -167,22 +177,15 @@
         }
         .ebi-img { width: 120px; animation: bounce 2s infinite; filter: drop-shadow(0 5px 0 rgba(0,0,0,0.1)); }
         @keyframes bounce { 0%, 100% {transform:translateY(0);} 50% {transform:translateY(-5px);} }
-
-        /* TASK LIST STYLES */
         .task-item {
             background: white; padding: 12px; margin-bottom: 8px; border-radius: 10px;
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px solid #eee; transition: all 0.4s ease;
         }
-        .task-item.completed {
-            text-decoration: line-through; color: #aaa;
-            opacity: 0; transform: translateX(50px);
-        }
-        
+        .task-item.completed { text-decoration: line-through; color: #aaa; opacity: 0; transform: translateX(50px); }
+
         /* === 5. DIARY === */
-        .diary-box {
-            background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
-        }
+        .diary-box { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .mood-bar { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 50%; width: 40px; height: 40px; border: 2px solid transparent; cursor: pointer; }
         .mood-btn.selected { background: var(--pastel-pink); border-color: var(--pink); transform: scale(1.1); }
@@ -214,13 +217,12 @@
 </head>
 <body>
 
-<div class="snow-container" id="snow-container"></div>
 <div class="scanlines"></div>
 
 <div class="app-shell">
     <div class="marquee-container">
         <div class="marquee-text">
-            ★ SEIREN OS v11.0 ★ OFFICIAL CITIZEN SYSTEM ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
+            ★ SEIREN OS v12.0 ★ OFFICIAL CITIZEN SYSTEM ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
         </div>
     </div>
 
@@ -245,24 +247,33 @@
                     <div class="xp-track"><div id="xp-bar" class="xp-fill"></div></div>
                 </div>
 
-                <div class="id-card-container">
-                    <div class="id-card-inner">
-                        <div class="official-stamp">SEIREN<br>OFFICIAL</div>
-                        <div class="id-header">
-                            <span class="id-title">RESIDENT IDENTIFICATION</span>
-                            <span class="id-title">#<span id="my-id">0000</span></span>
+                <div class="id-card-wrap">
+                    <div class="id-inner">
+                        <div class="id-top">
+                            <div class="id-logo"><div class="id-chip"></div> SEIREN GOV.</div>
+                            <div style="font-size:0.6rem; color:#aaa;">ID CARD</div>
                         </div>
-                        <div class="id-content">
-                            <div class="avatar-frame" onclick="changeAvatar()">
-                                <img id="my-avatar" src="" alt="Avatar">
+                        <div class="id-body">
+                            <div class="id-photo-zone">
+                                <img id="my-avatar" class="id-photo" src="" onclick="changeAvatar()">
                             </div>
-                            <div class="id-details">
-                                <h2 id="my-name">User</h2>
-                                <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">Class 2-B</div>
-                                <div class="stat-badge" id="my-type">Tsundere</div>
-                                <span class="change-lnk" onclick="changeAvatar()">Tap photo to switch</span>
+                            <div class="id-data">
+                                <div>
+                                    <div id="my-name" class="id-main-name">User</div>
+                                    <div id="my-realname" class="id-sub-name">aka ???</div>
+                                </div>
+                                <div class="id-grid">
+                                    <span class="id-label">ID#:</span> <span id="my-id" class="id-val">0000</span>
+                                    <span class="id-label">Type:</span> <span id="my-type" class="id-val">?</span>
+                                    <span class="id-label">Eyes:</span> <span id="my-eyes" class="id-val">?</span>
+                                    <span class="id-label">Hair:</span> <span id="my-hair" class="id-val">?</span>
+                                    <span class="id-label">Wgt:</span> <span id="my-wgt" class="id-val">?</span>
+                                    <span class="id-label">Sign:</span> <span id="my-sign" class="id-val">?</span>
+                                </div>
                             </div>
                         </div>
+                        <div class="id-barcode"></div>
+                        <div class="id-stamp">SEIREN<br>PASSED</div>
                     </div>
                 </div>
 
@@ -290,7 +301,7 @@
             <div style="background:white; padding:15px; border-radius:15px; margin-bottom:15px;">
                 <input type="text" id="wish-name" placeholder="Item Name">
                 <input type="text" id="wish-img" placeholder="Image Link (Pinterest/Google)">
-                <input type="text" id="wish-link" placeholder="Item Link (Where to buy) - Optional">
+                <input type="text" id="wish-link" placeholder="Item Link (Where to buy)">
                 <button class="btn-main" onclick="addWish()">Pin It!</button>
             </div>
             <div class="corkboard"><div id="wish-grid" class="wish-grid"></div></div>
@@ -371,44 +382,38 @@
 
     // === DATA ===
     const DB = {
-        user: JSON.parse(localStorage.getItem('v11_user')) || null,
-        wish: JSON.parse(localStorage.getItem('v11_wish')) || [],
-        pet: JSON.parse(localStorage.getItem('v11_pet')) || { hunger: 50, tasks: ['Drink Water'] },
-        diary: JSON.parse(localStorage.getItem('v11_diary')) || [],
-        fortune: JSON.parse(localStorage.getItem('v11_fortune')) || { date: '', icon: '', title: '', desc: '' },
-        xp: parseInt(localStorage.getItem('v11_xp')) || 0,
-        lvl: parseInt(localStorage.getItem('v11_lvl')) || 1
+        user: JSON.parse(localStorage.getItem('v12_user')) || null,
+        wish: JSON.parse(localStorage.getItem('v12_wish')) || [],
+        pet: JSON.parse(localStorage.getItem('v12_pet')) || { hunger: 50, tasks: ['Drink Water'] },
+        diary: JSON.parse(localStorage.getItem('v12_diary')) || [],
+        fortune: JSON.parse(localStorage.getItem('v12_fortune')) || { date: '', icon: '', title: '', desc: '' },
+        xp: parseInt(localStorage.getItem('v12_xp')) || 0,
+        lvl: parseInt(localStorage.getItem('v12_lvl')) || 1
     };
     let mood = '😊';
 
     function init() {
-        createSnow();
-        if(DB.user) { renderID(); checkFortune(); updateXP(); } 
+        if(DB.user) { 
+            // Migration: Add new fields if missing
+            if(!DB.user.eyes) {
+                const seed = DB.user.name.length;
+                DB.user.eyes = ["Pink", "Blue", "Red", "Gold", "Purple"][seed%5];
+                DB.user.hair = ["Twin-tails", "Long", "Bob", "Drills"][seed%4];
+                DB.user.wgt = ["3 Apples", "5 Mochis", "40kg", "Feather"][seed%4];
+                DB.user.sign = ["Aries", "Leo", "Libra", "Pisces"][seed%4];
+                localStorage.setItem('v12_user', JSON.stringify(DB.user));
+            }
+            renderID(); checkFortune(); updateXP(); 
+        } 
         else { document.getElementById('setup-screen').style.display='block'; }
         renderWish(); renderPet(); renderDiary();
-    }
-
-    // SNOW
-    function createSnow() {
-        const c = document.getElementById('snow-container');
-        for(let i=0; i<15; i++){
-            const d = document.createElement('div');
-            d.innerText='❄'; d.style.position='absolute'; d.style.color='white'; d.style.opacity='0.6';
-            d.style.left=Math.random()*100+'vw'; 
-            d.style.animation=`fall ${Math.random()*3+5}s linear infinite`;
-            d.style.animationDelay=Math.random()*5+'s';
-            c.appendChild(d);
-        }
-        const style = document.createElement('style');
-        style.innerHTML = `@keyframes fall { to { transform: translateY(100vh) rotate(360deg); } }`;
-        document.head.appendChild(style);
     }
 
     // XP
     function addXP(n) {
         DB.xp += n;
         if(DB.xp >= 100) { DB.xp -= 100; DB.lvl++; playSnd('spark'); alert("LEVEL UP!"); }
-        localStorage.setItem('v11_xp', DB.xp); localStorage.setItem('v11_lvl', DB.lvl);
+        localStorage.setItem('v12_xp', DB.xp); localStorage.setItem('v12_lvl', DB.lvl);
         updateXP();
     }
     function updateXP() {
@@ -423,21 +428,36 @@
         if(!name) return;
         playSnd('bloop');
         const seed = name.length;
+        // Generate Seiren Name
+        const pres = ["Mi", "Lu", "Fa", "Ko", "Ri", "Yu"];
+        const sufs = ["-chan", "-pyon", "ren", "la"];
+        const sName = pres[seed % pres.length] + sufs[(seed*3) % sufs.length];
+
         DB.user = {
-            name: name,
+            name: sName,
+            realName: name,
             avatarIdx: 0,
             type: ["Tsundere", "Dojikko", "Alien", "Idol"][seed % 4],
-            id: Math.floor(Math.random()*9000)+1000
+            id: Math.floor(Math.random()*9000)+1000,
+            eyes: ["Pink", "Blue", "Red", "Gold", "Purple"][seed%5],
+            hair: ["Twin-tails", "Long", "Bob", "Drills"][seed%4],
+            wgt: ["3 Apples", "5 Mochis", "40kg", "Feather"][seed%4],
+            sign: ["Aries", "Leo", "Libra", "Pisces"][seed%4]
         };
-        localStorage.setItem('v11_user', JSON.stringify(DB.user));
+        localStorage.setItem('v12_user', JSON.stringify(DB.user));
         document.getElementById('setup-screen').style.display='none';
         renderID();
     }
     function renderID() {
         document.getElementById('id-display').style.display='block';
         document.getElementById('my-name').innerText = DB.user.name;
+        document.getElementById('my-realname').innerText = "aka " + DB.user.realName;
         document.getElementById('my-type').innerText = DB.user.type;
         document.getElementById('my-id').innerText = DB.user.id;
+        document.getElementById('my-eyes').innerText = DB.user.eyes;
+        document.getElementById('my-hair').innerText = DB.user.hair;
+        document.getElementById('my-wgt').innerText = DB.user.wgt;
+        document.getElementById('my-sign').innerText = DB.user.sign;
         document.getElementById('my-avatar').src = AVATARS[DB.user.avatarIdx % AVATARS.length];
     }
     function changeAvatar() {
@@ -445,11 +465,11 @@
         if(DB.lvl < 2 && DB.user.avatarIdx === 0) return alert("Level up to unlock avatars!");
         const limit = Math.min(DB.lvl + 1, AVATARS.length);
         DB.user.avatarIdx = (DB.user.avatarIdx + 1) % limit;
-        localStorage.setItem('v11_user', JSON.stringify(DB.user));
+        localStorage.setItem('v12_user', JSON.stringify(DB.user));
         renderID();
     }
 
-    // FORTUNE (FIXED - Variable Naming)
+    // FORTUNE
     function checkFortune() {
         const today = new Date().toDateString();
         const card = document.getElementById('fortune-card');
@@ -474,13 +494,11 @@
         ];
         const res = opts[Math.floor(Math.random()*opts.length)];
         
-        // SAVE DATA WITH CORRECT KEYS
-        const newFortune = { date: today, icon: res.i, title: res.t, desc: res.d };
-        DB.fortune = newFortune;
-        localStorage.setItem('v11_fortune', JSON.stringify(DB.fortune));
+        DB.fortune = { date: today, icon: res.i, title: res.t, desc: res.d };
+        localStorage.setItem('v12_fortune', JSON.stringify(DB.fortune));
         addXP(20);
         
-        renderFData(newFortune);
+        renderFData(DB.fortune);
         const card = document.getElementById('fortune-card');
         card.style.transition = 'transform 0.8s'; 
         void card.offsetWidth; 
@@ -492,7 +510,7 @@
         document.getElementById('fortune-desc').innerText = d.desc;
     }
 
-    // WISHLIST (WITH LINKS)
+    // WISHLIST (WITH DELETE)
     function addWish() {
         const n = document.getElementById('wish-name').value;
         const i = document.getElementById('wish-img').value;
@@ -504,24 +522,29 @@
             img:i || "https://cdn-icons-png.flaticon.com/512/3209/3209955.png",
             link: l || "#"
         });
-        localStorage.setItem('v11_wish', JSON.stringify(DB.wish));
-        document.getElementById('wish-name').value=""; 
-        document.getElementById('wish-img').value="";
-        document.getElementById('wish-link').value="";
+        localStorage.setItem('v12_wish', JSON.stringify(DB.wish));
+        document.getElementById('wish-name').value=""; document.getElementById('wish-img').value=""; document.getElementById('wish-link').value="";
         renderWish();
+    }
+    function deleteWish(index) {
+        playSnd('bloop');
+        if(confirm("Remove this wish?")) {
+            DB.wish.splice(index, 1);
+            localStorage.setItem('v12_wish', JSON.stringify(DB.wish));
+            renderWish();
+        }
     }
     function renderWish() {
         const g = document.getElementById('wish-grid');
         g.innerHTML="";
-        DB.wish.forEach(w=>{
+        DB.wish.forEach((w, idx)=>{
             let content = `
                 <div class="polaroid">
+                    <button class="delete-wish-btn" onclick="event.preventDefault(); deleteWish(${idx})">x</button>
                     <div class="pin"></div>
                     <img src="${w.img}">
                     <div style="font-size:0.7rem;margin-top:5px;">${w.name}</div>
                 </div>`;
-                
-            // If link exists, wrap in anchor tag
             if(w.link && w.link !== "#") {
                 content = `<a href="${w.link}" target="_blank" class="polaroid-link">${content}</a>`;
             }
@@ -543,7 +566,6 @@
             </div>`;
         });
     }
-    
     function finishTask(index, checkbox) {
         checkbox.disabled = true;
         playSnd('bloop');
@@ -553,16 +575,15 @@
         row.classList.add('completed');
         setTimeout(() => {
             DB.pet.tasks.splice(index, 1);
-            localStorage.setItem('v11_pet', JSON.stringify(DB.pet));
+            localStorage.setItem('v12_pet', JSON.stringify(DB.pet));
             renderPet(); 
         }, 500); 
     }
-
     function addTask() {
         const v = document.getElementById('task-input').value;
         if(v) { 
             DB.pet.tasks.push(v); 
-            localStorage.setItem('v11_pet', JSON.stringify(DB.pet)); 
+            localStorage.setItem('v12_pet', JSON.stringify(DB.pet)); 
             document.getElementById('task-input').value=""; 
             renderPet(); 
         }
@@ -580,7 +601,7 @@
         playSnd('spark');
         DB.diary.unshift({d: new Date().toLocaleDateString(), m: mood, t: t});
         addXP(10);
-        localStorage.setItem('v11_diary', JSON.stringify(DB.diary));
+        localStorage.setItem('v12_diary', JSON.stringify(DB.diary));
         document.getElementById('diary-text').value=""; renderDiary();
     }
     function renderDiary() {
