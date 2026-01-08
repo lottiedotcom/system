@@ -18,19 +18,19 @@
             --bg-light: #ffe4e1;
             --bg-dark: #ffb7b2;
             --dark: #d12e87;
-            --glass: rgba(255, 255, 255, 0.92);
+            --glass: rgba(255, 255, 255, 0.95);
             --text: #555;
         }
 
         body {
             font-family: 'Verdana', sans-serif;
             background-color: var(--bg-light);
-            /* POLKA DOT PATTERN */
+            /* POLKA DOTS */
             background-image: 
                 radial-gradient(var(--bg-dark) 20%, transparent 20%),
                 radial-gradient(var(--bg-dark) 20%, transparent 20%);
-            background-position: 0 0, 10px 10px;
-            background-size: 20px 20px;
+            background-position: 0 0, 15px 15px;
+            background-size: 30px 30px;
             margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
             color: var(--text); overscroll-behavior: none;
             transition: background-color 0.5s ease;
@@ -54,7 +54,7 @@
         @keyframes float { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-8px);} }
         
         .welcome-title {
-            color: #d12e87; font-size: 1.8rem; font-weight: 800; 
+            color: #d12e87; font-size: 2rem; font-weight: 800; 
             letter-spacing: 2px; margin-top: 10px; margin-bottom: 30px; text-transform: uppercase;
         }
 
@@ -66,6 +66,10 @@
         }
         .enter-btn:active { transform: scale(0.95); }
 
+        .reset-link {
+            margin-top: 20px; font-size: 0.7rem; color: #aaa; text-decoration: underline; cursor: pointer;
+        }
+
         /* --- APP SHELL --- */
         .app-shell {
             width: 100%; max-width: 480px; background: var(--glass);
@@ -74,7 +78,7 @@
         }
 
         .status-bar {
-            display: flex; justify-content: space-between; padding: 8px 15px;
+            display: flex; justify-content: space-between; padding: 10px 20px;
             font-size: 0.7rem; font-weight: bold; color: var(--dark);
             background: rgba(255,255,255,0.6); border-bottom: 1px solid white;
         }
@@ -99,13 +103,11 @@
 
         /* --- DASHBOARD ELEMENTS --- */
         .dash-header { text-align: center; margin-bottom: 20px; }
-        .greeting { font-size: 1.5rem; color: var(--dark); font-weight: bold; }
         
         .xp-box { background: white; padding: 8px; border-radius: 12px; margin-bottom: 15px; border: 2px solid var(--blue); text-align: center; }
         .xp-track { height: 6px; background: #eee; border-radius: 4px; margin-top: 4px; overflow: hidden; }
         .xp-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #87cefa); width: 0%; transition: width 0.5s; }
 
-        /* ID CARD */
         .id-card-wrap {
             background: white; border: 3px solid var(--main); border-radius: 20px;
             padding: 5px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
@@ -131,7 +133,6 @@
         .stat-label { color: var(--main); font-weight: bold; }
         .signature { font-family: 'Brush Script MT', cursive; font-size: 1.2rem; color: var(--blue); transform: rotate(-5deg); display: inline-block; margin-right: 10px; }
 
-        /* MENU GRID */
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .dash-btn {
             background: white; border-radius: 15px; padding: 10px 5px; text-align: center;
@@ -142,14 +143,12 @@
         .dash-icon { font-size: 1.5rem; display: block; margin-bottom: 3px; }
         .dash-label { font-size: 0.7rem; font-weight: bold; color: var(--text); }
 
-        /* LOG WIDGET */
         .front-log-widget {
             background: white; border: 2px dashed var(--main); border-radius: 15px;
             padding: 10px; margin-bottom: 20px;
         }
         .log-entry-mini { display: flex; justify-content: space-between; font-size: 0.7rem; padding: 4px 0; border-bottom: 1px dotted #eee; }
 
-        /* FORTUNE CARD */
         .fortune-stage { perspective: 1000px; width: 140px; height: 200px; margin: 0 auto; cursor: pointer; }
         .card-wrapper {
             width: 100%; height: 100%; position: relative;
@@ -169,32 +168,27 @@
             box-shadow: 0 3px 0 #29b6f6; font-weight: bold;
         }
 
-        /* BBS */
         .bbs-container { background: white; border: 2px solid var(--main); border-radius: 15px; height: 100%; min-height: 400px; display: flex; flex-direction: column; overflow: hidden; }
         .bbs-messages { flex: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
         .bbs-msg { background: white; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.05); font-size: 0.8rem; border-left: 4px solid #ddd; }
         .bbs-meta { font-size: 0.6rem; color: #999; margin-bottom: 2px; display: flex; justify-content: space-between; }
         .bbs-input-area { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 5px; }
 
-        /* UI */
         input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 15px; box-sizing: border-box; font-family:inherit; margin-bottom: 10px; outline:none; }
         input:focus { border-color: var(--main); background: #fff; }
         .btn-main { background: var(--main); color: white; border: none; padding: 12px; width: 100%; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
         .btn-main:active { transform: translateY(4px); box-shadow: none; }
 
-        /* MODALS */
         .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
         .modal-box { background: white; width: 85%; max-width: 400px; border-radius: 25px; border: 4px solid var(--main); padding: 20px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideUp 0.3s; }
         .slot-card { background: #fdf2f8; border: 2px solid #eee; border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .slot-card.active-slot { border-color: var(--main); background: var(--bg-light); }
 
-        /* NAV */
         nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 100; border: 2px solid white; }
         .nav-btn { background: none; border: none; color: #ccc; font-size: 1.4rem; transition: 0.2s; display: flex; flex-direction:column; align-items: center; }
         .nav-label { font-size: 0.55rem; margin-top:2px; font-weight:bold; }
         .nav-btn.active { color: var(--main); transform: scale(1.1); }
 
-        /* CORKBOARD */
         .corkboard { background: #e6d7c3; border: 5px solid #8b5a2b; border-radius: 10px; padding: 15px; min-height: 400px; }
         .polaroid { background: white; padding: 6px; text-align: center; margin-bottom:10px; transform: rotate(-1deg); box-shadow: 2px 2px 5px rgba(0,0,0,0.2); position:relative; transition: transform 0.2s; }
         .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
@@ -237,6 +231,7 @@
             ENTER WORLD<br>
             <span style="font-size:1rem;">♡</span>
         </button>
+        <div class="reset-link" onclick="hardReset()">[ Reset Data ]</div>
     </div>
 </div>
 
@@ -461,12 +456,12 @@
 </div>
 
 <script>
-    // --- ASSETS ---
+    // --- STABLE AVATAR LINKS ---
     const AVATARS = [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzYjS4GrT6U0nmcao3A-UnuzLyeh-2UR3jloaiM4z7_A&s=10",
-        "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
-        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png/revision/latest?cb=20230827221913"
+        "https://cdn-icons-png.flaticon.com/512/4140/4140048.png",
+        "https://cdn-icons-png.flaticon.com/512/4140/4140037.png",
+        "https://cdn-icons-png.flaticon.com/512/4140/4140047.png",
+        "https://cdn-icons-png.flaticon.com/512/6997/6997662.png"
     ];
     
     // 30 FORTUNES
@@ -494,32 +489,19 @@
     };
     let mood = '😊';
 
-    // --- INIT & SANITIZER ---
+    // --- INIT ---
     window.addEventListener('load', () => {
-        // Load data or init defaults
-        const saved = localStorage.getItem('seiren_v32');
-        if(saved) {
-            DB = JSON.parse(saved);
-        } else {
-            // Attempt migration from v31
-            const old = localStorage.getItem('seiren_v31');
-            if(old) DB = JSON.parse(old);
-        }
-
-        // SANITIZER: Clean Ghost Profiles
-        // If profiles contains nulls, filter them out.
-        if (DB.profiles && Array.isArray(DB.profiles)) {
-            const initialLen = DB.profiles.length;
-            DB.profiles = DB.profiles.filter(p => p !== null);
-            if (DB.profiles.length !== initialLen) {
-                console.log("Sanitized ghost profiles.");
-                save();
+        try {
+            const saved = localStorage.getItem('seiren_v34');
+            if(saved) {
+                DB = JSON.parse(saved);
+                // Sanitize ghost profiles
+                if(DB.profiles) DB.profiles = DB.profiles.filter(p => p !== null);
+                if(DB.profiles.length > 0 && !DB.profiles[DB.activeIdx]) DB.activeIdx = 0;
             }
-        }
-
-        // Initial Theme
-        if(DB.profiles.length > 0) {
-            applyTheme(DB.profiles[DB.activeIdx]);
+        } catch(e) {
+            console.error("Data corrupted, resetting", e);
+            localStorage.removeItem('seiren_v34');
         }
 
         setInterval(() => {
@@ -533,28 +515,31 @@
         setTimeout(() => {
             document.getElementById('welcome-layer').style.display = 'none';
             document.getElementById('main-app').style.display = 'flex';
-            
-            // Check Profile Count
-            if(DB.profiles.length > 0) {
-                // Ensure activeIdx is valid
-                if (!DB.profiles[DB.activeIdx]) DB.activeIdx = 0;
-                
-                applyTheme(DB.profiles[DB.activeIdx]);
-                document.getElementById('dash-view').style.display = 'block';
-                document.getElementById('setup-view').style.display = 'none';
-                refreshUI(); checkFortune();
-            } else {
-                document.getElementById('dash-view').style.display = 'none';
-                document.getElementById('setup-view').style.display = 'block';
-            }
-            
-            // Fade in main app
-            setTimeout(() => document.getElementById('main-app').style.opacity = '1', 50);
+            setTimeout(() => {
+                document.getElementById('main-app').style.opacity = '1';
+                // Check if user exists
+                if(DB.profiles && DB.profiles.length > 0) {
+                    applyTheme(DB.profiles[DB.activeIdx]);
+                    document.getElementById('dash-view').style.display = 'block';
+                    document.getElementById('setup-view').style.display = 'none';
+                    refreshUI(); checkFortune();
+                } else {
+                    document.getElementById('dash-view').style.display = 'none';
+                    document.getElementById('setup-view').style.display = 'block';
+                }
+            }, 50);
         }, 500);
     }
 
+    function hardReset() {
+        if(confirm("⚠ RESET ALL DATA? This cannot be undone.")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
     function save() {
-        localStorage.setItem('seiren_v32', JSON.stringify(DB));
+        localStorage.setItem('seiren_v34', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -585,11 +570,11 @@
             realName: name, age: age,
             color: color || "#ff69b4",
             id: Math.floor(Math.random()*9000)+1000,
-            sign: ["Aries","Leo","Virgo","Pisces"][seed%4],
+            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi"][seed%6],
             eyes: ["Pink","Blue","Gold","Red"][seed%4],
             hair: ["Twin","Long","Bob","Short"][seed%4],
-            wgt: ["3 Apples","Feather","45kg"][seed%3],
-            hgt: (140+(seed%30))+"cm",
+            wgt: ["3 Apples","Secret ♡","Cotton Candy","1 Mochi","Feather"][seed%5],
+            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size"][seed%5],
             av: seed % AVATARS.length
         };
     }
@@ -598,11 +583,9 @@
         const n = document.getElementById('setup-name').value;
         const a = document.getElementById('setup-age').value;
         if(!n) return;
-        DB.profiles.push(genID(n, a, "#ff69b4"));
+        DB.profiles = [genID(n, a, "#ff69b4")]; // Force array
         DB.activeIdx = 0;
         save();
-        
-        // Explicitly switch views
         document.getElementById('setup-view').style.display='none';
         document.getElementById('dash-view').style.display='block';
         refreshUI();
@@ -780,27 +763,23 @@
     function delReg(i) { DB.registry.splice(i,1); save(); openRegistry(); }
     function saveToRegistry() { DB.registry.unshift({...DB.profiles[DB.activeIdx]}); save(); alert("Saved!"); }
 
-    // --- NAVIGATION ---
     function go(id, btn) {
-        // Handle Tab Switching
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
         document.getElementById('tab-'+id).classList.add('active');
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
 
-        // FORCE CHECK for Home Button Fix
-        if (id === 'home') {
-            if (DB.profiles.length > 0) {
-                document.getElementById('setup-view').style.display = 'none';
-                document.getElementById('dash-view').style.display = 'block';
-                refreshUI(); // Ensure data is repainted
+        // HOME FIX
+        if(id === 'home') {
+            if(DB.profiles.length > 0) {
+                document.getElementById('setup-view').style.display='none';
+                document.getElementById('dash-view').style.display='block';
             } else {
-                document.getElementById('setup-view').style.display = 'block';
-                document.getElementById('dash-view').style.display = 'none';
+                document.getElementById('setup-view').style.display='block';
+                document.getElementById('dash-view').style.display='none';
             }
         }
     }
-
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
     function setMood(m,b) { mood=m; document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }
 
