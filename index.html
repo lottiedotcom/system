@@ -143,7 +143,6 @@
         .id-photo { 
             width: 80px; height: 80px; border-radius: 50%; border: 3px outset white; 
             outline: 3px solid var(--main); object-fit: cover; background: white;
-            animation: float 4s ease-in-out infinite; 
         }
         .id-data { flex: 1; }
         .id-stats-grid {
@@ -229,10 +228,10 @@
         .bg-check-green { background-color: #f1f8e9 !important; background-image: repeating-linear-gradient(45deg, #c5e1a5 25%, transparent 25%, transparent 75%, #c5e1a5 75%, #c5e1a5), repeating-linear-gradient(45deg, #c5e1a5 25%, #f1f8e9 25%, #f1f8e9 75%, #c5e1a5 75%, #c5e1a5) !important; background-size: 20px 20px !important; }
         .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }
 
-        /* FIXED ACCESSORY POS - LOWERED */
+        /* FIXED ACCESSORY POS */
         .pet-hat { 
             position: absolute; 
-            top: 55px; /* LOWERED SIGNIFICANTLY */
+            top: 40px; 
             left: 50%; 
             transform: translateX(-50%); 
             font-size: 4rem; 
@@ -241,9 +240,9 @@
             text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
-        .acc-head { top: 35px; } /* Sits on head */
-        .acc-mask { top: 65px; } /* Over face */
-        .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; transform: none; }
+        .acc-head { top: 15px; } /* Sits on head */
+        .acc-mask { top: 50px; } /* Over face */
+        .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; transform: none; } /* Beside */
 
         .ebi-img { width: 140px; transition: transform 0.2s; margin-top:10px; }
         .ebi-img.bounce { animation: bigBounce 0.5s ease; }
@@ -270,7 +269,7 @@
         .quick-mood-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
         .qm-btn { background: white; border: 2px solid var(--main); border-radius: 10px; padding: 10px; font-size: 1.2rem; cursor: pointer; transition: transform 0.1s; }
         .qm-btn:active { transform: scale(0.9); }
-        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; white-space: pre-wrap; }
+        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; }
         
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 9999; font-weight:bold; }
         .toast.show { opacity: 1; top: 30px; }
@@ -451,10 +450,6 @@
                     <button class="qm-btn" onclick="logMoodQuick('🌀')">🌀</button>
                     <button class="qm-btn" onclick="logMoodQuick('💀')">💀</button>
                     <button class="qm-btn" onclick="logMoodQuick('✨')">✨</button>
-                    <button class="qm-btn" onclick="logMoodQuick('😰')">😰</button>
-                    <button class="qm-btn" onclick="logMoodQuick('⚡')">⚡</button>
-                    <button class="qm-btn" onclick="logMoodQuick('😶')">😶</button>
-                    <button class="qm-btn" onclick="logMoodQuick('☁️')">☁️</button>
                 </div>
                 <div id="receipt-log" class="receipt-log">
                     *** MOOD RECEIPT ***<br>
@@ -572,19 +567,20 @@
 </div>
 
 <script>
-    // --- STABLE AVATARS (PROVIDED) ---
+    // --- DIRECT IMAGE LINKS (REVERTING PROXY TO FIX HOTLINKING PROTECTION VIA HTML TAG) ---
     const AVATARS = [
-        "https://i.postimg.cc/Wb1dxKCd/Images_D2FB0W0F.webp",
-        "https://i.postimg.cc/QxdFvPwK/girlsbravo_tomoka_manga.jpg",
-        "https://i.postimg.cc/bNwZ4MWn/girlsbravo_maharu_manga.jpg",
-        "https://i.postimg.cc/28S1gJMq/girlsbravo_koyomi_manga.jpg",
-        "https://i.postimg.cc/YqCvTVZR/Girls_Bravo_Koyomi_Hare_Nanaka.webp",
-        "https://i.postimg.cc/5N2XDGTw/Girls_Bravo_Kosame.webp",
-        "https://i.postimg.cc/J7qy6m6H/ee755c95_ea8f_4a26_bdfd_fbaff3669802.jpg",
-        "https://i.postimg.cc/wTj1nPZQ/Cd480afa91.webp",
-        "https://i.postimg.cc/rFwD7b39/Cc8a9456a3.webp",
-        "https://i.postimg.cc/X7YrthmQ/Ac83513f62.webp",
-        "https://i.postimg.cc/5N2XDGTP/9180_710547588.jpg"
+        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg", 
+        "https://static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png",
+        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg",
+        "https://static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png",
+        "https://static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png",
+        "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png", 
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
+        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
     ];
     
     // GACHA POOLS
@@ -630,16 +626,13 @@
     });
 
     // --- INIT ---
-    let soundEnabled = false; // Flag to ensure audio context is resumed
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v47'); // Updated Version
+        const saved = localStorage.getItem('seiren_v44'); // Updated Version
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v46') || localStorage.getItem('seiren_v45'));
+            const old = JSON.parse(localStorage.getItem('seiren_v43') || localStorage.getItem('seiren_v42'));
             if(old) { DB = old; save(); }
         }
         
@@ -656,11 +649,6 @@
     });
 
     function enterApp() {
-        // RESUME AUDIO CONTEXT ON FIRST CLICK
-        if(audioCtx.state === 'suspended') {
-            audioCtx.resume().then(() => { soundEnabled = true; });
-        }
-
         document.getElementById('welcome-layer').style.opacity = '0';
         setTimeout(() => {
             document.getElementById('welcome-layer').style.display = 'none';
@@ -674,4 +662,468 @@
                     refreshUI(); checkFortune();
                 } else {
                     document.getElementById('setup-view').style.display = 'block';
-                    document.getElementById('dash-view').style.display =
+                    document.getElementById('dash-view').style.display = 'none';
+                }
+            }, 50);
+        }, 500);
+    }
+
+    function save() {
+        localStorage.setItem('seiren_v44', JSON.stringify(DB));
+        const t = document.getElementById('toast');
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 1000);
+    }
+
+    function applyTheme(user) {
+        const color = user ? (user.color || "#ff69b4") : "#ff69b4";
+        const r = document.documentElement;
+        r.style.setProperty('--main', color);
+        r.style.setProperty('--dark', adjustColor(color, -40));
+        r.style.setProperty('--bg-light', adjustColor(color, 160));
+        r.style.setProperty('--bg-dark', adjustColor(color, 120));
+    }
+    function adjustColor(col, amt) {
+        var usePound = false; if (col[0] == "#") { col = col.slice(1); usePound = true; }
+        var num = parseInt(col,16);
+        var r = (num >> 16) + amt; var b = ((num >> 8) & 0x00FF) + amt; var g = (num & 0x0000FF) + amt;
+        if (r > 255) r = 255; else if (r < 0) r = 0; if (b > 255) b = 255; else if (b < 0) b = 0; if (g > 255) g = 255; else if (g < 0) g = 0;
+        return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
+    }
+
+    // --- GIRLS BRAVO GENERATOR ---
+    function genID(name, age, color) {
+        const seed = name.length + parseInt(age||0) + Math.floor(Math.random()*100);
+        const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To"];
+        const nameS = ["-chan","-ren","-la","-ru","-ka","-na","-ho"];
+        
+        return {
+            name: nameP[seed%nameP.length] + nameS[seed%nameS.length],
+            realName: name, age: age,
+            color: color || "#ff69b4",
+            id: Math.floor(Math.random()*9000)+1000,
+            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka"][seed%9],
+            eyes: ["Pink","Blue","Gold","Red","Violet","Teal"][seed%6],
+            hair: ["Twin","Long","Bob","Short","Drills","Messy"][seed%6],
+            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs"][seed%7],
+            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized"][seed%7],
+            av: Math.floor(Math.random() * AVATARS.length),
+            hat: "" 
+        };
+    }
+
+    function initFirstProfile() {
+        const n = document.getElementById('setup-name').value;
+        const a = document.getElementById('setup-age').value;
+        if(!n) return;
+        DB.profiles.push(genID(n, a, "#ff69b4"));
+        DB.activeIdx = 0;
+        save();
+        document.getElementById('setup-view').style.display='none';
+        document.getElementById('dash-view').style.display='block';
+        refreshUI();
+    }
+
+    // --- MAIN RENDER ---
+    function refreshUI() {
+        const u = DB.profiles[DB.activeIdx];
+        if(u) {
+            document.getElementById('dash-greet').innerText = `Hello, ${u.realName}`;
+            document.getElementById('id-name').innerText = u.name;
+            document.getElementById('id-real').innerText = `aka ${u.realName}`;
+            document.getElementById('id-num').innerText = u.id;
+            document.getElementById('id-sign').innerText = u.sign;
+            document.getElementById('id-eyes').innerText = u.eyes;
+            document.getElementById('id-hair').innerText = u.hair;
+            document.getElementById('id-hgt').innerText = u.hgt;
+            document.getElementById('id-wgt').innerText = u.wgt;
+            
+            const avIndex = (u.av || 0) % AVATARS.length;
+            // Removed cache buster to let the browser handle standard caching with no-referrer
+            document.getElementById('id-pic').src = AVATARS[avIndex];
+            
+            document.getElementById('my-sig').innerText = u.name;
+            
+            const hat = u.hat || "";
+            const el = document.getElementById('ebi-hat');
+            el.innerText = hat;
+            el.className = getAccType(hat); 
+        }
+        
+        document.getElementById('pet-container').className = `pet-box ${DB.wallpaper || ''}`;
+
+        const badgeIdx = Math.min(DB.lvl-1, BADGES.length-1);
+        document.getElementById('lvl-badge').innerText = BADGES[Math.max(0, badgeIdx)];
+
+        document.getElementById('lvl-num').innerText = DB.lvl;
+        document.getElementById('xp-val').innerText = DB.xp;
+        document.getElementById('xp-bar').style.width = DB.xp + "%";
+        document.getElementById('credit-val').innerText = DB.credits;
+
+        const invGrid = document.getElementById('inv-grid');
+        while(invGrid.children.length > 1) { invGrid.removeChild(invGrid.lastChild); }
+        DB.inventory.forEach(item => {
+            const span = document.createElement('span');
+            span.className = 'inv-item';
+            if(item.startsWith('bg-')) {
+                span.innerText = "🖼️";
+                span.onclick = () => setWallpaper(item);
+            } else {
+                span.innerText = item;
+                span.onclick = () => setHat(item);
+            }
+            invGrid.appendChild(span);
+        });
+
+        const mini = document.getElementById('mini-log'); mini.innerHTML = "";
+        DB.frontLog.slice(0, 3).forEach(l => {
+            mini.innerHTML += `<div class="log-entry-mini" style="display:flex;justify-content:space-between;border-bottom:1px dotted #ccc;font-size:0.7rem;padding:3px;"><span>${l.name}</span><span>${l.time}</span></div>`;
+        });
+
+        const wList = document.getElementById('wish-list'); wList.innerHTML="";
+        DB.wish.forEach((w,i)=> wList.innerHTML+=`<div class="polaroid"><div class="delete-wish-btn" onclick="delWish(${i})">x</div><img src="${w.img}"><div style="font-size:0.7rem;margin-top:5px;font-weight:bold;">${w.name}</div></div>`);
+
+        document.getElementById('pet-bar').style.width = DB.pet.hunger+"%";
+        
+        const hrsSince = (Date.now() - (DB.pet.lastTask || Date.now())) / (1000 * 60 * 60);
+        if(hrsSince > 24) {
+             document.getElementById('ebi-msg').innerText = "Ebi is lonely... (Do tasks!)";
+        }
+
+        const tList = document.getElementById('task-list'); tList.innerHTML="";
+        DB.pet.tasks.forEach((t,i)=> tList.innerHTML+=`<div class="task-item"><span>${t}</span><input type="checkbox" onclick="doTask(${i})"></div>`);
+
+        const bbs = document.getElementById('bbs-feed'); bbs.innerHTML="";
+        DB.bbs.slice().reverse().forEach(m => {
+            bbs.innerHTML += `<div class="bbs-msg" style="border-left-color:${m.color}"><div class="bbs-meta"><span style="color:${m.color};font-weight:bold;">${m.sender}</span><span>${m.time}</span></div>${m.text}</div>`;
+        });
+
+        const df = document.getElementById('diary-feed'); df.innerHTML="";
+        DB.diary.forEach(e => {
+            const emoji = e.m || '😊';
+            const dateStr = e.d ? `<div style="font-size:0.6rem;color:#aaa;">${e.d}</div>` : '';
+            df.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:5px;border-radius:10px;border-bottom:2px solid #eee; display:flex; gap:10px; align-items:flex-start;"><span style="font-size:1.5rem;">${emoji}</span><div style="flex:1;">${dateStr}<span style="margin-top:5px;display:block;">${e.t}</span></div></div>`
+        });
+    }
+
+    // --- LOCKED AVATAR LOGIC ---
+    function rotateAvatar() {
+        const u = DB.profiles[DB.activeIdx];
+        const maxIndex = Math.min(DB.lvl, AVATARS.length - 1);
+        let nextAv = u.av + 1;
+        if(nextAv > maxIndex) {
+            nextAv = 0; 
+            if(maxIndex < AVATARS.length - 1) {
+                alert(`LOCKED: Reach Level ${nextAv + 1} to unlock this avatar!`);
+            }
+        }
+        u.av = nextAv;
+        save(); refreshUI();
+    }
+
+    // --- PROFILES ---
+    function openProfileManager() {
+        const list = document.getElementById('profile-list'); list.innerHTML="";
+        DB.profiles.forEach((p,i) => {
+            const active = i===DB.activeIdx ? "active-slot" : "";
+            list.innerHTML += `<div class="slot-card ${active}"><div><b>${p.realName}</b> (${p.name})</div><div>${i!==DB.activeIdx ? `<button class="btn-main" style="width:auto;padding:5px;" onclick="swap(${i})">Switch</button>` : 'Active'} <button style="color:red;border:none;background:none;font-weight:bold;" onclick="delProf(${i})">x</button></div></div>`;
+        });
+        document.getElementById('modal-profiles').style.display='flex';
+    }
+    
+    function addProfile() {
+        const n = document.getElementById('new-p-name').value;
+        const a = document.getElementById('new-p-age').value;
+        const c = document.getElementById('new-p-color').value;
+        if(!n) return;
+        DB.profiles.push(genID(n, a, c));
+        swap(DB.profiles.length - 1);
+        document.getElementById('new-p-name').value="";
+        closeModals();
+    }
+
+    function swap(i) {
+        DB.activeIdx = i;
+        const user = DB.profiles[i];
+        const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        DB.frontLog.unshift({ name: user.realName, time: time });
+        if(DB.frontLog.length > 20) DB.frontLog.pop();
+        addXP(10); 
+        alert("Switched! +10 Credits earned.");
+        applyTheme(user); save(); closeModals(); refreshUI();
+    }
+
+    function delProf(i) {
+        if(confirm("Delete?")) {
+            DB.profiles.splice(i, 1);
+            if(DB.activeIdx >= i && DB.activeIdx > 0) DB.activeIdx--;
+            if(DB.profiles.length === 0) location.reload();
+            save(); openProfileManager();
+        }
+    }
+
+    function addXP(amount) {
+        DB.xp += amount;
+        DB.credits += amount; 
+        if(DB.xp >= 100) {
+            DB.xp -= 100; DB.lvl++; playSnd('chime');
+            if(DB.lvl < AVATARS.length) {
+                DB.profiles[DB.activeIdx].av = DB.lvl; 
+                alert(`LEVEL UP! You are now Level ${DB.lvl}! New Avatar Unlocked & Equipped! 🎀`);
+            } else {
+                alert(`LEVEL UP! You are now Level ${DB.lvl}!`);
+            }
+        }
+        save(); refreshUI();
+    }
+
+    // --- QUICK MOOD TRACKER ---
+    function logMoodQuick(m) {
+        playSnd('bloop');
+        addXP(10);
+        // Log to Receipt
+        const receipt = document.getElementById('receipt-log');
+        const line = document.createElement('div');
+        line.innerText = `${m}.............1.....+10₵`;
+        receipt.appendChild(line);
+        receipt.scrollTop = receipt.scrollHeight;
+        
+        // Also feed pet slightly
+        if(DB.pet.hunger < 100) {
+            DB.pet.hunger = Math.min(100, DB.pet.hunger + 5);
+        }
+        save(); refreshUI();
+    }
+
+    // --- FORTUNE ---
+    function checkFortune() {
+        const t = new Date().toDateString();
+        if(DB.fortune && DB.fortune.date === t) {
+            renderFortuneCard(DB.fortune);
+            document.getElementById('fortune-card').classList.add('flipped');
+        } else {
+            document.getElementById('fortune-card').classList.remove('flipped');
+        }
+    }
+    function flipFortune() {
+        const t = new Date().toDateString();
+        if(DB.fortune && DB.fortune.date === t) return;
+        const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
+        DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
+        addXP(50); 
+        alert("Fortune Read! +50 Credits earned.");
+        save();
+        renderFortuneCard(DB.fortune);
+        const card = document.getElementById('fortune-card');
+        card.style.transition = 'transform 0.8s'; 
+        void card.offsetWidth; card.classList.add('flipped');
+        refreshUI();
+    }
+    function renderFortuneCard(d) {
+        document.getElementById('fortune-icon').innerText = d.i;
+        document.getElementById('fortune-title').innerText = d.t;
+        document.getElementById('fortune-desc').innerText = d.d;
+    }
+    function resetFortune() {
+        if(confirm("Reset Day?")) {
+            DB.fortune = {date:''}; save(); 
+            document.getElementById('fortune-card').classList.remove('flipped');
+        }
+    }
+
+    // --- BBS ---
+    function postBBS() {
+        const txt = document.getElementById('bbs-input').value;
+        if(!txt) return;
+        const u = DB.profiles[DB.activeIdx];
+        const t = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        DB.bbs.push({ sender: u.realName, color: u.color, text: txt, time: t });
+        document.getElementById('bbs-input').value=""; save(); refreshUI();
+    }
+
+    // --- BACKPACK & PET LOGIC ---
+    function openBackpack() {
+        document.getElementById('modal-backpack').style.display='flex';
+        refreshUI();
+    }
+
+    function playGacha(type) {
+        if(DB.credits < 50) { alert("Need 50 Credits! (Earn by doing tasks/diary)"); return; }
+        DB.credits -= 50;
+        playSnd('chime');
+        const pool = GACHA[type];
+        const item = pool[Math.floor(Math.random() * pool.length)];
+        if(!DB.inventory.includes(item)) {
+            DB.inventory.push(item);
+            alert(`You got: ${item.startsWith('bg') ? 'Wallpaper' : item}! Added to inventory.`);
+        } else {
+            alert(`You got: ${item.startsWith('bg') ? 'Wallpaper' : item} (Duplicate). Refunded 10 credits.`);
+            DB.credits += 10;
+        }
+        save(); refreshUI();
+    }
+
+    function triggerFeedReward() {
+        if(DB.pet.hunger >= 100) return;
+        playSnd('chime');
+        const petImg = document.getElementById('ebi-pet');
+        petImg.classList.remove('bounce');
+        void petImg.offsetWidth; petImg.classList.add('bounce');
+        DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); 
+        document.getElementById('ebi-msg').innerText = "Yummy! So tasty! 🍤";
+        save(); refreshUI();
+    }
+    
+    function setHat(h) {
+        const u = DB.profiles[DB.activeIdx];
+        u.hat = h;
+        playSnd('bloop');
+        save(); refreshUI();
+    }
+
+    function setWallpaper(w) {
+        DB.wallpaper = w;
+        playSnd('bloop');
+        save(); refreshUI();
+        alert("Room redecorated!");
+    }
+    
+    function getAccType(item) {
+        const heads = ["🎀","👑","🧢","🌸","🌱","🍃","🕸️","🎩","🥀"];
+        const masks = ["🐸","🕶️","👓","👺","🤡"];
+        if(heads.includes(item)) return "acc-head";
+        if(masks.includes(item)) return "acc-mask";
+        return "acc-side";
+    }
+    
+    // --- DIARY ---
+    function postDiary() {
+        const v = document.getElementById('diary-in').value; 
+        if(v){
+            DB.diary.unshift({t:v, m:mood, d: new Date().toLocaleString()}); 
+            document.getElementById('diary-in').value=""; 
+            addXP(15); 
+            triggerFeedReward(); 
+            save(); refreshUI();
+        }
+    }
+
+    // --- PORTAL ---
+    function openPortal() {
+        const list = document.getElementById('link-list'); list.innerHTML="";
+        if(DB.links) {
+            DB.links.forEach((l,i) => {
+                list.innerHTML += `<div style="background:#f9f9f9; padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                    <a href="${l.url}" target="_blank" style="text-decoration:none; color:var(--blue); font-weight:bold;">🔗 ${l.name}</a>
+                    <span onclick="delLink(${i})" style="color:red; cursor:pointer;">x</span>
+                </div>`;
+            });
+        }
+        document.getElementById('modal-portal').style.display='flex';
+    }
+    function addLink() {
+        const n = document.getElementById('link-name').value;
+        const u = document.getElementById('link-url').value;
+        if(n && u) {
+            if(!DB.links) DB.links = [];
+            DB.links.push({name:n, url:u});
+            save(); openPortal();
+            document.getElementById('link-name').value=""; document.getElementById('link-url').value="";
+        }
+    }
+    function delLink(i) { DB.links.splice(i,1); save(); openPortal(); }
+    
+    function exportData() {
+        const data = JSON.stringify(DB);
+        navigator.clipboard.writeText(data).then(() => {
+            alert("Save Data copied to clipboard! Paste it in your Notes app to keep it safe forever.");
+        });
+    }
+    function importData() {
+        const data = prompt("Paste your Save Data here:");
+        if(data) {
+            try {
+                DB = JSON.parse(data);
+                save(); location.reload();
+            } catch(e) { alert("Invalid data code!"); }
+        }
+    }
+
+    // --- TOOLS ---
+    function openWishModal() { document.getElementById('modal-wish').style.display='flex'; }
+    function submitWish() {
+        const n = document.getElementById('w-name').value;
+        const i = document.getElementById('w-img').value || "https://cdn-icons-png.flaticon.com/512/3209/3209955.png";
+        if(n) { DB.wish.push({name:n, img:i}); save(); closeModals(); refreshUI(); }
+    }
+    function delWish(i) { if(confirm("Delete?")) { DB.wish.splice(i,1); save(); refreshUI(); } }
+
+    function addTask() { const v = document.getElementById('task-in').value; if(v){DB.pet.tasks.push(v); document.getElementById('task-in').value=""; save(); refreshUI();} }
+    function doTask(i) { 
+        DB.pet.tasks.splice(i,1); 
+        DB.pet.lastTask = Date.now(); 
+        addXP(10); 
+        triggerFeedReward(); 
+        save(); refreshUI(); 
+    }
+
+    // --- SOUND ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSnd(type) {
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        if(type === 'sad') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+        } else if (type === 'chime') {
+             osc.type = 'sine';
+             osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+             osc.frequency.exponentialRampToValueAtTime(1800, audioCtx.currentTime + 0.1);
+             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+             osc.connect(gain); gain.connect(audioCtx.destination);
+             osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        } else {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
+    }
+
+    // --- NAV ---
+    function go(id, btn) {
+        let targetId = id;
+        if(id === 'home') targetId = 'dash';
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+        document.getElementById('tab-'+targetId).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        if(id === 'home') {
+            if(DB.profiles.length > 0) {
+                document.getElementById('setup-view').style.display = 'none';
+                document.getElementById('dash-view').style.display = 'block';
+                refreshUI();
+            } else {
+                document.getElementById('setup-view').style.display = 'block';
+                document.getElementById('dash-view').style.display = 'none';
+            }
+        }
+    }
+    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
+    function setMood(m,b) { mood=m; document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }
+
+    if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+</script>
+</body>
+</html>
