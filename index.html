@@ -7,398 +7,197 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ff69b4">
     <title>Seiren OS</title>
-    
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
 
     <style>
-        /* --- THEME VARIABLES --- */
-        :root {
-            --main: #ff69b4;
-            --bg-light: #ffe4e1;
-            --bg-dark: #ffb7b2;
-            --dark: #d12e87;
-            --glass: rgba(255, 255, 255, 0.95);
-            --text: #555;
-            --blue: #4fc3f7;
-        }
-
-        /* 2004 SCROLLBAR */
+        :root { --main: #ff69b4; --bg-light: #ffe4e1; --bg-dark: #ffb7b2; --dark: #d12e87; --glass: rgba(255, 255, 255, 0.95); --text: #555; --blue: #4fc3f7; }
         ::-webkit-scrollbar { width: 12px; }
         ::-webkit-scrollbar-track { background: #e0e0e0; border-left: 1px solid #ccc; }
         ::-webkit-scrollbar-thumb { background: #ff69b4; border: 2px outset #ff9eb5; }
-
+        
         body {
             font-family: 'Verdana', 'Tahoma', sans-serif;
             background-color: var(--bg-light);
-            background-image: 
-                radial-gradient(var(--bg-dark) 15%, transparent 16%),
-                radial-gradient(var(--bg-dark) 15%, transparent 16%);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
+            background-image: radial-gradient(var(--bg-dark) 15%, transparent 16%), radial-gradient(var(--bg-dark) 15%, transparent 16%);
+            background-size: 20px 20px; background-position: 0 0, 10px 10px;
             margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
             color: var(--text); overscroll-behavior: none;
         }
 
-        /* --- EFFECTS --- */
         .dream-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9998;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
             opacity: 0.5; mix-blend-mode: overlay;
         }
 
-        /* --- WELCOME SCREEN (HIGHEST Z-INDEX) --- */
         #welcome-layer {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
-            z-index: 20000; /* Super high to ensure clickability */
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
+            z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.5s ease-out;
         }
         .welcome-card {
             background: rgba(255,255,255,0.9); padding: 40px; border-radius: 40px;
-            box-shadow: 0 10px 40px rgba(255, 105, 180, 0.3);
-            text-align: center; backdrop-filter: blur(5px);
+            box-shadow: 0 10px 40px rgba(255, 105, 180, 0.3); text-align: center;
             width: 80%; max-width: 320px; border: 4px ridge white;
         }
         .enter-btn {
             background: #ff69b4; color: white; border: 3px outset #ffb7b2; padding: 15px 0; width: 100%;
             border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; 
             box-shadow: 2px 2px 5px rgba(0,0,0,0.1); 
-            transition: transform 0.1s; letter-spacing: 1px;
-            pointer-events: auto; /* Force clickable */
         }
         .enter-btn:active { transform: scale(0.98); border-style: inset; }
 
-        .app-shell {
-            width: 100%; max-width: 480px; background: var(--glass);
-            display: none; flex-direction: column; position: relative; height: 100%;
-            box-shadow: 0 0 50px rgba(0,0,0,0.1); z-index: 10;
-        }
-
-        .status-bar {
-            display: flex; justify-content: space-between; padding: 10px 15px;
-            font-size: 0.7rem; font-weight: bold; color: var(--dark);
-            background: rgba(255,255,255,0.8); border-bottom: 2px solid white;
-        }
-        
-        .lvl-badge {
-            position: fixed; top: 50px; left: 10px; z-index: 50;
-            background: white; border: 2px outset #ff69b4;
-            border-radius: 50%; width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-            animation: popIn 0.5s;
-        }
-
-        .marquee-container {
-            background: var(--main);
-            color: white; padding: 6px 0; white-space: nowrap; overflow: hidden;
-            border-bottom: 2px solid white; border-top: 2px solid white;
-        }
-        .marquee-text {
-            display: inline-block; padding-left: 100%;
-            animation: marquee 15s linear infinite; font-size: 0.7rem; letter-spacing: 1px; font-weight:bold;
-        }
+        .app-shell { width: 100%; max-width: 480px; background: var(--glass); display: none; flex-direction: column; position: relative; height: 100%; z-index: 10; }
+        .status-bar { display: flex; justify-content: space-between; padding: 10px 15px; font-size: 0.7rem; font-weight: bold; color: var(--dark); background: rgba(255,255,255,0.8); border-bottom: 2px solid white; }
+        .lvl-badge { position: fixed; top: 50px; left: 10px; z-index: 50; background: white; border: 2px outset #ff69b4; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+        .marquee-container { background: var(--main); color: white; padding: 6px 0; white-space: nowrap; overflow: hidden; border-bottom: 2px solid white; border-top: 2px solid white; }
+        .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 15s linear infinite; font-size: 0.7rem; font-weight:bold; }
         @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-        .content {
-            flex: 1; overflow-y: auto; overflow-x: hidden;
-            padding: 20px; padding-bottom: 120px; scroll-behavior: smooth;
-        }
+        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; padding-bottom: 120px; }
         .page { display: none; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .page.active { display: block; }
         @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }
 
-        /* DASHBOARD */
+        /* UI ELEMENTS */
         .dash-header { text-align: center; margin-bottom: 20px; }
         .xp-box { background: white; padding: 10px; border-radius: 12px; margin-bottom: 15px; border: 2px inset var(--blue); text-align: center; }
         .xp-track { height: 8px; background: #eee; border-radius: 4px; margin-top: 5px; overflow: hidden; border: 1px inset #ccc; }
         .xp-fill { height: 100%; background: repeating-linear-gradient(45deg, var(--blue), var(--blue) 5px, #87cefa 5px, #87cefa 10px); width: 0%; transition: width 0.5s; }
-
-        /* ID CARD */
-        .id-card-wrap {
-            background: white; border: 4px ridge var(--main); border-radius: 20px;
-            padding: 5px; box-shadow: 3px 3px 0 #ffb7b2;
-            margin-bottom: 20px; position: relative; overflow: hidden;
-        }
-        .id-inner {
-            background: var(--bg-light);
-            background-image: radial-gradient(var(--bg-dark) 2px, transparent 2px); background-size: 15px 15px;
-            border: 2px dashed var(--dark); border-radius: 15px; padding: 15px;
-        }
-        .deco-bow { position: absolute; top: -5px; right: -5px; font-size: 2rem; transform: rotate(15deg); z-index: 5; }
+        
+        .id-card-wrap { background: white; border: 4px ridge var(--main); border-radius: 20px; padding: 5px; box-shadow: 3px 3px 0 #ffb7b2; margin-bottom: 20px; position: relative; overflow: hidden; }
+        .id-inner { background: var(--bg-light); background-image: radial-gradient(var(--bg-dark) 2px, transparent 2px); background-size: 15px 15px; border: 2px dashed var(--dark); border-radius: 15px; padding: 15px; }
         .id-top { display: flex; justify-content: space-between; border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; }
         .id-body { display: flex; gap: 10px; align-items: center; }
-        .id-photo { 
-            width: 80px; height: 80px; border-radius: 50%; border: 3px outset white; 
-            outline: 3px solid var(--main); object-fit: cover; background: white;
-            animation: float 4s ease-in-out infinite; 
-        }
+        .id-photo { width: 80px; height: 80px; border-radius: 50%; border: 3px outset white; outline: 3px solid var(--main); object-fit: cover; background: white; }
         .id-data { flex: 1; }
-        .id-stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.65rem;
-            background: rgba(255,255,255,0.8); padding: 5px; border-radius: 5px; margin-top:5px; border: 1px inset white;
-        }
+        .id-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.65rem; background: rgba(255,255,255,0.8); padding: 5px; border-radius: 5px; margin-top:5px; border: 1px inset white; }
         .signature { font-family: 'Brush Script MT', cursive; font-size: 1.2rem; color: var(--blue); transform: rotate(-5deg); display: inline-block; margin-right: 10px; }
 
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .dash-btn {
-            background: white; border-radius: 15px; padding: 10px 5px; text-align: center;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s;
-            border: 2px outset #eee;
-        }
+        .dash-btn { background: white; border-radius: 15px; padding: 10px 5px; text-align: center; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); border: 2px outset #eee; }
         .dash-btn:active { transform: scale(0.95); border-style: inset; }
         .dash-icon { font-size: 1.5rem; display: block; margin-bottom: 3px; }
         .dash-label { font-size: 0.7rem; font-weight: bold; color: var(--text); }
 
-        /* FORTUNE */
         .fortune-stage { perspective: 1000px; width: 140px; height: 200px; margin: 0 auto; cursor: pointer; }
-        .card-wrapper {
-            width: 100%; height: 100%; position: relative;
-            transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        .card-wrapper { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.8s; }
         .card-wrapper.flipped { transform: rotateY(180deg); }
-        .card-face {
-            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15); border: 4px solid white;
-        }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.15); border: 4px solid white; }
         .card-front { background: repeating-linear-gradient(45deg, var(--main), var(--main) 10px, #ffb7b2 10px, #ffb7b2 20px); }
         .card-back { background: white; transform: rotateY(180deg); padding: 10px; text-align: center; border: 2px solid var(--main); }
-        .new-day-btn { background: #4fc3f7; color: white; border: 2px outset #81d4fa; padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; margin-top: 15px; cursor: pointer; box-shadow: 2px 2px 0 #29b6f6; font-weight: bold; }
-        .new-day-btn:active { border-style: inset; transform: translateY(2px); box-shadow:none; }
+        .new-day-btn { background: #4fc3f7; color: white; border: 2px outset #81d4fa; padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; margin-top: 15px; }
 
-        /* BBS & UI */
-        .bbs-container { background: white; border: 2px ridge var(--main); border-radius: 15px; height: 100%; min-height: 400px; display: flex; flex-direction: column; overflow: hidden; }
-        .bbs-messages { flex: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
-        .bbs-msg { background: white; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.05); font-size: 0.8rem; border-left: 4px solid #ddd; }
-        .bbs-meta { font-size: 0.6rem; color: #999; margin-bottom: 2px; display: flex; justify-content: space-between; }
-        .bbs-input-area { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 5px; }
+        .pet-box { background: white; border: 3px ridge var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; }
+        .pet-hat { position: absolute; top: 55px; left: 50%; transform: translateX(-50%); font-size: 4rem; z-index: 10; pointer-events: none; }
+        .acc-head { top: 35px; } .acc-mask { top: 60px; } .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; }
+        .ebi-img { width: 140px; margin-top:10px; }
         
-        input { width: 100%; padding: 12px; border: 2px inset #ddd; border-radius: 15px; box-sizing: border-box; font-family:inherit; margin-bottom: 10px; outline:none; background: #fffdfd; }
-        input:focus { border-color: var(--main); background: #fff; }
-        .btn-main { background: var(--main); color: white; border: 2px outset #ff9eb5; padding: 12px; width: 100%; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
-        .btn-main:active { transform: translateY(2px); box-shadow: none; border-style: inset; }
+        .gacha-btn { background: #f8f8f8; border: 2px outset #ddd; padding: 10px; border-radius: 10px; width: 30%; }
+        .inventory-grid { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 10px; background: #f0f0f0; padding: 10px; border: 2px inset #ccc; border-radius: 10px; }
+        .inv-item { font-size: 1.5rem; padding: 8px; border: 1px solid #ddd; background: white; border-radius: 5px; }
 
-        /* MODALS */
+        .diary-box { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .mood-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+        .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 15px; height: 40px; border: 2px outset #eee; display:flex; align-items:center; justify-content:center; }
+        .mood-btn.selected { border-color: var(--main); background: var(--bg-light); border-style: inset; }
+        
+        .quick-mood-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+        .qm-btn { background: white; border: 2px solid var(--main); border-radius: 10px; padding: 10px; font-size: 1.2rem; }
+        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; }
+
         .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
-        .modal-box { background: white; width: 85%; max-width: 400px; border-radius: 25px; border: 4px ridge var(--main); padding: 20px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: popIn 0.3s; }
+        .modal-box { background: white; width: 85%; max-width: 400px; border-radius: 25px; border: 4px ridge var(--main); padding: 20px; max-height: 80vh; overflow-y: auto; animation: popIn 0.3s; }
         .slot-card { background: #fdf2f8; border: 2px outset #eee; border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .slot-card.active-slot { border-color: var(--main); background: var(--bg-light); border-style: inset; }
-
-        /* NAV */
+        
         nav { position: fixed; bottom: 35px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 100; border: 2px solid white; }
-        .nav-btn { background: none; border: none; color: #ccc; font-size: 1.4rem; transition: 0.2s; display: flex; flex-direction:column; align-items: center; }
-        .nav-label { font-size: 0.55rem; margin-top:2px; font-weight:bold; }
+        .nav-btn { background: none; border: none; color: #ccc; font-size: 1.4rem; display: flex; flex-direction:column; align-items: center; }
         .nav-btn.active { color: var(--main); transform: scale(1.1); }
-
-        /* SAVE RIBBON */
-        .save-ribbon {
-            position: fixed; bottom: 0; left: 0; right: 0; height: 25px;
-            background: #d12e87; color: white;
-            font-size: 0.7rem; display: flex; align-items: center; justify-content: center;
-            z-index: 200; border-top: 2px solid white; font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        /* WISH & PET */
-        .corkboard { background: #e6d7c3; border: 5px ridge #8b5a2b; border-radius: 10px; padding: 15px; min-height: 400px; position: relative; }
-        .polaroid { background: white; padding: 6px; text-align: center; margin-bottom:15px; transform: rotate(-2deg); box-shadow: 3px 3px 6px rgba(0,0,0,0.1); position:relative; transition: transform 0.2s; display: inline-block; width: 45%; margin: 2%; vertical-align: top; }
-        .polaroid:nth-child(even) { transform: rotate(2deg); }
-        .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
-        .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border: 1px solid #eee; }
-        .delete-wish-btn { position: absolute; top: -8px; right: -8px; background: red; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; z-index: 5; cursor: pointer; }
-        .fab-btn { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; background: var(--main); color: white; border-radius: 50%; border: 3px outset white; font-size: 2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100; transition: transform 0.2s; }
+        .save-ribbon { position: fixed; bottom: 0; left: 0; right: 0; height: 25px; background: #d12e87; color: white; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; z-index: 200; border-top: 2px solid white; font-weight: bold; }
         
-        .pet-box { background: white; border: 3px ridge var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; transition: background 0.3s; }
-        
-        /* WALLPAPER PATTERNS */
+        /* WALLPAPER CLASSES */
         .bg-hearts { background-color: #ffe4e1 !important; background-image: radial-gradient(#ff69b4 2px, transparent 2px), radial-gradient(#ff69b4 2px, transparent 2px) !important; background-size: 20px 20px !important; background-position: 0 0, 10px 10px !important; }
         .bg-dots-blue { background-color: #e0f7fa !important; background-image: radial-gradient(#4fc3f7 2px, transparent 2px) !important; background-size: 15px 15px !important; }
         .bg-check-green { background-color: #f1f8e9 !important; background-image: repeating-linear-gradient(45deg, #c5e1a5 25%, transparent 25%, transparent 75%, #c5e1a5 75%, #c5e1a5), repeating-linear-gradient(45deg, #c5e1a5 25%, #f1f8e9 25%, #f1f8e9 75%, #c5e1a5 75%, #c5e1a5) !important; background-size: 20px 20px !important; }
         .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }
-
-        /* FIXED ACCESSORY POS - LOWERED */
-        .pet-hat { 
-            position: absolute; 
-            top: 55px; /* LOWERED SIGNIFICANTLY */
-            left: 50%; 
-            transform: translateX(-50%); 
-            font-size: 4rem; 
-            z-index: 10; 
-            pointer-events: none;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
         
-        .acc-head { top: 35px; } /* Sits on head */
-        .acc-mask { top: 65px; } /* Over face */
-        .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; transform: none; }
-
-        .ebi-img { width: 140px; transition: transform 0.2s; margin-top:10px; }
-        .ebi-img.bounce { animation: bigBounce 0.5s ease; }
-        @keyframes bigBounce { 0% {transform:scale(1);} 50% {transform:scale(1.2) translateY(-15px);} 100% {transform:scale(1);} }
-        .task-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
-        .task-item.completed { text-decoration: line-through; color: #aaa; opacity: 0.5; }
-        
-        /* GACHA SHOP UI */
-        .gacha-btn-group { display: flex; gap: 5px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
-        .gacha-btn { background: #f8f8f8; border: 2px outset #ddd; padding: 10px; border-radius: 10px; font-size: 0.8rem; cursor: pointer; width: 30%; }
-        .gacha-btn:active { border-style: inset; transform: translateY(2px); }
-
-        .inventory-grid { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 10px; background: #f0f0f0; padding: 10px; border: 2px inset #ccc; border-radius: 10px; }
-        .inv-item { font-size: 1.5rem; cursor: pointer; padding: 8px; border: 1px solid #ddd; background: white; border-radius: 5px; min-width: 30px; text-align: center; }
-        .inv-item:hover { background: #e0f7fa; border-color: var(--blue); }
-
-        /* DIARY EXPANSION */
-        .diary-box { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .mood-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
-        .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 15px; height: 40px; border: 2px outset #eee; cursor: pointer; display:flex; align-items:center; justify-content:center; }
-        .mood-btn.selected { border-color: var(--main); background: var(--bg-light); border-style: inset; }
-        
-        /* QUICK MOOD RECEIPT STYLE */
-        .quick-mood-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
-        .qm-btn { background: white; border: 2px solid var(--main); border-radius: 10px; padding: 10px; font-size: 1.2rem; cursor: pointer; transition: transform 0.1s; }
-        .qm-btn:active { transform: scale(0.9); }
-        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; white-space: pre-wrap; }
-        
-        /* WEBRING BUTTON STYLE (88x31) */
-        .web-btn-grid { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
-        .web-btn {
-            width: 88px; height: 31px;
-            background: linear-gradient(to bottom, #fff 0%, #eee 100%);
-            border: 1px solid #999;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'MS UI Gothic', sans-serif; font-size: 10px;
-            text-decoration: none; color: #333;
-            box-shadow: 1px 1px 0 #000;
-            overflow: hidden; white-space: nowrap; margin-bottom: 5px;
-        }
-        
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 20001; font-weight:bold; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 20001; font-weight:bold; pointer-events: none; }
         .toast.show { opacity: 1; top: 30px; }
-
+        
+        input { width: 100%; padding: 10px; margin-bottom: 5px; border: 2px inset #ccc; border-radius: 10px; }
+        .btn-main { background: var(--main); color: white; padding: 10px; border: 2px outset #ff9eb5; border-radius: 20px; width: 100%; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="dream-overlay"></div>
-<div class="scanlines"></div>
 <div id="toast" class="toast">💾 Saved!</div>
 
 <div id="welcome-layer">
     <div class="welcome-card">
         <div style="font-size:4rem; margin-bottom:10px;">🎀</div>
-        <h1 class="welcome-title">SEIREN</h1>
-        <button class="enter-btn" onclick="enterApp()">
-            ENTER WORLD<br>
-            <span style="font-size:1rem;">♡</span>
-        </button>
+        <h1 style="color:#d12e87; margin-bottom:20px;">SEIREN</h1>
+        <button class="enter-btn" onclick="startApp()">ENTER WORLD<br>♡</button>
     </div>
 </div>
 
 <div class="app-shell" id="main-app">
-    
     <div id="lvl-badge" class="lvl-badge">🌱</div>
-
-    <div class="status-bar">
-        <span id="clock">12:00</span>
-        <span>🔋 100%</span>
-    </div>
-    
-    <div class="marquee-container">
-        <div class="marquee-text">
-            ★ SYSTEM ONLINE ★ WELCOME HOME ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★
-        </div>
-    </div>
+    <div class="status-bar"><span id="clock">12:00</span><span>🔋 100%</span></div>
+    <div class="marquee-container"><div class="marquee-text">★ SYSTEM ONLINE ★ WELCOME HOME ★ EBI IS HUNGRY ★ MAKE A WISH ★ GIRLS BRAVO FOREVER ★</div></div>
 
     <div class="content">
-
         <div id="tab-dash" class="page active">
-            
             <div id="setup-view" style="text-align:center; padding:30px; display:none;">
                 <h2 style="color:var(--main);">New System?</h2>
                 <input type="text" id="setup-name" placeholder="Name">
                 <input type="number" id="setup-age" placeholder="Age">
                 <button class="btn-main" onclick="initFirstProfile()">Create ID</button>
             </div>
-
             <div id="dash-view" style="display:none;">
                 <div class="dash-header">
                     <h2 style="margin:0; color:var(--dark);" id="dash-greet">Hello!</h2>
                     <span style="font-size:0.8rem; color:#888;">System Dashboard</span>
                 </div>
-
                 <div class="xp-box">
                     <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:var(--blue);">
-                        <span>Level <span id="lvl-num">1</span></span>
-                        <span><span id="xp-val">0</span>/100 XP</span>
+                        <span>Level <span id="lvl-num">1</span></span><span><span id="xp-val">0</span>/100 XP</span>
                     </div>
                     <div class="xp-track"><div id="xp-bar" class="xp-fill"></div></div>
-                    <div style="margin-top:5px; font-size:0.7rem; color:var(--dark); font-weight:bold;">Credits: ₵<span id="credit-val">0</span></div>
+                    <div style="margin-top:5px; font-size:0.7rem; color:var(--dark);">Credits: ₵<span id="credit-val">0</span></div>
                 </div>
-
                 <div class="id-card-wrap">
                     <div class="id-inner">
                         <div class="deco-bow">🎀</div>
-                        <div class="id-top">
-                            <span style="font-size:0.7rem; font-weight:bold; color:var(--dark);">SEIREN GOV</span>
-                            <span style="font-size:0.6rem; color:#aaa; font-weight:bold;">ID CARD</span>
-                        </div>
+                        <div class="id-top"><span style="font-size:0.7rem; font-weight:bold; color:var(--dark);">SEIREN GOV</span></div>
                         <div class="id-body">
-                            <img id="id-pic" class="id-photo" src="" referrerpolicy="no-referrer" onclick="rotateAvatar()" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3233/3233508.png'">
+                            <img id="id-pic" class="id-photo" src="" onclick="rotateAvatar()">
                             <div class="id-data">
-                                <div id="id-name" style="font-size:1.3rem; font-weight:bold; color:var(--dark); line-height:1;">User</div>
-                                <div id="id-real" style="font-size:0.7rem; font-style:italic; color:#888; margin-bottom:8px;">aka ???</div>
+                                <div id="id-name" style="font-size:1.3rem; font-weight:bold; color:var(--dark);">User</div>
+                                <div id="id-real" style="font-size:0.7rem; font-style:italic; color:#888;">aka ???</div>
                                 <div class="id-stats-grid">
                                     <span><b>ID:</b> <span id="id-num">000</span></span>
                                     <span><b>Sign:</b> <span id="id-sign">?</span></span>
-                                    <span><b>Eyes:</b> <span id="id-eyes">?</span></span>
-                                    <span><b>Hair:</b> <span id="id-hair">?</span></span>
                                     <span><b>Hgt:</b> <span id="id-hgt">?</span></span>
                                     <span><b>Wgt:</b> <span id="id-wgt">?</span></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="id-footer">
-                            AUTHORIZED SIGNATURE: <span class="signature" id="my-sig">User</span>
-                        </div>
                     </div>
                 </div>
-
                 <div class="dash-grid">
-                    <div class="dash-btn" onclick="openProfileManager()">
-                        <span class="dash-icon">👥</span>
-                        <span class="dash-label">Switch</span>
-                    </div>
-                    <div class="dash-btn" onclick="openPortal()">
-                        <span class="dash-icon">🌀</span>
-                        <span class="dash-label">Portal</span>
-                    </div>
-                    <div class="dash-btn" onclick="openBackpack()">
-                        <span class="dash-icon">🎒</span>
-                        <span class="dash-label">Backpack</span>
-                    </div>
+                    <div class="dash-btn" onclick="openProfileManager()"><span class="dash-icon">👥</span><span>Switch</span></div>
+                    <div class="dash-btn" onclick="openPortal()"><span class="dash-icon">🌀</span><span>Portal</span></div>
+                    <div class="dash-btn" onclick="openBackpack()"><span class="dash-icon">🎒</span><span>Backpack</span></div>
                 </div>
-
-                <div class="front-log-widget" style="background:white; border:2px dashed var(--main); border-radius:15px; padding:10px; margin-bottom:20px;">
-                    <strong style="color:var(--main); font-size:0.8rem;">Front History</strong>
-                    <div id="mini-log"></div>
-                </div>
-
-                <div style="text-align:center; padding-bottom:20px;">
-                    <h3 style="color:var(--main); margin-bottom:5px;">Daily Fortune</h3>
+                <div style="text-align:center;">
                     <div class="fortune-stage" onclick="flipFortune()">
                         <div class="card-wrapper" id="fortune-card">
-                            <div class="card-face card-front"><span style="font-size:3rem; color:white; font-weight:bold;">?</span></div>
-                            <div class="card-face card-back">
-                                <div id="fortune-icon" style="font-size:3rem; margin-bottom:10px;">⭐</div>
-                                <strong id="fortune-title" style="color:var(--main); font-size:0.9rem;"></strong>
-                                <p id="fortune-desc" style="font-size:0.7rem; color:#666; margin-top:5px; line-height:1.2;"></p>
-                            </div>
+                            <div class="card-face card-front"><span style="font-size:3rem; color:white;">?</span></div>
+                            <div class="card-face card-back"><div id="fortune-icon" style="font-size:3rem;">⭐</div><strong id="fortune-title"></strong><p id="fortune-desc"></p></div>
                         </div>
                     </div>
                     <button class="new-day-btn" onclick="resetFortune()">↻ New Day</button>
@@ -411,43 +210,37 @@
             <div class="bbs-container">
                 <div class="bbs-messages" id="bbs-feed"></div>
                 <div class="bbs-input-area">
-                    <input type="text" id="bbs-input" placeholder="Message..." style="margin:0;">
-                    <button class="btn-main" style="width:auto; padding:10px;" onclick="postBBS()">Send</button>
+                    <input type="text" id="bbs-input" placeholder="Message...">
+                    <button class="btn-main" style="width:auto;" onclick="postBBS()">Send</button>
                 </div>
             </div>
         </div>
 
         <div id="tab-wish" class="page">
             <h2 style="color:var(--blue);">Wishlist</h2>
-            <div class="corkboard">
-                <div id="wish-list" class="wish-grid"></div>
-            </div>
+            <div class="corkboard"><div id="wish-list" class="wish-grid"></div></div>
             <button class="fab-btn" onclick="openWishModal()">+</button>
         </div>
 
         <div id="tab-pet" class="page">
-            <div class="pet-box" style="margin-bottom:20px;" id="pet-container">
-                <div class="pet-acc-container">
-                    <div id="ebi-hat" class="pet-hat"></div>
-                </div>
+            <div class="pet-box" id="pet-container">
+                <div class="pet-acc-container"><div id="ebi-hat" class="pet-hat"></div></div>
                 <img id="ebi-pet" src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="ebi-img">
                 <h3 style="color:var(--main);">Ebi</h3>
                 <div style="background:#eee; height:12px; border-radius:10px; overflow:hidden; margin:10px 0;">
                     <div id="pet-bar" style="width:50%; height:100%; background:var(--main); transition:width 0.5s;"></div>
                 </div>
-                <div id="ebi-msg" style="height:20px; font-size:0.7rem; color:#888; margin-bottom:10px;">Do tasks to feed me!</div>
+                <div id="ebi-msg" style="font-size:0.7rem; color:#888;">Do tasks to feed me!</div>
             </div>
-            <div style="margin-bottom:10px;">
-                <strong>To Do List</strong>
-                <div style="display:flex; gap:5px;">
-                    <input type="text" id="task-in" placeholder="Task...">
-                    <button class="btn-main" style="width:auto;" onclick="addTask()">+</button>
-                </div>
-                <div id="task-list"></div>
+            <strong>To Do List</strong>
+            <div style="display:flex; gap:5px; margin-bottom:10px;">
+                <input type="text" id="task-in" placeholder="Task...">
+                <button class="btn-main" style="width:auto;" onclick="addTask()">+</button>
             </div>
+            <div id="task-list"></div>
             
             <div style="margin-top:20px; border-top:2px dashed #ccc; padding-top:10px;">
-                <strong style="color:var(--dark);">Quick Mood Check</strong>
+                <strong>Quick Mood Check</strong>
                 <div class="quick-mood-board">
                     <button class="qm-btn" onclick="logMoodQuick('😊')">😊</button>
                     <button class="qm-btn" onclick="logMoodQuick('😢')">😢</button>
@@ -457,51 +250,31 @@
                     <button class="qm-btn" onclick="logMoodQuick('🌀')">🌀</button>
                     <button class="qm-btn" onclick="logMoodQuick('💀')">💀</button>
                     <button class="qm-btn" onclick="logMoodQuick('✨')">✨</button>
-                    <button class="qm-btn" onclick="logMoodQuick('😰')">😰</button>
-                    <button class="qm-btn" onclick="logMoodQuick('⚡')">⚡</button>
-                    <button class="qm-btn" onclick="logMoodQuick('😶')">😶</button>
-                    <button class="qm-btn" onclick="logMoodQuick('☁️')">☁️</button>
                 </div>
-                <div id="receipt-log" class="receipt-log">
-                    *** MOOD RECEIPT ***<br>
-                    Waiting for input...
-                </div>
+                <div id="receipt-log" class="receipt-log">*** RECEIPT ***</div>
             </div>
         </div>
 
         <div id="tab-diary" class="page">
             <h2 style="color:var(--main);">Secret Diary</h2>
             <div class="diary-box">
-                <div class="mood-bar">
-                    <button class="mood-btn selected" onclick="setMood('😊', this)">😊</button>
-                    <button class="mood-btn" onclick="setMood('😢', this)">😢</button>
-                    <button class="mood-btn" onclick="setMood('😡', this)">😡</button>
-                    <button class="mood-btn" onclick="setMood('💖', this)">💖</button>
-                    <button class="mood-btn" onclick="setMood('🌧️', this)">🌧️</button>
-                    <button class="mood-btn" onclick="setMood('💤', this)">💤</button>
-                    <button class="mood-btn" onclick="setMood('✨', this)">✨</button>
-                    <button class="mood-btn" onclick="setMood('💀', this)">💀</button>
-                </div>
-                <textarea id="diary-in" style="width:100%; height:80px; padding:10px; border:2px inset #eee; border-radius:10px; resize:none;" placeholder="Write something..."></textarea>
+                <textarea id="diary-in" style="width:100%; height:80px; padding:10px;" placeholder="Write something..."></textarea>
                 <button class="btn-main" onclick="postDiary()">Save Entry</button>
             </div>
             <div id="diary-feed" style="margin-top:20px;"></div>
         </div>
-
     </div>
 
     <div class="save-ribbon">♡ REMEMBER TO SAVE BEFORE LEAVING ♡</div>
 
     <div id="modal-profiles" class="modal-overlay">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--main);">Select Fronter</h3>
-            <div id="profile-list" style="max-height:200px; overflow-y:auto; margin-bottom:15px;"></div>
-            <div style="border-top:2px dashed #eee; padding-top:10px;">
-                <h4 style="margin:0 0 10px 0;">New Identity</h4>
+            <h3>Select Fronter</h3>
+            <div id="profile-list"></div>
+            <div style="border-top:2px dashed #eee; padding-top:10px; margin-top:10px;">
                 <input type="text" id="new-p-name" placeholder="Name">
                 <input type="number" id="new-p-age" placeholder="Age">
-                <label style="font-size:0.8rem; font-weight:bold;">Theme Color:</label>
-                <input type="color" id="new-p-color" value="#ff69b4" style="height:40px; padding:0; border:none; width:100%; border-radius:10px; margin-bottom:10px;">
+                <input type="color" id="new-p-color" value="#ff69b4" style="width:100%;">
                 <button class="btn-main" onclick="addProfile()">Create</button>
             </div>
             <button class="btn-main" style="background:#ccc; margin-top:10px;" onclick="closeModals()">Close</button>
@@ -510,50 +283,32 @@
 
     <div id="modal-backpack" class="modal-overlay">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--main);">🎒 Ebi's Backpack</h3>
-            
-            <div style="background:#f9f9f9; border:2px inset #eee; padding:10px; border-radius:10px; margin-bottom:15px;">
-                <div style="font-size:0.8rem; font-weight:bold; color:var(--dark);">Gacha Shop (50 ₵)</div>
+            <h3>🎒 Backpack</h3>
+            <div style="background:#f9f9f9; padding:10px; border-radius:10px; margin-bottom:10px;">
+                <div style="font-weight:bold;">Gacha (50 ₵)</div>
                 <div class="gacha-btn-group">
-                    <button class="gacha-btn" onclick="playGacha('cute')">🎀 Cute</button>
-                    <button class="gacha-btn" onclick="playGacha('dark')">🕸️ Dark</button>
-                    <button class="gacha-btn" onclick="playGacha('nature')">🍄 Nature</button>
-                    <button class="gacha-btn" onclick="playGacha('decor')">🖼️ Decor</button>
+                    <button class="gacha-btn" onclick="playGacha('cute')">🎀</button>
+                    <button class="gacha-btn" onclick="playGacha('dark')">🕸️</button>
+                    <button class="gacha-btn" onclick="playGacha('nature')">🍄</button>
+                    <button class="gacha-btn" onclick="playGacha('decor')">🖼️</button>
                 </div>
             </div>
-
-            <div style="font-size:0.8rem; font-weight:bold;">Inventory (Click to equip):</div>
-            <div class="inventory-grid" id="inv-grid">
-                <span class="inv-item" onclick="setHat('')">❌</span>
-                </div>
-
-            <button class="btn-main" style="background:#ccc; margin-top:15px;" onclick="closeModals()">Close</button>
+            <div id="inv-grid" class="inventory-grid"><span class="inv-item" onclick="setHat('')">❌</span></div>
+            <button class="btn-main" style="background:#ccc; margin-top:10px;" onclick="closeModals()">Close</button>
         </div>
     </div>
 
     <div id="modal-portal" class="modal-overlay">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--main);">🌀 Web Portal</h3>
-            
-            <p style="font-size:0.8rem; color:#666;">Bookmarks & Quizzes</p>
-            
-            <div id="link-list" style="margin-bottom:15px;" class="web-btn-grid"></div>
-            
-            <a href="https://www.quotev.com/quiz/17122879/who-am-I-pt-2" target="_blank" class="web-btn" style="width:100%;height:35px;margin-bottom:10px;">✨ QUIZ</a>
-            
-            <div style="background:#f0f8ff; padding:10px; border-radius:10px; margin-bottom:10px;">
-                <input type="text" id="link-name" placeholder="Title" style="margin-bottom:5px;">
-                <input type="text" id="link-url" placeholder="URL (https://...)">
-                <button class="btn-main" style="background:var(--blue); padding:5px;" onclick="addLink()">Add Link</button>
-            </div>
-
-            <div style="border-top:1px dashed #ccc; padding-top:10px; text-align:center;">
-                <h4 style="margin:0 0 10px 0;">System Backup</h4>
-                <button class="btn-main" style="background:#555; font-size:0.8rem;" onclick="exportData()">💾 Copy Save Data</button>
-                <button class="btn-main" style="background:#999; font-size:0.8rem; margin-top:5px;" onclick="importData()">📂 Import Save Data</button>
-            </div>
-
-            <button class="btn-main" style="background:#ccc; margin-top:15px;" onclick="closeModals()">Close</button>
+            <h3>🌀 Portal</h3>
+            <div id="link-list"></div>
+            <a href="https://www.quotev.com/quiz/17122879/who-am-I-pt-2" target="_blank" class="btn-main" style="display:block; text-align:center; text-decoration:none; margin-bottom:10px;">✨ QUIZ</a>
+            <input type="text" id="link-name" placeholder="Title">
+            <input type="text" id="link-url" placeholder="URL">
+            <button class="btn-main" onclick="addLink()">Add Link</button>
+            <button class="btn-main" style="background:#555; margin-top:10px;" onclick="exportData()">💾 Copy Save</button>
+            <button class="btn-main" style="background:#999; margin-top:5px;" onclick="importData()">📂 Import Save</button>
+            <button class="btn-main" style="background:#ccc; margin-top:10px;" onclick="closeModals()">Close</button>
         </div>
     </div>
 
@@ -568,13 +323,12 @@
     </div>
 
     <nav>
-        <button class="nav-btn active" onclick="go('home', this)"><span>🏠</span><span class="nav-label">Home</span></button>
-        <button class="nav-btn" onclick="go('bbs', this)"><span>💬</span><span class="nav-label">Chat</span></button>
-        <button class="nav-btn" onclick="go('wish', this)"><span>📌</span><span class="nav-label">Wish</span></button>
-        <button class="nav-btn" onclick="go('pet', this)"><span>🍤</span><span class="nav-label">Tools</span></button>
-        <button class="nav-btn" onclick="go('diary', this)"><span>📓</span><span class="nav-label">Diary</span></button>
+        <button class="nav-btn active" onclick="go('home', this)"><span>🏠</span><span>Home</span></button>
+        <button class="nav-btn" onclick="go('bbs', this)"><span>💬</span><span>Chat</span></button>
+        <button class="nav-btn" onclick="go('wish', this)"><span>📌</span><span>Wish</span></button>
+        <button class="nav-btn" onclick="go('pet', this)"><span>🍤</span><span>Tools</span></button>
+        <button class="nav-btn" onclick="go('diary', this)"><span>📓</span><span>Diary</span></button>
     </nav>
-
 </div>
 
 <script>
@@ -592,155 +346,72 @@
         "https://i.postimg.cc/X7YrthmQ/Ac83513f62.webp",
         "https://i.postimg.cc/5N2XDGTP/9180_710547588.jpg"
     ];
-    
-    // GACHA POOLS
+
+    const BADGES = ["🌱","🐣","🎀","⭐","🌸","🍄","💎","👑","🧚‍♀️","🏰","🪐"];
     const GACHA = {
         cute: ["🎀","👑","🩰","🧁","🧸","💖","🍓","🍭"],
         dark: ["🕸️","🕷️","💀","🥀","🖤","🦇","🗡️","⛓️"],
         nature: ["🍄","🌱","🌵","🌸","🌻","🐸","🍃","🪵"],
         decor: ["bg-hearts", "bg-dots-blue", "bg-check-green", "bg-clouds"] 
     };
-
-    const BADGES = ["🌱","🐣","🎀","⭐","🌸","🍄","💎","👑","🧚‍♀️","🏰","🪐"];
-
     const FORTUNES = [
-        {i:"🍞",t:"Toast Dash",d:"Running late but looking cute!"},
-        {i:"🌟",t:"Super Star",d:"You are the main character today."},
-        {i:"🌧️",t:"Melancholy",d:"A good day for reading inside."},
-        {i:"💖",t:"Doki Doki",d:"Love is in the air!"},
-        {i:"🎮",t:"Gamer Mode",d:"High score incoming."},
-        {i:"💤",t:"Sleepyhead",d:"Take a nap. You earned it."},
-        {i:"🍄",t:"Cottagecore",d:"Go touch some grass."},
-        {i:"👾",t:"Glitch Mode",d:"Disassociation risk high."},
-        {i:"🌸",t:"Bloom",d:"Growth is happening."},
-        {i:"🌊",t:"Ocean Deep",d:"Drink more water."},
-        {i:"💎",t:"Shiny",d:"You are glowing!"},
-        {i:"🌈",t:"Rainbow",d:"Storms pass, rainbows follow."},
-        {i:"🛁",t:"Bath Portal",d:"Bring a towel, just in case."},
-        {i:"🤧",t:"Sneeze Attack",d:"Someone is talking about you."},
-        {i:"🍛",t:"Space Curry",d:"Spicy food powers you up."},
-        {i:"🩸",t:"Nosebleed",d:"Too much cuteness detected."},
-        {i:"🧜‍♀️",t:"Siren Song",d:"Your words are persuasive."},
-        {i:"🛸",t:"UFO Sighting",d:"They are watching."},
-        {i:"😖",t:"Tsundere Mode",d:"It's okay to be honest!"},
-        {i:"404",t:"Error Found",d:"Motivation not found."},
-        {i:"☎️",t:"Dial-Up",d:"Connection to universe is slow."},
-        {i:"💻",t:"Blue Screen",d:"System crash imminent. Nap required."},
-        {i:"📧",t:"You've Got Mail",d:"Check your inbox."},
-        {i:"💯",t:"1000th Visitor",d:"You win! (Nothing)."},
-        {i:"🍓",t:"Strawberry Milk",d:"Treat yourself to sweet things."},
-        {i:"🐈‍⬛",t:"Black Cat",d:"A new friend approaches."}
+        {i:"🍞",t:"Toast Dash",d:"Running late!"},{i:"🌟",t:"Super Star",d:"Main character energy."},{i:"💖",t:"Doki Doki",d:"Love is in the air."},{i:"🎮",t:"Gamer",d:"High score incoming."},{i:"🛁",t:"Bath Portal",d:"Bring a towel."},{i:"🤧",t:"Sneeze",d:"Someone is talking about you."},{i:"🍛",t:"Curry",d:"Spicy power."},{i:"🩸",t:"Nosebleed",d:"Too cute."},{i:"💻",t:"Blue Screen",d:"Crash imminent."},{i:"📧",t:"Mail",d:"Check inbox."}
     ];
 
-    // --- STATE ---
-    let DB = {
-        profiles: [], activeIdx: 0, xp: 0, credits: 0, lvl: 1,
-        wish: [], pet: {hunger:50, tasks:[], lastTask: Date.now()}, 
-        inventory: [], 
-        bbs: [], frontLog: [], diary: [], links: [],
-        fortune: {date:'', i:'', t:'', d:''},
-        wallpaper: "" 
-    };
-    let mood = '😊';
-
-    // --- SAVE REMINDER ---
-    window.addEventListener('beforeunload', (event) => {
-        event.preventDefault();
-        event.returnValue = ''; 
-    });
-
-    // --- INIT ---
-    let soundEnabled = false; 
+    let DB = { profiles: [], activeIdx: 0, xp: 0, credits: 0, lvl: 1, wish: [], pet: {hunger:50, tasks:[], lastTask: Date.now()}, inventory: [], bbs: [], frontLog: [], diary: [], links: [], fortune: {date:'',i:'',t:'',d:''}, wallpaper: "" };
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v49'); // Updated Version
-        if(saved) DB = JSON.parse(saved);
+    // --- MAIN APP ENTRY ---
+    function startApp() {
+        // Resume Audio
+        if(audioCtx.state === 'suspended') audioCtx.resume();
         
-        // MIGRATION
-        if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v48') || localStorage.getItem('seiren_v47') || localStorage.getItem('seiren_v46'));
-            if(old) { DB = old; save(); }
-        }
-        
-        if(!DB.pet.lastTask) DB.pet.lastTask = Date.now();
-        if(!DB.links) DB.links = [];
-        if(!DB.inventory) DB.inventory = [];
-        if(DB.credits === undefined) DB.credits = 0;
-        if(!DB.wallpaper) DB.wallpaper = "";
-
-        setInterval(() => {
-            const d = new Date();
-            document.getElementById('clock').innerText = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        }, 1000);
-    });
-
-    function enterApp() {
-        if(audioCtx.state === 'suspended') {
-            audioCtx.resume().then(() => { soundEnabled = true; });
-        }
-
+        // Hide Welcome / Show App
         document.getElementById('welcome-layer').style.opacity = '0';
         setTimeout(() => {
             document.getElementById('welcome-layer').style.display = 'none';
             document.getElementById('main-app').style.display = 'flex';
             setTimeout(() => {
                 document.getElementById('main-app').style.opacity = '1';
-                if(DB.profiles.length > 0) {
-                    applyTheme(DB.profiles[DB.activeIdx]);
-                    document.getElementById('dash-view').style.display = 'block';
-                    document.getElementById('setup-view').style.display = 'none';
-                    refreshUI(); checkFortune();
-                } else {
-                    document.getElementById('setup-view').style.display = 'block';
-                    document.getElementById('dash-view').style.display = 'none';
-                }
+                loadData();
             }, 50);
         }, 500);
     }
 
+    function loadData() {
+        const saved = localStorage.getItem('seiren_v50');
+        if(saved) DB = JSON.parse(saved);
+        // Migration check
+        if(DB.profiles.length === 0) {
+            const old = JSON.parse(localStorage.getItem('seiren_v49') || localStorage.getItem('seiren_v48'));
+            if(old) { DB = old; save(); }
+        }
+        
+        // Render Correct View
+        if(DB.profiles.length > 0) {
+            applyTheme(DB.profiles[DB.activeIdx]);
+            document.getElementById('dash-view').style.display = 'block';
+            refreshUI(); checkFortune();
+        } else {
+            document.getElementById('setup-view').style.display = 'block';
+        }
+    }
+
     function save() {
-        localStorage.setItem('seiren_v49', JSON.stringify(DB));
+        localStorage.setItem('seiren_v50', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
     }
 
-    function applyTheme(user) {
-        const color = user ? (user.color || "#ff69b4") : "#ff69b4";
-        const r = document.documentElement;
-        r.style.setProperty('--main', color);
-        r.style.setProperty('--dark', adjustColor(color, -40));
-        r.style.setProperty('--bg-light', adjustColor(color, 160));
-        r.style.setProperty('--bg-dark', adjustColor(color, 120));
-    }
-    function adjustColor(col, amt) {
-        var usePound = false; if (col[0] == "#") { col = col.slice(1); usePound = true; }
-        var num = parseInt(col,16);
-        var r = (num >> 16) + amt; var b = ((num >> 8) & 0x00FF) + amt; var g = (num & 0x0000FF) + amt;
-        if (r > 255) r = 255; else if (r < 0) r = 0; if (b > 255) b = 255; else if (b < 0) b = 0; if (g > 255) g = 255; else if (g < 0) g = 0;
-        return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
-    }
-
-    // --- GIRLS BRAVO GENERATOR (EXPANDED) ---
+    // --- GENERATOR & PROFILES ---
     function genID(name, age, color) {
-        const seed = name.length + parseInt(age||0) + Math.floor(Math.random()*100);
-        const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To","Ami","Rina"];
-        const nameS = ["-chan","-ren","-la","-ru","-ka","-na","-ho","-chi","-mi"];
-        
         return {
-            name: nameP[seed%nameP.length] + nameS[seed%nameS.length],
-            realName: name, age: age,
-            color: color || "#ff69b4",
+            name: name + "-chan", realName: name, age: age, color: color,
             id: Math.floor(Math.random()*9000)+1000,
-            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka","Ghost","Angel","Witch","Space Cadet"][seed%13],
-            eyes: ["Pink","Blue","Gold","Red","Violet","Teal","Starry","Heterochromia","Void"][seed%9],
-            hair: ["Twin","Long","Bob","Short","Drills","Messy","Hime Cut","Bald","Ponytail","Buns"][seed%10],
-            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs","1000 Cookies","Light as air","Heavy Metal"][seed%10],
-            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized", "Skyscraper", "Bean sized", "Tall"][seed%10],
-            // STRICT LEVEL LOCK: New profile starts with unlocked avatar
-            av: Math.min(DB.lvl, AVATARS.length-1),
-            hat: "" 
+            sign: ["Alien","Maid","Neko","Usagi","Ghost"][Math.floor(Math.random()*5)],
+            wgt: "3 Peaches", hgt: "Tiny",
+            av: Math.min(DB.lvl, AVATARS.length-1), hat: ""
         };
     }
 
@@ -756,7 +427,6 @@
         refreshUI();
     }
 
-    // --- MAIN RENDER ---
     function refreshUI() {
         const u = DB.profiles[DB.activeIdx];
         if(u) {
@@ -765,156 +435,68 @@
             document.getElementById('id-real').innerText = `aka ${u.realName}`;
             document.getElementById('id-num').innerText = u.id;
             document.getElementById('id-sign').innerText = u.sign;
-            document.getElementById('id-eyes').innerText = u.eyes;
-            document.getElementById('id-hair').innerText = u.hair;
             document.getElementById('id-hgt').innerText = u.hgt;
             document.getElementById('id-wgt').innerText = u.wgt;
+            document.getElementById('id-pic').src = AVATARS[(u.av||0) % AVATARS.length];
             
-            const avIndex = (u.av || 0) % AVATARS.length;
-            document.getElementById('id-pic').src = AVATARS[avIndex];
-            
-            document.getElementById('my-sig').innerText = u.name;
-            
-            const hat = u.hat || "";
+            // SMART HAT LOGIC
             const el = document.getElementById('ebi-hat');
-            el.innerText = hat;
-            el.className = getAccType(hat); 
+            el.innerText = u.hat || "";
+            el.className = getAccType(u.hat || "");
         }
         
         document.getElementById('pet-container').className = `pet-box ${DB.wallpaper || ''}`;
-
-        const badgeIdx = Math.min(DB.lvl-1, BADGES.length-1);
-        document.getElementById('lvl-badge').innerText = BADGES[Math.max(0, badgeIdx)];
-
+        document.getElementById('lvl-badge').innerText = BADGES[Math.min(DB.lvl-1, BADGES.length-1)];
         document.getElementById('lvl-num').innerText = DB.lvl;
         document.getElementById('xp-val').innerText = DB.xp;
         document.getElementById('xp-bar').style.width = DB.xp + "%";
         document.getElementById('credit-val').innerText = DB.credits;
 
+        // INVENTORY
         const invGrid = document.getElementById('inv-grid');
         while(invGrid.children.length > 1) { invGrid.removeChild(invGrid.lastChild); }
         DB.inventory.forEach(item => {
             const span = document.createElement('span');
             span.className = 'inv-item';
-            if(item.startsWith('bg-')) {
-                span.innerText = "🖼️";
-                span.onclick = () => setWallpaper(item);
-            } else {
-                span.innerText = item;
-                span.onclick = () => setHat(item);
-            }
+            span.innerText = item.startsWith('bg-') ? '🖼️' : item;
+            span.onclick = () => { item.startsWith('bg-') ? setWallpaper(item) : setHat(item); };
             invGrid.appendChild(span);
         });
 
-        const mini = document.getElementById('mini-log'); mini.innerHTML = "";
-        DB.frontLog.slice(0, 3).forEach(l => {
-            mini.innerHTML += `<div class="log-entry-mini" style="display:flex;justify-content:space-between;border-bottom:1px dotted #ccc;font-size:0.7rem;padding:3px;"><span>${l.name}</span><span>${l.time}</span></div>`;
-        });
-
-        const wList = document.getElementById('wish-list'); wList.innerHTML="";
-        DB.wish.forEach((w,i)=> wList.innerHTML+=`<div class="polaroid"><div class="delete-wish-btn" onclick="delWish(${i})">x</div><img src="${w.img}"><div style="font-size:0.7rem;margin-top:5px;font-weight:bold;">${w.name}</div></div>`);
-
-        document.getElementById('pet-bar').style.width = DB.pet.hunger+"%";
-        
-        const hrsSince = (Date.now() - (DB.pet.lastTask || Date.now())) / (1000 * 60 * 60);
-        if(hrsSince > 24) {
-             document.getElementById('ebi-msg').innerText = "Ebi is lonely... (Do tasks!)";
-        }
-
+        // TASKS
         const tList = document.getElementById('task-list'); tList.innerHTML="";
         DB.pet.tasks.forEach((t,i)=> tList.innerHTML+=`<div class="task-item"><span>${t}</span><input type="checkbox" onclick="doTask(${i})"></div>`);
-
-        const bbs = document.getElementById('bbs-feed'); bbs.innerHTML="";
-        DB.bbs.slice().reverse().forEach(m => {
-            bbs.innerHTML += `<div class="bbs-msg" style="border-left-color:${m.color}"><div class="bbs-meta"><span style="color:${m.color};font-weight:bold;">${m.sender}</span><span>${m.time}</span></div>${m.text}</div>`;
-        });
-
+        
+        // DIARY
         const df = document.getElementById('diary-feed'); df.innerHTML="";
-        DB.diary.forEach(e => {
-            const emoji = e.m || '😊';
-            const dateStr = e.d ? `<div style="font-size:0.6rem;color:#aaa;">${e.d}</div>` : '';
-            df.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:5px;border-radius:10px;border-bottom:2px solid #eee; display:flex; gap:10px; align-items:flex-start;"><span style="font-size:1.5rem;">${emoji}</span><div style="flex:1;">${dateStr}<span style="margin-top:5px;display:block;">${e.t}</span></div></div>`
-        });
+        DB.diary.forEach(e => df.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:5px;border-bottom:1px solid #eee;">${e.t}</div>`);
     }
 
-    // --- LOCKED AVATAR LOGIC (STRICT) ---
-    function rotateAvatar() {
-        const u = DB.profiles[DB.activeIdx];
-        
-        // Strict locking: Cannot go beyond level index
-        const maxIndex = Math.min(DB.lvl, AVATARS.length - 1);
-        let nextAv = u.av + 1;
-        
-        if(nextAv > maxIndex) {
-            nextAv = 0; // Wrap around to start
-            if(maxIndex < AVATARS.length - 1) {
-                alert(`LOCKED: Reach Level ${nextAv + 1} to unlock next avatar!`);
-            }
-        }
-        u.av = nextAv;
+    // --- GAMEPLAY ---
+    function addXP(n) {
+        DB.xp += n; DB.credits += n;
+        if(DB.xp >= 100) { DB.xp -= 100; DB.lvl++; playSnd('chime'); alert("LEVEL UP!"); }
         save(); refreshUI();
     }
 
-    // --- PROFILES ---
-    function openProfileManager() {
-        playSnd('bloop');
-        const list = document.getElementById('profile-list'); list.innerHTML="";
-        DB.profiles.forEach((p,i) => {
-            const active = i===DB.activeIdx ? "active-slot" : "";
-            list.innerHTML += `<div class="slot-card ${active}"><div><b>${p.realName}</b> (${p.name})</div><div>${i!==DB.activeIdx ? `<button class="btn-main" style="width:auto;padding:5px;" onclick="swap(${i})">Switch</button>` : 'Active'} <button style="color:red;border:none;background:none;font-weight:bold;" onclick="delProf(${i})">x</button></div></div>`;
-        });
-        document.getElementById('modal-profiles').style.display='flex';
-    }
-    
-    function addProfile() {
-        const n = document.getElementById('new-p-name').value;
-        const a = document.getElementById('new-p-age').value;
-        const c = document.getElementById('new-p-color').value;
-        if(!n) return;
-        DB.profiles.push(genID(n, a, c));
-        swap(DB.profiles.length - 1);
-        document.getElementById('new-p-name').value="";
-        closeModals();
+    function doTask(i) {
+        DB.pet.tasks.splice(i,1);
+        DB.pet.lastTask = Date.now();
+        triggerFeedReward();
+        addXP(10);
     }
 
-    function swap(i) {
-        DB.activeIdx = i;
-        const user = DB.profiles[i];
-        const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        DB.frontLog.unshift({ name: user.realName, time: time });
-        if(DB.frontLog.length > 20) DB.frontLog.pop();
-        
-        addXP(10); 
-        alert("Switched! +10 Credits earned.");
-        
-        applyTheme(user); save(); closeModals(); refreshUI();
-    }
-
-    function delProf(i) {
-        if(confirm("Delete?")) {
-            DB.profiles.splice(i, 1);
-            if(DB.activeIdx >= i && DB.activeIdx > 0) DB.activeIdx--;
-            if(DB.profiles.length === 0) location.reload();
-            save(); openProfileManager();
-        }
-    }
-
-    function addXP(amount) {
-        DB.xp += amount;
-        DB.credits += amount; 
-        if(DB.xp >= 100) {
-            DB.xp -= 100; DB.lvl++; playSnd('chime');
-            if(DB.lvl < AVATARS.length) {
-                DB.profiles[DB.activeIdx].av = DB.lvl; 
-                alert(`LEVEL UP! You are now Level ${DB.lvl}! New Avatar Unlocked & Equipped! 🎀`);
-            } else {
-                alert(`LEVEL UP! You are now Level ${DB.lvl}!`);
-            }
+    function triggerFeedReward() {
+        if(DB.pet.hunger < 100) {
+            DB.pet.hunger += 10;
+            document.getElementById('ebi-msg').innerText = "Yummy! 🍤";
+            const pet = document.getElementById('ebi-pet');
+            pet.classList.remove('bounce'); void pet.offsetWidth; pet.classList.add('bounce');
+            playSnd('chime');
         }
         save(); refreshUI();
     }
 
-    // --- QUICK MOOD TRACKER ---
     function logMoodQuick(m) {
         playSnd('print');
         addXP(10);
@@ -923,264 +505,111 @@
         line.innerText = `${m}.............1.....+10₵`;
         receipt.appendChild(line);
         receipt.scrollTop = receipt.scrollHeight;
-        
-        if(DB.pet.hunger < 100) {
-            DB.pet.hunger = Math.min(100, DB.pet.hunger + 5);
-        }
-        save(); refreshUI();
-    }
-
-    // --- FORTUNE ---
-    function checkFortune() {
-        const t = new Date().toDateString();
-        if(DB.fortune && DB.fortune.date === t) {
-            renderFortuneCard(DB.fortune);
-            document.getElementById('fortune-card').classList.add('flipped');
-        } else {
-            document.getElementById('fortune-card').classList.remove('flipped');
-        }
-    }
-    function flipFortune() {
-        const t = new Date().toDateString();
-        if(DB.fortune && DB.fortune.date === t) return;
-        const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
-        DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
-        
-        addXP(50); 
-        alert("Fortune Read! +50 Credits earned.");
-        
-        save();
-        renderFortuneCard(DB.fortune);
-        const card = document.getElementById('fortune-card');
-        card.style.transition = 'transform 0.8s'; 
-        void card.offsetWidth; card.classList.add('flipped');
-        refreshUI();
-    }
-    function renderFortuneCard(d) {
-        document.getElementById('fortune-icon').innerText = d.i;
-        document.getElementById('fortune-title').innerText = d.t;
-        document.getElementById('fortune-desc').innerText = d.d;
-    }
-    function resetFortune() {
-        if(confirm("Reset Day?")) {
-            DB.fortune = {date:''}; save(); 
-            document.getElementById('fortune-card').classList.remove('flipped');
-        }
-    }
-
-    // --- BBS ---
-    function postBBS() {
-        const txt = document.getElementById('bbs-input').value;
-        if(!txt) return;
-        const u = DB.profiles[DB.activeIdx];
-        const t = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        DB.bbs.push({ sender: u.realName, color: u.color, text: txt, time: t });
-        document.getElementById('bbs-input').value=""; save(); refreshUI();
-    }
-
-    // --- BACKPACK & PET LOGIC ---
-    function openBackpack() {
-        playSnd('bloop');
-        document.getElementById('modal-backpack').style.display='flex';
-        refreshUI();
     }
 
     function playGacha(type) {
-        if(DB.credits < 50) { alert("Need 50 Credits! (Earn by doing tasks/diary)"); return; }
-        DB.credits -= 50;
-        playSnd('chime');
+        if(DB.credits < 50) { alert("Need 50 Credits!"); return; }
+        DB.credits -= 50; playSnd('chime');
         const pool = GACHA[type];
-        const item = pool[Math.floor(Math.random() * pool.length)];
-        if(!DB.inventory.includes(item)) {
-            DB.inventory.push(item);
-            alert(`You got: ${item.startsWith('bg') ? 'Wallpaper' : item}! Added to inventory.`);
-        } else {
-            alert(`You got: ${item.startsWith('bg') ? 'Wallpaper' : item} (Duplicate). Refunded 10 credits.`);
-            DB.credits += 10;
-        }
+        const item = pool[Math.floor(Math.random()*pool.length)];
+        if(!DB.inventory.includes(item)) { DB.inventory.push(item); alert(`Got: ${item}!`); }
+        else { DB.credits += 10; alert(`Duplicate ${item}. +10₵ returned.`); }
         save(); refreshUI();
     }
 
-    function triggerFeedReward() {
-        if(DB.pet.hunger >= 100) return;
-        playSnd('chime');
-        const petImg = document.getElementById('ebi-pet');
-        petImg.classList.remove('bounce');
-        void petImg.offsetWidth; petImg.classList.add('bounce');
-        DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); 
-        document.getElementById('ebi-msg').innerText = "Yummy! So tasty! 🍤";
-        save(); refreshUI();
-    }
-    
-    function setHat(h) {
-        const u = DB.profiles[DB.activeIdx];
-        u.hat = h;
-        playSnd('bloop');
-        save(); refreshUI();
-    }
-
-    function setWallpaper(w) {
-        DB.wallpaper = w;
-        playSnd('bloop');
-        save(); refreshUI();
-        alert("Room redecorated!");
-    }
+    function setHat(h) { DB.profiles[DB.activeIdx].hat = h; playSnd('bloop'); save(); refreshUI(); }
+    function setWallpaper(w) { DB.wallpaper = w; playSnd('bloop'); save(); refreshUI(); }
     
     function getAccType(item) {
         const heads = ["🎀","👑","🧢","🌸","🌱","🍃","🕸️","🎩","🥀"];
         const masks = ["🐸","🕶️","👓","👺","🤡"];
-        if(heads.includes(item)) return "acc-head";
-        if(masks.includes(item)) return "acc-mask";
-        return "acc-side";
-    }
-    
-    // --- DIARY ---
-    function postDiary() {
-        const v = document.getElementById('diary-in').value; 
-        if(v){
-            DB.diary.unshift({t:v, m:mood, d: new Date().toLocaleString()}); 
-            document.getElementById('diary-in').value=""; 
-            addXP(15); 
-            triggerFeedReward(); 
-            save(); refreshUI();
-        }
+        if(heads.includes(item)) return "pet-hat acc-head";
+        if(masks.includes(item)) return "pet-hat acc-mask";
+        return "pet-hat acc-side";
     }
 
-    // --- PORTAL ---
-    function openPortal() {
-        playSnd('bloop');
-        const list = document.getElementById('link-list'); list.innerHTML="";
-        if(DB.links) {
-            DB.links.forEach((l,i) => {
-                list.innerHTML += `<div style="background:#f9f9f9; padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-                    <a href="${l.url}" target="_blank" style="text-decoration:none; color:var(--blue); font-weight:bold;">🔗 ${l.name}</a>
-                    <span onclick="delLink(${i})" style="color:red; cursor:pointer;">x</span>
-                </div>`;
-            });
-        }
-        document.getElementById('modal-portal').style.display='flex';
-    }
-    function addLink() {
-        const n = document.getElementById('link-name').value;
-        const u = document.getElementById('link-url').value;
-        if(n && u) {
-            if(!DB.links) DB.links = [];
-            DB.links.push({name:n, url:u});
-            save(); openPortal();
-            document.getElementById('link-name').value=""; document.getElementById('link-url').value="";
-        }
-    }
-    function delLink(i) { DB.links.splice(i,1); save(); openPortal(); }
+    // --- STANDARD FUNCTIONS ---
+    function addTask() { const v=document.getElementById('task-in').value; if(v){DB.pet.tasks.push(v); document.getElementById('task-in').value=""; save(); refreshUI();} }
+    function postDiary() { const v=document.getElementById('diary-in').value; if(v){DB.diary.unshift({t:v}); document.getElementById('diary-in').value=""; addXP(15); triggerFeedReward();} }
     
-    function exportData() {
-        const data = JSON.stringify(DB);
-        navigator.clipboard.writeText(data).then(() => {
-            alert("Save Data copied to clipboard! Paste it in your Notes app to keep it safe forever.");
+    function rotateAvatar() {
+        const u = DB.profiles[DB.activeIdx];
+        if(u.av + 1 > Math.min(DB.lvl, AVATARS.length-1)) u.av = 0; else u.av++;
+        save(); refreshUI();
+    }
+
+    function openProfileManager() { 
+        const list = document.getElementById('profile-list'); list.innerHTML="";
+        DB.profiles.forEach((p,i) => {
+            list.innerHTML += `<div class="slot-card" onclick="swap(${i})">${p.name} (Switch)</div>`;
         });
+        document.getElementById('modal-profiles').style.display='flex'; 
     }
-    function importData() {
-        const data = prompt("Paste your Save Data here:");
-        if(data) {
-            try {
-                DB = JSON.parse(data);
-                save(); location.reload();
-            } catch(e) { alert("Invalid data code!"); }
-        }
-    }
+    function swap(i) { DB.activeIdx = i; applyTheme(DB.profiles[i]); closeModals(); refreshUI(); addXP(10); }
+    function applyTheme(u) { document.documentElement.style.setProperty('--main', u.color || '#ff69b4'); }
 
-    // --- TOOLS ---
-    function openWishModal() { document.getElementById('modal-wish').style.display='flex'; }
-    function submitWish() {
-        const n = document.getElementById('w-name').value;
-        const i = document.getElementById('w-img').value || "https://cdn-icons-png.flaticon.com/512/3209/3209955.png";
-        if(n) { DB.wish.push({name:n, img:i}); save(); closeModals(); refreshUI(); }
-    }
-    function delWish(i) { if(confirm("Delete?")) { DB.wish.splice(i,1); save(); refreshUI(); } }
-
-    function addTask() { const v = document.getElementById('task-in').value; if(v){DB.pet.tasks.push(v); document.getElementById('task-in').value=""; save(); refreshUI();} }
-    function doTask(i) { 
-        DB.pet.tasks.splice(i,1); 
-        DB.pet.lastTask = Date.now(); 
-        addXP(10); 
-        triggerFeedReward(); 
-        save(); refreshUI(); 
-    }
-
-    function saveToRegistry() { 
-        alert("This ID Card has been saved to your local storage!"); 
-    }
-
-    // --- SOUND ---
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // --- SOUND ENGINE ---
     function playSnd(type) {
         if(audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        
-        if (type === 'print') { // NEW RECEIPT SOUND
-             // WHITE NOISE GENERATION
-             const bufferSize = audioCtx.sampleRate * 0.15; 
-             const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-             const data = buffer.getChannelData(0);
-             for (let i = 0; i < bufferSize; i++) {
-                 data[i] = Math.random() * 2 - 1;
-             }
-             const noise = audioCtx.createBufferSource();
-             noise.buffer = buffer;
-             noise.connect(gain);
-             gain.connect(audioCtx.destination);
-             gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-             noise.start();
-        } else if (type === 'sad') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.5);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-        } else if (type === 'chime') {
-             osc.type = 'sine';
-             osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-             osc.frequency.exponentialRampToValueAtTime(1800, audioCtx.currentTime + 0.1);
-             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-             osc.connect(gain); gain.connect(audioCtx.destination);
-             osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+
+        if(type === 'print') {
+            // White Noise for Receipt
+            const bufferSize = audioCtx.sampleRate * 0.1;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for(let i=0; i<bufferSize; i++) data[i] = Math.random()*2-1;
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer; noise.connect(gain);
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.1);
+            noise.start();
         } else {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+            // Tones
+            osc.type = type==='chime'?'sine':'triangle';
+            osc.frequency.setValueAtTime(type==='chime'?1200:400, audioCtx.currentTime);
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.2);
+            osc.start(); osc.stop(audioCtx.currentTime+0.2);
         }
     }
 
-    // --- NAV ---
+    // --- NAV & UTILS ---
     function go(id, btn) {
         playSnd('bloop');
-        let targetId = id;
-        if(id === 'home') targetId = 'dash';
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-        document.getElementById('tab-'+targetId).classList.add('active');
+        document.getElementById('tab-'+(id==='home'?'dash':id)).classList.add('active');
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
-        if(id === 'home') {
-            if(DB.profiles.length > 0) {
-                document.getElementById('setup-view').style.display = 'none';
-                document.getElementById('dash-view').style.display = 'block';
-                refreshUI();
-            } else {
-                document.getElementById('setup-view').style.display = 'block';
-                document.getElementById('dash-view').style.display = 'none';
-            }
-        }
     }
+    
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
-    function setMood(m,b) { mood=m; document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }
+    function openBackpack() { document.getElementById('modal-backpack').style.display='flex'; refreshUI(); }
+    function openPortal() { document.getElementById('modal-portal').style.display='flex'; }
+    function openWishModal() { document.getElementById('modal-wish').style.display='flex'; }
+    
+    // --- FORTUNE ---
+    function checkFortune() {
+        if(DB.fortune.date === new Date().toDateString()) document.getElementById('fortune-card').classList.add('flipped');
+        renderFortune(DB.fortune);
+    }
+    function flipFortune() {
+        if(DB.fortune.date === new Date().toDateString()) return;
+        const f = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
+        DB.fortune = {date:new Date().toDateString(), ...f};
+        save(); renderFortune(DB.fortune);
+        document.getElementById('fortune-card').classList.add('flipped');
+        addXP(50);
+    }
+    function renderFortune(f) {
+        if(!f.i) return;
+        document.getElementById('fortune-icon').innerText = f.i;
+        document.getElementById('fortune-title').innerText = f.t;
+        document.getElementById('fortune-desc').innerText = f.d;
+    }
+    function resetFortune() { if(confirm("Reset?")) { DB.fortune={date:''}; save(); document.getElementById('fortune-card').classList.remove('flipped'); } }
 
     if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
