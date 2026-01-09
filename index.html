@@ -143,6 +143,7 @@
         .id-photo { 
             width: 80px; height: 80px; border-radius: 50%; border: 3px outset white; 
             outline: 3px solid var(--main); object-fit: cover; background: white;
+            animation: float 4s ease-in-out infinite; 
         }
         .id-data { flex: 1; }
         .id-stats-grid {
@@ -228,10 +229,10 @@
         .bg-check-green { background-color: #f1f8e9 !important; background-image: repeating-linear-gradient(45deg, #c5e1a5 25%, transparent 25%, transparent 75%, #c5e1a5 75%, #c5e1a5), repeating-linear-gradient(45deg, #c5e1a5 25%, #f1f8e9 25%, #f1f8e9 75%, #c5e1a5 75%, #c5e1a5) !important; background-size: 20px 20px !important; }
         .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }
 
-        /* FIXED ACCESSORY POS */
+        /* FIXED ACCESSORY POS - LOWERED */
         .pet-hat { 
             position: absolute; 
-            top: 40px; 
+            top: 55px; /* LOWERED SIGNIFICANTLY */
             left: 50%; 
             transform: translateX(-50%); 
             font-size: 4rem; 
@@ -240,9 +241,9 @@
             text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
-        .acc-head { top: 15px; } /* Sits on head */
-        .acc-mask { top: 50px; } /* Over face */
-        .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; transform: none; } /* Beside */
+        .acc-head { top: 35px; } /* Sits on head */
+        .acc-mask { top: 65px; } /* Over face */
+        .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; transform: none; }
 
         .ebi-img { width: 140px; transition: transform 0.2s; margin-top:10px; }
         .ebi-img.bounce { animation: bigBounce 0.5s ease; }
@@ -269,7 +270,7 @@
         .quick-mood-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
         .qm-btn { background: white; border: 2px solid var(--main); border-radius: 10px; padding: 10px; font-size: 1.2rem; cursor: pointer; transition: transform 0.1s; }
         .qm-btn:active { transform: scale(0.9); }
-        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; }
+        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; white-space: pre-wrap; }
         
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 9999; font-weight:bold; }
         .toast.show { opacity: 1; top: 30px; }
@@ -450,6 +451,10 @@
                     <button class="qm-btn" onclick="logMoodQuick('🌀')">🌀</button>
                     <button class="qm-btn" onclick="logMoodQuick('💀')">💀</button>
                     <button class="qm-btn" onclick="logMoodQuick('✨')">✨</button>
+                    <button class="qm-btn" onclick="logMoodQuick('😰')">😰</button>
+                    <button class="qm-btn" onclick="logMoodQuick('⚡')">⚡</button>
+                    <button class="qm-btn" onclick="logMoodQuick('😶')">😶</button>
+                    <button class="qm-btn" onclick="logMoodQuick('☁️')">☁️</button>
                 </div>
                 <div id="receipt-log" class="receipt-log">
                     *** MOOD RECEIPT ***<br>
@@ -567,20 +572,19 @@
 </div>
 
 <script>
-    // --- DIRECT IMAGE LINKS (REVERTING PROXY TO FIX HOTLINKING PROTECTION VIA HTML TAG) ---
+    // --- STABLE AVATARS (PROVIDED) ---
     const AVATARS = [
-        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg", 
-        "https://static.wikia.nocookie.net/girlsbravo/images/e/e9/Maharu.png",
-        "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Ac83513f62.jpg",
-        "https://static.wikia.nocookie.net/girlsbravo/images/5/58/Tomoka.png",
-        "https://static.wikia.nocookie.net/girlsbravo/images/2/23/Yukinari.png",
-        "https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png", 
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDNRg8thRPLTkTTKHsN1GxIk8WWQuawgwJcJalTTxhbNf339y17tzoxbmI&s=10",
-        "https://static.wikia.nocookie.net/aesthetics/images/0/04/Luckystarmoe.png",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklVuzM99qRKzhmBO5tNcbgRNsRyEVv7a4xjoHGC-ttshIszV1lN-VRNw&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-z6WQN33PPEubdeVEbA1tGIvqoi3-J8-8wReOIZikgQ&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4mFfq8-QLLwjpTjWrloE8-LH67ZIuDDv_5pqzFDKeC5CbaNQn60p9j8&s=10",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrlK8lLQ6EYZMbc8lqQ5ZCX_kThxUo6XFKizYzXR91YNT5feH1etfRF-s&s=10"
+        "https://i.postimg.cc/Wb1dxKCd/Images_D2FB0W0F.webp",
+        "https://i.postimg.cc/QxdFvPwK/girlsbravo_tomoka_manga.jpg",
+        "https://i.postimg.cc/bNwZ4MWn/girlsbravo_maharu_manga.jpg",
+        "https://i.postimg.cc/28S1gJMq/girlsbravo_koyomi_manga.jpg",
+        "https://i.postimg.cc/YqCvTVZR/Girls_Bravo_Koyomi_Hare_Nanaka.webp",
+        "https://i.postimg.cc/5N2XDGTw/Girls_Bravo_Kosame.webp",
+        "https://i.postimg.cc/J7qy6m6H/ee755c95_ea8f_4a26_bdfd_fbaff3669802.jpg",
+        "https://i.postimg.cc/wTj1nPZQ/Cd480afa91.webp",
+        "https://i.postimg.cc/rFwD7b39/Cc8a9456a3.webp",
+        "https://i.postimg.cc/X7YrthmQ/Ac83513f62.webp",
+        "https://i.postimg.cc/5N2XDGTP/9180_710547588.jpg"
     ];
     
     // GACHA POOLS
@@ -626,13 +630,16 @@
     });
 
     // --- INIT ---
+    let soundEnabled = false; // Flag to ensure audio context is resumed
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v44'); // Updated Version
+        const saved = localStorage.getItem('seiren_v47'); // Updated Version
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v43') || localStorage.getItem('seiren_v42'));
+            const old = JSON.parse(localStorage.getItem('seiren_v46') || localStorage.getItem('seiren_v45'));
             if(old) { DB = old; save(); }
         }
         
@@ -649,6 +656,11 @@
     });
 
     function enterApp() {
+        // RESUME AUDIO CONTEXT ON FIRST CLICK
+        if(audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => { soundEnabled = true; });
+        }
+
         document.getElementById('welcome-layer').style.opacity = '0';
         setTimeout(() => {
             document.getElementById('welcome-layer').style.display = 'none';
@@ -669,7 +681,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v44', JSON.stringify(DB));
+        localStorage.setItem('seiren_v47', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -691,23 +703,24 @@
         return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
     }
 
-    // --- GIRLS BRAVO GENERATOR ---
+    // --- GIRLS BRAVO GENERATOR (EXPANDED) ---
     function genID(name, age, color) {
         const seed = name.length + parseInt(age||0) + Math.floor(Math.random()*100);
-        const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To"];
-        const nameS = ["-chan","-ren","-la","-ru","-ka","-na","-ho"];
+        const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To","Ami","Rina"];
+        const nameS = ["-chan","-ren","-la","-ru","-ka","-na","-ho","-chi","-mi"];
         
         return {
             name: nameP[seed%nameP.length] + nameS[seed%nameS.length],
             realName: name, age: age,
             color: color || "#ff69b4",
             id: Math.floor(Math.random()*9000)+1000,
-            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka"][seed%9],
-            eyes: ["Pink","Blue","Gold","Red","Violet","Teal"][seed%6],
-            hair: ["Twin","Long","Bob","Short","Drills","Messy"][seed%6],
-            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs"][seed%7],
-            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized"][seed%7],
-            av: Math.floor(Math.random() * AVATARS.length),
+            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka","Ghost","Angel","Witch","Space Cadet"][seed%13],
+            eyes: ["Pink","Blue","Gold","Red","Violet","Teal","Starry","Heterochromia","Void"][seed%9],
+            hair: ["Twin","Long","Bob","Short","Drills","Messy","Hime Cut","Bald","Ponytail","Buns"][seed%10],
+            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs","1000 Cookies","Light as air","Heavy Metal"][seed%10],
+            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized", "Skyscraper", "Bean sized", "Tall"][seed%10],
+            // STRICT LEVEL LOCK: New profile starts with unlocked avatar
+            av: Math.min(DB.lvl, AVATARS.length-1),
             hat: "" 
         };
     }
@@ -739,7 +752,6 @@
             document.getElementById('id-wgt').innerText = u.wgt;
             
             const avIndex = (u.av || 0) % AVATARS.length;
-            // Removed cache buster to let the browser handle standard caching with no-referrer
             document.getElementById('id-pic').src = AVATARS[avIndex];
             
             document.getElementById('my-sig').innerText = u.name;
@@ -806,15 +818,18 @@
         });
     }
 
-    // --- LOCKED AVATAR LOGIC ---
+    // --- LOCKED AVATAR LOGIC (STRICT) ---
     function rotateAvatar() {
         const u = DB.profiles[DB.activeIdx];
+        
+        // Strict locking: Cannot go beyond level index
         const maxIndex = Math.min(DB.lvl, AVATARS.length - 1);
         let nextAv = u.av + 1;
+        
         if(nextAv > maxIndex) {
-            nextAv = 0; 
+            nextAv = 0; // Wrap around to start
             if(maxIndex < AVATARS.length - 1) {
-                alert(`LOCKED: Reach Level ${nextAv + 1} to unlock this avatar!`);
+                alert(`LOCKED: Reach Level ${nextAv + 1} to unlock next avatar!`);
             }
         }
         u.av = nextAv;
@@ -823,6 +838,7 @@
 
     // --- PROFILES ---
     function openProfileManager() {
+        playSnd('bloop');
         const list = document.getElementById('profile-list'); list.innerHTML="";
         DB.profiles.forEach((p,i) => {
             const active = i===DB.activeIdx ? "active-slot" : "";
@@ -848,8 +864,10 @@
         const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         DB.frontLog.unshift({ name: user.realName, time: time });
         if(DB.frontLog.length > 20) DB.frontLog.pop();
+        
         addXP(10); 
         alert("Switched! +10 Credits earned.");
+        
         applyTheme(user); save(); closeModals(); refreshUI();
     }
 
@@ -879,16 +897,14 @@
 
     // --- QUICK MOOD TRACKER ---
     function logMoodQuick(m) {
-        playSnd('bloop');
+        playSnd('print');
         addXP(10);
-        // Log to Receipt
         const receipt = document.getElementById('receipt-log');
         const line = document.createElement('div');
         line.innerText = `${m}.............1.....+10₵`;
         receipt.appendChild(line);
         receipt.scrollTop = receipt.scrollHeight;
         
-        // Also feed pet slightly
         if(DB.pet.hunger < 100) {
             DB.pet.hunger = Math.min(100, DB.pet.hunger + 5);
         }
@@ -910,8 +926,10 @@
         if(DB.fortune && DB.fortune.date === t) return;
         const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
         DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
+        
         addXP(50); 
         alert("Fortune Read! +50 Credits earned.");
+        
         save();
         renderFortuneCard(DB.fortune);
         const card = document.getElementById('fortune-card');
@@ -943,6 +961,7 @@
 
     // --- BACKPACK & PET LOGIC ---
     function openBackpack() {
+        playSnd('bloop');
         document.getElementById('modal-backpack').style.display='flex';
         refreshUI();
     }
@@ -1010,6 +1029,7 @@
 
     // --- PORTAL ---
     function openPortal() {
+        playSnd('bloop');
         const list = document.getElementById('link-list'); list.innerHTML="";
         if(DB.links) {
             DB.links.forEach((l,i) => {
@@ -1067,42 +1087,66 @@
         save(); refreshUI(); 
     }
 
-    // --- SOUND ---
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function saveToRegistry() { 
+        alert("This ID Card has been saved to your local storage!"); 
+    }
+
+    // --- NEW SOUND ENGINE (WHITE NOISE RECEIPT) ---
     function playSnd(type) {
         if(audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         
-        if(type === 'sad') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.5);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-        } else if (type === 'chime') {
-             osc.type = 'sine';
-             osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-             osc.frequency.exponentialRampToValueAtTime(1800, audioCtx.currentTime + 0.1);
-             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-             osc.connect(gain); gain.connect(audioCtx.destination);
-             osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        if (type === 'print') {
+            // White Noise Generation
+            const bufferSize = audioCtx.sampleRate * 0.15; 
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            noise.connect(gain);
+            gain.connect(audioCtx.destination);
+            // Envelope to sound crisp
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            noise.start();
         } else {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            // Standard bloops/chimes
+            const osc = audioCtx.createOscillator();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if(type === 'sad') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'chime') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } else {
+                // Default 'bloop'
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            }
         }
     }
 
     // --- NAV ---
     function go(id, btn) {
+        playSnd('bloop');
         let targetId = id;
         if(id === 'home') targetId = 'dash';
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
