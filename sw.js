@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seiren-os-v48'; // Updated version
+const CACHE_NAME = 'seiren-os-v47'; // Updated version
 const ASSETS = [
   './',
   './index.html',
