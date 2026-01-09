@@ -39,23 +39,50 @@
             background-position: 0 0, 10px 10px;
             margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
             color: var(--text); overscroll-behavior: none;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
-        /* --- DREAMY GRAIN OVERLAY --- */
+        /* --- CRT & DREAM OVERLAYS --- */
         .dream-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9999;
+            pointer-events: none; z-index: 9998;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
             opacity: 0.5;
             backdrop-filter: blur(0.5px);
             mix-blend-mode: overlay;
         }
+        
+        .scanlines {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.1) 50%,
+                rgba(0,0,0,0.1)
+            );
+            background-size: 100% 4px;
+            pointer-events: none; z-index: 9999;
+            opacity: 0.6;
+            animation: scanMove 60s linear infinite;
+        }
+        @keyframes scanMove { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
+
+        /* --- DASH STICKERS (DECORATIVE) --- */
+        .sticker {
+            position: absolute; width: 50px; height: 50px;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1));
+            pointer-events: none; z-index: 20;
+            animation: floatSticker 3s ease-in-out infinite;
+        }
+        @keyframes floatSticker { 0%, 100% {transform:translateY(0) rotate(0deg);} 50% {transform:translateY(-5px) rotate(5deg);} }
 
         /* --- APP SHELL --- */
         #welcome-layer {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
-            z-index: 9999; display: flex; flex-direction: column;
+            z-index: 10000; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             transition: opacity 0.5s ease-out;
         }
@@ -135,7 +162,7 @@
         .id-inner {
             background: var(--bg-light);
             background-image: radial-gradient(var(--bg-dark) 2px, transparent 2px); background-size: 15px 15px;
-            border: 2px dashed var(--dark); border-radius: 15px; padding: 15px;
+            border: 2px dashed var(--dark); border-radius: 15px; padding: 15px; position: relative;
         }
         .deco-bow { position: absolute; top: -5px; right: -5px; font-size: 2rem; transform: rotate(15deg); z-index: 5; }
         .id-top { display: flex; justify-content: space-between; border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; }
@@ -143,7 +170,7 @@
         .id-photo { 
             width: 80px; height: 80px; border-radius: 50%; border: 3px outset white; 
             outline: 3px solid var(--main); object-fit: cover; background: white;
-            animation: float 4s ease-in-out infinite; 
+            animation: float 4s ease-in-out infinite; cursor: pointer;
         }
         .id-data { flex: 1; }
         .id-stats-grid {
@@ -221,7 +248,7 @@
         .delete-wish-btn { position: absolute; top: -8px; right: -8px; background: red; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; z-index: 5; cursor: pointer; }
         .fab-btn { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; background: var(--main); color: white; border-radius: 50%; border: 3px outset white; font-size: 2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100; transition: transform 0.2s; }
         
-        .pet-box { background: white; border: 3px ridge var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; transition: background 0.3s; }
+        .pet-box { background: white; border: 3px ridge var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; transition: background 0.3s; min-height: 250px; overflow: hidden; touch-action: none; }
         
         /* WALLPAPER PATTERNS */
         .bg-hearts { background-color: #ffe4e1 !important; background-image: radial-gradient(#ff69b4 2px, transparent 2px), radial-gradient(#ff69b4 2px, transparent 2px) !important; background-size: 20px 20px !important; background-position: 0 0, 10px 10px !important; }
@@ -245,7 +272,18 @@
         .acc-mask { top: 65px; } /* Over face */
         .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; transform: none; }
 
-        .ebi-img { width: 140px; transition: transform 0.2s; margin-top:10px; }
+        /* DRAGGABLE PET STICKERS */
+        .pet-sticker {
+            position: absolute;
+            font-size: 3rem;
+            cursor: grab;
+            user-select: none;
+            z-index: 5;
+            transition: transform 0.1s;
+        }
+        .pet-sticker:active { cursor: grabbing; transform: scale(1.1); z-index: 15; }
+
+        .ebi-img { width: 140px; transition: transform 0.2s; margin-top:10px; position:relative; z-index:2; pointer-events: none;}
         .ebi-img.bounce { animation: bigBounce 0.5s ease; }
         @keyframes bigBounce { 0% {transform:scale(1);} 50% {transform:scale(1.2) translateY(-15px);} 100% {transform:scale(1);} }
         .task-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
@@ -270,10 +308,21 @@
         .quick-mood-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
         .qm-btn { background: white; border: 2px solid var(--main); border-radius: 10px; padding: 10px; font-size: 1.2rem; cursor: pointer; transition: transform 0.1s; }
         .qm-btn:active { transform: scale(0.9); }
-        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; white-space: pre-wrap; }
+        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; white-space: pre-wrap; height: 100px; overflow-y: scroll; }
         
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 9999; font-weight:bold; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 10001; font-weight:bold; }
         .toast.show { opacity: 1; top: 30px; }
+
+        /* 88x31 BADGES */
+        .badges-container {
+            display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; margin-top: 20px; opacity: 0.9;
+        }
+        .web-badge {
+            width: 88px; height: 31px; border: 1px solid #fff; border-radius: 0;
+            background: #e0e0e0; display: flex; align-items: center; justify-content: center;
+            font-size: 9px; font-family: 'Verdana', sans-serif; font-weight: bold; color: #555;
+            text-decoration: none; box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
 
     </style>
 </head>
@@ -320,7 +369,9 @@
                 <button class="btn-main" onclick="initFirstProfile()">Create ID</button>
             </div>
 
-            <div id="dash-view" style="display:none;">
+            <div id="dash-view" style="display:none; position:relative;">
+                <div id="sticker-layer"></div>
+
                 <div class="dash-header">
                     <h2 style="margin:0; color:var(--dark);" id="dash-greet">Hello!</h2>
                     <span style="font-size:0.8rem; color:#888;">System Dashboard</span>
@@ -329,7 +380,7 @@
                 <div class="xp-box">
                     <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:var(--blue);">
                         <span>Level <span id="lvl-num">1</span></span>
-                        <span><span id="xp-val">0</span>/100 XP</span>
+                        <span><span id="xp-val">0</span>/<span id="xp-req">100</span> XP</span>
                     </div>
                     <div class="xp-track"><div id="xp-bar" class="xp-fill"></div></div>
                     <div style="margin-top:5px; font-size:0.7rem; color:var(--dark); font-weight:bold;">Credits: ₵<span id="credit-val">0</span></div>
@@ -389,14 +440,22 @@
                         <div class="card-wrapper" id="fortune-card">
                             <div class="card-face card-front"><span style="font-size:3rem; color:white; font-weight:bold;">?</span></div>
                             <div class="card-face card-back">
-                                <div id="fortune-icon" style="font-size:3rem; margin-bottom:10px;">⭐</div>
+                                <div id="fortune-icon" style="font-size:3rem; margin-bottom:5px;">⭐</div>
                                 <strong id="fortune-title" style="color:var(--main); font-size:0.9rem;"></strong>
-                                <p id="fortune-desc" style="font-size:0.7rem; color:#666; margin-top:5px; line-height:1.2;"></p>
+                                <p id="fortune-desc" style="font-size:0.65rem; color:#666; margin-top:2px; line-height:1.2;"></p>
                             </div>
                         </div>
                     </div>
                     <button class="new-day-btn" onclick="resetFortune()">↻ New Day</button>
                 </div>
+
+                <div class="badges-container">
+                    <a href="#" class="web-badge" style="background:#ff9eb5; color:white;">HTML VALID</a>
+                    <a href="#" class="web-badge" style="background:#4fc3f7; color:white;">NOTEPAD</a>
+                    <a href="#" class="web-badge" style="background:#d12e87; color:white;">GIRLS BRAVO</a>
+                    <a href="#" class="web-badge" style="background:#b39ddb; color:white;">IE 6.0</a>
+                </div>
+
             </div>
         </div>
 
@@ -424,6 +483,8 @@
                 <div class="pet-acc-container">
                     <div id="ebi-hat" class="pet-hat"></div>
                 </div>
+                <div id="room-decor-layer"></div>
+
                 <img id="ebi-pet" src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="ebi-img">
                 <h3 style="color:var(--main);">Ebi</h3>
                 <div style="background:#eee; height:12px; border-radius:10px; overflow:hidden; margin:10px 0;">
@@ -460,6 +521,7 @@
                     *** MOOD RECEIPT ***<br>
                     Waiting for input...
                 </div>
+                <button class="btn-main" style="margin-top:5px; background:#ccc; color:#333;" onclick="cashOutReceipt()">🖨️ PRINT & COLLECT (<span id="pending-xp">0</span> XP)</button>
             </div>
         </div>
 
@@ -505,6 +567,7 @@
     <div id="modal-backpack" class="modal-overlay">
         <div class="modal-box">
             <h3 style="margin-top:0; color:var(--main);">🎒 Ebi's Backpack</h3>
+            <p style="font-size:0.7rem; color:#888;">Drag & Drop items in the room!</p>
             
             <div style="background:#f9f9f9; border:2px inset #eee; padding:10px; border-radius:10px; margin-bottom:15px;">
                 <div style="font-size:0.8rem; font-weight:bold; color:var(--dark);">Gacha Shop (50 ₵)</div>
@@ -516,10 +579,15 @@
                 </div>
             </div>
 
-            <div style="font-size:0.8rem; font-weight:bold;">Inventory (Click to equip):</div>
+            <div style="font-size:0.8rem; font-weight:bold;">Inventory (Click to equip/place):</div>
             <div class="inventory-grid" id="inv-grid">
                 <span class="inv-item" onclick="setHat('')">❌</span>
-                </div>
+            </div>
+            
+            <div style="margin-top:15px; border-top:1px dashed #ccc; padding-top:10px;">
+                 <button class="btn-main" style="background:#b39ddb;" onclick="toggleStickers()">✨ Toggle Dash Stickers</button>
+                 <button class="btn-main" style="background:#ff8a80; margin-top:5px;" onclick="clearRoomDecor()">🗑️ Clear Room Decor</button>
+            </div>
 
             <button class="btn-main" style="background:#ccc; margin-top:15px;" onclick="closeModals()">Close</button>
         </div>
@@ -587,16 +655,17 @@
         "https://i.postimg.cc/5N2XDGTP/9180_710547588.jpg"
     ];
     
-    // GACHA POOLS
+    // EXPANDED GACHA POOLS (STICKERS & ITEMS)
     const GACHA = {
-        cute: ["🎀","👑","🩰","🧁","🧸","💖","🍓","🍭"],
-        dark: ["🕸️","🕷️","💀","🥀","🖤","🦇","🗡️","⛓️"],
-        nature: ["🍄","🌱","🌵","🌸","🌻","🐸","🍃","🪵"],
-        decor: ["bg-hearts", "bg-dots-blue", "bg-check-green", "bg-clouds"] 
+        cute: ["🎀","👑","🩰","🧁","🧸","💖","🍓","🍭","🐰","🍰","👛","🐩","👙","💒","🍥"],
+        dark: ["🕸️","🕷️","💀","🥀","🖤","🦇","🗡️","⛓️","🩸","🕯️","⚰️","🌑","🧟‍♀️","🐈‍⬛","👁️"],
+        nature: ["🍄","🌱","🌵","🌸","🌻","🐸","🍃","🪵","🐞","🍯","🦋","🐌","🌼","🍏","⛺"],
+        decor: ["bg-hearts", "bg-dots-blue", "bg-check-green", "bg-clouds", "🧸", "📺", "🛏️", "🛁", "🪜", "🖼️", "🪴", "🪑"] 
     };
 
     const BADGES = ["🌱","🐣","🎀","⭐","🌸","🍄","💎","👑","🧚‍♀️","🏰","🪐"];
 
+    // MASSIVE FORTUNE UPDATE (25+ Fortunes)
     const FORTUNES = [
         {i:"🍞",t:"Toast Dash",d:"Running late but looking cute!"},
         {i:"🌟",t:"Super Star",d:"You are the main character today."},
@@ -609,19 +678,37 @@
         {i:"🌸",t:"Bloom",d:"Growth is happening."},
         {i:"🌊",t:"Ocean Deep",d:"Drink more water."},
         {i:"💎",t:"Shiny",d:"You are glowing!"},
-        {i:"🌈",t:"Rainbow",d:"Storms pass, rainbows follow."}
+        {i:"🌈",t:"Rainbow",d:"Storms pass, rainbows follow."},
+        {i:"🔮",t:"Mystic",d:"Trust your intuition today."},
+        {i:"👻",t:"Ghostly",d:"You feel unseen, but you are valid."},
+        {i:"💌",t:"Love Letter",d:"Expect good news soon."},
+        {i:"🎹",t:"Melody",d:"Listen to your favorite song."},
+        {i:"☕",t:"Coffee Break",d:"Energize yourself."},
+        {i:"🌙",t:"Moonchild",d:"The night brings comfort."},
+        {i:"🔥",t:"Passion",d:"Go get what you want!"},
+        {i:"❄️",t:"Frosty",d:"Stay cool under pressure."},
+        {i:"🍀",t:"Lucky",d:"Good fortune favors you."},
+        {i:"🧭",t:"Lost & Found",d:"You will find what you seek."},
+        {i:"🗝️",t:"Unlock",d:"A secret will be revealed."},
+        {i:"🎨",t:"Create",d:"Make something beautiful."},
+        {i:"🎭",t:"Drama",d:"Avoid the tea today."},
+        {i:"🩹",t:"Healing",d:"Be gentle with yourself."}
     ];
+    
+    const STICKERS = ["🎀","⭐","✨","🌸","💖","🍄","🍬","🩹","👑","🧸"];
 
     // --- STATE ---
     let DB = {
         profiles: [], activeIdx: 0, xp: 0, credits: 0, lvl: 1,
-        wish: [], pet: {hunger:50, tasks:[], lastTask: Date.now()}, 
+        wish: [], pet: {hunger:50, tasks:[], lastTask: Date.now(), decor: []}, 
         inventory: [], 
         bbs: [], frontLog: [], diary: [], links: [],
         fortune: {date:'', i:'', t:'', d:''},
-        wallpaper: "" 
+        wallpaper: "",
+        stickersEnabled: true
     };
     let mood = '😊';
+    let pendingXP = 0; // New functionality for receipt
 
     // --- SAVE REMINDER ---
     window.addEventListener('beforeunload', (event) => {
@@ -630,24 +717,26 @@
     });
 
     // --- INIT ---
-    let soundEnabled = false; // Flag to ensure audio context is resumed
+    let soundEnabled = false; 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v47'); // Updated Version
+        const saved = localStorage.getItem('seiren_v49'); // Updated Version
         if(saved) DB = JSON.parse(saved);
         
         // MIGRATION
         if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v46') || localStorage.getItem('seiren_v45'));
+            const old = JSON.parse(localStorage.getItem('seiren_v48') || localStorage.getItem('seiren_v47'));
             if(old) { DB = old; save(); }
         }
         
         if(!DB.pet.lastTask) DB.pet.lastTask = Date.now();
+        if(!DB.pet.decor) DB.pet.decor = []; // Ensure decor array exists
         if(!DB.links) DB.links = [];
         if(!DB.inventory) DB.inventory = [];
         if(DB.credits === undefined) DB.credits = 0;
         if(!DB.wallpaper) DB.wallpaper = "";
+        if(DB.stickersEnabled === undefined) DB.stickersEnabled = true;
 
         setInterval(() => {
             const d = new Date();
@@ -656,7 +745,6 @@
     });
 
     function enterApp() {
-        // RESUME AUDIO CONTEXT ON FIRST CLICK
         if(audioCtx.state === 'suspended') {
             audioCtx.resume().then(() => { soundEnabled = true; });
         }
@@ -671,7 +759,7 @@
                     applyTheme(DB.profiles[DB.activeIdx]);
                     document.getElementById('dash-view').style.display = 'block';
                     document.getElementById('setup-view').style.display = 'none';
-                    refreshUI(); checkFortune();
+                    refreshUI(); checkFortune(); renderStickers(); renderRoomDecor();
                 } else {
                     document.getElementById('setup-view').style.display = 'block';
                     document.getElementById('dash-view').style.display = 'none';
@@ -681,7 +769,7 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v47', JSON.stringify(DB));
+        localStorage.setItem('seiren_v49', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
@@ -703,7 +791,7 @@
         return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
     }
 
-    // --- GIRLS BRAVO GENERATOR (EXPANDED) ---
+    // --- GIRLS BRAVO GENERATOR (UPDATED: NO BALD) ---
     function genID(name, age, color) {
         const seed = name.length + parseInt(age||0) + Math.floor(Math.random()*100);
         const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To","Ami","Rina"];
@@ -716,10 +804,9 @@
             id: Math.floor(Math.random()*9000)+1000,
             sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka","Ghost","Angel","Witch","Space Cadet"][seed%13],
             eyes: ["Pink","Blue","Gold","Red","Violet","Teal","Starry","Heterochromia","Void"][seed%9],
-            hair: ["Twin","Long","Bob","Short","Drills","Messy","Hime Cut","Bald","Ponytail","Buns"][seed%10],
+            hair: ["Twin","Long","Bob","Short","Drills","Messy","Hime Cut","Ponytail","Buns","Waves"][seed%10], // Removed Bald
             wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs","1000 Cookies","Light as air","Heavy Metal"][seed%10],
             hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized", "Skyscraper", "Bean sized", "Tall"][seed%10],
-            // STRICT LEVEL LOCK: New profile starts with unlocked avatar
             av: Math.min(DB.lvl, AVATARS.length-1),
             hat: "" 
         };
@@ -753,7 +840,6 @@
             
             const avIndex = (u.av || 0) % AVATARS.length;
             document.getElementById('id-pic').src = AVATARS[avIndex];
-            
             document.getElementById('my-sig').innerText = u.name;
             
             const hat = u.hat || "";
@@ -767,9 +853,14 @@
         const badgeIdx = Math.min(DB.lvl-1, BADGES.length-1);
         document.getElementById('lvl-badge').innerText = BADGES[Math.max(0, badgeIdx)];
 
+        // HARDER LEVELING FORMULA UI
+        const reqXP = 100 + (DB.lvl * 20); // 100, 120, 140...
         document.getElementById('lvl-num').innerText = DB.lvl;
+        document.getElementById('xp-req').innerText = reqXP;
         document.getElementById('xp-val').innerText = DB.xp;
-        document.getElementById('xp-bar').style.width = DB.xp + "%";
+        
+        const pct = Math.min(100, (DB.xp / reqXP) * 100);
+        document.getElementById('xp-bar').style.width = pct + "%";
         document.getElementById('credit-val').innerText = DB.credits;
 
         const invGrid = document.getElementById('inv-grid');
@@ -782,7 +873,12 @@
                 span.onclick = () => setWallpaper(item);
             } else {
                 span.innerText = item;
-                span.onclick = () => setHat(item);
+                // Distinguish between Hat and Decor
+                if(getAccType(item) !== "acc-decor") {
+                   span.onclick = () => setHat(item);
+                } else {
+                   span.onclick = () => spawnRoomDecor(item);
+                }
             }
             invGrid.appendChild(span);
         });
@@ -797,11 +893,6 @@
 
         document.getElementById('pet-bar').style.width = DB.pet.hunger+"%";
         
-        const hrsSince = (Date.now() - (DB.pet.lastTask || Date.now())) / (1000 * 60 * 60);
-        if(hrsSince > 24) {
-             document.getElementById('ebi-msg').innerText = "Ebi is lonely... (Do tasks!)";
-        }
-
         const tList = document.getElementById('task-list'); tList.innerHTML="";
         DB.pet.tasks.forEach((t,i)=> tList.innerHTML+=`<div class="task-item"><span>${t}</span><input type="checkbox" onclick="doTask(${i})"></div>`);
 
@@ -816,24 +907,122 @@
             const dateStr = e.d ? `<div style="font-size:0.6rem;color:#aaa;">${e.d}</div>` : '';
             df.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:5px;border-radius:10px;border-bottom:2px solid #eee; display:flex; gap:10px; align-items:flex-start;"><span style="font-size:1.5rem;">${emoji}</span><div style="flex:1;">${dateStr}<span style="margin-top:5px;display:block;">${e.t}</span></div></div>`
         });
+        
+        document.getElementById('pending-xp').innerText = pendingXP;
     }
 
     // --- LOCKED AVATAR LOGIC (STRICT) ---
     function rotateAvatar() {
+        playSnd('bloop');
         const u = DB.profiles[DB.activeIdx];
-        
-        // Strict locking: Cannot go beyond level index
         const maxIndex = Math.min(DB.lvl, AVATARS.length - 1);
-        let nextAv = u.av + 1;
-        
+        let nextAv = (u.av || 0) + 1;
         if(nextAv > maxIndex) {
-            nextAv = 0; // Wrap around to start
+            nextAv = 0; 
             if(maxIndex < AVATARS.length - 1) {
                 alert(`LOCKED: Reach Level ${nextAv + 1} to unlock next avatar!`);
             }
         }
         u.av = nextAv;
         save(); refreshUI();
+    }
+
+    // --- STICKERS ---
+    function renderStickers() {
+        const layer = document.getElementById('sticker-layer');
+        layer.innerHTML = "";
+        if(!DB.stickersEnabled) return;
+
+        const seed = DB.profiles[DB.activeIdx].id;
+        const count = 5;
+        for(let i=0; i<count; i++) {
+            const el = document.createElement('div');
+            el.className = 'sticker';
+            el.innerText = STICKERS[(seed + i) % STICKERS.length];
+            const top = (seed * (i+1) * 37) % 80;
+            const left = (seed * (i+1) * 23) % 80;
+            el.style.top = top + "%";
+            el.style.left = left + "%";
+            el.style.fontSize = (2 + (i%2)) + "rem";
+            layer.appendChild(el);
+        }
+    }
+    
+    function toggleStickers() {
+        DB.stickersEnabled = !DB.stickersEnabled;
+        save(); renderStickers();
+        alert("Stickers " + (DB.stickersEnabled ? "ON" : "OFF"));
+    }
+
+    // --- ROOM DECOR (DRAGGABLE) ---
+    function spawnRoomDecor(item) {
+        if(!DB.pet.decor) DB.pet.decor = [];
+        // Default spawn center
+        DB.pet.decor.push({item: item, x: 50, y: 50});
+        save(); renderRoomDecor();
+        closeModals();
+        alert("Decor placed! Drag it to move.");
+    }
+    
+    function renderRoomDecor() {
+        const container = document.getElementById('room-decor-layer');
+        container.innerHTML = "";
+        if(!DB.pet.decor) return;
+        
+        DB.pet.decor.forEach((d, i) => {
+            const el = document.createElement('div');
+            el.className = 'pet-sticker';
+            el.innerText = d.item;
+            el.style.left = d.x + "%";
+            el.style.top = d.y + "%";
+            
+            // Drag logic
+            let isDragging = false;
+            
+            const startDrag = (e) => {
+                isDragging = true;
+                e.preventDefault();
+            };
+            
+            const doDrag = (e) => {
+                if(!isDragging) return;
+                const box = document.getElementById('pet-container').getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                
+                let xPct = ((clientX - box.left) / box.width) * 100;
+                let yPct = ((clientY - box.top) / box.height) * 100;
+                
+                el.style.left = xPct + "%";
+                el.style.top = yPct + "%";
+                
+                d.x = xPct;
+                d.y = yPct;
+            };
+            
+            const endDrag = () => {
+                if(isDragging) {
+                    isDragging = false;
+                    save(); 
+                }
+            };
+            
+            el.addEventListener('mousedown', startDrag);
+            el.addEventListener('touchstart', startDrag);
+            window.addEventListener('mousemove', doDrag);
+            window.addEventListener('touchmove', doDrag);
+            window.addEventListener('mouseup', endDrag);
+            window.addEventListener('touchend', endDrag);
+            
+            container.appendChild(el);
+        });
+    }
+
+    function clearRoomDecor() {
+        if(confirm("Remove all room stickers?")) {
+            DB.pet.decor = [];
+            save(); renderRoomDecor();
+        }
     }
 
     // --- PROFILES ---
@@ -864,11 +1053,9 @@
         const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         DB.frontLog.unshift({ name: user.realName, time: time });
         if(DB.frontLog.length > 20) DB.frontLog.pop();
-        
         addXP(10); 
         alert("Switched! +10 Credits earned.");
-        
-        applyTheme(user); save(); closeModals(); refreshUI();
+        applyTheme(user); save(); closeModals(); refreshUI(); renderStickers();
     }
 
     function delProf(i) {
@@ -883,8 +1070,10 @@
     function addXP(amount) {
         DB.xp += amount;
         DB.credits += amount; 
-        if(DB.xp >= 100) {
-            DB.xp -= 100; DB.lvl++; playSnd('chime');
+        const reqXP = 100 + (DB.lvl * 20); // Harder leveling logic
+        
+        if(DB.xp >= reqXP) {
+            DB.xp -= reqXP; DB.lvl++; playSnd('chime');
             if(DB.lvl < AVATARS.length) {
                 DB.profiles[DB.activeIdx].av = DB.lvl; 
                 alert(`LEVEL UP! You are now Level ${DB.lvl}! New Avatar Unlocked & Equipped! 🎀`);
@@ -895,20 +1084,39 @@
         save(); refreshUI();
     }
 
-    // --- QUICK MOOD TRACKER ---
+    // --- FUNCTIONAL MOOD RECEIPT ---
     function logMoodQuick(m) {
         playSnd('print');
-        addXP(10);
+        // Lowered XP gain to 5 for logging mood
+        const xpGain = 5;
+        pendingXP += xpGain; 
+        
         const receipt = document.getElementById('receipt-log');
         const line = document.createElement('div');
-        line.innerText = `${m}.............1.....+10₵`;
+        line.innerText = `${m}.............1.....+${xpGain}XP (Pending)`;
         receipt.appendChild(line);
         receipt.scrollTop = receipt.scrollHeight;
         
         if(DB.pet.hunger < 100) {
             DB.pet.hunger = Math.min(100, DB.pet.hunger + 5);
         }
-        save(); refreshUI();
+        
+        // Don't save yet, force them to print to collect
+        refreshUI();
+    }
+    
+    function cashOutReceipt() {
+        if(pendingXP > 0) {
+            playSnd('chime');
+            addXP(pendingXP);
+            DB.credits += pendingXP; // Bonus credits
+            alert(`Receipt Printed! Collected ${pendingXP} XP & Credits.`);
+            pendingXP = 0;
+            document.getElementById('receipt-log').innerHTML = "*** MOOD RECEIPT ***<br>Collected!";
+            save(); refreshUI();
+        } else {
+            alert("Nothing to print!");
+        }
     }
 
     // --- FORTUNE ---
@@ -972,13 +1180,9 @@
         playSnd('chime');
         const pool = GACHA[type];
         const item = pool[Math.floor(Math.random() * pool.length)];
-        if(!DB.inventory.includes(item)) {
-            DB.inventory.push(item);
-            alert(`You got: ${item.startsWith('bg') ? 'Wallpaper' : item}! Added to inventory.`);
-        } else {
-            alert(`You got: ${item.startsWith('bg') ? 'Wallpaper' : item} (Duplicate). Refunded 10 credits.`);
-            DB.credits += 10;
-        }
+        // Allow duplicates for decor items
+        DB.inventory.push(item);
+        alert(`You got: ${item}! Added to inventory.`);
         save(); refreshUI();
     }
 
@@ -998,6 +1202,7 @@
         u.hat = h;
         playSnd('bloop');
         save(); refreshUI();
+        alert("Hat equipped!");
     }
 
     function setWallpaper(w) {
@@ -1008,11 +1213,12 @@
     }
     
     function getAccType(item) {
-        const heads = ["🎀","👑","🧢","🌸","🌱","🍃","🕸️","🎩","🥀"];
-        const masks = ["🐸","🕶️","👓","👺","🤡"];
+        const heads = ["🎀","👑","🧢","🌸","🌱","🍃","🕸️","🎩","🥀","🐰","💀"];
+        const masks = ["🐸","🕶️","👓","👺","🤡","👁️"];
         if(heads.includes(item)) return "acc-head";
         if(masks.includes(item)) return "acc-mask";
-        return "acc-side";
+        // Everything else is decor
+        return "acc-decor";
     }
     
     // --- DIARY ---
@@ -1087,45 +1293,31 @@
         save(); refreshUI(); 
     }
 
-    function saveToRegistry() { 
-        alert("This ID Card has been saved to your local storage!"); 
-    }
-
-    // --- NEW SOUND ENGINE (WHITE NOISE RECEIPT) ---
+    // --- SOUND ENGINE ---
     function playSnd(type) {
         if(audioCtx.state === 'suspended') audioCtx.resume();
         const gain = audioCtx.createGain();
         
         if (type === 'print') {
-            // White Noise Generation
-            const bufferSize = audioCtx.sampleRate * 0.15; 
+            const bufferSize = audioCtx.sampleRate * 0.4; 
             const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             const data = buffer.getChannelData(0);
             for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
+                data[i] = (Math.random() * 2 - 1) * (Math.random() > 0.9 ? 1 : 0.5); 
             }
             const noise = audioCtx.createBufferSource();
             noise.buffer = buffer;
             noise.connect(gain);
             gain.connect(audioCtx.destination);
-            // Envelope to sound crisp
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
             noise.start();
         } else {
-            // Standard bloops/chimes
             const osc = audioCtx.createOscillator();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             
-            if(type === 'sad') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.5);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-            } else if (type === 'chime') {
+            if (type === 'chime') {
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(800, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
@@ -1133,7 +1325,6 @@
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.5);
             } else {
-                // Default 'bloop'
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(600, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
@@ -1157,7 +1348,7 @@
             if(DB.profiles.length > 0) {
                 document.getElementById('setup-view').style.display = 'none';
                 document.getElementById('dash-view').style.display = 'block';
-                refreshUI();
+                refreshUI(); renderStickers(); renderRoomDecor();
             } else {
                 document.getElementById('setup-view').style.display = 'block';
                 document.getElementById('dash-view').style.display = 'none';
