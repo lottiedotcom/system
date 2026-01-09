@@ -41,32 +41,20 @@
             color: var(--text); overscroll-behavior: none;
         }
 
-        /* --- EFFECTS (Pointer-Events NONE is critical) --- */
+        /* --- EFFECTS --- */
         .dream-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9997;
+            pointer-events: none; z-index: 9998;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
             opacity: 0.5; mix-blend-mode: overlay;
         }
-        
-        .crt-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle, rgba(18, 16, 16, 0) 60%, rgba(0, 0, 0, 0.1) 100%);
-            pointer-events: none; z-index: 9998;
-        }
 
-        /* STICKERS */
-        .sticker { position: fixed; z-index: 9990; pointer-events: none; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
-        .sticker-tl { top: 10px; left: 10px; font-size: 2rem; transform: rotate(-15deg); }
-        .sticker-tr { top: 10px; right: 10px; font-size: 2.5rem; transform: rotate(15deg); }
-        .sticker-bl { bottom: 60px; left: 10px; font-size: 2rem; animation: float 3s infinite; }
-        .sticker-br { bottom: 60px; right: 10px; font-size: 1.5rem; }
-
-        /* --- WELCOME --- */
+        /* --- WELCOME SCREEN (HIGHEST Z-INDEX) --- */
         #welcome-layer {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
-            z-index: 10000; display: flex; flex-direction: column;
+            z-index: 20000; /* Super high to ensure clickability */
+            display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             transition: opacity 0.5s ease-out;
         }
@@ -81,6 +69,7 @@
             border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; 
             box-shadow: 2px 2px 5px rgba(0,0,0,0.1); 
             transition: transform 0.1s; letter-spacing: 1px;
+            pointer-events: auto; /* Force clickable */
         }
         .enter-btn:active { transform: scale(0.98); border-style: inset; }
 
@@ -136,13 +125,6 @@
             padding: 5px; box-shadow: 3px 3px 0 #ffb7b2;
             margin-bottom: 20px; position: relative; overflow: hidden;
         }
-        .id-card-wrap::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg); animation: shine 3s infinite; pointer-events: none;
-        }
-        @keyframes shine { 0% {left: -100%;} 20% {left: 200%;} 100% {left: 200%;} }
-
         .id-inner {
             background: var(--bg-light);
             background-image: radial-gradient(var(--bg-dark) 2px, transparent 2px); background-size: 15px 15px;
@@ -208,8 +190,8 @@
         .slot-card { background: #fdf2f8; border: 2px outset #eee; border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .slot-card.active-slot { border-color: var(--main); background: var(--bg-light); border-style: inset; }
 
-        /* NAV - MOVED UP TO AVOID RIBBON */
-        nav { position: fixed; bottom: 45px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 100; border: 2px solid white; }
+        /* NAV */
+        nav { position: fixed; bottom: 35px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 100; border: 2px solid white; }
         .nav-btn { background: none; border: none; color: #ccc; font-size: 1.4rem; transition: 0.2s; display: flex; flex-direction:column; align-items: center; }
         .nav-label { font-size: 0.55rem; margin-top:2px; font-weight:bold; }
         .nav-btn.active { color: var(--main); transform: scale(1.1); }
@@ -283,7 +265,20 @@
         .qm-btn:active { transform: scale(0.9); }
         .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; white-space: pre-wrap; }
         
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 9999; font-weight:bold; }
+        /* WEBRING BUTTON STYLE (88x31) */
+        .web-btn-grid { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+        .web-btn {
+            width: 88px; height: 31px;
+            background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+            border: 1px solid #999;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'MS UI Gothic', sans-serif; font-size: 10px;
+            text-decoration: none; color: #333;
+            box-shadow: 1px 1px 0 #000;
+            overflow: hidden; white-space: nowrap; margin-bottom: 5px;
+        }
+        
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 20001; font-weight:bold; }
         .toast.show { opacity: 1; top: 30px; }
 
     </style>
@@ -542,9 +537,9 @@
             
             <p style="font-size:0.8rem; color:#666;">Bookmarks & Quizzes</p>
             
-            <div id="link-list" style="margin-bottom:15px;"></div>
+            <div id="link-list" style="margin-bottom:15px;" class="web-btn-grid"></div>
             
-            <a href="https://www.quotev.com/quiz/17122879/who-am-I-pt-2" target="_blank" style="display:block; background:var(--main); color:white; padding:10px; border-radius:10px; text-decoration:none; text-align:center; font-weight:bold; margin-bottom:10px;">✨ Take "Who Am I?" Quiz</a>
+            <a href="https://www.quotev.com/quiz/17122879/who-am-I-pt-2" target="_blank" class="web-btn" style="width:100%;height:35px;margin-bottom:10px;">✨ QUIZ</a>
             
             <div style="background:#f0f8ff; padding:10px; border-radius:10px; margin-bottom:10px;">
                 <input type="text" id="link-name" placeholder="Title" style="margin-bottom:5px;">
@@ -585,17 +580,17 @@
 <script>
     // --- STABLE AVATARS (PROVIDED) ---
     const AVATARS = [
-        "https://images.weserv.nl/?url=i.postimg.cc/Wb1dxKCd/Images_D2FB0W0F.webp",
-        "https://images.weserv.nl/?url=i.postimg.cc/QxdFvPwK/girlsbravo_tomoka_manga.jpg",
-        "https://images.weserv.nl/?url=i.postimg.cc/bNwZ4MWn/girlsbravo_maharu_manga.jpg",
-        "https://images.weserv.nl/?url=i.postimg.cc/28S1gJMq/girlsbravo_koyomi_manga.jpg",
-        "https://images.weserv.nl/?url=i.postimg.cc/YqCvTVZR/Girls_Bravo_Koyomi_Hare_Nanaka.webp",
-        "https://images.weserv.nl/?url=i.postimg.cc/5N2XDGTw/Girls_Bravo_Kosame.webp",
-        "https://images.weserv.nl/?url=i.postimg.cc/J7qy6m6H/ee755c95_ea8f_4a26_bdfd_fbaff3669802.jpg",
-        "https://images.weserv.nl/?url=i.postimg.cc/wTj1nPZQ/Cd480afa91.webp",
-        "https://images.weserv.nl/?url=i.postimg.cc/rFwD7b39/Cc8a9456a3.webp",
-        "https://images.weserv.nl/?url=i.postimg.cc/X7YrthmQ/Ac83513f62.webp",
-        "https://images.weserv.nl/?url=i.postimg.cc/5N2XDGTP/9180_710547588.jpg"
+        "https://i.postimg.cc/Wb1dxKCd/Images_D2FB0W0F.webp",
+        "https://i.postimg.cc/QxdFvPwK/girlsbravo_tomoka_manga.jpg",
+        "https://i.postimg.cc/bNwZ4MWn/girlsbravo_maharu_manga.jpg",
+        "https://i.postimg.cc/28S1gJMq/girlsbravo_koyomi_manga.jpg",
+        "https://i.postimg.cc/YqCvTVZR/Girls_Bravo_Koyomi_Hare_Nanaka.webp",
+        "https://i.postimg.cc/5N2XDGTw/Girls_Bravo_Kosame.webp",
+        "https://i.postimg.cc/J7qy6m6H/ee755c95_ea8f_4a26_bdfd_fbaff3669802.jpg",
+        "https://i.postimg.cc/wTj1nPZQ/Cd480afa91.webp",
+        "https://i.postimg.cc/rFwD7b39/Cc8a9456a3.webp",
+        "https://i.postimg.cc/X7YrthmQ/Ac83513f62.webp",
+        "https://i.postimg.cc/5N2XDGTP/9180_710547588.jpg"
     ];
     
     // GACHA POOLS
@@ -620,7 +615,21 @@
         {i:"🌸",t:"Bloom",d:"Growth is happening."},
         {i:"🌊",t:"Ocean Deep",d:"Drink more water."},
         {i:"💎",t:"Shiny",d:"You are glowing!"},
-        {i:"🌈",t:"Rainbow",d:"Storms pass, rainbows follow."}
+        {i:"🌈",t:"Rainbow",d:"Storms pass, rainbows follow."},
+        {i:"🛁",t:"Bath Portal",d:"Bring a towel, just in case."},
+        {i:"🤧",t:"Sneeze Attack",d:"Someone is talking about you."},
+        {i:"🍛",t:"Space Curry",d:"Spicy food powers you up."},
+        {i:"🩸",t:"Nosebleed",d:"Too much cuteness detected."},
+        {i:"🧜‍♀️",t:"Siren Song",d:"Your words are persuasive."},
+        {i:"🛸",t:"UFO Sighting",d:"They are watching."},
+        {i:"😖",t:"Tsundere Mode",d:"It's okay to be honest!"},
+        {i:"404",t:"Error Found",d:"Motivation not found."},
+        {i:"☎️",t:"Dial-Up",d:"Connection to universe is slow."},
+        {i:"💻",t:"Blue Screen",d:"System crash imminent. Nap required."},
+        {i:"📧",t:"You've Got Mail",d:"Check your inbox."},
+        {i:"💯",t:"1000th Visitor",d:"You win! (Nothing)."},
+        {i:"🍓",t:"Strawberry Milk",d:"Treat yourself to sweet things."},
+        {i:"🐈‍⬛",t:"Black Cat",d:"A new friend approaches."}
     ];
 
     // --- STATE ---
@@ -668,7 +677,7 @@
 
     function enterApp() {
         if(audioCtx.state === 'suspended') {
-            audioCtx.resume().then(() => { soundEnabled = true; }).catch(e => console.log(e));
+            audioCtx.resume().then(() => { soundEnabled = true; });
         }
 
         document.getElementById('welcome-layer').style.opacity = '0';
@@ -762,7 +771,6 @@
             document.getElementById('id-wgt').innerText = u.wgt;
             
             const avIndex = (u.av || 0) % AVATARS.length;
-            // No cache buster needed for direct stable links
             document.getElementById('id-pic').src = AVATARS[avIndex];
             
             document.getElementById('my-sig').innerText = u.name;
@@ -829,15 +837,18 @@
         });
     }
 
-    // --- LOCKED AVATAR LOGIC ---
+    // --- LOCKED AVATAR LOGIC (STRICT) ---
     function rotateAvatar() {
         const u = DB.profiles[DB.activeIdx];
+        
+        // Strict locking: Cannot go beyond level index
         const maxIndex = Math.min(DB.lvl, AVATARS.length - 1);
         let nextAv = u.av + 1;
+        
         if(nextAv > maxIndex) {
-            nextAv = 0; 
+            nextAv = 0; // Wrap around to start
             if(maxIndex < AVATARS.length - 1) {
-                alert(`LOCKED: Reach Level ${nextAv + 1} to unlock this avatar!`);
+                alert(`LOCKED: Reach Level ${nextAv + 1} to unlock next avatar!`);
             }
         }
         u.av = nextAv;
@@ -872,8 +883,10 @@
         const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         DB.frontLog.unshift({ name: user.realName, time: time });
         if(DB.frontLog.length > 20) DB.frontLog.pop();
+        
         addXP(10); 
         alert("Switched! +10 Credits earned.");
+        
         applyTheme(user); save(); closeModals(); refreshUI();
     }
 
@@ -932,8 +945,10 @@
         if(DB.fortune && DB.fortune.date === t) return;
         const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
         DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
+        
         addXP(50); 
         alert("Fortune Read! +50 Credits earned.");
+        
         save();
         renderFortuneCard(DB.fortune);
         const card = document.getElementById('fortune-card');
@@ -1102,22 +1117,29 @@
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         
-        if (type === 'print') {
-            // WHITE NOISE GENERATION FOR RECEIPT SOUND
-            const bufferSize = audioCtx.sampleRate * 0.15; 
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-            const noise = audioCtx.createBufferSource();
-            noise.buffer = buffer;
-            noise.connect(gain);
-            gain.connect(audioCtx.destination);
-            // Envelope to sound crisp
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-            noise.start();
+        if (type === 'print') { // NEW RECEIPT SOUND
+             // WHITE NOISE GENERATION
+             const bufferSize = audioCtx.sampleRate * 0.15; 
+             const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+             const data = buffer.getChannelData(0);
+             for (let i = 0; i < bufferSize; i++) {
+                 data[i] = Math.random() * 2 - 1;
+             }
+             const noise = audioCtx.createBufferSource();
+             noise.buffer = buffer;
+             noise.connect(gain);
+             gain.connect(audioCtx.destination);
+             gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+             noise.start();
+        } else if (type === 'sad') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
         } else if (type === 'chime') {
              osc.type = 'sine';
              osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
@@ -1127,12 +1149,12 @@
              osc.connect(gain); gain.connect(audioCtx.destination);
              osc.start(); osc.stop(audioCtx.currentTime + 0.3);
         } else {
-            // Default 'bloop'
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gain); gain.connect(audioCtx.destination);
             osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         }
     }
