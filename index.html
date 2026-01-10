@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ff69b4">
-    <title>Seiren OS</title>
+    <title>Seiren OS 2.0</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
@@ -22,6 +22,7 @@
             --glass: rgba(255, 255, 255, 0.95);
             --text: #555;
             --blue: #4fc3f7;
+            --banana: #ffe135;
         }
 
         /* 2004 SCROLLBAR */
@@ -68,15 +69,6 @@
             animation: scanMove 60s linear infinite;
         }
         @keyframes scanMove { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
-
-        /* --- DASH STICKERS (DECORATIVE) --- */
-        .sticker {
-            position: absolute; width: 50px; height: 50px;
-            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1));
-            pointer-events: none; z-index: 20;
-            animation: floatSticker 3s ease-in-out infinite;
-        }
-        @keyframes floatSticker { 0%, 100% {transform:translateY(0) rotate(0deg);} 50% {transform:translateY(-5px) rotate(5deg);} }
 
         /* --- APP SHELL --- */
         #welcome-layer {
@@ -174,11 +166,12 @@
         }
         .id-data { flex: 1; }
         .id-stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.65rem;
+            display: grid; grid-template-columns: 1fr; gap: 4px; font-size: 0.65rem;
             background: rgba(255,255,255,0.8); padding: 5px; border-radius: 5px; margin-top:5px; border: 1px inset white;
         }
         .signature { font-family: 'Brush Script MT', cursive; font-size: 1.2rem; color: var(--blue); transform: rotate(-5deg); display: inline-block; margin-right: 10px; }
 
+        /* DASH BUTTONS */
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .dash-btn {
             background: white; border-radius: 15px; padding: 10px 5px; text-align: center;
@@ -189,48 +182,110 @@
         .dash-icon { font-size: 1.5rem; display: block; margin-bottom: 3px; }
         .dash-label { font-size: 0.7rem; font-weight: bold; color: var(--text); }
 
-        /* FORTUNE */
-        .fortune-stage { perspective: 1000px; width: 140px; height: 200px; margin: 0 auto; cursor: pointer; }
-        .card-wrapper {
-            width: 100%; height: 100%; position: relative;
-            transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .card-wrapper.flipped { transform: rotateY(180deg); }
-        .card-face {
-            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15); border: 4px solid white;
-        }
-        .card-front { background: repeating-linear-gradient(45deg, var(--main), var(--main) 10px, #ffb7b2 10px, #ffb7b2 20px); }
-        .card-back { background: white; transform: rotateY(180deg); padding: 10px; text-align: center; border: 2px solid var(--main); }
-        .new-day-btn { background: #4fc3f7; color: white; border: 2px outset #81d4fa; padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; margin-top: 15px; cursor: pointer; box-shadow: 2px 2px 0 #29b6f6; font-weight: bold; }
-        .new-day-btn:active { border-style: inset; transform: translateY(2px); box-shadow:none; }
+        /* PET ROOM & DRAG SYSTEM */
+        .pet-box { background: white; border: 3px ridge var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; transition: background 0.3s; min-height: 250px; overflow: hidden; touch-action: none; }
+        
+        .ebi-img { width: 140px; transition: transform 0.2s; margin-top:30px; position:relative; z-index:2; pointer-events: none;}
+        .ebi-img.bounce { animation: bigBounce 0.5s ease; }
+        @keyframes bigBounce { 0% {transform:scale(1);} 50% {transform:scale(1.2) translateY(-15px);} 100% {transform:scale(1);} }
 
-        /* BBS & UI */
+        /* Draggable Items */
+        .pet-sticker {
+            position: absolute;
+            font-size: 3rem;
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+        .pet-sticker.wear { z-index: 20; } /* Wearables on top of Ebi */
+        .pet-sticker.decor { z-index: 1; } /* Decor behind Ebi */
+        .pet-sticker:active { cursor: grabbing; transform: scale(1.1); z-index: 30; }
+
+        /* WALLPAPERS */
+        .bg-hearts { background-color: #ffe4e1 !important; background-image: radial-gradient(#ff69b4 2px, transparent 2px), radial-gradient(#ff69b4 2px, transparent 2px) !important; background-size: 20px 20px !important; background-position: 0 0, 10px 10px !important; }
+        .bg-dots-blue { background-color: #e0f7fa !important; background-image: radial-gradient(#4fc3f7 2px, transparent 2px) !important; background-size: 15px 15px !important; }
+        .bg-check-green { background-color: #f1f8e9 !important; background-image: repeating-linear-gradient(45deg, #c5e1a5 25%, transparent 25%, transparent 75%, #c5e1a5 75%, #c5e1a5), repeating-linear-gradient(45deg, #c5e1a5 25%, #f1f8e9 25%, #f1f8e9 75%, #c5e1a5 75%, #c5e1a5) !important; background-size: 20px 20px !important; }
+        .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }
+        
+        /* NEW WALLPAPERS */
+        .bg-seiren {
+            background: linear-gradient(135deg, #ffb3d9 25%, transparent 25%),
+                        linear-gradient(225deg, #ffb3d9 25%, transparent 25%),
+                        linear-gradient(45deg, #ffb3d9 25%, transparent 25%),
+                        linear-gradient(315deg, #ffb3d9 25%, #ffe4f0 25%) !important;
+            background-size: 30px 30px !important;
+            background-position: 15px 0, 15px 0, 0 0, 0 0 !important;
+        }
+        .bg-bath {
+            background: linear-gradient(to bottom, #e1f5fe 0%, #b3e5fc 100%) !important;
+            background-image: 
+                radial-gradient(circle, #81d4fa 2px, transparent 2px),
+                radial-gradient(circle, #4fc3f7 1px, transparent 1px) !important;
+            background-size: 40px 40px, 20px 20px !important;
+            background-position: 0 0, 10px 10px !important;
+        }
+        .bg-bubblegum {
+            background: #ffccdd !important;
+            background-image: repeating-radial-gradient(circle at 0 0, transparent 0, #ffccdd 10px),
+                              repeating-linear-gradient(#ff99bb55, #ff99bb) !important;
+        }
+        .bg-nature {
+            background: #c8e6c9 !important;
+            background-image: 
+                linear-gradient(45deg, #a5d6a7 25%, transparent 25%),
+                linear-gradient(-45deg, #a5d6a7 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #a5d6a7 75%),
+                linear-gradient(-45deg, transparent 75%, #a5d6a7 75%) !important;
+            background-size: 20px 20px !important;
+        }
+
+        /* INVENTORY & GACHA */
+        .gacha-pool-btn { width: 45%; margin: 2px; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 0.9rem; }
+        
+        .inv-section-title { width: 100%; border-bottom: 2px solid #ddd; margin: 10px 0 5px 0; font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .inventory-grid { display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-start; }
+        .inv-item { font-size: 1.5rem; cursor: pointer; padding: 5px; border: 1px solid #ddd; background: white; border-radius: 5px; width: 40px; height: 40px; display:flex; align-items:center; justify-content:center;}
+        .inv-item:hover { background: #e0f7fa; border-color: var(--blue); }
+
+        /* RECEIPT SYSTEM */
+        .receipt-container {
+            font-family: 'Courier New', monospace;
+            background: #fff;
+            padding: 15px;
+            border: 1px dashed #aaa;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            margin-top: 15px;
+        }
+        .receipt-header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 10px; font-weight: bold; font-size: 0.9rem; }
+        .receipt-lines { min-height: 80px; font-size: 0.75rem; line-height: 1.4; color: #333; }
+        .receipt-footer { border-top: 2px dashed #000; padding-top: 10px; margin-top: 10px; font-size: 0.8rem; font-weight: bold; display: flex; justify-content: space-between; }
+        .print-btn {
+            background: var(--dark); color: white; border: none; padding: 10px; width: 100%;
+            font-family: 'Courier New', monospace; font-weight: bold; margin-top: 10px;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .print-btn:active { opacity: 0.8; }
+        .print-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* UI GENERAL */
+        .btn-main { background: var(--main); color: white; border: 2px outset #ff9eb5; padding: 12px; width: 100%; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
+        .btn-main:active { transform: translateY(2px); box-shadow: none; border-style: inset; }
+        
+        .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+        .modal-box { background: white; width: 85%; max-width: 400px; border-radius: 25px; border: 4px ridge var(--main); padding: 20px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: popIn 0.3s; }
+
+        /* BBS & OTHERS */
         .bbs-container { background: white; border: 2px ridge var(--main); border-radius: 15px; height: 100%; min-height: 400px; display: flex; flex-direction: column; overflow: hidden; }
         .bbs-messages { flex: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
         .bbs-msg { background: white; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.05); font-size: 0.8rem; border-left: 4px solid #ddd; }
-        .bbs-meta { font-size: 0.6rem; color: #999; margin-bottom: 2px; display: flex; justify-content: space-between; }
-        .bbs-input-area { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 5px; }
-        
         input { width: 100%; padding: 12px; border: 2px inset #ddd; border-radius: 15px; box-sizing: border-box; font-family:inherit; margin-bottom: 10px; outline:none; background: #fffdfd; }
-        input:focus { border-color: var(--main); background: #fff; }
-        .btn-main { background: var(--main); color: white; border: 2px outset #ff9eb5; padding: 12px; width: 100%; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
-        .btn-main:active { transform: translateY(2px); box-shadow: none; border-style: inset; }
-
-        /* MODALS */
-        .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
-        .modal-box { background: white; width: 85%; max-width: 400px; border-radius: 25px; border: 4px ridge var(--main); padding: 20px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: popIn 0.3s; }
-        .slot-card { background: #fdf2f8; border: 2px outset #eee; border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .slot-card.active-slot { border-color: var(--main); background: var(--bg-light); border-style: inset; }
-
-        /* NAV */
+        
         nav { position: fixed; bottom: 35px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 100; border: 2px solid white; }
         .nav-btn { background: none; border: none; color: #ccc; font-size: 1.4rem; transition: 0.2s; display: flex; flex-direction:column; align-items: center; }
         .nav-label { font-size: 0.55rem; margin-top:2px; font-weight:bold; }
         .nav-btn.active { color: var(--main); transform: scale(1.1); }
 
-        /* SAVE RIBBON */
         .save-ribbon {
             position: fixed; bottom: 0; left: 0; right: 0; height: 25px;
             background: #d12e87; color: white;
@@ -238,91 +293,33 @@
             z-index: 200; border-top: 2px solid white; font-weight: bold;
             letter-spacing: 1px;
         }
-
-        /* WISH & PET */
-        .corkboard { background: #e6d7c3; border: 5px ridge #8b5a2b; border-radius: 10px; padding: 15px; min-height: 400px; position: relative; }
-        .polaroid { background: white; padding: 6px; text-align: center; margin-bottom:15px; transform: rotate(-2deg); box-shadow: 3px 3px 6px rgba(0,0,0,0.1); position:relative; transition: transform 0.2s; display: inline-block; width: 45%; margin: 2%; vertical-align: top; }
-        .polaroid:nth-child(even) { transform: rotate(2deg); }
-        .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
-        .polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border: 1px solid #eee; }
-        .delete-wish-btn { position: absolute; top: -8px; right: -8px; background: red; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; z-index: 5; cursor: pointer; }
-        .fab-btn { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; background: var(--main); color: white; border-radius: 50%; border: 3px outset white; font-size: 2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100; transition: transform 0.2s; }
-        
-        .pet-box { background: white; border: 3px ridge var(--main); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; position:relative; transition: background 0.3s; min-height: 250px; overflow: hidden; touch-action: none; }
-        
-        /* WALLPAPER PATTERNS */
-        .bg-hearts { background-color: #ffe4e1 !important; background-image: radial-gradient(#ff69b4 2px, transparent 2px), radial-gradient(#ff69b4 2px, transparent 2px) !important; background-size: 20px 20px !important; background-position: 0 0, 10px 10px !important; }
-        .bg-dots-blue { background-color: #e0f7fa !important; background-image: radial-gradient(#4fc3f7 2px, transparent 2px) !important; background-size: 15px 15px !important; }
-        .bg-check-green { background-color: #f1f8e9 !important; background-image: repeating-linear-gradient(45deg, #c5e1a5 25%, transparent 25%, transparent 75%, #c5e1a5 75%, #c5e1a5), repeating-linear-gradient(45deg, #c5e1a5 25%, #f1f8e9 25%, #f1f8e9 75%, #c5e1a5 75%, #c5e1a5) !important; background-size: 20px 20px !important; }
-        .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }
-
-        /* FIXED ACCESSORY POS - LOWERED */
-        .pet-hat { 
-            position: absolute; 
-            top: 55px; /* LOWERED SIGNIFICANTLY */
-            left: 50%; 
-            transform: translateX(-50%); 
-            font-size: 4rem; 
-            z-index: 10; 
-            pointer-events: none;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        
-        .acc-head { top: 35px; } /* Sits on head */
-        .acc-mask { top: 65px; } /* Over face */
-        .acc-side { top: unset; bottom: 20px; right: 20px; left: unset; transform: none; }
-
-        /* DRAGGABLE PET STICKERS */
-        .pet-sticker {
-            position: absolute;
-            font-size: 3rem;
-            cursor: grab;
-            user-select: none;
-            z-index: 5;
-            transition: transform 0.1s;
-        }
-        .pet-sticker:active { cursor: grabbing; transform: scale(1.1); z-index: 15; }
-
-        .ebi-img { width: 140px; transition: transform 0.2s; margin-top:10px; position:relative; z-index:2; pointer-events: none;}
-        .ebi-img.bounce { animation: bigBounce 0.5s ease; }
-        @keyframes bigBounce { 0% {transform:scale(1);} 50% {transform:scale(1.2) translateY(-15px);} 100% {transform:scale(1);} }
-        .task-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
-        .task-item.completed { text-decoration: line-through; color: #aaa; opacity: 0.5; }
-        
-        /* GACHA SHOP UI */
-        .gacha-btn-group { display: flex; gap: 5px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
-        .gacha-btn { background: #f8f8f8; border: 2px outset #ddd; padding: 10px; border-radius: 10px; font-size: 0.8rem; cursor: pointer; width: 30%; }
-        .gacha-btn:active { border-style: inset; transform: translateY(2px); }
-
-        .inventory-grid { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 10px; background: #f0f0f0; padding: 10px; border: 2px inset #ccc; border-radius: 10px; }
-        .inv-item { font-size: 1.5rem; cursor: pointer; padding: 8px; border: 1px solid #ddd; background: white; border-radius: 5px; min-width: 30px; text-align: center; }
-        .inv-item:hover { background: #e0f7fa; border-color: var(--blue); }
-
-        /* DIARY EXPANSION */
-        .diary-box { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .mood-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
-        .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 15px; height: 40px; border: 2px outset #eee; cursor: pointer; display:flex; align-items:center; justify-content:center; }
-        .mood-btn.selected { border-color: var(--main); background: var(--bg-light); border-style: inset; }
-        
-        /* QUICK MOOD RECEIPT STYLE */
-        .quick-mood-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
-        .qm-btn { background: white; border: 2px solid var(--main); border-radius: 10px; padding: 10px; font-size: 1.2rem; cursor: pointer; transition: transform 0.1s; }
-        .qm-btn:active { transform: scale(0.9); }
-        .receipt-log { font-family: 'Courier New', monospace; font-size: 0.7rem; background: #fff; padding: 10px; border: 1px dashed #ccc; margin-top: 10px; min-height: 50px; white-space: pre-wrap; height: 100px; overflow-y: scroll; }
         
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 105, 180, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 10001; font-weight:bold; }
         .toast.show { opacity: 1; top: 30px; }
 
-        /* 88x31 BADGES */
-        .badges-container {
-            display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; margin-top: 20px; opacity: 0.9;
-        }
-        .web-badge {
-            width: 88px; height: 31px; border: 1px solid #fff; border-radius: 0;
-            background: #e0e0e0; display: flex; align-items: center; justify-content: center;
-            font-size: 9px; font-family: 'Verdana', sans-serif; font-weight: bold; color: #555;
-            text-decoration: none; box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
+        .corkboard { background: #e6d7c3; border: 5px ridge #8b5a2b; border-radius: 10px; padding: 15px; min-height: 400px; position: relative; }
+        .polaroid { background: white; padding: 6px; text-align: center; margin-bottom:15px; transform: rotate(-2deg); box-shadow: 3px 3px 6px rgba(0,0,0,0.1); position:relative; transition: transform 0.2s; display: inline-block; width: 45%; margin: 2%; vertical-align: top; }
+        .fab-btn { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; background: var(--main); color: white; border-radius: 50%; border: 3px outset white; font-size: 2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 100; transition: transform 0.2s; }
+        
+        .badges-container { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; margin-top: 20px; opacity: 0.9; }
+        .web-badge { width: 88px; height: 31px; border: 1px solid #fff; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; color: #555; text-decoration: none; }
+        
+        /* TASK LIST */
+        .task-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
+        
+        /* DIARY */
+        .diary-box { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .mood-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+        .mood-btn { font-size: 1.5rem; background: #f0f0f0; border-radius: 15px; height: 40px; border: 2px outset #eee; cursor: pointer; display:flex; align-items:center; justify-content:center; }
+        .mood-btn.selected { border-color: var(--main); background: var(--bg-light); border-style: inset; }
+
+        .fortune-stage { perspective: 1000px; width: 140px; height: 200px; margin: 0 auto; cursor: pointer; }
+        .card-wrapper { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.8s; }
+        .card-wrapper.flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.15); border: 4px solid white; }
+        .card-front { background: repeating-linear-gradient(45deg, var(--main), var(--main) 10px, #ffb7b2 10px, #ffb7b2 20px); }
+        .card-back { background: white; transform: rotateY(180deg); padding: 10px; text-align: center; border: 2px solid var(--main); }
+        .new-day-btn { background: #4fc3f7; color: white; border: 2px outset #81d4fa; padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; margin-top: 15px; cursor: pointer; box-shadow: 2px 2px 0 #29b6f6; font-weight: bold; }
 
     </style>
 </head>
@@ -335,7 +332,7 @@
 <div id="welcome-layer">
     <div class="welcome-card">
         <div style="font-size:4rem; margin-bottom:10px;">🎀</div>
-        <h1 class="welcome-title">SEIREN</h1>
+        <h1 class="welcome-title">SEIREN OS</h1>
         <button class="enter-btn" onclick="enterApp()">
             ENTER WORLD<br>
             <span style="font-size:1rem;">♡</span>
@@ -370,8 +367,7 @@
             </div>
 
             <div id="dash-view" style="display:none; position:relative;">
-                <div id="sticker-layer"></div>
-
+                
                 <div class="dash-header">
                     <h2 style="margin:0; color:var(--dark);" id="dash-greet">Hello!</h2>
                     <span style="font-size:0.8rem; color:#888;">System Dashboard</span>
@@ -383,7 +379,7 @@
                         <span><span id="xp-val">0</span>/<span id="xp-req">100</span> XP</span>
                     </div>
                     <div class="xp-track"><div id="xp-bar" class="xp-fill"></div></div>
-                    <div style="margin-top:5px; font-size:0.7rem; color:var(--dark); font-weight:bold;">Credits: ₵<span id="credit-val">0</span></div>
+                    <div style="margin-top:5px; font-size:0.7rem; color:var(--dark); font-weight:bold;">Bananas: <span id="credit-val">0</span> 🍌</div>
                 </div>
 
                 <div class="id-card-wrap">
@@ -401,10 +397,7 @@
                                 <div class="id-stats-grid">
                                     <span><b>ID:</b> <span id="id-num">000</span></span>
                                     <span><b>Sign:</b> <span id="id-sign">?</span></span>
-                                    <span><b>Eyes:</b> <span id="id-eyes">?</span></span>
-                                    <span><b>Hair:</b> <span id="id-hair">?</span></span>
-                                    <span><b>Hgt:</b> <span id="id-hgt">?</span></span>
-                                    <span><b>Wgt:</b> <span id="id-wgt">?</span></span>
+                                    <div style="grid-column: span 2; font-style: italic; color:#666;" id="id-traits"></div>
                                 </div>
                             </div>
                         </div>
@@ -427,11 +420,6 @@
                         <span class="dash-icon">🎒</span>
                         <span class="dash-label">Backpack</span>
                     </div>
-                </div>
-
-                <div class="front-log-widget" style="background:white; border:2px dashed var(--main); border-radius:15px; padding:10px; margin-bottom:20px;">
-                    <strong style="color:var(--main); font-size:0.8rem;">Front History</strong>
-                    <div id="mini-log"></div>
                 </div>
 
                 <div style="text-align:center; padding-bottom:20px;">
@@ -459,11 +447,70 @@
             </div>
         </div>
 
+        <div id="tab-pet" class="page">
+            
+            <div id="pet-container" class="pet-box">
+                <div id="room-decor-layer"></div>
+                <div id="room-wear-layer"></div>
+                
+                <img id="ebi-pet" src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img">
+                
+                <h3 style="color:var(--main);">Ebi</h3>
+                <div style="background:#eee; height:12px; border-radius:10px; overflow:hidden; margin:10px 0;">
+                    <div id="pet-bar" style="width:50%; height:100%; background:var(--main); transition:width 0.5s;"></div>
+                </div>
+                <div id="ebi-msg" style="height:20px; font-size:0.7rem; color:#888; margin-bottom:10px;">Do tasks to feed me!</div>
+            </div>
+
+            <div style="margin-bottom:10px; text-align:center;">
+                <button class="btn-main" style="background:#e1f5fe; color:#0277bd; border-color:#81d4fa;" onclick="takeBath()">🛁 Take a Bath (Daily Event)</button>
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <strong>To Do List</strong>
+                <div style="display:flex; gap:5px;">
+                    <input type="text" id="task-in" placeholder="Task...">
+                    <button class="btn-main" style="width:auto;" onclick="addTask()">+</button>
+                </div>
+                <div id="task-list"></div>
+            </div>
+            
+            <div style="margin-top:20px;">
+                <strong style="color:var(--dark);">Quick Mood Log</strong>
+                <div class="quick-mood-board" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-top:5px;">
+                    <button class="mood-btn" onclick="logMoodQuick('😊','Good')">😊</button>
+                    <button class="mood-btn" onclick="logMoodQuick('😢','Sad')">😢</button>
+                    <button class="mood-btn" onclick="logMoodQuick('😡','Mad')">😡</button>
+                    <button class="mood-btn" onclick="logMoodQuick('💖','Love')">💖</button>
+                    <button class="mood-btn" onclick="logMoodQuick('✨','Sparkle')">✨</button>
+                    <button class="mood-btn" onclick="logMoodQuick('💀','Dead')">💀</button>
+                    <button class="mood-btn" onclick="logMoodQuick('💤','Sleepy')">💤</button>
+                    <button class="mood-btn" onclick="logMoodQuick('☁️','Numb')">☁️</button>
+                </div>
+                
+                <div class="receipt-container">
+                    <div class="receipt-header">
+                        ╔════ SEIREN OS ════╗<br>
+                        ║   MOOD RECEIPT    ║<br>
+                        ╚═══════════════════╝
+                    </div>
+                    <div id="receipt-lines" class="receipt-lines">
+                        Waiting for input...
+                    </div>
+                    <div class="receipt-footer">
+                        <span>ENTRIES: <span id="r-count">0</span></span>
+                        <span>PENDING: +<span id="r-xp">0</span> XP</span>
+                    </div>
+                    <button id="print-btn" class="print-btn" onclick="cashOutReceipt()" disabled>🖨️ PRINT & COLLECT</button>
+                </div>
+            </div>
+        </div>
+
         <div id="tab-bbs" class="page">
             <h2 style="color:var(--main);">System Chat</h2>
             <div class="bbs-container">
                 <div class="bbs-messages" id="bbs-feed"></div>
-                <div class="bbs-input-area">
+                <div class="bbs-input-area" style="padding:10px; border-top:1px solid #eee; display:flex; gap:5px;">
                     <input type="text" id="bbs-input" placeholder="Message..." style="margin:0;">
                     <button class="btn-main" style="width:auto; padding:10px;" onclick="postBBS()">Send</button>
                 </div>
@@ -478,53 +525,6 @@
             <button class="fab-btn" onclick="openWishModal()">+</button>
         </div>
 
-        <div id="tab-pet" class="page">
-            <div class="pet-box" style="margin-bottom:20px;" id="pet-container">
-                <div class="pet-acc-container">
-                    <div id="ebi-hat" class="pet-hat"></div>
-                </div>
-                <div id="room-decor-layer"></div>
-
-                <img id="ebi-pet" src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="ebi-img">
-                <h3 style="color:var(--main);">Ebi</h3>
-                <div style="background:#eee; height:12px; border-radius:10px; overflow:hidden; margin:10px 0;">
-                    <div id="pet-bar" style="width:50%; height:100%; background:var(--main); transition:width 0.5s;"></div>
-                </div>
-                <div id="ebi-msg" style="height:20px; font-size:0.7rem; color:#888; margin-bottom:10px;">Do tasks to feed me!</div>
-            </div>
-            <div style="margin-bottom:10px;">
-                <strong>To Do List</strong>
-                <div style="display:flex; gap:5px;">
-                    <input type="text" id="task-in" placeholder="Task...">
-                    <button class="btn-main" style="width:auto;" onclick="addTask()">+</button>
-                </div>
-                <div id="task-list"></div>
-            </div>
-            
-            <div style="margin-top:20px; border-top:2px dashed #ccc; padding-top:10px;">
-                <strong style="color:var(--dark);">Quick Mood Check</strong>
-                <div class="quick-mood-board">
-                    <button class="qm-btn" onclick="logMoodQuick('😊')">😊</button>
-                    <button class="qm-btn" onclick="logMoodQuick('😢')">😢</button>
-                    <button class="qm-btn" onclick="logMoodQuick('😡')">😡</button>
-                    <button class="qm-btn" onclick="logMoodQuick('💖')">💖</button>
-                    <button class="qm-btn" onclick="logMoodQuick('💤')">💤</button>
-                    <button class="qm-btn" onclick="logMoodQuick('🌀')">🌀</button>
-                    <button class="qm-btn" onclick="logMoodQuick('💀')">💀</button>
-                    <button class="qm-btn" onclick="logMoodQuick('✨')">✨</button>
-                    <button class="qm-btn" onclick="logMoodQuick('😰')">😰</button>
-                    <button class="qm-btn" onclick="logMoodQuick('⚡')">⚡</button>
-                    <button class="qm-btn" onclick="logMoodQuick('😶')">😶</button>
-                    <button class="qm-btn" onclick="logMoodQuick('☁️')">☁️</button>
-                </div>
-                <div id="receipt-log" class="receipt-log">
-                    *** MOOD RECEIPT ***<br>
-                    Waiting for input...
-                </div>
-                <button class="btn-main" style="margin-top:5px; background:#ccc; color:#333;" onclick="cashOutReceipt()">🖨️ PRINT & COLLECT (<span id="pending-xp">0</span> XP)</button>
-            </div>
-        </div>
-
         <div id="tab-diary" class="page">
             <h2 style="color:var(--main);">Secret Diary</h2>
             <div class="diary-box">
@@ -533,10 +533,6 @@
                     <button class="mood-btn" onclick="setMood('😢', this)">😢</button>
                     <button class="mood-btn" onclick="setMood('😡', this)">😡</button>
                     <button class="mood-btn" onclick="setMood('💖', this)">💖</button>
-                    <button class="mood-btn" onclick="setMood('🌧️', this)">🌧️</button>
-                    <button class="mood-btn" onclick="setMood('💤', this)">💤</button>
-                    <button class="mood-btn" onclick="setMood('✨', this)">✨</button>
-                    <button class="mood-btn" onclick="setMood('💀', this)">💀</button>
                 </div>
                 <textarea id="diary-in" style="width:100%; height:80px; padding:10px; border:2px inset #eee; border-radius:10px; resize:none;" placeholder="Write something..."></textarea>
                 <button class="btn-main" onclick="postDiary()">Save Entry</button>
@@ -544,9 +540,41 @@
             <div id="diary-feed" style="margin-top:20px;"></div>
         </div>
 
-    </div>
+    </div> <div class="save-ribbon">♡ REMEMBER TO SAVE BEFORE LEAVING ♡</div>
 
-    <div class="save-ribbon">♡ REMEMBER TO SAVE BEFORE LEAVING ♡</div>
+    <div id="modal-backpack" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-top:0; color:var(--main);">🎒 Ebi's Backpack</h3>
+            
+            <div style="background:#f9f9f9; border:2px inset #eee; padding:10px; border-radius:10px; margin-bottom:15px;">
+                <div style="font-size:0.8rem; font-weight:bold; color:var(--dark);">Gacha Shop (50 🍌)</div>
+                <div style="display:flex; flex-wrap:wrap; justify-content:center;">
+                    <button class="btn-main gacha-pool-btn" style="background:#ffb7b2;" onclick="playGacha('cute')">🎀 Cute</button>
+                    <button class="btn-main gacha-pool-btn" style="background:#333;" onclick="playGacha('dark')">🕸️ Dark</button>
+                    <button class="btn-main gacha-pool-btn" style="background:#ff69b4;" onclick="playGacha('seiren')">👙 Seiren</button>
+                    <button class="btn-main gacha-pool-btn" style="background:#81c784;" onclick="playGacha('fun')">🐸 Fun</button>
+                </div>
+            </div>
+
+            <div style="font-size:0.8rem; font-weight:bold;">Inventory (Click to use):</div>
+            <div style="max-height:200px; overflow-y:auto; background:#fff; border:1px solid #eee; padding:5px;">
+                <div class="inv-section-title">👒 Wearables (Drag on Ebi)</div>
+                <div class="inventory-grid" id="inv-wear"></div>
+                
+                <div class="inv-section-title">🏠 Room Decor (Drag in Room)</div>
+                <div class="inventory-grid" id="inv-decor"></div>
+                
+                <div class="inv-section-title">🎨 Wallpapers</div>
+                <div class="inventory-grid" id="inv-wall"></div>
+            </div>
+            
+            <div style="margin-top:15px; border-top:1px dashed #ccc; padding-top:10px;">
+                 <button class="btn-main" style="background:#ff8a80;" onclick="clearRoomDecor()">🗑️ Clear Room</button>
+            </div>
+
+            <button class="btn-main" style="background:#ccc; margin-top:15px;" onclick="closeModals()">Close</button>
+        </div>
+    </div>
 
     <div id="modal-profiles" class="modal-overlay">
         <div class="modal-box">
@@ -564,57 +592,20 @@
         </div>
     </div>
 
-    <div id="modal-backpack" class="modal-overlay">
-        <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--main);">🎒 Ebi's Backpack</h3>
-            <p style="font-size:0.7rem; color:#888;">Drag & Drop items in the room!</p>
-            
-            <div style="background:#f9f9f9; border:2px inset #eee; padding:10px; border-radius:10px; margin-bottom:15px;">
-                <div style="font-size:0.8rem; font-weight:bold; color:var(--dark);">Gacha Shop (50 ₵)</div>
-                <div class="gacha-btn-group">
-                    <button class="gacha-btn" onclick="playGacha('cute')">🎀 Cute</button>
-                    <button class="gacha-btn" onclick="playGacha('dark')">🕸️ Dark</button>
-                    <button class="gacha-btn" onclick="playGacha('nature')">🍄 Nature</button>
-                    <button class="gacha-btn" onclick="playGacha('decor')">🖼️ Decor</button>
-                </div>
-            </div>
-
-            <div style="font-size:0.8rem; font-weight:bold;">Inventory (Click to equip/place):</div>
-            <div class="inventory-grid" id="inv-grid">
-                <span class="inv-item" onclick="setHat('')">❌</span>
-            </div>
-            
-            <div style="margin-top:15px; border-top:1px dashed #ccc; padding-top:10px;">
-                 <button class="btn-main" style="background:#b39ddb;" onclick="toggleStickers()">✨ Toggle Dash Stickers</button>
-                 <button class="btn-main" style="background:#ff8a80; margin-top:5px;" onclick="clearRoomDecor()">🗑️ Clear Room Decor</button>
-            </div>
-
-            <button class="btn-main" style="background:#ccc; margin-top:15px;" onclick="closeModals()">Close</button>
-        </div>
-    </div>
-
     <div id="modal-portal" class="modal-overlay">
         <div class="modal-box">
             <h3 style="margin-top:0; color:var(--main);">🌀 Web Portal</h3>
-            
-            <p style="font-size:0.8rem; color:#666;">Bookmarks & Quizzes</p>
-            
             <div id="link-list" style="margin-bottom:15px;"></div>
-            
             <a href="https://www.quotev.com/quiz/17122879/who-am-I-pt-2" target="_blank" style="display:block; background:var(--main); color:white; padding:10px; border-radius:10px; text-decoration:none; text-align:center; font-weight:bold; margin-bottom:10px;">✨ Take "Who Am I?" Quiz</a>
-            
             <div style="background:#f0f8ff; padding:10px; border-radius:10px; margin-bottom:10px;">
                 <input type="text" id="link-name" placeholder="Title" style="margin-bottom:5px;">
                 <input type="text" id="link-url" placeholder="URL (https://...)">
                 <button class="btn-main" style="background:var(--blue); padding:5px;" onclick="addLink()">Add Link</button>
             </div>
-
             <div style="border-top:1px dashed #ccc; padding-top:10px; text-align:center;">
-                <h4 style="margin:0 0 10px 0;">System Backup</h4>
                 <button class="btn-main" style="background:#555; font-size:0.8rem;" onclick="exportData()">💾 Copy Save Data</button>
                 <button class="btn-main" style="background:#999; font-size:0.8rem; margin-top:5px;" onclick="importData()">📂 Import Save Data</button>
             </div>
-
             <button class="btn-main" style="background:#ccc; margin-top:15px;" onclick="closeModals()">Close</button>
         </div>
     </div>
@@ -640,7 +631,7 @@
 </div>
 
 <script>
-    // --- STABLE AVATARS (PROVIDED) ---
+    // --- CONSTANTS ---
     const AVATARS = [
         "https://i.postimg.cc/Wb1dxKCd/Images_D2FB0W0F.webp",
         "https://i.postimg.cc/QxdFvPwK/girlsbravo_tomoka_manga.jpg",
@@ -654,89 +645,85 @@
         "https://i.postimg.cc/X7YrthmQ/Ac83513f62.webp",
         "https://i.postimg.cc/5N2XDGTP/9180_710547588.jpg"
     ];
-    
-    // EXPANDED GACHA POOLS (STICKERS & ITEMS)
+
+    const GB_ARCHETYPES = [
+        {name: "Miharu Type", traits: "Sweet, Innocent, Hungry", emoji: "🌸"},
+        {name: "Tomoka Type", traits: "Energetic, Cat-like, Playful", emoji: "🐱"},
+        {name: "Koyomi Type", traits: "Tsundere, Strong-willed, Loyal", emoji: "⚡"},
+        {name: "Kosame Type", traits: "Shy, Bookish, Thoughtful", emoji: "📚"},
+        {name: "Kirie Type", traits: "Responsible, Mature, Leader", emoji: "👑"},
+        {name: "Yukina Type", traits: "Performer, Charismatic, Shining", emoji: "⭐"},
+        {name: "Mamoru Type", traits: "Flirty, Social, Charming", emoji: "💕"},
+        {name: "Lisa Type", traits: "Powerful, Mysterious, Magical", emoji: "🔮"},
+        {name: "Ebi Type", traits: "Quirky, Unique, Independent", emoji: "🍤"},
+        {name: "Maharu Type", traits: "Tomboyish, Athletic, Competitive", emoji: "🏃‍♀️"}
+    ];
+
     const GACHA = {
-        cute: ["🎀","👑","🩰","🧁","🧸","💖","🍓","🍭","🐰","🍰","👛","🐩","👙","💒","🍥"],
-        dark: ["🕸️","🕷️","💀","🥀","🖤","🦇","🗡️","⛓️","🩸","🕯️","⚰️","🌑","🧟‍♀️","🐈‍⬛","👁️"],
-        nature: ["🍄","🌱","🌵","🌸","🌻","🐸","🍃","🪵","🐞","🍯","🦋","🐌","🌼","🍏","⛺"],
-        decor: ["bg-hearts", "bg-dots-blue", "bg-check-green", "bg-clouds", "🧸", "📺", "🛏️", "🛁", "🪜", "🖼️", "🪴", "🪑"] 
+        cute: {
+            wear: ["🎀","👑","🧁","🍓","🍭","🐰","💖","🌸","💮"],
+            decor: ["🧸","🍰","👛","💒","🎠"],
+            wall: ["bg-hearts", "bg-bubblegum"]
+        },
+        seiren: {
+            wear: ["🍌","🛁","🌺","💧","⭐","🌸"],
+            decor: ["🪴","🌴","💐","🕯️","🪞"],
+            wall: ["bg-seiren", "bg-bath", "bg-nature"]
+        },
+        dark: {
+            wear: ["🕷️","💀","🥀","🖤","🦇","⛓️"],
+            decor: ["🕯️","⚰️","🕸️","🗡️"],
+            wall: ["bg-void", "bg-gothic"]
+        },
+        fun: {
+            wear: ["🍄","🌱","🐸","🦋","🐌","🍏"],
+            decor: ["🌵","🪵","⛺","🍯"],
+            wall: ["bg-check-green", "bg-clouds"]
+        }
     };
 
-    const BADGES = ["🌱","🐣","🎀","⭐","🌸","🍄","💎","👑","🧚‍♀️","🏰","🪐"];
-
-    // MASSIVE FORTUNE UPDATE (25+ Fortunes)
     const FORTUNES = [
         {i:"🍞",t:"Toast Dash",d:"Running late but looking cute!"},
         {i:"🌟",t:"Super Star",d:"You are the main character today."},
         {i:"🌧️",t:"Melancholy",d:"A good day for reading inside."},
         {i:"💖",t:"Doki Doki",d:"Love is in the air!"},
-        {i:"🎮",t:"Gamer Mode",d:"High score incoming."},
-        {i:"💤",t:"Sleepyhead",d:"Take a nap. You earned it."},
-        {i:"🍄",t:"Cottagecore",d:"Go touch some grass."},
-        {i:"👾",t:"Glitch Mode",d:"Disassociation risk high."},
-        {i:"🌸",t:"Bloom",d:"Growth is happening."},
-        {i:"🌊",t:"Ocean Deep",d:"Drink more water."},
-        {i:"💎",t:"Shiny",d:"You are glowing!"},
-        {i:"🌈",t:"Rainbow",d:"Storms pass, rainbows follow."},
-        {i:"🔮",t:"Mystic",d:"Trust your intuition today."},
-        {i:"👻",t:"Ghostly",d:"You feel unseen, but you are valid."},
-        {i:"💌",t:"Love Letter",d:"Expect good news soon."},
-        {i:"🎹",t:"Melody",d:"Listen to your favorite song."},
-        {i:"☕",t:"Coffee Break",d:"Energize yourself."},
-        {i:"🌙",t:"Moonchild",d:"The night brings comfort."},
-        {i:"🔥",t:"Passion",d:"Go get what you want!"},
-        {i:"❄️",t:"Frosty",d:"Stay cool under pressure."},
-        {i:"🍀",t:"Lucky",d:"Good fortune favors you."},
-        {i:"🧭",t:"Lost & Found",d:"You will find what you seek."},
-        {i:"🗝️",t:"Unlock",d:"A secret will be revealed."},
-        {i:"🎨",t:"Create",d:"Make something beautiful."},
-        {i:"🎭",t:"Drama",d:"Avoid the tea today."},
-        {i:"🩹",t:"Healing",d:"Be gentle with yourself."}
+        {i:"🍌",t:"Banana Power",d:"Potassium levels critical."},
+        {i:"🍤",t:"Ebi Blessing",d:"A good meal awaits you."}
     ];
-    
-    const STICKERS = ["🎀","⭐","✨","🌸","💖","🍄","🍬","🩹","👑","🧸"];
+
+    const BADGES = ["🌱","🐣","🎀","⭐","🌸","🍄","💎","👑","🧚‍♀️","🏰","🪐"];
 
     // --- STATE ---
     let DB = {
         profiles: [], activeIdx: 0, xp: 0, credits: 0, lvl: 1,
-        wish: [], pet: {hunger:50, tasks:[], lastTask: Date.now(), decor: []}, 
-        inventory: [], 
+        wish: [], pet: {
+            hunger:50, tasks:[], lastTask: Date.now(), 
+            placed: [] // Combined array for all placed items {id, type, x, y}
+        }, 
+        inventory: [], // Strings like "🎀" or "bg-hearts"
         bbs: [], frontLog: [], diary: [], links: [],
         fortune: {date:'', i:'', t:'', d:''},
         wallpaper: "",
-        stickersEnabled: true
+        lastBath: ""
     };
+    
+    // Runtime vars
     let mood = '😊';
-    let pendingXP = 0; // New functionality for receipt
-
-    // --- SAVE REMINDER ---
-    window.addEventListener('beforeunload', (event) => {
-        event.preventDefault();
-        event.returnValue = ''; 
-    });
-
-    // --- INIT ---
-    let soundEnabled = false; 
+    let receiptBuffer = [];
+    let pendingXP = 0;
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+    // --- INIT ---
     window.addEventListener('load', () => {
-        const saved = localStorage.getItem('seiren_v49'); // Updated Version
+        const saved = localStorage.getItem('seiren_v50');
         if(saved) DB = JSON.parse(saved);
         
-        // MIGRATION
-        if(DB.profiles.length === 0) {
-            const old = JSON.parse(localStorage.getItem('seiren_v48') || localStorage.getItem('seiren_v47'));
-            if(old) { DB = old; save(); }
+        // Data Migration
+        if(!DB.pet.placed) DB.pet.placed = [];
+        if(DB.pet.decor) { // Migrate old decor to new placed system
+             DB.pet.decor.forEach(d => DB.pet.placed.push({id: d.item, type: 'decor', x: d.x, y: d.y}));
+             delete DB.pet.decor;
         }
-        
-        if(!DB.pet.lastTask) DB.pet.lastTask = Date.now();
-        if(!DB.pet.decor) DB.pet.decor = []; // Ensure decor array exists
-        if(!DB.links) DB.links = [];
-        if(!DB.inventory) DB.inventory = [];
-        if(DB.credits === undefined) DB.credits = 0;
-        if(!DB.wallpaper) DB.wallpaper = "";
-        if(DB.stickersEnabled === undefined) DB.stickersEnabled = true;
 
         setInterval(() => {
             const d = new Date();
@@ -745,10 +732,7 @@
     });
 
     function enterApp() {
-        if(audioCtx.state === 'suspended') {
-            audioCtx.resume().then(() => { soundEnabled = true; });
-        }
-
+        if(audioCtx.state === 'suspended') audioCtx.resume();
         document.getElementById('welcome-layer').style.opacity = '0';
         setTimeout(() => {
             document.getElementById('welcome-layer').style.display = 'none';
@@ -758,8 +742,7 @@
                 if(DB.profiles.length > 0) {
                     applyTheme(DB.profiles[DB.activeIdx]);
                     document.getElementById('dash-view').style.display = 'block';
-                    document.getElementById('setup-view').style.display = 'none';
-                    refreshUI(); checkFortune(); renderStickers(); renderRoomDecor();
+                    refreshUI(); renderPlacedItems();
                 } else {
                     document.getElementById('setup-view').style.display = 'block';
                     document.getElementById('dash-view').style.display = 'none';
@@ -769,10 +752,40 @@
     }
 
     function save() {
-        localStorage.setItem('seiren_v49', JSON.stringify(DB));
+        localStorage.setItem('seiren_v50', JSON.stringify(DB));
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 1000);
+    }
+
+    // --- HELPER: GET ITEM TYPE ---
+    function getItemType(item) {
+        if(item.startsWith('bg-')) return 'wall';
+        // Scan all pools
+        for(let pool in GACHA) {
+            if(GACHA[pool].wear.includes(item)) return 'wear';
+            if(GACHA[pool].decor.includes(item)) return 'decor';
+        }
+        return 'decor'; // Default
+    }
+
+    // --- GENERATOR & THEME ---
+    function genID(name, age, color) {
+        const seed = name.length + parseInt(age||0) + Math.floor(Math.random()*100);
+        const syllables = ["Mih","aru","Tom","oka","Koy","omi","Kir","ie","Yuk","ina","Lis","a","Eb","i","Mah","aru","Bra","vo"];
+        const generatedName = syllables[seed%syllables.length] + syllables[(seed+1)%syllables.length];
+        
+        const archetype = GB_ARCHETYPES[seed % GB_ARCHETYPES.length];
+
+        return {
+            name: generatedName,
+            realName: name, age: age,
+            color: color || "#ff69b4",
+            id: Math.floor(Math.random()*9000)+1000,
+            sign: archetype.name,
+            traits: archetype.traits,
+            av: Math.min(DB.lvl, AVATARS.length-1)
+        };
     }
 
     function applyTheme(user) {
@@ -783,6 +796,7 @@
         r.style.setProperty('--bg-light', adjustColor(color, 160));
         r.style.setProperty('--bg-dark', adjustColor(color, 120));
     }
+    
     function adjustColor(col, amt) {
         var usePound = false; if (col[0] == "#") { col = col.slice(1); usePound = true; }
         var num = parseInt(col,16);
@@ -791,40 +805,7 @@
         return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
     }
 
-    // --- GIRLS BRAVO GENERATOR (UPDATED: NO BALD) ---
-    function genID(name, age, color) {
-        const seed = name.length + parseInt(age||0) + Math.floor(Math.random()*100);
-        const nameP = ["Mi","Lu","Fa","Ko","Ki","Yu","Se","Ma","To","Ami","Rina"];
-        const nameS = ["-chan","-ren","-la","-ru","-ka","-na","-ho","-chi","-mi"];
-        
-        return {
-            name: nameP[seed%nameP.length] + nameS[seed%nameS.length],
-            realName: name, age: age,
-            color: color || "#ff69b4",
-            id: Math.floor(Math.random()*9000)+1000,
-            sign: ["Miharu","Siren","Alien","Maid","Neko","Usagi","Yukie","Kirie","Tomoka","Ghost","Angel","Witch","Space Cadet"][seed%13],
-            eyes: ["Pink","Blue","Gold","Red","Violet","Teal","Starry","Heterochromia","Void"][seed%9],
-            hair: ["Twin","Long","Bob","Short","Drills","Messy","Hime Cut","Ponytail","Buns","Waves"][seed%10], // Removed Bald
-            wgt: ["3 Peaches","Secret ♡","Cotton Candy","1 Mochi","Feather","2 Apples","3 Bathtubs","1000 Cookies","Light as air","Heavy Metal"][seed%10],
-            hgt: ["5 Strawberries", "2 Baguettes", "Tiny", "Cloud High", "Doll Size", "10cm", "UFO sized", "Skyscraper", "Bean sized", "Tall"][seed%10],
-            av: Math.min(DB.lvl, AVATARS.length-1),
-            hat: "" 
-        };
-    }
-
-    function initFirstProfile() {
-        const n = document.getElementById('setup-name').value;
-        const a = document.getElementById('setup-age').value;
-        if(!n) return;
-        DB.profiles.push(genID(n, a, "#ff69b4"));
-        DB.activeIdx = 0;
-        save();
-        document.getElementById('setup-view').style.display='none';
-        document.getElementById('dash-view').style.display='block';
-        refreshUI();
-    }
-
-    // --- MAIN RENDER ---
+    // --- UI RENDER ---
     function refreshUI() {
         const u = DB.profiles[DB.activeIdx];
         if(u) {
@@ -833,66 +814,49 @@
             document.getElementById('id-real').innerText = `aka ${u.realName}`;
             document.getElementById('id-num').innerText = u.id;
             document.getElementById('id-sign').innerText = u.sign;
-            document.getElementById('id-eyes').innerText = u.eyes;
-            document.getElementById('id-hair').innerText = u.hair;
-            document.getElementById('id-hgt').innerText = u.hgt;
-            document.getElementById('id-wgt').innerText = u.wgt;
+            document.getElementById('id-traits').innerText = u.traits;
             
             const avIndex = (u.av || 0) % AVATARS.length;
             document.getElementById('id-pic').src = AVATARS[avIndex];
             document.getElementById('my-sig').innerText = u.name;
-            
-            const hat = u.hat || "";
-            const el = document.getElementById('ebi-hat');
-            el.innerText = hat;
-            el.className = getAccType(hat); 
         }
         
         document.getElementById('pet-container').className = `pet-box ${DB.wallpaper || ''}`;
 
+        // Level & Bananas
         const badgeIdx = Math.min(DB.lvl-1, BADGES.length-1);
         document.getElementById('lvl-badge').innerText = BADGES[Math.max(0, badgeIdx)];
-
-        // HARDER LEVELING FORMULA UI
-        const reqXP = 100 + (DB.lvl * 20); // 100, 120, 140...
+        const reqXP = 100 + (DB.lvl * 20);
         document.getElementById('lvl-num').innerText = DB.lvl;
         document.getElementById('xp-req').innerText = reqXP;
         document.getElementById('xp-val').innerText = DB.xp;
-        
         const pct = Math.min(100, (DB.xp / reqXP) * 100);
         document.getElementById('xp-bar').style.width = pct + "%";
         document.getElementById('credit-val').innerText = DB.credits;
 
-        const invGrid = document.getElementById('inv-grid');
-        while(invGrid.children.length > 1) { invGrid.removeChild(invGrid.lastChild); }
+        // Inventory
+        const wearGrid = document.getElementById('inv-wear'); wearGrid.innerHTML = "";
+        const decorGrid = document.getElementById('inv-decor'); decorGrid.innerHTML = "";
+        const wallGrid = document.getElementById('inv-wall'); wallGrid.innerHTML = "";
+
         DB.inventory.forEach(item => {
+            const type = getItemType(item);
             const span = document.createElement('span');
             span.className = 'inv-item';
-            if(item.startsWith('bg-')) {
+            
+            if(type === 'wall') {
                 span.innerText = "🖼️";
-                span.onclick = () => setWallpaper(item);
+                span.onclick = () => { DB.wallpaper = item; save(); refreshUI(); playSnd('bloop'); alert("Wallpaper Applied!"); };
+                wallGrid.appendChild(span);
             } else {
                 span.innerText = item;
-                // Distinguish between Hat and Decor
-                if(getAccType(item) !== "acc-decor") {
-                   span.onclick = () => setHat(item);
-                } else {
-                   span.onclick = () => spawnRoomDecor(item);
-                }
+                span.onclick = () => spawnItem(item, type);
+                if(type === 'wear') wearGrid.appendChild(span);
+                else decorGrid.appendChild(span);
             }
-            invGrid.appendChild(span);
         });
 
-        const mini = document.getElementById('mini-log'); mini.innerHTML = "";
-        DB.frontLog.slice(0, 3).forEach(l => {
-            mini.innerHTML += `<div class="log-entry-mini" style="display:flex;justify-content:space-between;border-bottom:1px dotted #ccc;font-size:0.7rem;padding:3px;"><span>${l.name}</span><span>${l.time}</span></div>`;
-        });
-
-        const wList = document.getElementById('wish-list'); wList.innerHTML="";
-        DB.wish.forEach((w,i)=> wList.innerHTML+=`<div class="polaroid"><div class="delete-wish-btn" onclick="delWish(${i})">x</div><img src="${w.img}"><div style="font-size:0.7rem;margin-top:5px;font-weight:bold;">${w.name}</div></div>`);
-
-        document.getElementById('pet-bar').style.width = DB.pet.hunger+"%";
-        
+        // Logs & Lists
         const tList = document.getElementById('task-list'); tList.innerHTML="";
         DB.pet.tasks.forEach((t,i)=> tList.innerHTML+=`<div class="task-item"><span>${t}</span><input type="checkbox" onclick="doTask(${i})"></div>`);
 
@@ -900,142 +864,152 @@
         DB.bbs.slice().reverse().forEach(m => {
             bbs.innerHTML += `<div class="bbs-msg" style="border-left-color:${m.color}"><div class="bbs-meta"><span style="color:${m.color};font-weight:bold;">${m.sender}</span><span>${m.time}</span></div>${m.text}</div>`;
         });
-
-        const df = document.getElementById('diary-feed'); df.innerHTML="";
-        DB.diary.forEach(e => {
-            const emoji = e.m || '😊';
-            const dateStr = e.d ? `<div style="font-size:0.6rem;color:#aaa;">${e.d}</div>` : '';
-            df.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:5px;border-radius:10px;border-bottom:2px solid #eee; display:flex; gap:10px; align-items:flex-start;"><span style="font-size:1.5rem;">${emoji}</span><div style="flex:1;">${dateStr}<span style="margin-top:5px;display:block;">${e.t}</span></div></div>`
-        });
         
-        document.getElementById('pending-xp').innerText = pendingXP;
+        const wList = document.getElementById('wish-list'); wList.innerHTML="";
+        DB.wish.forEach((w,i)=> wList.innerHTML+=`<div class="polaroid"><div class="delete-wish-btn" style="position:absolute;top:-5px;right:-5px;background:red;color:white;border-radius:50%;width:20px;height:20px;cursor:pointer;" onclick="delWish(${i})">x</div><img src="${w.img}"><div style="font-size:0.7rem;margin-top:5px;font-weight:bold;">${w.name}</div></div>`);
     }
 
-    // --- LOCKED AVATAR LOGIC (STRICT) ---
-    function rotateAvatar() {
-        playSnd('bloop');
-        const u = DB.profiles[DB.activeIdx];
-        const maxIndex = Math.min(DB.lvl, AVATARS.length - 1);
-        let nextAv = (u.av || 0) + 1;
-        if(nextAv > maxIndex) {
-            nextAv = 0; 
-            if(maxIndex < AVATARS.length - 1) {
-                alert(`LOCKED: Reach Level ${nextAv + 1} to unlock next avatar!`);
-            }
-        }
-        u.av = nextAv;
+    // --- RECEIPT SYSTEM ---
+    function logMoodQuick(emoji, label) {
+        playSnd('print');
+        const now = new Date();
+        const time = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        
+        const line = `<div style="display:flex; justify-content:space-between;"><span>${time} ${emoji} ${label}</span><span>......+5 XP</span></div>`;
+        
+        receiptBuffer.push(line);
+        pendingXP += 5;
+        
+        const rLines = document.getElementById('receipt-lines');
+        if(receiptBuffer.length === 1) rLines.innerHTML = ""; // Clear waiting text
+        rLines.innerHTML += line;
+        
+        document.getElementById('r-count').innerText = receiptBuffer.length;
+        document.getElementById('r-xp').innerText = pendingXP;
+        document.getElementById('print-btn').disabled = false;
+        rLines.scrollTop = rLines.scrollHeight;
+    }
+
+    function cashOutReceipt() {
+        if(pendingXP <= 0) return;
+        playSnd('print');
+        addXP(pendingXP);
+        DB.credits += pendingXP; // Convert XP to Bananas 1:1
+        alert(`Receipt Printed! Gained ${pendingXP} XP & Bananas 🍌`);
+        
+        // Reset
+        pendingXP = 0;
+        receiptBuffer = [];
+        document.getElementById('receipt-lines').innerHTML = "Waiting for input...";
+        document.getElementById('r-count').innerText = "0";
+        document.getElementById('r-xp').innerText = "0";
+        document.getElementById('print-btn').disabled = true;
         save(); refreshUI();
     }
 
-    // --- STICKERS ---
-    function renderStickers() {
-        const layer = document.getElementById('sticker-layer');
-        layer.innerHTML = "";
-        if(!DB.stickersEnabled) return;
-
-        const seed = DB.profiles[DB.activeIdx].id;
-        const count = 5;
-        for(let i=0; i<count; i++) {
-            const el = document.createElement('div');
-            el.className = 'sticker';
-            el.innerText = STICKERS[(seed + i) % STICKERS.length];
-            const top = (seed * (i+1) * 37) % 80;
-            const left = (seed * (i+1) * 23) % 80;
-            el.style.top = top + "%";
-            el.style.left = left + "%";
-            el.style.fontSize = (2 + (i%2)) + "rem";
-            layer.appendChild(el);
-        }
-    }
-    
-    function toggleStickers() {
-        DB.stickersEnabled = !DB.stickersEnabled;
-        save(); renderStickers();
-        alert("Stickers " + (DB.stickersEnabled ? "ON" : "OFF"));
+    // --- PLACEMENT & DRAGGING ---
+    function spawnItem(id, type) {
+        DB.pet.placed.push({
+            id: id, type: type,
+            x: 50, y: 50 // Center default
+        });
+        save(); renderPlacedItems(); closeModals();
+        alert(`${type === 'wear' ? 'Accessory' : 'Decor'} placed! Drag to move.`);
     }
 
-    // --- ROOM DECOR (DRAGGABLE) ---
-    function spawnRoomDecor(item) {
-        if(!DB.pet.decor) DB.pet.decor = [];
-        // Default spawn center
-        DB.pet.decor.push({item: item, x: 50, y: 50});
-        save(); renderRoomDecor();
-        closeModals();
-        alert("Decor placed! Drag it to move.");
-    }
-    
-    function renderRoomDecor() {
-        const container = document.getElementById('room-decor-layer');
-        container.innerHTML = "";
-        if(!DB.pet.decor) return;
-        
-        DB.pet.decor.forEach((d, i) => {
+    function renderPlacedItems() {
+        const wearLayer = document.getElementById('room-wear-layer');
+        const decorLayer = document.getElementById('room-decor-layer');
+        wearLayer.innerHTML = ""; decorLayer.innerHTML = "";
+
+        DB.pet.placed.forEach((item, index) => {
             const el = document.createElement('div');
-            el.className = 'pet-sticker';
-            el.innerText = d.item;
-            el.style.left = d.x + "%";
-            el.style.top = d.y + "%";
-            
-            // Drag logic
+            el.className = `pet-sticker ${item.type}`;
+            el.innerText = item.id;
+            el.style.left = item.x + "%";
+            el.style.top = item.y + "%";
+
+            // Drag Logic
             let isDragging = false;
-            
-            const startDrag = (e) => {
-                isDragging = true;
-                e.preventDefault();
-            };
-            
+            const startDrag = (e) => { isDragging = true; e.preventDefault(); };
             const doDrag = (e) => {
                 if(!isDragging) return;
                 const box = document.getElementById('pet-container').getBoundingClientRect();
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                
-                let xPct = ((clientX - box.left) / box.width) * 100;
-                let yPct = ((clientY - box.top) / box.height) * 100;
-                
-                el.style.left = xPct + "%";
-                el.style.top = yPct + "%";
-                
-                d.x = xPct;
-                d.y = yPct;
+                item.x = ((clientX - box.left) / box.width) * 100;
+                item.y = ((clientY - box.top) / box.height) * 100;
+                el.style.left = item.x + "%";
+                el.style.top = item.y + "%";
             };
-            
-            const endDrag = () => {
-                if(isDragging) {
-                    isDragging = false;
-                    save(); 
-                }
-            };
-            
+            const endDrag = () => { if(isDragging) { isDragging = false; save(); } };
+
             el.addEventListener('mousedown', startDrag);
             el.addEventListener('touchstart', startDrag);
             window.addEventListener('mousemove', doDrag);
             window.addEventListener('touchmove', doDrag);
             window.addEventListener('mouseup', endDrag);
             window.addEventListener('touchend', endDrag);
-            
-            container.appendChild(el);
+
+            if(item.type === 'wear') wearLayer.appendChild(el);
+            else decorLayer.appendChild(el);
         });
     }
 
     function clearRoomDecor() {
-        if(confirm("Remove all room stickers?")) {
-            DB.pet.decor = [];
-            save(); renderRoomDecor();
+        if(confirm("Clear all items from the room?")) {
+            DB.pet.placed = [];
+            save(); renderPlacedItems();
         }
     }
 
-    // --- PROFILES ---
-    function openProfileManager() {
-        playSnd('bloop');
-        const list = document.getElementById('profile-list'); list.innerHTML="";
-        DB.profiles.forEach((p,i) => {
-            const active = i===DB.activeIdx ? "active-slot" : "";
-            list.innerHTML += `<div class="slot-card ${active}"><div><b>${p.realName}</b> (${p.name})</div><div>${i!==DB.activeIdx ? `<button class="btn-main" style="width:auto;padding:5px;" onclick="swap(${i})">Switch</button>` : 'Active'} <button style="color:red;border:none;background:none;font-weight:bold;" onclick="delProf(${i})">x</button></div></div>`;
-        });
-        document.getElementById('modal-profiles').style.display='flex';
+    // --- GACHA ---
+    function playGacha(theme) {
+        if(DB.credits < 50) { alert("Need 50 Bananas! 🍌"); return; }
+        
+        DB.credits -= 50;
+        playSnd('chime');
+        
+        const pool = GACHA[theme];
+        // 40% wear, 40% decor, 20% wall
+        const rand = Math.random();
+        let type = 'wear';
+        if(rand > 0.4) type = 'decor';
+        if(rand > 0.8) type = 'wall';
+        
+        const items = pool[type];
+        const item = items[Math.floor(Math.random() * items.length)];
+        
+        DB.inventory.push(item);
+        save(); refreshUI();
+        alert(`GACHA RESULT:\nType: ${type.toUpperCase()}\nItem: ${item}`);
     }
-    
+
+    // --- EVENTS & BATH ---
+    function takeBath() {
+        const today = new Date().toDateString();
+        if(DB.lastBath === today) {
+            alert("Already bathed today! Ebi is clean. 💧");
+            return;
+        }
+        
+        playSnd('chime');
+        DB.lastBath = today;
+        addXP(30);
+        DB.credits += 20;
+        alert("Ahh~ So refreshing! 🛁\n+30 XP, +20 Bananas");
+        save(); refreshUI();
+    }
+
+    function initFirstProfile() {
+        const n = document.getElementById('setup-name').value;
+        const a = document.getElementById('setup-age').value;
+        if(!n) return;
+        DB.profiles.push(genID(n, a, "#ff69b4"));
+        DB.activeIdx = 0;
+        save(); enterApp();
+    }
+
     function addProfile() {
         const n = document.getElementById('new-p-name').value;
         const a = document.getElementById('new-p-age').value;
@@ -1043,275 +1017,56 @@
         if(!n) return;
         DB.profiles.push(genID(n, a, c));
         swap(DB.profiles.length - 1);
-        document.getElementById('new-p-name').value="";
         closeModals();
     }
 
     function swap(i) {
         DB.activeIdx = i;
         const user = DB.profiles[i];
-        const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        DB.frontLog.unshift({ name: user.realName, time: time });
-        if(DB.frontLog.length > 20) DB.frontLog.pop();
-        addXP(10); 
-        alert("Switched! +10 Credits earned.");
-        applyTheme(user); save(); closeModals(); refreshUI(); renderStickers();
-    }
-
-    function delProf(i) {
-        if(confirm("Delete?")) {
-            DB.profiles.splice(i, 1);
-            if(DB.activeIdx >= i && DB.activeIdx > 0) DB.activeIdx--;
-            if(DB.profiles.length === 0) location.reload();
-            save(); openProfileManager();
-        }
+        applyTheme(user); save(); refreshUI();
     }
 
     function addXP(amount) {
         DB.xp += amount;
-        DB.credits += amount; 
-        const reqXP = 100 + (DB.lvl * 20); // Harder leveling logic
-        
+        const reqXP = 100 + (DB.lvl * 20);
         if(DB.xp >= reqXP) {
             DB.xp -= reqXP; DB.lvl++; playSnd('chime');
-            if(DB.lvl < AVATARS.length) {
-                DB.profiles[DB.activeIdx].av = DB.lvl; 
-                alert(`LEVEL UP! You are now Level ${DB.lvl}! New Avatar Unlocked & Equipped! 🎀`);
-            } else {
-                alert(`LEVEL UP! You are now Level ${DB.lvl}!`);
-            }
+            alert(`LEVEL UP! You are now Level ${DB.lvl}! 🍌`);
         }
         save(); refreshUI();
     }
 
-    // --- FUNCTIONAL MOOD RECEIPT ---
-    function logMoodQuick(m) {
-        playSnd('print');
-        // Lowered XP gain to 5 for logging mood
-        const xpGain = 5;
-        pendingXP += xpGain; 
-        
-        const receipt = document.getElementById('receipt-log');
-        const line = document.createElement('div');
-        line.innerText = `${m}.............1.....+${xpGain}XP (Pending)`;
-        receipt.appendChild(line);
-        receipt.scrollTop = receipt.scrollHeight;
-        
-        if(DB.pet.hunger < 100) {
-            DB.pet.hunger = Math.min(100, DB.pet.hunger + 5);
-        }
-        
-        // Don't save yet, force them to print to collect
-        refreshUI();
-    }
-    
-    function cashOutReceipt() {
-        if(pendingXP > 0) {
-            playSnd('chime');
-            addXP(pendingXP);
-            DB.credits += pendingXP; // Bonus credits
-            alert(`Receipt Printed! Collected ${pendingXP} XP & Credits.`);
-            pendingXP = 0;
-            document.getElementById('receipt-log').innerHTML = "*** MOOD RECEIPT ***<br>Collected!";
-            save(); refreshUI();
-        } else {
-            alert("Nothing to print!");
-        }
-    }
-
-    // --- FORTUNE ---
-    function checkFortune() {
-        const t = new Date().toDateString();
-        if(DB.fortune && DB.fortune.date === t) {
-            renderFortuneCard(DB.fortune);
-            document.getElementById('fortune-card').classList.add('flipped');
-        } else {
-            document.getElementById('fortune-card').classList.remove('flipped');
-        }
-    }
-    function flipFortune() {
-        const t = new Date().toDateString();
-        if(DB.fortune && DB.fortune.date === t) return;
-        const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
-        DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
-        
-        addXP(50); 
-        alert("Fortune Read! +50 Credits earned.");
-        
-        save();
-        renderFortuneCard(DB.fortune);
-        const card = document.getElementById('fortune-card');
-        card.style.transition = 'transform 0.8s'; 
-        void card.offsetWidth; card.classList.add('flipped');
-        refreshUI();
-    }
-    function renderFortuneCard(d) {
-        document.getElementById('fortune-icon').innerText = d.i;
-        document.getElementById('fortune-title').innerText = d.t;
-        document.getElementById('fortune-desc').innerText = d.d;
-    }
-    function resetFortune() {
-        if(confirm("Reset Day?")) {
-            DB.fortune = {date:''}; save(); 
-            document.getElementById('fortune-card').classList.remove('flipped');
-        }
-    }
-
-    // --- BBS ---
-    function postBBS() {
-        const txt = document.getElementById('bbs-input').value;
-        if(!txt) return;
-        const u = DB.profiles[DB.activeIdx];
-        const t = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        DB.bbs.push({ sender: u.realName, color: u.color, text: txt, time: t });
-        document.getElementById('bbs-input').value=""; save(); refreshUI();
-    }
-
-    // --- BACKPACK & PET LOGIC ---
-    function openBackpack() {
-        playSnd('bloop');
-        document.getElementById('modal-backpack').style.display='flex';
-        refreshUI();
-    }
-
-    function playGacha(type) {
-        if(DB.credits < 50) { alert("Need 50 Credits! (Earn by doing tasks/diary)"); return; }
-        DB.credits -= 50;
-        playSnd('chime');
-        const pool = GACHA[type];
-        const item = pool[Math.floor(Math.random() * pool.length)];
-        // Allow duplicates for decor items
-        DB.inventory.push(item);
-        alert(`You got: ${item}! Added to inventory.`);
-        save(); refreshUI();
-    }
-
-    function triggerFeedReward() {
-        if(DB.pet.hunger >= 100) return;
-        playSnd('chime');
-        const petImg = document.getElementById('ebi-pet');
-        petImg.classList.remove('bounce');
-        void petImg.offsetWidth; petImg.classList.add('bounce');
-        DB.pet.hunger = Math.min(100, DB.pet.hunger + 15); 
-        document.getElementById('ebi-msg').innerText = "Yummy! So tasty! 🍤";
-        save(); refreshUI();
-    }
-    
-    function setHat(h) {
-        const u = DB.profiles[DB.activeIdx];
-        u.hat = h;
-        playSnd('bloop');
-        save(); refreshUI();
-        alert("Hat equipped!");
-    }
-
-    function setWallpaper(w) {
-        DB.wallpaper = w;
-        playSnd('bloop');
-        save(); refreshUI();
-        alert("Room redecorated!");
-    }
-    
-    function getAccType(item) {
-        const heads = ["🎀","👑","🧢","🌸","🌱","🍃","🕸️","🎩","🥀","🐰","💀"];
-        const masks = ["🐸","🕶️","👓","👺","🤡","👁️"];
-        if(heads.includes(item)) return "acc-head";
-        if(masks.includes(item)) return "acc-mask";
-        // Everything else is decor
-        return "acc-decor";
-    }
-    
-    // --- DIARY ---
-    function postDiary() {
-        const v = document.getElementById('diary-in').value; 
-        if(v){
-            DB.diary.unshift({t:v, m:mood, d: new Date().toLocaleString()}); 
-            document.getElementById('diary-in').value=""; 
-            addXP(15); 
-            triggerFeedReward(); 
-            save(); refreshUI();
-        }
-    }
-
-    // --- PORTAL ---
-    function openPortal() {
-        playSnd('bloop');
-        const list = document.getElementById('link-list'); list.innerHTML="";
-        if(DB.links) {
-            DB.links.forEach((l,i) => {
-                list.innerHTML += `<div style="background:#f9f9f9; padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-                    <a href="${l.url}" target="_blank" style="text-decoration:none; color:var(--blue); font-weight:bold;">🔗 ${l.name}</a>
-                    <span onclick="delLink(${i})" style="color:red; cursor:pointer;">x</span>
-                </div>`;
-            });
-        }
-        document.getElementById('modal-portal').style.display='flex';
-    }
-    function addLink() {
-        const n = document.getElementById('link-name').value;
-        const u = document.getElementById('link-url').value;
-        if(n && u) {
-            if(!DB.links) DB.links = [];
-            DB.links.push({name:n, url:u});
-            save(); openPortal();
-            document.getElementById('link-name').value=""; document.getElementById('link-url').value="";
-        }
-    }
-    function delLink(i) { DB.links.splice(i,1); save(); openPortal(); }
-    
-    function exportData() {
-        const data = JSON.stringify(DB);
-        navigator.clipboard.writeText(data).then(() => {
-            alert("Save Data copied to clipboard! Paste it in your Notes app to keep it safe forever.");
-        });
-    }
-    function importData() {
-        const data = prompt("Paste your Save Data here:");
-        if(data) {
-            try {
-                DB = JSON.parse(data);
-                save(); location.reload();
-            } catch(e) { alert("Invalid data code!"); }
-        }
-    }
-
-    // --- TOOLS ---
-    function openWishModal() { document.getElementById('modal-wish').style.display='flex'; }
-    function submitWish() {
-        const n = document.getElementById('w-name').value;
-        const i = document.getElementById('w-img').value || "https://cdn-icons-png.flaticon.com/512/3209/3209955.png";
-        if(n) { DB.wish.push({name:n, img:i}); save(); closeModals(); refreshUI(); }
-    }
-    function delWish(i) { if(confirm("Delete?")) { DB.wish.splice(i,1); save(); refreshUI(); } }
-
-    function addTask() { const v = document.getElementById('task-in').value; if(v){DB.pet.tasks.push(v); document.getElementById('task-in').value=""; save(); refreshUI();} }
-    function doTask(i) { 
-        DB.pet.tasks.splice(i,1); 
-        DB.pet.lastTask = Date.now(); 
-        addXP(10); 
-        triggerFeedReward(); 
-        save(); refreshUI(); 
-    }
-
-    // --- SOUND ENGINE ---
     function playSnd(type) {
         if(audioCtx.state === 'suspended') audioCtx.resume();
         const gain = audioCtx.createGain();
         
         if (type === 'print') {
-            const bufferSize = audioCtx.sampleRate * 0.4; 
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = (Math.random() * 2 - 1) * (Math.random() > 0.9 ? 1 : 0.5); 
+            // Thermal printer effect
+            const now = audioCtx.currentTime;
+            const whir = audioCtx.createOscillator();
+            whir.type = 'sawtooth';
+            whir.frequency.setValueAtTime(80, now);
+            whir.frequency.linearRampToValueAtTime(120, now + 0.3);
+            whir.connect(gain);
+            
+            const clicks = 8; 
+            for(let i = 0; i < clicks; i++) {
+                const clickTime = now + (i * 0.05);
+                const osc = audioCtx.createOscillator();
+                const clickGain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(800 + Math.random() * 400, clickTime);
+                osc.connect(clickGain);
+                clickGain.connect(gain);
+                clickGain.gain.setValueAtTime(0.15, clickTime);
+                clickGain.gain.exponentialRampToValueAtTime(0.01, clickTime + 0.02);
+                osc.start(clickTime);
+                osc.stop(clickTime + 0.02);
             }
-            const noise = audioCtx.createBufferSource();
-            noise.buffer = buffer;
-            noise.connect(gain);
             gain.connect(audioCtx.destination);
-            gain.gain.setValueAtTime(0.5, audioCtx.currentTime); 
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-            noise.start();
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            whir.start(now); whir.stop(now + 0.4);
         } else {
             const osc = audioCtx.createOscillator();
             osc.connect(gain);
@@ -1335,30 +1090,74 @@
         }
     }
 
-    // --- NAV ---
-    function go(id, btn) {
+    // --- STANDARD FUNCTIONS ---
+    function openProfileManager() {
+        const list = document.getElementById('profile-list'); list.innerHTML="";
+        DB.profiles.forEach((p,i) => {
+            list.innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;"><div><b>${p.realName}</b></div><button class="btn-main" style="width:auto;padding:5px;" onclick="swap(${i})">Switch</button></div>`;
+        });
+        document.getElementById('modal-profiles').style.display='flex';
+    }
+    
+    function flipFortune() {
+        const t = new Date().toDateString();
+        if(DB.fortune && DB.fortune.date === t) return;
+        const res = FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
+        DB.fortune = { date: t, i: res.i, t: res.t, d: res.d };
+        addXP(50); DB.credits += 50;
+        document.getElementById('fortune-icon').innerText = res.i;
+        document.getElementById('fortune-title').innerText = res.t;
+        document.getElementById('fortune-desc').innerText = res.d;
+        document.getElementById('fortune-card').classList.add('flipped');
+        save();
+    }
+
+    function rotateAvatar() {
         playSnd('bloop');
-        let targetId = id;
-        if(id === 'home') targetId = 'dash';
+        const u = DB.profiles[DB.activeIdx];
+        const maxIndex = Math.min(DB.lvl, AVATARS.length - 1);
+        let nextAv = (u.av || 0) + 1;
+        if(nextAv > maxIndex) nextAv = 0; 
+        u.av = nextAv;
+        save(); refreshUI();
+    }
+
+    function postBBS() {
+        const txt = document.getElementById('bbs-input').value;
+        if(!txt) return;
+        const u = DB.profiles[DB.activeIdx];
+        DB.bbs.push({ sender: u.realName, color: u.color, text: txt, time: new Date().toLocaleTimeString() });
+        document.getElementById('bbs-input').value=""; save(); refreshUI();
+    }
+
+    function postDiary() {
+        const v = document.getElementById('diary-in').value; 
+        if(v){ DB.diary.unshift({t:v, m:mood, d: new Date().toLocaleString()}); document.getElementById('diary-in').value=""; addXP(15); }
+    }
+    
+    function addTask() { const v=document.getElementById('task-in').value; if(v){DB.pet.tasks.push(v); document.getElementById('task-in').value=""; save(); refreshUI();} }
+    function doTask(i) { DB.pet.tasks.splice(i,1); addXP(10); save(); refreshUI(); }
+
+    function openBackpack() { document.getElementById('modal-backpack').style.display='flex'; refreshUI(); }
+    function openPortal() { document.getElementById('modal-portal').style.display='flex'; }
+    function openWishModal() { document.getElementById('modal-wish').style.display='flex'; }
+    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
+    function go(id, btn) {
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-        document.getElementById('tab-'+targetId).classList.add('active');
+        document.getElementById('tab-'+(id==='home'?'dash':id)).classList.add('active');
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
-        if(id === 'home') {
-            if(DB.profiles.length > 0) {
-                document.getElementById('setup-view').style.display = 'none';
-                document.getElementById('dash-view').style.display = 'block';
-                refreshUI(); renderStickers(); renderRoomDecor();
-            } else {
-                document.getElementById('setup-view').style.display = 'block';
-                document.getElementById('dash-view').style.display = 'none';
-            }
-        }
+        playSnd('bloop');
     }
-    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none'); }
     function setMood(m,b) { mood=m; document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }
-
-    if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+    function submitWish() {
+        const n = document.getElementById('w-name').value;
+        const i = document.getElementById('w-img').value || "https://cdn-icons-png.flaticon.com/512/3209/3209955.png";
+        if(n) { DB.wish.push({name:n, img:i}); save(); closeModals(); refreshUI(); }
+    }
+    function delWish(i) { if(confirm("Delete?")) { DB.wish.splice(i,1); save(); refreshUI(); } }
+    function exportData() { navigator.clipboard.writeText(JSON.stringify(DB)).then(()=>alert("Copied!")); }
+    function importData() { const d=prompt("Paste Data:"); if(d){try{DB=JSON.parse(d); save(); location.reload();}catch(e){alert("Error");}} }
 </script>
 </body>
 </html>
