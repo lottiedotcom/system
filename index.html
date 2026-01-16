@@ -14,8 +14,6 @@
     /* --- CORE VARIABLES --- */  
     :root {  
         --main: #ff69b4;   
-        /* Frosted Glass Opacity */
-        --bg-overlay: rgba(255, 255, 255, 0.6);  
         --font-main: 'Verdana', sans-serif;  
         --font-mono: 'Courier New', monospace;  
     }  
@@ -34,41 +32,34 @@
         color: #444;   
     }  
 
-    /* --- NEW PATTERNED BACKGROUNDS --- */
+    /* --- VIVID BACKGROUND PATTERNS --- */
     .bg-polka {
         background-color: #fff0f5 !important;
-        background-image: radial-gradient(var(--main) 20%, transparent 20%) !important;
+        background-image: radial-gradient(#ff1493 20%, transparent 20%) !important;
         background-size: 30px 30px !important;
         background-position: 0 0 !important;
         background-attachment: fixed !important;
     }
     .bg-lines {
         background-color: #fff0f5 !important;
-        background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 105, 180, 0.2) 10px, rgba(255, 105, 180, 0.2) 20px) !important;
+        background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 20, 147, 0.4) 10px, rgba(255, 20, 147, 0.4) 20px) !important;
         background-attachment: fixed !important;
     }
     .bg-grid {
         background-color: #fff !important;
-        background-image: linear-gradient(rgba(255, 105, 180, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 105, 180, 0.3) 1px, transparent 1px) !important;
+        background-image: linear-gradient(rgba(255, 105, 180, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 105, 180, 0.5) 1px, transparent 1px) !important;
         background-size: 20px 20px !important;
         background-attachment: fixed !important;
     }
     .bg-checkers {
         background-color: #fff !important;
-        background-image: repeating-linear-gradient(45deg, rgba(255,105,180,0.15) 25%, transparent 25%, transparent 75%, rgba(255,105,180,0.15) 75%, rgba(255,105,180,0.15)), repeating-linear-gradient(45deg, rgba(255,105,180,0.15) 25%, #fff 25%, #fff 75%, rgba(255,105,180,0.15) 75%, rgba(255,105,180,0.15)) !important;
+        background-image: repeating-linear-gradient(45deg, rgba(255,105,180,0.25) 25%, transparent 25%, transparent 75%, rgba(255,105,180,0.25) 75%, rgba(255,105,180,0.25)), repeating-linear-gradient(45deg, rgba(255,105,180,0.25) 25%, #fff 25%, #fff 75%, rgba(255,105,180,0.25) 75%, rgba(255,105,180,0.25)) !important;
         background-position: 0 0, 10px 10px !important;
         background-size: 20px 20px !important;
-        background-attachment: fixed !important;
-    }
-    .bg-cross {
-        background-color: #fff0f5 !important;
-        background-image: radial-gradient(var(--main) 2px, transparent 2px), radial-gradient(var(--main) 2px, transparent 2px) !important;
-        background-size: 20px 20px !important;
-        background-position: 0 0, 10px 10px !important;
         background-attachment: fixed !important;
     }
     .bg-clouds { 
-        background-color: #e3f2fd !important; 
+        background-color: #81d4fa !important; 
         background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; 
         background-size: 40px 40px !important; 
         background-position: 0 0, 20px 20px !important; 
@@ -79,6 +70,7 @@
         background-image: radial-gradient(white 1px, transparent 1px) !important; 
         background-size: 30px 30px !important; 
         background-attachment: fixed !important;
+        color: white; /* Make text white on night mode */
     }  
     
     /* --- VISUAL FX --- */  
@@ -95,14 +87,13 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL --- */  
+    /* --- APP SHELL (NOW TRANSPARENT FOR FULL WALLPAPER EFFECT) --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
-        background: var(--bg-overlay); 
-        backdrop-filter: blur(15px); 
-        -webkit-backdrop-filter: blur(15px);
+        background: transparent; /* Changed from white to transparent */
         display: none; flex-direction: column; position: relative; height: 100%;  
-        box-shadow: 0 0 50px rgba(0,0,0,0.2); z-index: 10; border-left: 1px solid white; border-right: 1px solid white;  
+        z-index: 10; 
+        /* Removed border to make it look more like OS */
     }  
     .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; scroll-behavior: smooth; }  
     .page { display: none; animation: popIn 0.3s; }  
@@ -134,11 +125,11 @@
 
     /* --- DASHBOARD --- */  
     .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }  
-    .dash-btn { background: white; border: 2px solid #eee; border-radius: 18px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; }  
+    .dash-btn { background: white; border: 2px solid #eee; border-radius: 18px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }  
     .dash-btn:active { transform: scale(0.96); background: #f9f9f9; border-color: var(--main); }  
 
     /* --- CHAT --- */  
-    .chat-shell { display: flex; height: 100%; border: 2px solid var(--main); border-radius: 15px; background: white; overflow: hidden; position:relative; }  
+    .chat-shell { display: flex; height: 100%; border: 2px solid var(--main); border-radius: 15px; background: white; overflow: hidden; position:relative; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }  
     .channel-sidebar { width: 75px; background: #f0f0f0; border-right: 1px solid #e0e0e0; padding-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 12px; overflow-y: auto; transition: margin-left 0.3s ease; }  
     .channel-sidebar.hidden { margin-left: -75px; }  
     .sidebar-toggle { position: absolute; top: 10px; left: 10px; z-index: 100; background: var(--main); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; font-weight: bold; cursor: pointer; }  
@@ -154,7 +145,7 @@
     .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; background: #fafafa; }  
 
     /* --- PET --- */  
-    .pet-stage { height: 350px; position: relative; border: 4px ridge var(--main); border-radius: 20px; background: rgba(255,255,255,0.6); overflow: hidden; display: flex; align-items: center; justify-content: center; }  
+    .pet-stage { height: 350px; position: relative; border: 4px ridge var(--main); border-radius: 20px; background: rgba(255,255,255,0.85); box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; display: flex; align-items: center; justify-content: center; }  
     .ebi-img { width: 160px; pointer-events: none; z-index: 5; margin-top: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }  
     .sticker { position: absolute; font-size: 3rem; cursor: grab; z-index: 10; user-select: none; }  
     .speech-bubble {  
@@ -204,7 +195,7 @@
 <div class="scanlines"></div>  
 <div class="dream-overlay"></div>  
 
-<div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-overlay); z-index:3000; display:flex; flex-direction:column; align-items:center; justify-content:center;">  
+<div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:3000; display:flex; flex-direction:column; align-items:center; justify-content:center;">  
     <div style="font-size:4rem; margin-bottom:10px;">💾</div>  
     <h1 style="color:var(--main); margin:0 0 10px 0;">SEIREN OS</h1>  
     <p style="font-size:0.8rem; color:#666; margin-bottom:30px;">Guest Mode Active</p>  
@@ -290,7 +281,7 @@
     </div>  
 
     <div id="page-pharmacy" class="page">  
-        <h2 style="color:var(--main); text-align:center; margin-bottom:15px;">Pharmacy & Care</h2>  
+        <h2 style="color:var(--main); text-align:center; margin-bottom:15px; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Pharmacy & Care</h2>  
         <div style="background:white; padding:15px; border-radius:15px; border:2px solid var(--main);">  
             <div id="receipt-list" style="max-height:150px; overflow-y:auto; font-family:var(--font-mono); border-bottom:1px dashed #ccc; margin-bottom:10px; min-height:50px;"></div>  
               
@@ -324,17 +315,17 @@
     </div>  
 
     <div id="page-pet" class="page">  
-        <h2 style="color:var(--main); text-align:center;">Patient Room</h2>  
+        <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Patient Room</h2>  
         <div class="pet-stage" id="pet-stage">  
             <div id="decor-layer"></div>  
             <div id="pet-speech" class="speech-bubble">Hello!</div>  
             <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img">  
         </div>  
-        <p style="text-align:center; font-size:0.7rem; color:#888; margin-top:5px;">Check Backpack for Prescribed Items</p>  
+        <p style="text-align:center; font-size:0.7rem; color:#888; margin-top:5px; background:rgba(255,255,255,0.8); border-radius:5px; padding:2px;">Check Backpack for Prescribed Items</p>  
     </div>  
 
     <div id="page-diary" class="page">  
-        <h2 style="color:var(--main); text-align:center;">Diary</h2>  
+        <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Diary</h2>  
         <textarea id="diary-in" style="width:100%; height:100px;" placeholder="Entry..."></textarea>  
         <button class="btn-action" onclick="postDiary()">Save</button>  
         <div id="diary-feed" style="margin-top:20px;"></div>  
@@ -449,7 +440,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v66'); 
+        const saved = localStorage.getItem('seiren_fixed_v67'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -470,7 +461,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); }  
-    function save() { localStorage.setItem('seiren_fixed_v66', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v67', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
