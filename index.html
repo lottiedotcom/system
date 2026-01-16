@@ -33,7 +33,7 @@
         color: #444;   
     }  
 
-    /* --- NEW BACKGROUND PATTERNS --- */
+    /* --- BACKGROUND PATTERNS (Applied via Body Class) --- */
     .bg-polka {
         background-color: #fff0f5 !important;
         background-image: radial-gradient(var(--main) 20%, transparent 20%) !important;
@@ -49,8 +49,17 @@
         background-image: linear-gradient(rgba(255, 105, 180, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 105, 180, 0.3) 1px, transparent 1px) !important;
         background-size: 20px 20px !important;
     }
-    .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }  
-    .bg-night { background-color: #1a237e !important; background-image: radial-gradient(white 1px, transparent 1px) !important; background-size: 30px 30px !important; }  
+    .bg-clouds { 
+        background-color: #e3f2fd !important; 
+        background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; 
+        background-size: 40px 40px !important; 
+        background-position: 0 0, 20px 20px !important; 
+    }  
+    .bg-night { 
+        background-color: #1a237e !important; 
+        background-image: radial-gradient(white 1px, transparent 1px) !important; 
+        background-size: 30px 30px !important; 
+    }  
     
     /* --- VISUAL FX --- */  
     .scanlines {  
@@ -177,6 +186,7 @@
     <h1 style="color:var(--main); margin:0 0 10px 0;">SEIREN OS</h1>  
     <p style="font-size:0.8rem; color:#666; margin-bottom:30px;">Guest Mode Active</p>  
     <button class="btn-action" style="width:220px;" onclick="enterSystem()">Enter System</button>  
+    
     <label class="btn-action" style="width:220px; background:#4fc3f7; text-align:center; display:block; cursor:pointer;">  
         📂 Load Backup  
         <input type="file" id="backup-input" style="display:none;" onchange="importData(this)">  
@@ -395,9 +405,18 @@
     const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!"];  
     const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
     const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
-  
+    
+    // MAPPING ICONS FOR BACKGROUNDS
+    const BG_ICONS = {
+        'bg-clouds': '☁️',
+        'bg-night': '🌙',
+        'bg-polka': '⚪',
+        'bg-lines': '🥢',
+        'bg-grid': '▦'
+    };
+
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v63'); 
+        const saved = localStorage.getItem('seiren_fixed_v64'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -418,7 +437,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); }  
-    function save() { localStorage.setItem('seiren_fixed_v63', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v64', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -474,8 +493,11 @@
         document.getElementById('cp-display').innerText = DB.xp;  
         
         // APPLY WALLPAPER GLOBALLY
-        if(p.wallpaper) document.body.className = "fx-active " + p.wallpaper;   
-        else document.body.className = "fx-active";  
+        // Preserve fx-active status
+        let classes = "";
+        if(DB.settings.crt) classes += "fx-active ";
+        if(p.wallpaper) classes += p.wallpaper;
+        document.body.className = classes;
     }  
   
     function createProfile() {  
@@ -525,7 +547,7 @@
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
         
-        // FIXED: CLEANER INPUTS (No pre-filling)
+        // CLEANER INPUTS (No pre-filling)
         document.getElementById('new-name').value = "";
         document.getElementById('new-age').value = "";
         document.getElementById('new-sign').value = "";
@@ -615,9 +637,25 @@
 
         DB.inventory.forEach(item => {  
             const b = document.createElement('div'); b.style.fontSize="2.5rem"; b.style.cursor="pointer"; b.innerText=item;  
+            
+            // CHECK IF ITEM IS BACKGROUND
             if(item.startsWith('bg-')) {  
-                b.style.fontSize="1rem"; b.innerText="🖼️"; b.style.border="2px solid pink"; b.style.padding="5px"; b.style.borderRadius="5px"; 
-                b.onclick = () => { DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); closeModals(); alert("System Wallpaper Updated!"); };  
+                // Use mapped icon or fallback
+                let icon = BG_ICONS[item] || "🖼️";
+                b.style.fontSize="1.5rem"; 
+                b.innerText=icon; 
+                b.style.border="2px solid pink"; 
+                b.style.padding="10px"; 
+                b.style.borderRadius="10px";
+                
+                // INSTANT APPLY
+                b.onclick = () => { 
+                    DB.profiles[DB.active].wallpaper = item; 
+                    save(); 
+                    refreshAll(); // Changes background instantly
+                    alert("Wallpaper Applied!"); 
+                    // Optional: closeModals(); 
+                };  
             } else {  
                 b.onclick = () => { DB.decor.push({i:item, x:50, y:50}); save(); closeModals(); nav('pet'); };  
             }  
@@ -647,7 +685,12 @@
             setTimeout(()=>bub.classList.remove('show'), 2000);  
             
             let msg = `Rx Filled!\n\nReceived: ${item}`;
-            if(item.startsWith('bg-')) msg += "\n(New System Wallpaper!)";
+            
+            // Check if it's a background for better messaging
+            if(item.startsWith('bg-')) {
+                const icon = BG_ICONS[item] || "🖼️";
+                msg += `\n(New System Wallpaper! Look for ${icon})`;
+            }
             
             alert(msg);   
             save(); loadUI();   
@@ -655,14 +698,14 @@
     }  
   
     // --- MISC ---  
-    function toggleCRT() { DB.settings.crt = document.getElementById('toggle-crt').checked; if(DB.settings.crt) document.body.classList.add('fx-active'); else document.body.classList.remove('fx-active'); save(); }  
+    function toggleCRT() { DB.settings.crt = document.getElementById('toggle-crt').checked; loadUI(); save(); }  
     function enterPin(n) { tempPin+=n; document.getElementById('pin-dots').innerText="*".repeat(tempPin.length); if(tempPin.length===4){ if(tempPin===DB.lock){ document.getElementById('lock-screen').style.display='none'; document.querySelector('.app-shell').style.display='flex'; refreshAll(); } else { tempPin=""; document.getElementById('pin-dots').innerText="ERR"; }}}  
     function clearPin(){ tempPin=""; document.getElementById('pin-dots').innerText=""; }  
     function setLock(){ const p=document.getElementById('pin-set').value; if(p.length===4){ DB.lock=p; save(); alert("Locked!"); closeModals(); }}  
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
       
-    // FIXED IMPORT LOGIC
+    // FIXED IMPORT LOGIC - MORE ROBUST
     function importData(input) {   
         const file = input.files[0]; if(!file) return;  
         const reader = new FileReader();   
@@ -674,7 +717,7 @@
                 alert("Backup Loaded Successfully!"); 
                 location.reload(); 
             } catch(x) { 
-                alert("Error: Invalid Backup File."); 
+                alert("Error: Invalid Backup File. Please ensure it is a valid JSON backup."); 
                 console.error(x);
             } 
         };   
