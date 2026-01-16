@@ -14,7 +14,7 @@
     /* --- CORE VARIABLES --- */  
     :root {  
         --main: #ff69b4;   
-        --bg-overlay: rgba(255, 255, 255, 0.92);  
+        --bg-overlay: rgba(255, 255, 255, 0.94);  
         --font-main: 'Verdana', sans-serif;  
         --font-mono: 'Courier New', monospace;  
     }  
@@ -24,6 +24,7 @@
     body {  
         font-family: var(--font-main);  
         background-color: #ffe4e1;   
+        /* Default Background */
         background-image: radial-gradient(#ffb7b2 15%, transparent 16%), radial-gradient(#ffb7b2 15%, transparent 16%);  
         background-size: 20px 20px; background-position: 0 0, 10px 10px;  
         background-repeat: repeat;  
@@ -32,6 +33,25 @@
         color: #444;   
     }  
 
+    /* --- NEW BACKGROUND PATTERNS --- */
+    .bg-polka {
+        background-color: #fff0f5 !important;
+        background-image: radial-gradient(var(--main) 20%, transparent 20%) !important;
+        background-size: 30px 30px !important;
+        background-position: 0 0 !important;
+    }
+    .bg-lines {
+        background-color: #fff0f5 !important;
+        background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 105, 180, 0.2) 10px, rgba(255, 105, 180, 0.2) 20px) !important;
+    }
+    .bg-grid {
+        background-color: #fff !important;
+        background-image: linear-gradient(rgba(255, 105, 180, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 105, 180, 0.3) 1px, transparent 1px) !important;
+        background-size: 20px 20px !important;
+    }
+    .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }  
+    .bg-night { background-color: #1a237e !important; background-image: radial-gradient(white 1px, transparent 1px) !important; background-size: 30px 30px !important; }  
+    
     /* --- VISUAL FX --- */  
     .scanlines {  
         position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999; display: none;  
@@ -71,30 +91,14 @@
         animation: foil 6s linear infinite; opacity: 0.6;  
     }  
     @keyframes foil { 0% {transform:translate(0,0);} 100% {transform:translate(50%,50%);} }  
-
     .id-inner { padding: 15px; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; }  
-      
-    .id-header {   
-        border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px;  
-        display: flex; justify-content: space-between; font-weight: 900; letter-spacing: 1px; font-size: 0.7rem; color: #555;  
-    }  
-      
+    .id-header { border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; font-weight: 900; letter-spacing: 1px; font-size: 0.7rem; color: #555; }  
     .id-main { display: flex; gap: 15px; margin-bottom: 10px; }  
-      
-    .id-photo {   
-        width: 90px; height: 110px; background: #eee; border: 1px solid #999;   
-        object-fit: cover; display: block; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);  
-    }  
-      
+    .id-photo { width: 90px; height: 110px; background: #eee; border: 1px solid #999; object-fit: cover; display: block; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }  
     .id-details { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 5px; font-size: 0.7rem; }  
     .id-label { color: var(--main); font-weight: bold; font-size: 0.6rem; text-transform: uppercase; display:block; }  
     .id-val { color: #222; font-weight: bold; display: block; border-bottom: 1px dotted #ccc; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }  
-      
-    .bio-section {  
-        background: rgba(255,255,255,0.8); border: 1px solid #ddd; border-radius: 8px;  
-        padding: 8px; font-size: 0.75rem; color: #333; flex: 1;  
-        overflow-y: auto; max-height: 80px; margin-top: 5px; white-space: pre-wrap;  
-    }  
+    .bio-section { background: rgba(255,255,255,0.8); border: 1px solid #ddd; border-radius: 8px; padding: 8px; font-size: 0.75rem; color: #333; flex: 1; overflow-y: auto; max-height: 80px; margin-top: 5px; white-space: pre-wrap; }  
 
     /* --- DASHBOARD --- */  
     .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }  
@@ -106,12 +110,10 @@
     .channel-sidebar { width: 75px; background: #f0f0f0; border-right: 1px solid #e0e0e0; padding-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 12px; overflow-y: auto; transition: margin-left 0.3s ease; }  
     .channel-sidebar.hidden { margin-left: -75px; }  
     .sidebar-toggle { position: absolute; top: 10px; left: 10px; z-index: 100; background: var(--main); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; font-weight: bold; cursor: pointer; }  
-      
     .chan-btn { width: 48px; height: 48px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #666; cursor: pointer; border: 2px solid white; position: relative; flex-shrink: 0; }  
     .chan-btn.active { background: var(--main); color: white; border-radius: 14px; }  
     .del-chan { position: absolute; top: -5px; right: -5px; background: red; color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: none; align-items: center; justify-content: center; }  
     .chan-btn:hover .del-chan { display: flex; }  
-
     .chat-view { flex: 1; display: flex; flex-direction: column; min-width: 0; }  
     .chat-feed { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background-image: radial-gradient(#f0f0f0 1px, transparent 1px); background-size: 20px 20px; }  
     .pk-msg { display: flex; gap: 10px; align-items: flex-start; }  
@@ -132,15 +134,8 @@
     }  
     .speech-bubble.show { transform: translateX(-50%) scale(1); }  
 
-    /* GLOBAL WALLPAPERS */  
-    .bg-hearts { background-color: #ffe4e1 !important; background-image: radial-gradient(#ff69b4 2px, transparent 2px), radial-gradient(#ff69b4 2px, transparent 2px) !important; background-size: 20px 20px !important; background-position: 0 0, 10px 10px !important; }  
-    .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }  
-    .bg-night { background-color: #1a237e !important; background-image: radial-gradient(white 1px, transparent 1px) !important; background-size: 30px 30px !important; }  
-    .bg-forest { background-color: #e8f5e9 !important; background-image: repeating-linear-gradient(45deg, #c8e6c9 25%, transparent 25%, transparent 75%, #c8e6c9 75%, #c8e6c9), repeating-linear-gradient(45deg, #c8e6c9 25%, #e8f5e9 25%, #e8f5e9 75%, #c8e6c9 75%, #c8e6c9) !important; background-size: 20px 20px !important;}  
-
     /* --- PHARMACY --- */  
     .receipt-paper { background: #fff; border: 1px solid #ccc; padding: 15px; font-family: var(--font-mono); font-size: 0.8rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 10px; position: relative; }  
-    .receipt-entry { display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px dotted #eee; }  
     .mood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; max-height: 200px; overflow-y: auto; padding-right: 5px; }  
     .mood-btn { background: white; border: 1px solid #ccc; border-radius: 8px; height: 40px; font-size: 1.2rem; cursor: pointer; }  
     .mood-btn:active { background: var(--main); }  
@@ -182,9 +177,9 @@
     <h1 style="color:var(--main); margin:0 0 10px 0;">SEIREN OS</h1>  
     <p style="font-size:0.8rem; color:#666; margin-bottom:30px;">Guest Mode Active</p>  
     <button class="btn-action" style="width:220px;" onclick="enterSystem()">Enter System</button>  
-    <label class="btn-action" style="width:220px; background:#4fc3f7; text-align:center; display:block;">  
+    <label class="btn-action" style="width:220px; background:#4fc3f7; text-align:center; display:block; cursor:pointer;">  
         📂 Load Backup  
-        <input type="file" accept=".json" style="display:none;" onchange="importData(this)">  
+        <input type="file" id="backup-input" accept=".json,application/json" style="display:none;" onchange="importData(this)">  
     </label>  
 </div>  
 
@@ -286,7 +281,7 @@
                 <button class="mood-btn" onclick="logMood('🧸', 5)">🧸</button>  
             </div>  
 
-            <button class="btn-action" style="margin-top:10px; background:#78909c;" onclick="processReceipt()">Print Receipt (+XP)</button>  
+            <button class="btn-action" style="margin-top:10px; background:#78909c;" onclick="processReceipt()">Print Receipt (+Self Care)</button>  
             <button class="btn-action" style="margin-top:10px; background:#4db6ac;" onclick="fillPrescription()">💊 Fill Rx (50 XP)</button>  
         </div>  
     </div>  
@@ -374,9 +369,10 @@
 
 <div id="modal-backpack" class="modal">  
     <div class="modal-card">  
-        <h3>Medicine Cabinet</h3>  
-        <p style="font-size:0.7rem; color:#666;">Click to place/wear. Backgrounds apply globally to current profile.</p>  
+        <h3>Inventory</h3>  
+        <p style="font-size:0.7rem; color:#666;">Items placed in Room. Backgrounds apply to SYSTEM.</p>  
         <div id="inventory-grid" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:10px; background:#f9f9f9; border-radius:10px; margin-bottom:10px;"></div>  
+        <div id="empty-msg" style="text-align:center; color:#999; display:none;">Backpack is empty.<br>Visit Pharmacy.</div>
         <button class="btn-action" style="background:#ff6b6b;" onclick="clearDecor()">🗑️ Clear Room</button>  
         <button class="btn-action" style="margin-top:5px; background:#ccc;" onclick="closeModals()">Close</button>  
     </div>  
@@ -386,18 +382,22 @@
     // --- STATE ---  
     let DB = {  
         sysName: "SEIREN OS",  
-        profiles: [], active: 0, xp: 0, inventory: ["🎀", "bg-hearts"], decor: [],   
+        profiles: [], active: 0, xp: 0, 
+        inventory: [], // FIXED: START EMPTY
+        decor: [],   
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true }  
     };  
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
   
-    const LOOT_ITEMS = ["🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴", "bg-clouds", "bg-night", "bg-forest"];  
+    // FIXED: LOOT TABLE INCLUDES NEW GLOBAL BACKGROUNDS
+    const LOOT_ITEMS = ["🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴", "bg-clouds", "bg-night", "bg-polka", "bg-lines", "bg-grid"];  
     const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!"];  
+    const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
     const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
   
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v60'); 
+        const saved = localStorage.getItem('seiren_fixed_v62'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -418,24 +418,22 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); }  
-    function save() { localStorage.setItem('seiren_fixed_v60', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v62', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
   
-    // --- IMAGES (FIXED WITH COMPRESSION) ---  
+    // --- IMAGES ---  
     function handleFile(inpt, id) {   
         const file = inpt.files[0];  
         if(!file) return;  
 
-        // Resize Logic to prevent storage crash
         const reader = new FileReader();  
         reader.onload = (e) => {  
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                // Max size 250px
                 const maxSize = 250;
                 let w = img.width;
                 let h = img.height;
@@ -445,8 +443,6 @@
                 canvas.width = w;
                 canvas.height = h;
                 ctx.drawImage(img, 0, 0, w, h);
-                
-                // Compress to jpeg
                 uploadedAv = canvas.toDataURL('image/jpeg', 0.8);
                 document.getElementById(id).src = uploadedAv; 
             };
@@ -456,7 +452,6 @@
     }  
       
     function handleChatImage(inpt) {   
-        // Simple handler for chat, also needs compression ideally but keeping simple for now
         const file = inpt.files[0];  
         if(!file) return;  
         const reader = new FileReader();  
@@ -470,19 +465,17 @@
         document.documentElement.style.setProperty('--main', p.color);  
         document.getElementById('sys-name-display').innerText = DB.sysName;  
         document.getElementById('dash-name').innerText = p.name;  
-        // document.getElementById('dash-id').innerText = p.id;  
         document.getElementById('dash-sign').innerText = p.sign||"?";  
         document.getElementById('dash-species').innerText = p.species||"?";  
         document.getElementById('dash-age').innerText = p.age||"?";  
         document.getElementById('dash-height').innerText = p.height||"?";  
         document.getElementById('dash-bio').innerText = p.bio || "No info provided.";  
-          
-        // KEY FIX: Ensure this source is set correctly
         document.getElementById('dash-av').src = p.av || DEFAULT_AV;  
         document.getElementById('cp-display').innerText = DB.xp;  
-          
-        if(p.wallpaper) document.body.className = p.wallpaper;   
-        else document.body.className = "";  
+        
+        // APPLY WALLPAPER GLOBALLY
+        if(p.wallpaper) document.body.className = "fx-active " + p.wallpaper;   
+        else document.body.className = "fx-active";  
     }  
   
     function createProfile() {  
@@ -504,51 +497,31 @@
         }  
     }
 
-    // --- NEW: UPDATE CURRENT PROFILE ---
     function updateCurrentProfile() {
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
-        
-        // Update fields if they have value, otherwise keep old
         const p = DB.profiles[DB.active];
         
-        // If user typed new data, use it. If empty, keep old.
         const newName = document.getElementById('new-name').value;
         if(newName) p.name = newName;
-
         const newAge = document.getElementById('new-age').value;
         if(newAge) p.age = newAge;
-
         const newSign = document.getElementById('new-sign').value;
         if(newSign) p.sign = newSign;
-
         const newSpec = document.getElementById('new-species').value;
         if(newSpec) p.species = newSpec;
-        
         const newH = document.getElementById('new-height').value;
         if(newH) p.height = newH;
-
         const newBio = document.getElementById('new-bio').value;
         if(newBio) p.bio = newBio;
-
         const newColor = document.getElementById('new-color').value;
         p.color = newColor;
 
-        // Only update AV if a new one was uploaded
-        if(uploadedAv) {
-            p.av = uploadedAv;
-            uploadedAv = ""; // reset buffer
-        }
-
-        save();
-        closeModals();
-        refreshAll();
-        alert("ID Updated!");
+        if(uploadedAv) { p.av = uploadedAv; uploadedAv = ""; }
+        save(); closeModals(); refreshAll(); alert("ID Updated!");
     }
   
     function openProfileModal() {  
         document.getElementById('modal-profile').style.display='flex';  
-        
-        // Pre-fill inputs with current data for easier editing
         const p = DB.profiles[DB.active];
         document.getElementById('new-name').value = p.name;
         document.getElementById('new-age').value = p.age;
@@ -633,11 +606,15 @@
     function openBackpack() {  
         document.getElementById('modal-backpack').style.display='flex';  
         const g = document.getElementById('inventory-grid'); g.innerHTML="";  
+        
+        if(DB.inventory.length === 0) document.getElementById('empty-msg').style.display='block';
+        else document.getElementById('empty-msg').style.display='none';
+
         DB.inventory.forEach(item => {  
             const b = document.createElement('div'); b.style.fontSize="2.5rem"; b.style.cursor="pointer"; b.innerText=item;  
             if(item.startsWith('bg-')) {  
-                b.style.fontSize="1rem"; b.innerText="🖼️";  
-                b.onclick = () => { DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); closeModals(); };  
+                b.style.fontSize="1rem"; b.innerText="🖼️"; b.style.border="2px solid pink"; b.style.padding="5px"; b.style.borderRadius="5px"; 
+                b.onclick = () => { DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); closeModals(); alert("System Wallpaper Updated!"); };  
             } else {  
                 b.onclick = () => { DB.decor.push({i:item, x:50, y:50}); save(); closeModals(); nav('pet'); };  
             }  
@@ -648,7 +625,16 @@
   
     // --- PHARMACY ---  
     function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div>${i} SYMPTOM ... ${p} XP</div>`; pendingXP+=p; }  
-    function processReceipt() { if(pendingXP>0){ DB.xp+=pendingXP; alert(`Processed! +${pendingXP} XP`); pendingXP=0; document.getElementById('receipt-list').innerHTML=""; save(); loadUI(); } }  
+    
+    // FIXED: NOW INCLUDES SELF CARE TASK
+    function processReceipt() { 
+        if(pendingXP>0){ 
+            DB.xp+=pendingXP; 
+            const task = SELF_CARE[Math.floor(Math.random()*SELF_CARE.length)];
+            alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"`); 
+            pendingXP=0; document.getElementById('receipt-list').innerHTML=""; save(); loadUI(); 
+        } 
+    }  
     function fillPrescription() {   
         if(DB.xp>=50){   
             DB.xp-=50; const item=LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)];   
@@ -657,7 +643,12 @@
             const bub = document.getElementById('pet-speech');  
             bub.innerText = speech; bub.classList.add('show');  
             setTimeout(()=>bub.classList.remove('show'), 2000);  
-            alert(`Rx Filled!\n\nReceived: ${item}\nTask: Take a 5 min break.`);   
+            
+            // Check if item is a background to show correct message
+            let msg = `Rx Filled!\n\nReceived: ${item}`;
+            if(item.startsWith('bg-')) msg += "\n(New System Wallpaper!)";
+            
+            alert(msg);   
             save(); loadUI();   
         } else alert("Need 50 XP");   
     }  
@@ -670,10 +661,22 @@
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
       
+    // FIXED IMPORT LOGIC
     function importData(input) {   
         const file = input.files[0]; if(!file) return;  
         const reader = new FileReader();   
-        reader.onload=(e)=>{ try{ DB=JSON.parse(e.target.result); save(); alert("Loaded!"); location.reload(); } catch(x){ alert("Error"); } };   
+        reader.onload=(e)=>{ 
+            try { 
+                const json = JSON.parse(e.target.result); 
+                DB = json; 
+                save(); 
+                alert("Backup Loaded Successfully!"); 
+                location.reload(); 
+            } catch(x) { 
+                alert("Error: Invalid Backup File."); 
+                console.error(x);
+            } 
+        };   
         reader.readAsText(file);  
     }  
   
