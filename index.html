@@ -100,7 +100,7 @@
     .dash-btn { background: white; border: 2px solid #eee; border-radius: 18px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }  
     .dash-btn:active { transform: scale(0.96); background: #f9f9f9; border-color: var(--main); }  
 
-    /* --- NEW BIO/ABOUT TAB --- */
+    /* --- BIO/ABOUT TAB --- */
     .bio-container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
     .bio-list-box { 
         border: 2px dashed #eee; padding: 10px; border-radius: 10px; min-height: 60px; 
@@ -464,7 +464,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v70'); // Version bump
+        const saved = localStorage.getItem('seiren_fixed_v71'); // Version bump
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -493,7 +493,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); }  
-    function save() { localStorage.setItem('seiren_fixed_v70', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v71', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -609,24 +609,24 @@
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
         
-        // FIXED: Show CURRENT data as placeholders
+        // FIXED: PLACEHOLDERS NOW SHOW LABEL + CURRENT DATA
         document.getElementById('new-name').value = "";
-        document.getElementById('new-name').placeholder = p.name;
+        document.getElementById('new-name').placeholder = "Name: " + p.name;
         
         document.getElementById('new-age').value = "";
-        document.getElementById('new-age').placeholder = p.age;
+        document.getElementById('new-age').placeholder = "Age: " + p.age;
         
         document.getElementById('new-sign').value = "";
-        document.getElementById('new-sign').placeholder = p.sign;
+        document.getElementById('new-sign').placeholder = "Sign: " + p.sign;
         
         document.getElementById('new-species').value = "";
-        document.getElementById('new-species').placeholder = p.species;
+        document.getElementById('new-species').placeholder = "Species: " + p.species;
         
         document.getElementById('new-height').value = "";
-        document.getElementById('new-height').placeholder = p.height;
+        document.getElementById('new-height').placeholder = "Height: " + p.height;
         
         document.getElementById('new-bio').value = "";
-        document.getElementById('new-bio').placeholder = p.bio;
+        document.getElementById('new-bio').placeholder = "Bio: " + p.bio;
         
         document.getElementById('new-color').value = p.color;
         document.getElementById('av-preview').src = p.av || DEFAULT_AV;
