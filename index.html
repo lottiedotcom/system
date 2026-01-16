@@ -179,7 +179,7 @@
     <button class="btn-action" style="width:220px;" onclick="enterSystem()">Enter System</button>  
     <label class="btn-action" style="width:220px; background:#4fc3f7; text-align:center; display:block; cursor:pointer;">  
         📂 Load Backup  
-        <input type="file" id="backup-input" accept=".json,application/json" style="display:none;" onchange="importData(this)">  
+        <input type="file" id="backup-input" style="display:none;" onchange="importData(this)">  
     </label>  
 </div>  
 
@@ -383,21 +383,21 @@
     let DB = {  
         sysName: "SEIREN OS",  
         profiles: [], active: 0, xp: 0, 
-        inventory: [], // FIXED: START EMPTY
+        inventory: [], 
         decor: [],   
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true }  
     };  
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
   
-    // FIXED: LOOT TABLE INCLUDES NEW GLOBAL BACKGROUNDS
+    // LOOT TABLE 
     const LOOT_ITEMS = ["🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴", "bg-clouds", "bg-night", "bg-polka", "bg-lines", "bg-grid"];  
     const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!"];  
     const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
     const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
   
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v62'); 
+        const saved = localStorage.getItem('seiren_fixed_v63'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -418,7 +418,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); }  
-    function save() { localStorage.setItem('seiren_fixed_v62', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v63', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -501,6 +501,7 @@
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
         const p = DB.profiles[DB.active];
         
+        // Only update if field is NOT empty (allows partial updates)
         const newName = document.getElementById('new-name').value;
         if(newName) p.name = newName;
         const newAge = document.getElementById('new-age').value;
@@ -523,12 +524,14 @@
     function openProfileModal() {  
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
-        document.getElementById('new-name').value = p.name;
-        document.getElementById('new-age').value = p.age;
-        document.getElementById('new-sign').value = p.sign;
-        document.getElementById('new-species').value = p.species;
-        document.getElementById('new-height').value = p.height;
-        document.getElementById('new-bio').value = p.bio;
+        
+        // FIXED: CLEANER INPUTS (No pre-filling)
+        document.getElementById('new-name').value = "";
+        document.getElementById('new-age').value = "";
+        document.getElementById('new-sign').value = "";
+        document.getElementById('new-species').value = "";
+        document.getElementById('new-height').value = "";
+        document.getElementById('new-bio').value = "";
         document.getElementById('new-color').value = p.color;
         document.getElementById('av-preview').src = p.av || DEFAULT_AV;
 
@@ -626,7 +629,6 @@
     // --- PHARMACY ---  
     function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div>${i} SYMPTOM ... ${p} XP</div>`; pendingXP+=p; }  
     
-    // FIXED: NOW INCLUDES SELF CARE TASK
     function processReceipt() { 
         if(pendingXP>0){ 
             DB.xp+=pendingXP; 
@@ -644,7 +646,6 @@
             bub.innerText = speech; bub.classList.add('show');  
             setTimeout(()=>bub.classList.remove('show'), 2000);  
             
-            // Check if item is a background to show correct message
             let msg = `Rx Filled!\n\nReceived: ${item}`;
             if(item.startsWith('bg-')) msg += "\n(New System Wallpaper!)";
             
