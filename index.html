@@ -113,6 +113,12 @@
     .bio-tag span { cursor: pointer; opacity: 0.7; font-size: 0.7rem; }
     .bio-input-group { display: flex; gap: 5px; margin-bottom: 15px; }
 
+    /* --- FRONT LOG TABLE --- */
+    .log-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .log-table th { text-align: left; border-bottom: 2px solid var(--main); padding: 5px; color: var(--main); }
+    .log-table td { border-bottom: 1px solid #eee; padding: 8px 5px; color: #555; }
+    .log-table tr:nth-child(even) { background: #f9f9f9; }
+
     /* --- CHAT --- */  
     .chat-shell { display: flex; height: 100%; border: 2px solid var(--main); border-radius: 15px; background: white; overflow: hidden; position:relative; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }  
     .channel-sidebar { width: 75px; background: #f0f0f0; border-right: 1px solid #e0e0e0; padding-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 12px; overflow-y: auto; transition: margin-left 0.3s ease; }  
@@ -375,7 +381,10 @@
 
 <div id="modal-profile" class="modal">  
     <div class="modal-card">  
-        <h3>Identity Card</h3>  
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3>Identity Card</h3>
+            <button class="btn-action" style="width:auto; padding:5px 10px; font-size:0.7rem;" onclick="openLogModal()">📜 History</button>
+        </div>
         <div id="prof-list" style="margin-bottom:15px; max-height:150px; overflow-y:auto; border:1px solid #eee;"></div>  
         <hr>  
         <h4>Profile Editor</h4>  
@@ -410,6 +419,19 @@
     </div>
 </div>  
 
+<div id="modal-log" class="modal">
+    <div class="modal-card">
+        <h3>Front Log</h3>
+        <div style="max-height:300px; overflow-y:auto; margin-bottom:10px;">
+            <table class="log-table">
+                <thead><tr><th>Who</th><th>Date</th><th>Start</th><th>Duration</th></tr></thead>
+                <tbody id="front-log-body"></tbody>
+            </table>
+        </div>
+        <button class="btn-action" style="background:#ccc;" onclick="closeModals()">Close</button>
+    </div>
+</div>
+
 <div id="modal-backpack" class="modal">  
     <div class="modal-card">  
         <h3>Inventory</h3>  
@@ -428,7 +450,9 @@
         profiles: [], active: 0, xp: 0, 
         inventory: [], 
         decor: [],   
-        cofront: [], // Stores indices of co-fronters
+        cofront: [], 
+        frontHistory: [], // New History Log
+        currentFrontStart: 0, // Time tracking
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true }  
     };  
@@ -454,7 +478,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v72'); 
+        const saved = localStorage.getItem('seiren_fixed_v74'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -464,8 +488,11 @@
                 likes: [], dislikes: [], notes: "" 
             });  
         }  
-        // Ensure new fields exist
+        // Initialize new fields
         if(!DB.cofront) DB.cofront = [];
+        if(!DB.frontHistory) DB.frontHistory = [];
+        if(!DB.currentFrontStart) DB.currentFrontStart = Date.now();
+
         DB.profiles.forEach(p => {
             if(!p.likes) p.likes = [];
             if(!p.dislikes) p.dislikes = [];
@@ -485,7 +512,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); }  
-    function save() { localStorage.setItem('seiren_fixed_v72', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v74', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -583,7 +610,6 @@
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
         
-        // FIXED: Placeholders
         document.getElementById('new-name').value = ""; document.getElementById('new-name').placeholder = "Name: " + p.name;
         document.getElementById('new-age').value = ""; document.getElementById('new-age').placeholder = "Age: " + p.age;
         document.getElementById('new-sign').value = ""; document.getElementById('new-sign').placeholder = "Sign: " + p.sign;
@@ -606,8 +632,9 @@
         });  
     }  
 
-    // --- SWITCH & CO-FRONT ---
+    // --- SWITCH, CO-FRONT, AND LOGGING ---
     function switchProfile(index) {
+        logSwitch(DB.active); // Log the session ending
         DB.active = index;
         DB.cofront = []; // Clear co-front when switching main
         save(); refreshAll(); closeModals();
@@ -620,6 +647,43 @@
         DB.cofront.push(index);
         save(); refreshAll(); 
         alert(DB.profiles[index].name + " added to Co-Con!");
+    }
+
+    // --- FRONT LOGIC ---
+    function logSwitch(oldIndex) {
+        if (!DB.currentFrontStart) { DB.currentFrontStart = Date.now(); return; }
+        
+        const now = Date.now();
+        const diff = now - DB.currentFrontStart;
+        
+        // Format Duration
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(minutes / 60);
+        const displayTime = (hours > 0 ? hours + "h " : "") + (minutes % 60) + "m";
+
+        const p = DB.profiles[oldIndex];
+        
+        // Add to history
+        DB.frontHistory.unshift({
+            n: p.name,
+            d: new Date(DB.currentFrontStart).toLocaleDateString(),
+            t: new Date(DB.currentFrontStart).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            dur: displayTime || "<1m"
+        });
+        
+        // Cap history at 50 items
+        if (DB.frontHistory.length > 50) DB.frontHistory.pop();
+
+        DB.currentFrontStart = now;
+    }
+
+    function openLogModal() {
+        document.getElementById('modal-log').style.display = 'flex';
+        const tbody = document.getElementById('front-log-body');
+        tbody.innerHTML = "";
+        DB.frontHistory.forEach(entry => {
+            tbody.innerHTML += `<tr><td><b>${entry.n}</b></td><td>${entry.d}</td><td>${entry.t}</td><td>${entry.dur}</td></tr>`;
+        });
     }
 
     // --- BIO TAB LOGIC ---
