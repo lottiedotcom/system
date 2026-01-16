@@ -1,14 +1,13 @@
 {
   "name": "Seiren OS",
   "short_name": "Seiren",
-  "start_url": ".",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffe4e1",
   "theme_color": "#ff69b4",
-  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "https://static.wikia.nocookie.net/girlsbravo/images/f/fa/Miharu.jpg/revision/latest?cb=20090726063551",
+      "src": "https://cdn-icons-png.flaticon.com/512/2919/2919573.png",
       "sizes": "512x512",
       "type": "image/png"
     }
