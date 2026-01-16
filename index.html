@@ -32,12 +32,13 @@
         color: #444;   
     }  
 
-    /* --- VIVID BACKGROUND PATTERNS --- */
+    /* --- EXPANDED BACKGROUND LIBRARY --- */
+    
+    /* 1. CLASSICS */
     .bg-polka {
         background-color: #fff0f5 !important;
         background-image: radial-gradient(#ff1493 20%, transparent 20%) !important;
         background-size: 30px 30px !important;
-        background-position: 0 0 !important;
         background-attachment: fixed !important;
     }
     .bg-lines {
@@ -54,15 +55,15 @@
     .bg-checkers {
         background-color: #fff !important;
         background-image: repeating-linear-gradient(45deg, rgba(255,105,180,0.25) 25%, transparent 25%, transparent 75%, rgba(255,105,180,0.25) 75%, rgba(255,105,180,0.25)), repeating-linear-gradient(45deg, rgba(255,105,180,0.25) 25%, #fff 25%, #fff 75%, rgba(255,105,180,0.25) 75%, rgba(255,105,180,0.25)) !important;
-        background-position: 0 0, 10px 10px !important;
         background-size: 20px 20px !important;
         background-attachment: fixed !important;
     }
+
+    /* 2. NATURE & SCENES */
     .bg-clouds { 
         background-color: #81d4fa !important; 
         background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; 
         background-size: 40px 40px !important; 
-        background-position: 0 0, 20px 20px !important; 
         background-attachment: fixed !important;
     }  
     .bg-night { 
@@ -70,8 +71,84 @@
         background-image: radial-gradient(white 1px, transparent 1px) !important; 
         background-size: 30px 30px !important; 
         background-attachment: fixed !important;
-        color: white; /* Make text white on night mode */
-    }  
+        color: white; 
+    }
+    .bg-sunset {
+        background: linear-gradient(180deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%) !important;
+        background-attachment: fixed !important;
+    }
+    .bg-mint {
+        background-color: #e0f2f1 !important;
+        background-image: radial-gradient(#00695c 1px, transparent 1px) !important;
+        background-size: 15px 15px !important;
+        background-attachment: fixed !important;
+    }
+
+    /* 3. PATTERNS */
+    .bg-rainbow {
+        background: repeating-linear-gradient(90deg, #ffcdd2, #ffcdd2 20px, #f8bbd0 20px, #f8bbd0 40px, #e1bee7 40px, #e1bee7 60px, #d1c4e9 60px, #d1c4e9 80px, #c5cae9 80px, #c5cae9 100px, #b3e5fc 100px, #b3e5fc 120px) !important;
+        background-attachment: fixed !important;
+    }
+    .bg-blueprint {
+        background-color: #283593 !important;
+        background-image: linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px) !important;
+        background-size: 20px 20px !important;
+        background-attachment: fixed !important;
+        color: white;
+    }
+    .bg-argyle {
+        background-color: #ffe4e1 !important;
+        background-image: repeating-linear-gradient(120deg, rgba(255,255,255,.5), rgba(255,255,255,.5) 1px, transparent 1px, transparent 60px), repeating-linear-gradient(60deg, rgba(255,255,255,.5), rgba(255,255,255,.5) 1px, transparent 1px, transparent 60px), linear-gradient(60deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1)), linear-gradient(120deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1)) !important;
+        background-size: 70px 120px !important;
+        background-attachment: fixed !important;
+    }
+    .bg-lemon {
+        background-color: #fff9c4 !important;
+        background-image: repeating-linear-gradient(45deg, #fff176 25%, transparent 25%, transparent 75%, #fff176 75%, #fff176), repeating-linear-gradient(45deg, #fff176 25%, #fff9c4 25%, #fff9c4 75%, #fff176 75%, #fff176) !important;
+        background-size: 20px 20px !important;
+        background-attachment: fixed !important;
+    }
+    .bg-pixels {
+        background-color: #e1bee7;
+        background-image: linear-gradient(45deg, #ce93d8 25%, transparent 25%, transparent 75%, #ce93d8 75%, #ce93d8), linear-gradient(45deg, #ce93d8 25%, transparent 25%, transparent 75%, #ce93d8 75%, #ce93d8) !important;
+        background-size: 10px 10px !important;
+        background-position: 0 0, 5px 5px !important;
+        background-attachment: fixed !important;
+    }
+    .bg-zigzag {
+        background-color: #fff;
+        background-image: linear-gradient(135deg, #b2ebf2 25%, transparent 25%), linear-gradient(225deg, #b2ebf2 25%, transparent 25%), linear-gradient(45deg, #b2ebf2 25%, transparent 25%), linear-gradient(315deg, #b2ebf2 25%, transparent 25%) !important;
+        background-position: 10px 0, 10px 0, 0 0, 0 0 !important;
+        background-size: 20px 20px !important;
+        background-repeat: repeat !important;
+        background-attachment: fixed !important;
+    }
+    .bg-hearts-tiny {
+        background-color: #ffebee;
+        background-image: radial-gradient(#ef9a9a 15%, transparent 16%), radial-gradient(#ef9a9a 15%, transparent 16%) !important;
+        background-size: 10px 10px !important;
+        background-position: 0 0, 5px 5px !important;
+        background-attachment: fixed !important;
+    }
+    .bg-matrix {
+        background-color: #000 !important;
+        background-image: linear-gradient(rgba(0, 255, 0, 0.2) 1px, transparent 1px) !important;
+        background-size: 100% 20px !important;
+        color: #0f0;
+        background-attachment: fixed !important;
+    }
+    .bg-lavender {
+        background-color: #ede7f6 !important;
+        background-image: radial-gradient(white 15%, transparent 16%) !important;
+        background-size: 20px 20px !important;
+        background-attachment: fixed !important;
+    }
+    .bg-honey {
+        background-color: #fff8e1 !important;
+        background-image: linear-gradient(30deg, #ffecb3 12%, transparent 12.5%, transparent 87%, #ffecb3 87.5%, #ffecb3), linear-gradient(150deg, #ffecb3 12%, transparent 12.5%, transparent 87%, #ffecb3 87.5%, #ffecb3), linear-gradient(30deg, #ffecb3 12%, transparent 12.5%, transparent 87%, #ffecb3 87.5%, #ffecb3), linear-gradient(150deg, #ffecb3 12%, transparent 12.5%, transparent 87%, #ffecb3 87.5%, #ffecb3), linear-gradient(60deg, #ffe082 25%, transparent 25.5%, transparent 75%, #ffe082 75%, #ffe082), linear-gradient(60deg, #ffe082 25%, transparent 25.5%, transparent 75%, #ffe082 75%, #ffe082) !important;
+        background-size: 20px 35px !important;
+        background-attachment: fixed !important;
+    }
     
     /* --- VISUAL FX --- */  
     .scanlines {  
@@ -87,13 +164,12 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL (NOW TRANSPARENT FOR FULL WALLPAPER EFFECT) --- */  
+    /* --- APP SHELL (TRANSPARENT) --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
-        background: transparent; /* Changed from white to transparent */
+        background: transparent; 
         display: none; flex-direction: column; position: relative; height: 100%;  
         z-index: 10; 
-        /* Removed border to make it look more like OS */
     }  
     .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; scroll-behavior: smooth; }  
     .page { display: none; animation: popIn 0.3s; }  
@@ -422,7 +498,9 @@
     const LOOT_ITEMS = [
         "🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴",
         "🥤", "🍰", "🍙", "🍬", "🍭", "🎨", "🪁", "☂️", "🎵", "📷", "💡", "🔮", "🧹", "🪴",
-        "bg-clouds", "bg-night", "bg-polka", "bg-lines", "bg-grid", "bg-checkers", "bg-cross"
+        "bg-clouds", "bg-night", "bg-polka", "bg-lines", "bg-grid", "bg-checkers", "bg-sunset", "bg-mint",
+        "bg-rainbow", "bg-blueprint", "bg-argyle", "bg-lemon", "bg-pixels", "bg-zigzag", "bg-hearts-tiny",
+        "bg-matrix", "bg-lavender", "bg-honey"
     ];  
     const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!"];  
     const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
@@ -436,11 +514,22 @@
         'bg-lines': '🥢',
         'bg-grid': '▦',
         'bg-checkers': '🏁',
-        'bg-cross': '➕'
+        'bg-sunset': '🌅',
+        'bg-mint': '🍃',
+        'bg-rainbow': '🌈',
+        'bg-blueprint': '📐',
+        'bg-argyle': '💠',
+        'bg-lemon': '🍋',
+        'bg-pixels': '👾',
+        'bg-zigzag': '〰️',
+        'bg-hearts-tiny': '💗',
+        'bg-matrix': '💻',
+        'bg-lavender': '🦄',
+        'bg-honey': '🍯'
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v67'); 
+        const saved = localStorage.getItem('seiren_fixed_v68'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -461,7 +550,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); }  
-    function save() { localStorage.setItem('seiren_fixed_v67', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v68', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
