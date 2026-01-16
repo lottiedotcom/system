@@ -224,6 +224,10 @@
                             <div style="flex:1;"><span class="id-label">SIGN</span><span class="id-val" id="dash-sign">--</span></div>  
                             <div style="flex:1;"><span class="id-label">SPECIES</span><span class="id-val" id="dash-species">--</span></div>  
                         </div>  
+                        <div id="cofront-row" style="display:none; margin-top:5px;">
+                            <span class="id-label">CO-CON</span>
+                            <span class="id-val" id="dash-co"></span>
+                        </div>
                     </div>  
                 </div>  
                 <span class="id-label">PERSONNEL NOTES</span>  
@@ -397,9 +401,9 @@
           
         <input type="color" id="new-color" value="#ff69b4" style="width:100%; border:none; height:30px; margin-top:5px;">  
         
-        <div style="display:flex; gap:10px; margin-top:10px;">
-            <button class="btn-action" style="background:#81c784;" onclick="updateCurrentProfile()">Save Changes</button>
-            <button class="btn-action" onclick="createProfile()">Create New</button>
+        <div style="display:flex; gap:5px; margin-top:10px; flex-wrap:wrap;">
+            <button class="btn-action" style="background:#81c784; flex:1;" onclick="updateCurrentProfile()">Save Changes</button>
+            <button class="btn-action" style="flex:1;" onclick="createProfile()">Create New</button>
         </div>
         
         <button class="btn-action" style="margin-top:5px; background:#ccc;" onclick="closeModals()">Close</button>  
@@ -424,6 +428,7 @@
         profiles: [], active: 0, xp: 0, 
         inventory: [], 
         decor: [],   
+        cofront: [], // Stores indices of co-fronters
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true }  
     };  
@@ -441,30 +446,15 @@
     const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
     const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
     
-    // MAPPING ICONS FOR BACKGROUNDS
     const BG_ICONS = {
-        'bg-clouds': '☁️',
-        'bg-night': '🌙',
-        'bg-polka': '⚪',
-        'bg-lines': '🥢',
-        'bg-grid': '▦',
-        'bg-checkers': '🏁',
-        'bg-sunset': '🌅',
-        'bg-mint': '🍃',
-        'bg-rainbow': '🌈',
-        'bg-blueprint': '📐',
-        'bg-argyle': '💠',
-        'bg-lemon': '🍋',
-        'bg-pixels': '👾',
-        'bg-zigzag': '〰️',
-        'bg-hearts-tiny': '💗',
-        'bg-matrix': '💻',
-        'bg-lavender': '🦄',
-        'bg-honey': '🍯'
+        'bg-clouds': '☁️', 'bg-night': '🌙', 'bg-polka': '⚪', 'bg-lines': '🥢', 'bg-grid': '▦',
+        'bg-checkers': '🏁', 'bg-sunset': '🌅', 'bg-mint': '🍃', 'bg-rainbow': '🌈', 'bg-blueprint': '📐',
+        'bg-argyle': '💠', 'bg-lemon': '🍋', 'bg-pixels': '👾', 'bg-zigzag': '〰️', 'bg-hearts-tiny': '💗',
+        'bg-matrix': '💻', 'bg-lavender': '🦄', 'bg-honey': '🍯'
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v71'); // Version bump
+        const saved = localStorage.getItem('seiren_fixed_v72'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -474,11 +464,13 @@
                 likes: [], dislikes: [], notes: "" 
             });  
         }  
-        // Ensure new fields exist for old saves
+        // Ensure new fields exist
+        if(!DB.cofront) DB.cofront = [];
         DB.profiles.forEach(p => {
             if(!p.likes) p.likes = [];
             if(!p.dislikes) p.dislikes = [];
             if(!p.notes) p.notes = "";
+            if(!p.id) p.id = Math.floor(Math.random()*900000);
         });
 
         document.getElementById('sys-name-input').value = DB.sysName || "SEIREN OS";  
@@ -493,31 +485,22 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); }  
-    function save() { localStorage.setItem('seiren_fixed_v71', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v72', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
   
     // --- IMAGES ---  
     function handleFile(inpt, id) {   
-        const file = inpt.files[0];  
-        if(!file) return;  
-
+        const file = inpt.files[0]; if(!file) return;  
         const reader = new FileReader();  
         reader.onload = (e) => {  
             const img = new Image();
             img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const maxSize = 250;
-                let w = img.width;
-                let h = img.height;
-                if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } }
-                else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
-                
-                canvas.width = w;
-                canvas.height = h;
-                ctx.drawImage(img, 0, 0, w, h);
+                const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                const maxSize = 250; let w = img.width; let h = img.height;
+                if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } } else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
+                canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
                 uploadedAv = canvas.toDataURL('image/jpeg', 0.8);
                 document.getElementById(id).src = uploadedAv; 
             };
@@ -525,13 +508,9 @@
         };  
         reader.readAsDataURL(file);  
     }  
-      
     function handleChatImage(inpt) {   
-        const file = inpt.files[0];  
-        if(!file) return;  
-        const reader = new FileReader();  
-        reader.onload = (e) => { chatImg = e.target.result; alert("Image attached!"); };  
-        reader.readAsDataURL(file);  
+        const file = inpt.files[0]; if(!file) return;  
+        const reader = new FileReader(); reader.onload = (e) => { chatImg = e.target.result; alert("Image attached!"); }; reader.readAsDataURL(file);  
     }  
   
     // --- UI & PROFILES ---  
@@ -548,6 +527,16 @@
         document.getElementById('dash-av').src = p.av || DEFAULT_AV;  
         document.getElementById('cp-display').innerText = DB.xp;  
         
+        // Co-Front Display
+        const coDiv = document.getElementById('cofront-row');
+        if (DB.cofront && DB.cofront.length > 0) {
+            const names = DB.cofront.map(idx => DB.profiles[idx].name).join(", ");
+            document.getElementById('dash-co').innerText = names;
+            coDiv.style.display = 'block';
+        } else {
+            coDiv.style.display = 'none';
+        }
+
         let classes = "";
         if(DB.settings.crt) classes += "fx-active ";
         if(p.wallpaper) classes += p.wallpaper;
@@ -567,7 +556,7 @@
                 height:document.getElementById('new-height').value,  
                 bio:document.getElementById('new-bio').value,
                 likes: [], dislikes: [], notes: "",  
-                id: Math.floor(Math.random()*9000)+1000  
+                id: Math.floor(Math.random()*900000)  
             });  
             uploadedAv = ""; DB.active = DB.profiles.length - 1;  
             save(); closeModals(); refreshAll();  
@@ -578,28 +567,13 @@
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
         const p = DB.profiles[DB.active];
         
-        // FIXED: Only update if field is NOT empty
-        const newName = document.getElementById('new-name').value;
-        if(newName) p.name = newName;
-        
-        const newAge = document.getElementById('new-age').value;
-        if(newAge) p.age = newAge;
-        
-        const newSign = document.getElementById('new-sign').value;
-        if(newSign) p.sign = newSign;
-        
-        const newSpec = document.getElementById('new-species').value;
-        if(newSpec) p.species = newSpec;
-        
-        const newH = document.getElementById('new-height').value;
-        if(newH) p.height = newH;
-        
-        const newBio = document.getElementById('new-bio').value;
-        if(newBio) p.bio = newBio;
-        
-        const newColor = document.getElementById('new-color').value;
-        p.color = newColor;
-
+        const newName = document.getElementById('new-name').value; if(newName) p.name = newName;
+        const newAge = document.getElementById('new-age').value; if(newAge) p.age = newAge;
+        const newSign = document.getElementById('new-sign').value; if(newSign) p.sign = newSign;
+        const newSpec = document.getElementById('new-species').value; if(newSpec) p.species = newSpec;
+        const newH = document.getElementById('new-height').value; if(newH) p.height = newH;
+        const newBio = document.getElementById('new-bio').value; if(newBio) p.bio = newBio;
+        const newColor = document.getElementById('new-color').value; p.color = newColor;
         if(uploadedAv) { p.av = uploadedAv; uploadedAv = ""; }
         
         save(); closeModals(); refreshAll(); alert("ID Updated!");
@@ -609,115 +583,86 @@
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
         
-        // FIXED: PLACEHOLDERS NOW SHOW LABEL + CURRENT DATA
-        document.getElementById('new-name').value = "";
-        document.getElementById('new-name').placeholder = "Name: " + p.name;
-        
-        document.getElementById('new-age').value = "";
-        document.getElementById('new-age').placeholder = "Age: " + p.age;
-        
-        document.getElementById('new-sign').value = "";
-        document.getElementById('new-sign').placeholder = "Sign: " + p.sign;
-        
-        document.getElementById('new-species').value = "";
-        document.getElementById('new-species').placeholder = "Species: " + p.species;
-        
-        document.getElementById('new-height').value = "";
-        document.getElementById('new-height').placeholder = "Height: " + p.height;
-        
-        document.getElementById('new-bio').value = "";
-        document.getElementById('new-bio').placeholder = "Bio: " + p.bio;
-        
+        // FIXED: Placeholders
+        document.getElementById('new-name').value = ""; document.getElementById('new-name').placeholder = "Name: " + p.name;
+        document.getElementById('new-age').value = ""; document.getElementById('new-age').placeholder = "Age: " + p.age;
+        document.getElementById('new-sign').value = ""; document.getElementById('new-sign').placeholder = "Sign: " + p.sign;
+        document.getElementById('new-species').value = ""; document.getElementById('new-species').placeholder = "Species: " + p.species;
+        document.getElementById('new-height').value = ""; document.getElementById('new-height').placeholder = "Height: " + p.height;
+        document.getElementById('new-bio').value = ""; document.getElementById('new-bio').placeholder = "Bio: " + p.bio;
         document.getElementById('new-color').value = p.color;
         document.getElementById('av-preview').src = p.av || DEFAULT_AV;
 
         const list = document.getElementById('prof-list'); list.innerHTML="";  
         DB.profiles.forEach((p,i)=>{  
-            list.innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">  
+            list.innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">  
                 <b>${p.name}</b>  
                 <div>  
-                    <button onclick="DB.active=${i}; save(); refreshAll(); closeModals();">Select</button>  
+                    <button style="margin-right:5px; font-size:0.8rem;" onclick="addToCofront(${i})">+ Co-Con</button>
+                    <button onclick="switchProfile(${i})">Switch</button>  
                     ${i!==0 ? `<button style="color:red; margin-left:5px;" onclick="if(confirm('Delete?')){DB.profiles.splice(${i},1); DB.active=0; save(); openProfileModal();}">x</button>` : ''}  
                 </div>  
             </div>`;  
         });  
     }  
 
+    // --- SWITCH & CO-FRONT ---
+    function switchProfile(index) {
+        DB.active = index;
+        DB.cofront = []; // Clear co-front when switching main
+        save(); refreshAll(); closeModals();
+    }
+
+    function addToCofront(index) {
+        if (!DB.cofront) DB.cofront = [];
+        if (index === DB.active) { alert("Already fronting!"); return; }
+        if (DB.cofront.includes(index)) { alert("Already co-fronting!"); return; }
+        DB.cofront.push(index);
+        save(); refreshAll(); 
+        alert(DB.profiles[index].name + " added to Co-Con!");
+    }
+
     // --- BIO TAB LOGIC ---
     function renderBio() {
         const p = DB.profiles[DB.active];
         if(!p.likes) p.likes=[]; if(!p.dislikes) p.dislikes=[]; if(!p.notes) p.notes="";
 
-        const likesList = document.getElementById('likes-list');
-        likesList.innerHTML = "";
-        p.likes.forEach((l, i) => {
-            likesList.innerHTML += `<div class="bio-tag">${l} <span onclick="removeBioItem('likes',${i})">x</span></div>`;
-        });
+        const likesList = document.getElementById('likes-list'); likesList.innerHTML = "";
+        p.likes.forEach((l, i) => { likesList.innerHTML += `<div class="bio-tag">${l} <span onclick="removeBioItem('likes',${i})">x</span></div>`; });
 
-        const dislikesList = document.getElementById('dislikes-list');
-        dislikesList.innerHTML = "";
-        p.dislikes.forEach((l, i) => {
-            dislikesList.innerHTML += `<div class="bio-tag" style="background:#555;">${l} <span onclick="removeBioItem('dislikes',${i})">x</span></div>`;
-        });
+        const dislikesList = document.getElementById('dislikes-list'); dislikesList.innerHTML = "";
+        p.dislikes.forEach((l, i) => { dislikesList.innerHTML += `<div class="bio-tag" style="background:#555;">${l} <span onclick="removeBioItem('dislikes',${i})">x</span></div>`; });
 
         document.getElementById('notes-in').value = p.notes;
     }
-
     function addBioItem(type) {
         const inputId = type === 'likes' ? 'like-in' : 'dislike-in';
         const val = document.getElementById(inputId).value;
-        if(val) {
-            DB.profiles[DB.active][type].push(val);
-            document.getElementById(inputId).value = "";
-            save(); renderBio();
-        }
+        if(val) { DB.profiles[DB.active][type].push(val); document.getElementById(inputId).value = ""; save(); renderBio(); }
     }
-
-    function removeBioItem(type, index) {
-        DB.profiles[DB.active][type].splice(index, 1);
-        save(); renderBio();
-    }
-
-    function saveBioNotes() {
-        DB.profiles[DB.active].notes = document.getElementById('notes-in').value;
-        save();
-    }
+    function removeBioItem(type, index) { DB.profiles[DB.active][type].splice(index, 1); save(); renderBio(); }
+    function saveBioNotes() { DB.profiles[DB.active].notes = document.getElementById('notes-in').value; save(); }
   
     // --- CHAT ---  
-    function toggleSidebar() {  
-        document.getElementById('chan-list').classList.toggle('hidden');  
-        const btn = document.querySelector('.sidebar-toggle');  
-        btn.innerText = btn.innerText === '<' ? '>' : '<';  
-    }  
+    function toggleSidebar() { document.getElementById('chan-list').classList.toggle('hidden'); const btn = document.querySelector('.sidebar-toggle'); btn.innerText = btn.innerText === '<' ? '>' : '<'; }  
     function renderChat() {  
         const list = document.getElementById('chan-list'); list.innerHTML="";  
         Object.keys(DB.channels).forEach(k => {  
-            const div = document.createElement('div');  
-            div.className = `chan-btn ${DB.curChan===k?'active':''}`;  
-            div.innerText = DB.channels[k].name.substring(0,2).toUpperCase();  
-            div.onclick = () => { DB.curChan=k; renderChat(); };  
-            if(k!=='gen') {  
-                const del = document.createElement('div'); del.className='del-chan'; del.innerText='x';  
-                div.appendChild(del);  
-                del.onclick=(e)=>{e.stopPropagation(); if(confirm("Delete?")){ delete DB.channels[k]; DB.curChan='gen'; save(); renderChat(); }};  
-            }  
+            const div = document.createElement('div'); div.className = `chan-btn ${DB.curChan===k?'active':''}`;  
+            div.innerText = DB.channels[k].name.substring(0,2).toUpperCase(); div.onclick = () => { DB.curChan=k; renderChat(); };  
+            if(k!=='gen') { const del = document.createElement('div'); del.className='del-chan'; del.innerText='x'; div.appendChild(del); del.onclick=(e)=>{e.stopPropagation(); if(confirm("Delete?")){ delete DB.channels[k]; DB.curChan='gen'; save(); renderChat(); }}; }  
             list.appendChild(div);  
         });  
         const add = document.createElement('div'); add.className='chan-btn'; add.style.background='#4fc3f7'; add.style.color='white'; add.innerText='+';  
         add.onclick = () => { const n=prompt("Name:"); if(n){ const id=n.toLowerCase().replace(/\s/g,''); DB.channels[id]={name:n, msgs:[]}; save(); renderChat(); }};  
         list.appendChild(add);  
-  
         const c = DB.channels[DB.curChan]; document.getElementById('chan-title').innerText = "#" + c.name;  
         const feed = document.getElementById('chat-feed'); feed.innerHTML="";  
-        c.msgs.forEach(m => {  
-            const imgHTML = m.img ? `<img src="${m.img}" class="pk-img">` : '';  
-            feed.innerHTML += `<div class="pk-msg"><img src="${m.av}" class="pk-av" style="background:${m.color}"><div><div class="pk-name" style="color:${m.color}">${m.name}</div><div class="pk-txt">${m.txt}${imgHTML}</div></div></div>`;  
-        });  
+        c.msgs.forEach(m => { const imgHTML = m.img ? `<img src="${m.img}" class="pk-img">` : ''; feed.innerHTML += `<div class="pk-msg"><img src="${m.av}" class="pk-av" style="background:${m.color}"><div><div class="pk-name" style="color:${m.color}">${m.name}</div><div class="pk-txt">${m.txt}${imgHTML}</div></div></div>`; });  
         feed.scrollTop = feed.scrollHeight;  
     }  
     function sendMsg() {  
-        const i = document.getElementById('msg-in');  
-        if(!i.value && !chatImg) return;  
+        const i = document.getElementById('msg-in'); if(!i.value && !chatImg) return;  
         const p = DB.profiles[DB.active];  
         DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value, img:chatImg });  
         i.value=""; chatImg=""; save(); renderChat();  
@@ -730,15 +675,10 @@
             const el = document.createElement('div'); el.className='sticker'; el.innerText=d.i;  
             el.style.left=d.x+"%"; el.style.top=d.y+"%";  
             let isDrag=false;  
-            const move = (e) => {  
-                if(!isDrag)return; const b=document.getElementById('pet-stage').getBoundingClientRect();  
-                const cx=e.touches?e.touches[0].clientX:e.clientX; const cy=e.touches?e.touches[0].clientY:e.clientY;  
-                d.x=((cx-b.left)/b.width)*100; d.y=((cy-b.top)/b.height)*100; el.style.left=d.x+"%"; el.style.top=d.y+"%";  
-            };  
+            const move = (e) => { if(!isDrag)return; const b=document.getElementById('pet-stage').getBoundingClientRect(); const cx=e.touches?e.touches[0].clientX:e.clientX; const cy=e.touches?e.touches[0].clientY:e.clientY; d.x=((cx-b.left)/b.width)*100; d.y=((cy-b.top)/b.height)*100; el.style.left=d.x+"%"; el.style.top=d.y+"%"; };  
             const end = () => { if(isDrag){isDrag=false; save();} };  
             el.onmousedown=()=>{isDrag=true}; el.ontouchstart=()=>{isDrag=true};  
-            window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive:false});  
-            window.addEventListener('mouseup', end); window.addEventListener('touchend', end);  
+            window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive:false}); window.addEventListener('mouseup', end); window.addEventListener('touchend', end);  
             l.appendChild(el);  
         });  
     }  
@@ -747,136 +687,87 @@
     function openBackpack() {  
         document.getElementById('modal-backpack').style.display='flex';  
         const g = document.getElementById('inventory-grid'); g.innerHTML="";  
-        
-        if(DB.inventory.length === 0) document.getElementById('empty-msg').style.display='block';
-        else document.getElementById('empty-msg').style.display='none';
+        if(DB.inventory.length === 0) document.getElementById('empty-msg').style.display='block'; else document.getElementById('empty-msg').style.display='none';
 
-        const sortedInv = [...DB.inventory].sort((a,b) => {
-            const aBg = a.startsWith('bg-');
-            const bBg = b.startsWith('bg-');
-            return aBg === bBg ? 0 : aBg ? 1 : -1;
-        });
+        // Add "Clear Wallpaper" option manually
+        const clearBtn = document.createElement('div'); 
+        clearBtn.style.fontSize="1.5rem"; clearBtn.innerText="🚫"; 
+        clearBtn.style.border="2px dashed red"; clearBtn.style.padding="10px"; clearBtn.style.borderRadius="10px"; clearBtn.style.cursor="pointer";
+        clearBtn.onclick = () => { DB.profiles[DB.active].wallpaper = ""; save(); refreshAll(); alert("Wallpaper Removed"); };
+        g.appendChild(clearBtn);
 
+        const sortedInv = [...DB.inventory].sort((a,b) => { const aBg = a.startsWith('bg-'); const bBg = b.startsWith('bg-'); return aBg === bBg ? 0 : aBg ? 1 : -1; });
         sortedInv.forEach((item, index) => {  
-            const b = document.createElement('div'); 
-            b.style.fontSize="2.5rem"; 
-            b.style.cursor="pointer"; 
-            b.innerText=item;  
-            
+            const b = document.createElement('div'); b.style.fontSize="2.5rem"; b.style.cursor="pointer"; b.innerText=item;  
             if(item.startsWith('bg-')) {  
-                let icon = BG_ICONS[item] || "🖼️";
-                b.style.fontSize="1.5rem"; 
-                b.innerText=icon; 
-                b.style.border="2px solid pink"; 
-                b.style.padding="10px"; 
-                b.style.borderRadius="10px";
-                
-                b.onclick = () => { 
-                    DB.profiles[DB.active].wallpaper = item; 
-                    save(); 
-                    refreshAll(); 
-                    alert("Wallpaper Applied!"); 
-                };  
+                let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerText=icon; b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
+                b.onclick = () => { DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); };  
             } else {  
-                b.onclick = () => { 
-                    DB.decor.push({i:item, x:50, y:50}); 
-                    const realIndex = DB.inventory.indexOf(item);
-                    if(realIndex > -1) DB.inventory.splice(realIndex, 1);
-                    save(); 
-                    closeModals(); 
-                    nav('pet'); 
-                };  
+                b.onclick = () => { DB.decor.push({i:item, x:50, y:50}); const realIndex = DB.inventory.indexOf(item); if(realIndex > -1) DB.inventory.splice(realIndex, 1); save(); closeModals(); nav('pet'); };  
             }  
             g.appendChild(b);  
         });  
     }  
-    function clearDecor(){ 
-        DB.decor=[]; 
-        save(); 
-        renderDecor(); 
-        closeModals(); 
-    }  
+    function clearDecor(){ DB.decor=[]; save(); renderDecor(); closeModals(); }  
   
     // --- PHARMACY ---  
     function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div>${i} ... ${p} XP</div>`; pendingXP+=p; }  
-    
-    function processReceipt() { 
-        if(pendingXP>0){ 
-            DB.xp+=pendingXP; 
-            const task = SELF_CARE[Math.floor(Math.random()*SELF_CARE.length)];
-            alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"`); 
-            pendingXP=0; document.getElementById('receipt-list').innerHTML=""; save(); loadUI(); 
-        } 
-    }  
-
+    function processReceipt() { if(pendingXP>0){ DB.xp+=pendingXP; const task = SELF_CARE[Math.floor(Math.random()*SELF_CARE.length)]; alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"`); pendingXP=0; document.getElementById('receipt-list').innerHTML=""; save(); loadUI(); } }  
     function fillPrescription() {   
         if(DB.xp>=50){   
-            DB.xp-=50; 
-            let item = "";
-            let attempts = 0;
-            
-            do {
-                item = LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)];
-                attempts++;
-                if (item.startsWith('bg-') && DB.inventory.includes(item)) {
-                    item = "DUPE"; 
-                }
-            } while (item === "DUPE" && attempts < 10);
-
-            if (item === "DUPE") {
-                const consumables = LOOT_ITEMS.filter(i => !i.startsWith('bg-'));
-                item = consumables[Math.floor(Math.random()*consumables.length)];
-            }
-
+            DB.xp-=50; let item = ""; let attempts = 0;
+            do { item = LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)]; attempts++; if (item.startsWith('bg-') && DB.inventory.includes(item)) { item = "DUPE"; } } while (item === "DUPE" && attempts < 10);
+            if (item === "DUPE") { const consumables = LOOT_ITEMS.filter(i => !i.startsWith('bg-')); item = consumables[Math.floor(Math.random()*consumables.length)]; }
             DB.inventory.push(item);  
-            
-            const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)];  
-            const bub = document.getElementById('pet-speech');  
-            bub.innerText = speech; bub.classList.add('show');  
-            setTimeout(()=>bub.classList.remove('show'), 2000);  
-            
-            let msg = `Rx Filled!\n\nReceived: ${item}`;
-            if(item.startsWith('bg-')) {
-                const icon = BG_ICONS[item] || "🖼️";
-                msg += `\n(New System Wallpaper! Look for ${icon})`;
-            }
-            alert(msg);   
-            save(); loadUI();   
+            const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)]; const bub = document.getElementById('pet-speech'); bub.innerText = speech; bub.classList.add('show'); setTimeout(()=>bub.classList.remove('show'), 2000);  
+            let msg = `Rx Filled!\n\nReceived: ${item}`; if(item.startsWith('bg-')) { const icon = BG_ICONS[item] || "🖼️"; msg += `\n(New System Wallpaper! Look for ${icon})`; } alert(msg); save(); loadUI();   
         } else alert("Need 50 XP");   
     }  
   
-    // --- MISC ---  
+    // --- MISC & PRIVATE DIARY ---  
     function toggleCRT() { DB.settings.crt = document.getElementById('toggle-crt').checked; loadUI(); save(); }  
     function enterPin(n) { tempPin+=n; document.getElementById('pin-dots').innerText="*".repeat(tempPin.length); if(tempPin.length===4){ if(tempPin===DB.lock){ document.getElementById('lock-screen').style.display='none'; document.querySelector('.app-shell').style.display='flex'; refreshAll(); } else { tempPin=""; document.getElementById('pin-dots').innerText="ERR"; }}}  
     function clearPin(){ tempPin=""; document.getElementById('pin-dots').innerText=""; }  
     function setLock(){ const p=document.getElementById('pin-set').value; if(p.length===4){ DB.lock=p; save(); alert("Locked!"); closeModals(); }}  
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
-      
-    function importData(input) {   
-        const file = input.files[0]; if(!file) return;  
-        const reader = new FileReader();   
-        reader.onload=(e)=>{ 
-            try { 
-                const json = JSON.parse(e.target.result); 
-                DB = json; 
-                save(); 
-                alert("Backup Loaded Successfully!"); 
-                location.reload(); 
-            } catch(x) { 
-                alert("Error: Invalid Backup File."); 
-                console.error(x);
-            } 
-        };   
-        reader.readAsText(file);  
-    }  
+    function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); }  
   
     function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); }  
-    function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, t:t.value}); t.value=""; save(); renderDiary(); }}  
-    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; DB.diary.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${i},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }  
+    
+    // --- FIXED DIARY (PRIVATE) ---
+    function postDiary() { 
+        const t=document.getElementById('diary-in'); 
+        if(t.value){ 
+            DB.diary.unshift({
+                d:new Date().toLocaleDateString(), 
+                n:DB.profiles[DB.active].name, 
+                uid: DB.profiles[DB.active].id, // Tag with ID
+                t:t.value
+            }); 
+            t.value=""; save(); renderDiary(); 
+        }
+    }  
+    function renderDiary() { 
+        const f=document.getElementById('diary-feed'); f.innerHTML=""; 
+        const currentID = DB.profiles[DB.active].id;
+        
+        // Filter: Show only if UID matches current active ID
+        // Fallback: If entry has no UID (old data), show it anyway
+        const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid);
+
+        myEntries.forEach((e,i)=>{ 
+            f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; 
+        }); 
+    }  
+    
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
     function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }  
   
+    // --- FORCE NUKE SW ---
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) { for(let registration of registrations) { registration.unregister(); } });
+    }
 </script>  
 </body>  
 </html>
