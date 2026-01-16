@@ -65,7 +65,6 @@
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
-        /* FIXED: Lower blur amount prevents crashing */
         backdrop-filter: blur(10px); 
         -webkit-backdrop-filter: blur(10px);
         display: none; flex-direction: column; position: relative; height: 100%;  
@@ -76,22 +75,19 @@
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
-    /* --- FIXED GLIMMER ID CARD (PERFORMANCE OPTIMIZED) --- */  
+    /* --- FIXED GLIMMER ID CARD --- */  
     .id-card-wrap {  
         background: #fff; border-radius: 15px; padding: 0;  
         box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px;   
         position: relative; overflow: hidden; border: 1px solid #ccc;  
         min-height: 270px;
-        /* Fix for flickering */
         transform: translate3d(0,0,0); 
     }  
     .id-card-wrap::before {  
         content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;  
-        /* Simplified gradient for better performance */
         background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.2) 45%, rgba(0,255,255,0.3) 50%, rgba(255,255,0,0.2) 55%, transparent 60%);  
         mix-blend-mode: multiply; pointer-events: none; z-index: 10;  
         animation: foil 5s linear infinite; opacity: 0.6;  
-        /* Hardware Acceleration */
         will-change: transform;
     }  
     @keyframes foil { 
@@ -208,7 +204,12 @@
     <label class="btn-action" style="width:220px; background:#4fc3f7; text-align:center; display:block; cursor:pointer;">  
         📂 Load Backup  
         <input type="file" id="backup-input" style="display:none;" onchange="importData(this)">  
-    </label>  
+    </label>
+
+    <label class="btn-action" style="width:220px; background:#7e57c2; text-align:center; display:block; cursor:pointer; margin-top:10px;">  
+        👾 Import PluralKit  
+        <input type="file" id="pk-input" style="display:none;" onchange="importPluralKit(this)">  
+    </label>
 </div>  
 
 <div id="lock-screen">  
@@ -491,7 +492,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v74'); 
+        const saved = localStorage.getItem('seiren_fixed_v75'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -525,7 +526,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); }  
-    function save() { localStorage.setItem('seiren_fixed_v74', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v75', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -808,6 +809,53 @@
     function setLock(){ const p=document.getElementById('pin-set').value; if(p.length===4){ DB.lock=p; save(); alert("Locked!"); closeModals(); }}  
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
+    
+    // --- PLURALKIT IMPORT LOGIC ---
+    function importPluralKit(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const json = JSON.parse(e.target.result);
+                // Handle different PK export formats (sometimes wrapped in "members", sometimes just the object)
+                let members = json.members || json; 
+                if (!Array.isArray(members)) throw new Error("Invalid PK file");
+
+                let count = 0;
+                members.forEach(m => {
+                    // Check duplicates by name
+                    if (!DB.profiles.some(p => p.name === m.name)) {
+                        DB.profiles.push({
+                            name: m.name || "Unknown",
+                            av: m.avatar_url || DEFAULT_AV,
+                            // Map pronouns to sign (fits UI better), default to '?'
+                            sign: m.pronouns || "?", 
+                            // Map birthday to age if present, else empty
+                            age: m.birthday || "--",
+                            species: "System Member",
+                            height: "--",
+                            // Full bio goes here
+                            bio: m.description || "Imported from PluralKit",
+                            color: m.color ? "#"+m.color : "#ff69b4",
+                            id: m.id || Math.floor(Math.random()*900000),
+                            likes: [], dislikes: [], notes: ""
+                        });
+                        count++;
+                    }
+                });
+                
+                save();
+                alert(`Successfully imported ${count} members from PluralKit!`);
+                refreshAll();
+            } catch(err) {
+                alert("Error importing PK file. Make sure it is a valid system.json export.");
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    }
+
     function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); }  
   
     function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); }  
