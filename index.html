@@ -12,7 +12,6 @@
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
 
     <style>
-        /* --- CORE VARIABLES --- */
         :root {
             --main: #ff69b4; 
             --bg-overlay: rgba(255, 255, 255, 0.92);
@@ -33,11 +32,11 @@
             color: #444; 
         }
 
-        /* --- VISUAL FX --- */
+        /* --- FX --- */
         .scanlines {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999; display: none;
             background: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%); background-size: 100% 4px;
-            animation: scan 60s linear infinite; opacity: 0.6;
+            animation: scan 60s linear infinite; opacity: 0.4;
         }
         .dream-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; display: none;
@@ -58,18 +57,20 @@
         .page.active { display: block; }
         @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }
 
-        /* --- GLIMMER ID CARD (FIXED) --- */
+        /* --- GLIMMER ID CARD (FIXED CONTRAST) --- */
         .id-card-wrap {
             background: #fff; border-radius: 15px; padding: 0;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px; 
             position: relative; overflow: hidden; border: 1px solid #ccc;
             min-height: 270px; 
         }
+        
+        /* Holographic Effect - Lower Opacity to Read Text */
         .id-card-wrap::before {
             content: ""; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
-            background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.4) 45%, rgba(0,255,255,0.5) 50%, rgba(255,255,0,0.4) 55%, transparent 60%);
+            background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.2) 45%, rgba(0,255,255,0.3) 50%, rgba(255,255,0,0.2) 55%, transparent 60%);
             mix-blend-mode: multiply; pointer-events: none; z-index: 10;
-            animation: foil 6s linear infinite; opacity: 0.6;
+            animation: foil 6s linear infinite; opacity: 0.5;
         }
         @keyframes foil { 0% {transform:translate(0,0);} 100% {transform:translate(50%,50%);} }
 
@@ -77,12 +78,12 @@
         
         .id-header { 
             border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; font-weight: 900; letter-spacing: 1px; font-size: 0.7rem; color: #555;
+            display: flex; justify-content: space-between; font-weight: 900; letter-spacing: 1px; font-size: 0.7rem; color: #333;
         }
         
         .id-main { display: flex; gap: 15px; margin-bottom: 10px; }
         
-        /* THE FIX: Ensure this targets the IMG tag correctly */
+        /* AVATAR FIX: Use IMG tag styling */
         .id-photo { 
             width: 90px; height: 110px; background: #eee; border: 1px solid #999; 
             object-fit: cover; display: block; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
@@ -90,18 +91,24 @@
         
         .id-details { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 5px; font-size: 0.7rem; }
         .id-label { color: var(--main); font-weight: bold; font-size: 0.6rem; text-transform: uppercase; display:block; }
-        .id-val { color: #222; font-weight: bold; display: block; border-bottom: 1px dotted #ccc; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        /* TEXT CONTRAST FIX: Use Dark Gray (#222) instead of White/Light Gray */
+        .id-val { color: #222; font-weight: bold; display: block; border-bottom: 1px dotted #888; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .bio-section {
             background: rgba(255,255,255,0.8); border: 1px solid #ddd; border-radius: 8px;
-            padding: 8px; font-size: 0.75rem; color: #333; flex: 1;
+            padding: 8px; font-size: 0.75rem; color: #222; flex: 1;
             overflow-y: auto; max-height: 80px; margin-top: 5px; white-space: pre-wrap;
         }
 
         /* --- DASHBOARD --- */
-        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .dash-btn { background: white; border: 2px solid #eee; border-radius: 18px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; }
-        .dash-btn:active { transform: scale(0.96); background: #f9f9f9; border-color: var(--main); }
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .dash-btn { 
+            background: white; border: 2px solid #ffb7b2; border-radius: 20px; padding: 15px; 
+            text-align: center; font-weight: bold; cursor: pointer; color: #555;
+            box-shadow: 0 4px 0 #eee; transition: transform 0.1s;
+        }
+        .dash-btn:active { transform: translateY(4px); box-shadow: none; border-color: var(--main); }
 
         /* --- CHAT --- */
         .chat-shell { display: flex; height: 100%; border: 2px solid var(--main); border-radius: 15px; background: white; overflow: hidden; position:relative; }
@@ -118,7 +125,7 @@
         .chat-feed { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background-image: radial-gradient(#f0f0f0 1px, transparent 1px); background-size: 20px 20px; }
         .pk-msg { display: flex; gap: 10px; align-items: flex-start; }
         .pk-av { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-        .pk-img { max-width: 150px; border-radius: 10px; margin-top: 5px; display: block; border: 2px solid #eee;}
+        .pk-img { max-width: 150px; border-radius: 10px; margin-top: 5px; display: block; border: 2px solid #eee; }
         .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; background: #fafafa; }
 
         /* --- PET --- */
@@ -157,7 +164,8 @@
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .modal-card { background: white; width: 90%; max-width: 380px; border-radius: 25px; padding: 25px; border: 4px ridge var(--main); max-height: 85vh; overflow-y: auto; }
-        input, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border: 2px inset #eee; border-radius: 10px; font-family: inherit;}
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border: 2px inset #eee; border-radius: 10px; font-family: inherit; outline:none;}
+        input:focus, textarea:focus { border-color: var(--main); background: #fff; }
 
         /* --- LOCK SCREEN --- */
         #lock-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--main); z-index: 20000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
@@ -262,6 +270,7 @@
 
     <div id="page-pharmacy" class="page">
         <h2 style="color:var(--main); text-align:center; margin-bottom:15px;">Pharmacy & Care</h2>
+        
         <div style="background:white; padding:15px; border-radius:15px; border:2px solid var(--main);">
             <div id="receipt-list" style="max-height:150px; overflow-y:auto; font-family:var(--font-mono); border-bottom:1px dashed #ccc; margin-bottom:10px; min-height:50px;"></div>
             
@@ -379,11 +388,22 @@
     // --- STATE ---
     let DB = {
         sysName: "SEIREN OS",
-        profiles: [], active: 0, xp: 0, inventory: ["🎀", "bg-hearts"], decor: [], 
-        lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',
-        diary: [], settings: { crt: true }
+        profiles: [], 
+        active: 0, 
+        xp: 0, 
+        inventory: ["🎀", "bg-hearts"], 
+        decor: [], 
+        lock: null,
+        channels: { 'gen': {name:'general', msgs:[]} }, 
+        curChan: 'gen',
+        diary: [], 
+        settings: { crt: true }
     };
-    let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";
+
+    let pendingXP = 0; 
+    let tempPin = ""; 
+    let uploadedAv = ""; 
+    let chatImg = "";
 
     const LOOT_ITEMS = ["🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴", "bg-clouds", "bg-night", "bg-forest"];
     const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!"];
@@ -565,7 +585,7 @@
     }
     function clearDecor(){ DB.decor=[]; save(); renderDecor(); closeModals(); }
 
-    // --- PHARMACY ---
+    // --- PHARMACY (NEW RX LOGIC) ---
     function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div>${i} SYMPTOM ... ${p} XP</div>`; pendingXP+=p; }
     function processReceipt() { if(pendingXP>0){ DB.xp+=pendingXP; alert(`Processed! +${pendingXP} XP`); pendingXP=0; document.getElementById('receipt-list').innerHTML=""; save(); loadUI(); } }
     function fillPrescription() { 
@@ -589,16 +609,23 @@
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }
     
+    // BACKUP FIX
     function importData(input) { 
-        const file = input.files[0]; if(!file) return;
+        const file = input.files[0]; 
+        if(!file) return;
         const reader = new FileReader(); 
-        reader.onload=(e)=>{ try{ DB=JSON.parse(e.target.result); save(); alert("Loaded!"); location.reload(); } catch(x){ alert("Error"); } }; 
+        reader.onload=(e)=>{ 
+            try{ 
+                DB=JSON.parse(e.target.result); save(); alert("Loaded!"); location.reload(); 
+            } catch(x){ alert("Error"); }
+        }; 
         reader.readAsText(file);
+        input.value = ''; // Reset input to allow reloading same file
     }
 
     function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); }
     function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, t:t.value}); t.value=""; save(); renderDiary(); }}
-    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; DB.diary.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${i},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }
+    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; DB.diary.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-btn-corner" onclick="if(confirm('Del?')){DB.diary.splice(${i},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }
     function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }
     function openProfileModal() {
