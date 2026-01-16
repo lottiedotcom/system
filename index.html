@@ -61,7 +61,7 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL (OPTIMIZED) --- */  
+    /* --- APP SHELL --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
@@ -75,7 +75,7 @@
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
-    /* --- FIXED GLIMMER ID CARD --- */  
+    /* --- ID CARD --- */  
     .id-card-wrap {  
         background: #fff; border-radius: 15px; padding: 0;  
         box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px;   
@@ -465,8 +465,8 @@
         inventory: [], 
         decor: [],   
         cofront: [], 
-        frontHistory: [], // New History Log
-        currentFrontStart: 0, // Time tracking
+        frontHistory: [], 
+        currentFrontStart: 0, 
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true }  
     };  
@@ -492,7 +492,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v75'); 
+        const saved = localStorage.getItem('seiren_fixed_v77'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -526,7 +526,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); }  
-    function save() { localStorage.setItem('seiren_fixed_v75', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v77', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -736,13 +736,26 @@
         list.appendChild(add);  
         const c = DB.channels[DB.curChan]; document.getElementById('chan-title').innerText = "#" + c.name;  
         const feed = document.getElementById('chat-feed'); feed.innerHTML="";  
-        c.msgs.forEach(m => { const imgHTML = m.img ? `<img src="${m.img}" class="pk-img">` : ''; feed.innerHTML += `<div class="pk-msg"><img src="${m.av}" class="pk-av" style="background:${m.color}"><div><div class="pk-name" style="color:${m.color}">${m.name}</div><div class="pk-txt">${m.txt}${imgHTML}</div></div></div>`; });  
+        c.msgs.forEach(m => { 
+            const imgHTML = m.img ? `<img src="${m.img}" class="pk-img">` : ''; 
+            // ADDED TIMESTAMP DISPLAY HERE
+            feed.innerHTML += `
+            <div class="pk-msg">
+                <img src="${m.av}" class="pk-av" style="background:${m.color}">
+                <div>
+                    <div class="pk-name" style="color:${m.color}">${m.name} <span style="color:#aaa; font-size:0.7em;">${m.time||''}</span></div>
+                    <div class="pk-txt">${m.txt}${imgHTML}</div>
+                </div>
+            </div>`; 
+        });  
         feed.scrollTop = feed.scrollHeight;  
     }  
     function sendMsg() {  
         const i = document.getElementById('msg-in'); if(!i.value && !chatImg) return;  
         const p = DB.profiles[DB.active];  
-        DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value, img:chatImg });  
+        // ADDED TIMESTAMP HERE
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value, img:chatImg, time:time });  
         i.value=""; chatImg=""; save(); renderChat();  
     }  
   
@@ -761,32 +774,72 @@
         });  
     }  
     
-    // --- FIXED BACKPACK ---
+    // --- FIXED BACKPACK (STACKING LOGIC) ---
     function openBackpack() {  
         document.getElementById('modal-backpack').style.display='flex';  
         const g = document.getElementById('inventory-grid'); g.innerHTML="";  
         if(DB.inventory.length === 0) document.getElementById('empty-msg').style.display='block'; else document.getElementById('empty-msg').style.display='none';
 
-        // Add "Clear Wallpaper" option manually
+        // Add "Clear Wallpaper" option
         const clearBtn = document.createElement('div'); 
         clearBtn.style.fontSize="1.5rem"; clearBtn.innerText="🚫"; 
         clearBtn.style.border="2px dashed red"; clearBtn.style.padding="10px"; clearBtn.style.borderRadius="10px"; clearBtn.style.cursor="pointer";
         clearBtn.onclick = () => { DB.profiles[DB.active].wallpaper = ""; save(); refreshAll(); alert("Wallpaper Removed"); };
         g.appendChild(clearBtn);
 
-        const sortedInv = [...DB.inventory].sort((a,b) => { const aBg = a.startsWith('bg-'); const bBg = b.startsWith('bg-'); return aBg === bBg ? 0 : aBg ? 1 : -1; });
-        sortedInv.forEach((item, index) => {  
-            const b = document.createElement('div'); b.style.fontSize="2.5rem"; b.style.cursor="pointer"; b.innerText=item;  
+        // 1. COUNT ITEMS
+        const counts = {};
+        DB.inventory.forEach(x => { counts[x] = (counts[x] || 0) + 1; });
+
+        // 2. SORT AND DISPLAY UNIQUE ITEMS
+        const uniqueItems = Object.keys(counts).sort((a,b) => { 
+            const aBg = a.startsWith('bg-'); const bBg = b.startsWith('bg-'); 
+            return aBg === bBg ? 0 : aBg ? 1 : -1; 
+        });
+
+        uniqueItems.forEach(item => {  
+            const b = document.createElement('div'); 
+            b.style.fontSize="2.5rem"; 
+            b.style.cursor="pointer"; 
+            b.style.position="relative"; // For badge positioning
+            
+            // Display Count Badge if > 1
+            let badge = "";
+            if(counts[item] > 1 && !item.startsWith('bg-')) {
+                badge = `<span style="position:absolute; bottom:0; right:0; background:red; color:white; font-size:0.6rem; padding:2px 5px; border-radius:10px;">x${counts[item]}</span>`;
+            }
+            
             if(item.startsWith('bg-')) {  
-                let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerText=icon; b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
+                let icon = BG_ICONS[item] || "🖼️"; 
+                b.style.fontSize="1.5rem"; b.innerHTML=icon; // InnerHTML used for badge if needed (bg usually unique)
+                b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
                 b.onclick = () => { DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); };  
             } else {  
-                b.onclick = () => { DB.decor.push({i:item, x:50, y:50}); const realIndex = DB.inventory.indexOf(item); if(realIndex > -1) DB.inventory.splice(realIndex, 1); save(); closeModals(); nav('pet'); };  
+                b.innerHTML = item + badge; // Add icon and badge
+                b.onclick = () => { 
+                    DB.decor.push({i:item, x:50, y:50}); 
+                    // Remove ONE instance of this item
+                    const realIndex = DB.inventory.indexOf(item); 
+                    if(realIndex > -1) DB.inventory.splice(realIndex, 1); 
+                    save(); closeModals(); nav('pet'); 
+                };  
             }  
             g.appendChild(b);  
         });  
     }  
-    function clearDecor(){ DB.decor=[]; save(); renderDecor(); closeModals(); }  
+
+    // --- FIXED CLEAR DECOR (RETURN TO BACKPACK) ---
+    function clearDecor(){ 
+        // Iterate through decor and push items back to inventory
+        DB.decor.forEach(d => {
+            DB.inventory.push(d.i);
+        });
+        DB.decor=[]; 
+        save(); 
+        renderDecor(); 
+        closeModals(); 
+        alert("Items returned to Backpack!");
+    }  
   
     // --- PHARMACY ---  
     function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div>${i} ... ${p} XP</div>`; pendingXP+=p; }  
@@ -809,55 +862,29 @@
     function setLock(){ const p=document.getElementById('pin-set').value; if(p.length===4){ DB.lock=p; save(); alert("Locked!"); closeModals(); }}  
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
-    
-    // --- PLURALKIT IMPORT LOGIC ---
+    function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); }  
+    // PK Import
     function importPluralKit(input) {
-        const file = input.files[0];
-        if(!file) return;
+        const file = input.files[0]; if(!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
                 const json = JSON.parse(e.target.result);
-                // Handle different PK export formats (sometimes wrapped in "members", sometimes just the object)
-                let members = json.members || json; 
-                if (!Array.isArray(members)) throw new Error("Invalid PK file");
-
+                let members = json.members || json; if (!Array.isArray(members)) throw new Error("Invalid PK file");
                 let count = 0;
                 members.forEach(m => {
-                    // Check duplicates by name
                     if (!DB.profiles.some(p => p.name === m.name)) {
                         DB.profiles.push({
-                            name: m.name || "Unknown",
-                            av: m.avatar_url || DEFAULT_AV,
-                            // Map pronouns to sign (fits UI better), default to '?'
-                            sign: m.pronouns || "?", 
-                            // Map birthday to age if present, else empty
-                            age: m.birthday || "--",
-                            species: "System Member",
-                            height: "--",
-                            // Full bio goes here
-                            bio: m.description || "Imported from PluralKit",
-                            color: m.color ? "#"+m.color : "#ff69b4",
-                            id: m.id || Math.floor(Math.random()*900000),
-                            likes: [], dislikes: [], notes: ""
-                        });
-                        count++;
+                            name: m.name || "Unknown", av: m.avatar_url || DEFAULT_AV, sign: m.pronouns || "?", age: m.birthday || "--", species: "System Member", height: "--", bio: m.description || "Imported from PluralKit", color: m.color ? "#"+m.color : "#ff69b4", id: m.id || Math.floor(Math.random()*900000), likes: [], dislikes: [], notes: ""
+                        }); count++;
                     }
                 });
-                
-                save();
-                alert(`Successfully imported ${count} members from PluralKit!`);
-                refreshAll();
-            } catch(err) {
-                alert("Error importing PK file. Make sure it is a valid system.json export.");
-                console.error(err);
-            }
+                save(); alert(`Successfully imported ${count} members from PluralKit!`); refreshAll();
+            } catch(err) { alert("Error importing PK file. Make sure it is a valid system.json export."); console.error(err); }
         };
         reader.readAsText(file);
     }
 
-    function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); }  
-  
     function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); }  
     
     // --- FIXED DIARY (PRIVATE) ---
@@ -876,11 +903,7 @@
     function renderDiary() { 
         const f=document.getElementById('diary-feed'); f.innerHTML=""; 
         const currentID = DB.profiles[DB.active].id;
-        
-        // Filter: Show only if UID matches current active ID
-        // Fallback: If entry has no UID (old data), show it anyway
         const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid);
-
         myEntries.forEach((e,i)=>{ 
             f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; 
         }); 
@@ -896,3 +919,4 @@
 </script>  
 </body>  
 </html>
+
