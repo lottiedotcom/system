@@ -34,7 +34,7 @@
         color: #444;   
     }  
 
-    /* --- BACKGROUND PATTERNS --- */
+    /* --- NEW PATTERNED BACKGROUNDS --- */
     .bg-polka {
         background-color: #fff0f5 !important;
         background-image: radial-gradient(var(--main) 20%, transparent 20%) !important;
@@ -51,6 +51,20 @@
         background-color: #fff !important;
         background-image: linear-gradient(rgba(255, 105, 180, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 105, 180, 0.3) 1px, transparent 1px) !important;
         background-size: 20px 20px !important;
+        background-attachment: fixed !important;
+    }
+    .bg-checkers {
+        background-color: #fff !important;
+        background-image: repeating-linear-gradient(45deg, rgba(255,105,180,0.15) 25%, transparent 25%, transparent 75%, rgba(255,105,180,0.15) 75%, rgba(255,105,180,0.15)), repeating-linear-gradient(45deg, rgba(255,105,180,0.15) 25%, #fff 25%, #fff 75%, rgba(255,105,180,0.15) 75%, rgba(255,105,180,0.15)) !important;
+        background-position: 0 0, 10px 10px !important;
+        background-size: 20px 20px !important;
+        background-attachment: fixed !important;
+    }
+    .bg-cross {
+        background-color: #fff0f5 !important;
+        background-image: radial-gradient(var(--main) 2px, transparent 2px), radial-gradient(var(--main) 2px, transparent 2px) !important;
+        background-size: 20px 20px !important;
+        background-position: 0 0, 10px 10px !important;
         background-attachment: fixed !important;
     }
     .bg-clouds { 
@@ -413,8 +427,12 @@
     };  
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
   
-    // LOOT TABLE 
-    const LOOT_ITEMS = ["🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴", "bg-clouds", "bg-night", "bg-polka", "bg-lines", "bg-grid"];  
+    // LOOT TABLE - EXPANDED TO REDUCE DUPLICATES
+    const LOOT_ITEMS = [
+        "🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴",
+        "🥤", "🍰", "🍙", "🍬", "🍭", "🎨", "🪁", "☂️", "🎵", "📷", "💡", "🔮", "🧹", "🪴",
+        "bg-clouds", "bg-night", "bg-polka", "bg-lines", "bg-grid", "bg-checkers", "bg-cross"
+    ];  
     const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!"];  
     const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
     const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
@@ -425,11 +443,13 @@
         'bg-night': '🌙',
         'bg-polka': '⚪',
         'bg-lines': '🥢',
-        'bg-grid': '▦'
+        'bg-grid': '▦',
+        'bg-checkers': '🏁',
+        'bg-cross': '➕'
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v65'); 
+        const saved = localStorage.getItem('seiren_fixed_v66'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -450,7 +470,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); }  
-    function save() { localStorage.setItem('seiren_fixed_v65', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v66', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -638,7 +658,7 @@
         });  
     }  
     
-    // --- FIXED BACKPACK (CONSUMABLE ITEMS) ---
+    // --- FIXED BACKPACK ---
     function openBackpack() {  
         document.getElementById('modal-backpack').style.display='flex';  
         const g = document.getElementById('inventory-grid'); g.innerHTML="";  
@@ -659,7 +679,7 @@
             b.style.cursor="pointer"; 
             b.innerText=item;  
             
-            // CHECK IF ITEM IS BACKGROUND (PERMANENT)
+            // CHECK IF ITEM IS BACKGROUND
             if(item.startsWith('bg-')) {  
                 let icon = BG_ICONS[item] || "🖼️";
                 b.style.fontSize="1.5rem"; 
@@ -677,15 +697,9 @@
             } else {  
                 // CONSUMABLE DECOR ITEM
                 b.onclick = () => { 
-                    // Add to room
                     DB.decor.push({i:item, x:50, y:50}); 
-                    
-                    // Remove SPECIFIC item from inventory (find index in main DB array)
                     const realIndex = DB.inventory.indexOf(item);
-                    if(realIndex > -1) {
-                        DB.inventory.splice(realIndex, 1);
-                    }
-                    
+                    if(realIndex > -1) DB.inventory.splice(realIndex, 1);
                     save(); 
                     closeModals(); 
                     nav('pet'); 
@@ -695,9 +709,6 @@
         });  
     }  
     function clearDecor(){ 
-        // OPTIONAL: Return items to inventory when cleared? 
-        // For now, let's just clear them (hard reset) or we could push them back.
-        // Let's just clear to keep it simple as requested.
         DB.decor=[]; 
         save(); 
         renderDecor(); 
@@ -715,10 +726,32 @@
             pendingXP=0; document.getElementById('receipt-list').innerHTML=""; save(); loadUI(); 
         } 
     }  
+
+    // FIXED: FILL PRESCRIPTION (NO DUPLICATE BACKGROUNDS)
     function fillPrescription() {   
         if(DB.xp>=50){   
-            DB.xp-=50; const item=LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)];   
+            DB.xp-=50; 
+            let item = "";
+            let attempts = 0;
+            
+            // Try 10 times to find a unique item if it's a background
+            do {
+                item = LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)];
+                attempts++;
+                // If it's a background and we already have it, re-roll
+                if (item.startsWith('bg-') && DB.inventory.includes(item)) {
+                    item = "DUPE"; 
+                }
+            } while (item === "DUPE" && attempts < 10);
+
+            // If we still rolled a dupe background after 10 tries, give a consumable instead
+            if (item === "DUPE") {
+                const consumables = LOOT_ITEMS.filter(i => !i.startsWith('bg-'));
+                item = consumables[Math.floor(Math.random()*consumables.length)];
+            }
+
             DB.inventory.push(item);  
+            
             const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)];  
             const bub = document.getElementById('pet-speech');  
             bub.innerText = speech; bub.classList.add('show');  
