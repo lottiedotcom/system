@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ff69b4">
-    <title>Seiren OS: Care Edition</title>
+    <title>Seiren OS: Final Mix</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
@@ -14,7 +14,7 @@
     <style>
         :root {
             --main: #ff69b4; 
-            --bg-overlay: rgba(255,255,255,0.85);
+            --bg-overlay: rgba(255,255,255,0.9);
             --font-main: 'Verdana', sans-serif;
             --font-receipt: 'Courier New', monospace;
         }
@@ -23,21 +23,10 @@
         body {
             font-family: var(--font-main);
             background-color: #ffe4e1; 
-            background-size: cover; background-position: center; transition: background 0.5s;
+            background-image: radial-gradient(#ffb7b2 15%, transparent 16%), radial-gradient(#ffb7b2 15%, transparent 16%);
+            background-size: 20px 20px; background-position: 0 0, 10px 10px;
             margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
             color: #444; user-select: none; -webkit-user-select: none;
-        }
-
-        /* --- VISUAL FX --- */
-        .scanlines {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.05) 50%);
-            background-size: 100% 4px; pointer-events: none; z-index: 9999;
-        }
-        .vignette {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: radial-gradient(circle, transparent 60%, rgba(255,182,193,0.4) 100%);
-            pointer-events: none; z-index: 9998;
         }
 
         /* --- APP CONTAINER --- */
@@ -52,7 +41,7 @@
         /* --- LOCK SCREEN --- */
         #lock-screen {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: #ff69b4; z-index: 20000;
+            background: var(--main); z-index: 20000;
             display: none; flex-direction: column; align-items: center; justify-content: center;
             color: white; transition: transform 0.3s ease-in-out;
         }
@@ -70,17 +59,38 @@
         .page.active { display: block; }
         @keyframes fadeIn { from {opacity:0; transform:translateY(5px);} to {opacity:1; transform:translateY(0);} }
 
-        /* --- DASHBOARD --- */
-        .dash-card {
-            background: white; border-radius: 20px; padding: 20px; text-align: center;
-            border: 2px solid var(--main); box-shadow: 4px 4px 0 rgba(0,0,0,0.05);
+        /* --- REALISTIC CUTE ID CARD --- */
+        .id-card-wrap {
+            background: white; border: 4px ridge var(--main); border-radius: 20px;
+            padding: 5px; box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
             margin-bottom: 20px; position: relative; overflow: hidden;
         }
-        .dash-avatar {
-            width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--main);
-            margin: 0 auto 10px; background-size: cover; background-position: center; background-color: #eee;
+        .id-card-wrap::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg); animation: shine 4s infinite; pointer-events: none;
         }
-        
+        @keyframes shine { 0% {left: -100%;} 20% {left: 200%;} 100% {left: 200%;} }
+
+        .id-inner {
+            background: #fff0f5;
+            background-image: radial-gradient(#ffc1e3 2px, transparent 2px); background-size: 15px 15px;
+            border: 2px dashed #d12e87; border-radius: 15px; padding: 15px; position: relative;
+        }
+        .id-top { display: flex; justify-content: space-between; border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; }
+        .id-body { display: flex; gap: 10px; align-items: center; }
+        .id-photo { 
+            width: 80px; height: 80px; border-radius: 50%; border: 3px outset white; 
+            outline: 3px solid var(--main); object-fit: cover; background: white;
+        }
+        .id-data { flex: 1; }
+        .id-stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.65rem;
+            background: rgba(255,255,255,0.9); padding: 5px; border-radius: 5px; margin-top:5px; border: 1px inset white;
+        }
+        .signature { font-family: 'Brush Script MT', cursive; font-size: 1.2rem; color: #4fc3f7; transform: rotate(-5deg); display: inline-block; margin-right: 10px; }
+
+        /* --- DASHBOARD WIDGETS --- */
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .dash-btn {
             background: white; border: 2px solid #eee; border-radius: 15px; padding: 15px;
@@ -89,29 +99,17 @@
         .dash-btn:active { transform: scale(0.98); background: #f9f9f9; }
 
         /* --- PHARMACY (RECEIPT SYSTEM) --- */
-        .pharmacy-container {
-            display: flex; flex-direction: column; gap: 15px;
-        }
+        .pharmacy-container { display: flex; flex-direction: column; gap: 15px; }
         .receipt-paper {
             background: #fff; border: 1px solid #ccc; padding: 15px;
             font-family: var(--font-receipt); font-size: 0.75rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        .receipt-paper::before {
-            content: ''; position: absolute; top: -5px; left: 0; width: 100%; height: 10px;
-            background: radial-gradient(circle, transparent, transparent 50%, #fff 50%, #fff 100%) -7px -8px / 16px 16px repeat-x;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative;
         }
         .receipt-list { max-height: 150px; overflow-y: auto; border-bottom: 2px dashed #000; margin-bottom: 10px; padding-bottom: 10px; }
         .receipt-entry { display: flex; justify-content: space-between; margin-bottom: 4px; }
-        
         .mood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .mood-btn {
-            background: white; border: 1px solid #ccc; border-radius: 8px; height: 40px;
-            font-size: 1.4rem; cursor: pointer; transition: 0.1s;
-        }
+        .mood-btn { background: white; border: 1px solid #ccc; border-radius: 8px; height: 40px; font-size: 1.4rem; cursor: pointer; transition: 0.1s; }
         .mood-btn:active { background: var(--main); border-color: var(--main); }
-
         .prescription-btn {
             background: #4db6ac; color: white; border: none; padding: 15px; border-radius: 10px;
             font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -130,21 +128,25 @@
             position: absolute; font-size: 2.5rem; cursor: grab; z-index: 10;
             filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1));
         }
-        .sticker:active { cursor: grabbing; transform: scale(1.1); z-index: 20; }
 
-        /* --- DISCORD CHAT --- */
+        /* --- DISCORD CHAT & CHANNELS --- */
         .chat-shell { display: flex; height: 100%; border: 2px solid var(--main); border-radius: 15px; background: white; overflow: hidden; }
-        .channel-list { width: 60px; background: #f0f0f0; border-right: 1px solid #eee; padding-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .chan-btn { width: 40px; height: 40px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #666; cursor: pointer; }
+        .channel-list { width: 70px; background: #f0f0f0; border-right: 1px solid #eee; padding-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 10px; overflow-y:auto;}
+        .chan-btn { width: 45px; height: 45px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #666; cursor: pointer; border: 2px solid white; position: relative; }
         .chan-btn.active { background: var(--main); color: white; border-radius: 12px; }
+        .del-chan { position: absolute; top:-5px; right:-5px; background:red; color:white; width:15px; height:15px; border-radius:50%; font-size:10px; display:none; align-items:center; justify-content:center;}
+        .chan-btn:hover .del-chan { display:flex; }
         
         .chat-view { flex: 1; display: flex; flex-direction: column; }
         .chat-feed { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
-        
         .pk-msg { display: flex; gap: 10px; align-items: flex-start; }
         .pk-av { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
         .pk-name { font-size: 0.8rem; font-weight: bold; margin-bottom: 2px; }
         .pk-txt { font-size: 0.85rem; color: #444; line-height: 1.3; }
+
+        /* --- DIARY --- */
+        .diary-entry { background: white; padding: 10px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--main); position: relative; }
+        .del-diary { position: absolute; top: 5px; right: 5px; color: red; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
 
         /* --- NAV --- */
         .dock {
@@ -171,17 +173,12 @@
             background: #eee; padding: 10px; border-radius: 10px; width: 100%;
             text-align: center; margin-bottom: 10px; cursor: pointer; border: 2px dashed #ccc;
         }
-
-        .btn-action {
-            background: var(--main); color: white; padding: 10px; width: 100%; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;
-        }
+        .btn-action { background: var(--main); color: white; padding: 10px; width: 100%; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        input { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
 
     </style>
 </head>
 <body>
-
-<div class="scanlines"></div>
-<div class="vignette"></div>
 
 <div id="lock-screen">
     <div style="font-size:3rem; margin-bottom:20px;">🔒</div>
@@ -204,49 +201,59 @@
 
 <div class="app-shell" id="app">
     
-    <div id="page-dash" class="page active" style="padding-top:40px;">
-        <div class="dash-card">
-            <div id="dash-av" class="dash-avatar"></div>
-            <h2 id="dash-name" style="margin:0; color:var(--main);">User</h2>
-            <small id="dash-id" style="color:#999;">ID: ???</small>
-            <div style="margin-top:15px; background:#f9f9f9; padding:10px; border-radius:10px;">
-                <b>Care Points:</b> <span id="cp-display">0</span> 💊
+    <div id="page-dash" class="page active" style="padding-top:20px;">
+        
+        <div class="id-card-wrap">
+            <div class="id-inner">
+                <div style="position:absolute; top:-5px; right:-5px; font-size:2rem; transform:rotate(15deg);">🎀</div>
+                <div class="id-top">
+                    <span style="font-size:0.7rem; font-weight:bold; color:var(--dark);">SEIREN GOV</span>
+                    <span style="font-size:0.6rem; color:#aaa; font-weight:bold;">ID CARD</span>
+                </div>
+                <div class="id-body">
+                    <div id="dash-av" class="id-photo" style="background-size:cover; background-position:center;"></div>
+                    <div class="id-data">
+                        <div id="dash-name" style="font-size:1.3rem; font-weight:bold; color:var(--dark); line-height:1;">User</div>
+                        <div style="font-size:0.7rem; font-style:italic; color:#888; margin-bottom:5px;">System Member</div>
+                        <div class="id-stats-grid">
+                            <span><b>ID:</b> <span id="dash-id">000</span></span>
+                            <span><b>Sign:</b> <span id="dash-sign">?</span></span>
+                            <span><b>Type:</b> <span id="dash-species">?</span></span>
+                            <span><b>Hgt:</b> <span id="dash-height">?</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; font-size:0.6rem; color:var(--blue);">
+                    AUTHORIZED SIGNATURE: <span class="signature" id="dash-sig">User</span>
+                </div>
             </div>
         </div>
 
+        <div style="background:white; padding:10px; border-radius:10px; text-align:center; margin-bottom:15px; border:2px inset #eee;">
+            <b>Care Points:</b> <span id="cp-display">0</span> 💊
+        </div>
+
         <div class="dash-grid">
-            <div class="dash-btn" onclick="openProfileModal()">
-                👥<br>Switch
-            </div>
-            <div class="dash-btn" onclick="openLockModal()">
-                🔒<br>Security
-            </div>
-            <div class="dash-btn" onclick="openBackpack()">
-                🎒<br>Meds/Decor
-            </div>
-            <div class="dash-btn" onclick="nav('pharmacy')">
-                🏥<br>Pharmacy
-            </div>
+            <div class="dash-btn" onclick="openProfileModal()">👥<br>Switch</div>
+            <div class="dash-btn" onclick="openLockModal()">🔒<br>Security</div>
+            <div class="dash-btn" onclick="openBackpack()">🎒<br>Meds/Decor</div>
+            <div class="dash-btn" onclick="nav('pharmacy')">🏥<br>Pharmacy</div>
         </div>
     </div>
 
     <div id="page-pharmacy" class="page">
         <h2 style="color:var(--main); text-align:center;">Seiren Care Center</h2>
-        
         <div class="pharmacy-container">
             <div class="receipt-paper">
                 <div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:5px; margin-bottom:5px;">
-                    SEIREN HEALTH<br>
-                    SYMPTOM LOG
+                    SEIREN HEALTH<br>SYMPTOM LOG
                 </div>
                 <div id="receipt-list" class="receipt-list"></div>
                 <div style="display:flex; justify-content:space-between; font-weight:bold;">
-                    <span>PENDING:</span>
-                    <span>+<span id="pending-pts">0</span> CP</span>
+                    <span>PENDING:</span><span>+<span id="pending-pts">0</span> CP</span>
                 </div>
             </div>
 
-            <div style="text-align:center; font-size:0.8rem; color:#666;">LOG SYMPTOMS TO PRINT:</div>
             <div class="mood-grid">
                 <button class="mood-btn" onclick="logMood('😊', 5)">😊</button>
                 <button class="mood-btn" onclick="logMood('😢', 10)">😢</button>
@@ -257,17 +264,11 @@
                 <button class="mood-btn" onclick="logMood('💀', 15)">💀</button>
                 <button class="mood-btn" onclick="logMood('💖', 5)">💖</button>
             </div>
-
             <button class="btn-action" style="background:#888;" onclick="printReceipt()">🖨️ PROCESS RECEIPT</button>
-
-            <hr style="border:1px dashed #ccc; width:100%;">
-
-            <div style="background:white; padding:15px; border-radius:15px; border:2px solid #4db6ac;">
+            <div style="background:white; padding:15px; border-radius:15px; border:2px solid #4db6ac; margin-top:10px;">
                 <div style="text-align:center; font-weight:bold; color:#00695c;">PHARMACY COUNTER</div>
                 <p style="text-align:center; font-size:0.8rem; margin:5px 0;">Cost: 50 Care Points</p>
-                <button class="prescription-btn" onclick="fillPrescription()">
-                    💊 FILL PRESCRIPTION
-                </button>
+                <button class="prescription-btn" onclick="fillPrescription()">💊 FILL PRESCRIPTION</button>
             </div>
         </div>
     </div>
@@ -278,22 +279,31 @@
             <div id="decor-layer"></div>
             <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img">
         </div>
-        <p style="text-align:center; font-size:0.8rem; color:#666;">Drag prescribed stickers from your backpack!</p>
     </div>
 
     <div id="page-chat" class="page" style="height:100%; padding-bottom:80px;">
         <div class="chat-shell">
-            <div class="channel-list" id="chan-list">
-                </div>
+            <div class="channel-list" id="chan-list"></div>
             <div class="chat-view">
-                <div style="padding:10px; border-bottom:1px solid #eee; font-weight:bold; color:var(--main);" id="chan-title">#general</div>
+                <div style="padding:10px; border-bottom:1px solid #eee; font-weight:bold; color:var(--main); display:flex; justify-content:space-between;">
+                    <span id="chan-title">#general</span>
+                </div>
                 <div class="chat-feed" id="chat-feed"></div>
                 <div style="padding:10px; border-top:1px solid #eee;">
-                    <input type="text" id="msg-in" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;" placeholder="Message...">
-                    <button onclick="sendMsg()" style="margin-top:5px; width:100%; padding:8px; background:var(--main); color:white; border:none; border-radius:5px;">Send</button>
+                    <input type="text" id="msg-in" style="width:100%;" placeholder="Message...">
+                    <button class="btn-action" onclick="sendMsg()">Send</button>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="page-diary" class="page">
+        <h2 style="color:var(--main); text-align:center;">System Diary</h2>
+        <div style="margin-bottom:15px;">
+            <textarea id="diary-in" style="width:100%; height:80px; padding:10px;" placeholder="Write entry..."></textarea>
+            <button class="btn-action" onclick="postDiary()">Save Entry</button>
+        </div>
+        <div id="diary-feed"></div>
     </div>
 
     <div class="dock">
@@ -301,6 +311,7 @@
         <button class="dock-btn" onclick="nav('pharmacy')">🏥</button>
         <button class="dock-btn" onclick="nav('pet')">🍤</button>
         <button class="dock-btn" onclick="nav('chat')">💬</button>
+        <button class="dock-btn" onclick="nav('diary')">📓</button>
     </div>
 
 </div>
@@ -311,10 +322,15 @@
         <div id="prof-list" style="margin-bottom:15px; max-height:150px; overflow-y:auto;"></div>
         <hr>
         <h4>New ID</h4>
-        <input type="text" id="new-name" placeholder="Name" style="width:100%; margin-bottom:5px; padding:8px;">
+        <input type="text" id="new-name" placeholder="Name">
+        <div style="display:flex; gap:5px;">
+            <input type="text" id="new-sign" placeholder="Sign (Leo, etc)">
+            <input type="text" id="new-species" placeholder="Species (Elf..)">
+        </div>
+        <input type="text" id="new-height" placeholder="Height">
         
         <label class="file-upload-btn">
-            📂 Upload Avatar
+            📂 Upload Photo
             <input type="file" id="av-upload" accept="image/*" style="display:none;" onchange="handleFile(this, 'av-preview')">
         </label>
         <div id="av-preview" style="width:50px; height:50px; background:#ccc; margin:0 auto; border-radius:50%; background-size:cover;"></div>
@@ -339,8 +355,9 @@
 <div id="modal-security" class="modal">
     <div class="modal-card">
         <h3>System Lock</h3>
-        <input type="number" id="pin-set" placeholder="Enter 4 digits" maxlength="4" style="width:100%; padding:10px; font-size:1.2rem; text-align:center;">
+        <input type="number" id="pin-set" placeholder="Enter 4 digits" maxlength="4" style="text-align:center;">
         <button class="btn-action" style="margin-top:10px;" onclick="setLock()">Enable Lock</button>
+        <button class="btn-action" style="margin-top:5px; background:#ff4444;" onclick="disableLock()">Disable/Remove Lock</button>
         <button class="btn-action" style="margin-top:5px; background:#ccc;" onclick="closeModals()">Close</button>
     </div>
 </div>
@@ -348,290 +365,210 @@
 <script>
     // --- STATE ---
     let DB = {
-        profiles: [],
-        active: 0,
-        cp: 0, // Care Points
-        inventory: [],
-        decor: [],
-        lock: null,
-        channels: { 'gen': {name:'general', msgs:[]} },
-        curChan: 'gen'
+        profiles: [], active: 0, cp: 0, inventory: [], decor: [], lock: null,
+        channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',
+        diary: []
     };
-    
-    let pendingCP = 0;
-    let tempPin = "";
-    let uploadedAv = ""; // Temp holder for base64
+    let pendingCP = 0; let tempPin = ""; let uploadedAv = "";
+    const PRESCRIPTIONS = ["🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴"];
 
-    const PRESCRIPTIONS = [
-        "🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴"
-    ];
-
-    // --- INIT ---
     window.onload = () => {
-        const saved = localStorage.getItem('seiren_care_v2');
+        const saved = localStorage.getItem('seiren_final_v1');
         if(saved) DB = JSON.parse(saved);
 
         if(DB.profiles.length === 0) {
             DB.profiles.push({
-                name: "Host", 
-                av: "", // Default gray
-                color: "#ff69b4",
-                id: "001"
+                name: "Host", av: "", color: "#ff69b4", id: "001",
+                sign: "Unknown", species: "Human", height: "Unknown"
             });
         }
-
-        if(DB.lock) {
-            document.getElementById('lock-screen').style.display = 'flex';
-        } else {
-            document.querySelector('.app-shell').style.display = 'flex';
-            loadUI();
-        }
+        if(DB.lock) document.getElementById('lock-screen').style.display = 'flex';
+        else { document.querySelector('.app-shell').style.display = 'flex'; loadUI(); }
     };
+    function save() { localStorage.setItem('seiren_final_v1', JSON.stringify(DB)); }
 
-    function save() { localStorage.setItem('seiren_care_v2', JSON.stringify(DB)); }
-
-    // --- NAVIGATION & UI ---
+    // --- NAV ---
     function nav(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById('page-'+id).classList.add('active');
         document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
-        // Find button logic later, simple toggle for now
-        
         if(id === 'pet') renderDecor();
         if(id === 'chat') renderChat();
+        if(id === 'diary') renderDiary();
     }
     
     function loadUI() {
         const p = DB.profiles[DB.active];
-        
-        // Theme
         document.documentElement.style.setProperty('--main', p.color);
-        document.body.style.backgroundColor = p.color; // Changes background of body
         
-        // Dash
+        // ID Card Data
         document.getElementById('dash-name').innerText = p.name;
-        document.getElementById('dash-id').innerText = "ID: " + p.id;
+        document.getElementById('dash-sig').innerText = p.name;
+        document.getElementById('dash-id').innerText = p.id;
+        document.getElementById('dash-sign').innerText = p.sign || "?";
+        document.getElementById('dash-species').innerText = p.species || "?";
+        document.getElementById('dash-height').innerText = p.height || "?";
         document.getElementById('dash-av').style.backgroundImage = p.av ? `url(${p.av})` : 'none';
+        
         document.getElementById('cp-display').innerText = DB.cp;
     }
 
-    // --- LOCK SCREEN ---
+    // --- LOCK ---
     function enterPin(n) {
-        tempPin += n;
-        document.getElementById('pin-dots').innerText = "*".repeat(tempPin.length);
+        tempPin += n; document.getElementById('pin-dots').innerText = "*".repeat(tempPin.length);
         if(tempPin.length === 4) {
             if(tempPin === DB.lock) {
-                document.getElementById('lock-screen').style.transform = "translateY(-100%)";
-                setTimeout(()=> {
-                    document.getElementById('lock-screen').style.display = 'none';
-                    document.querySelector('.app-shell').style.display = 'flex';
-                    loadUI();
-                }, 300);
-            } else {
-                tempPin = "";
-                document.getElementById('pin-dots').innerText = "ERROR";
-                setTimeout(()=>document.getElementById('pin-dots').innerText="", 500);
-            }
+                document.getElementById('lock-screen').style.display = 'none';
+                document.querySelector('.app-shell').style.display = 'flex'; loadUI();
+            } else { tempPin = ""; document.getElementById('pin-dots').innerText = "ERR"; }
         }
     }
     function clearPin() { tempPin=""; document.getElementById('pin-dots').innerText=""; }
     function openLockModal() { document.getElementById('modal-security').style.display='flex'; }
-    function setLock() {
-        const p = document.getElementById('pin-set').value;
-        if(p.length===4) { DB.lock = p; save(); closeModals(); alert("System Locked Next Boot"); }
-    }
+    function setLock() { const p = document.getElementById('pin-set').value; if(p.length===4) { DB.lock = p; save(); closeModals(); alert("Locked on next boot."); } }
+    function disableLock() { if(confirm("Remove lock?")) { DB.lock = null; save(); closeModals(); alert("Lock Removed."); }}
 
-    // --- PHARMACY (RECEIPT) ---
+    // --- PHARMACY ---
     function logMood(icon, pts) {
         const list = document.getElementById('receipt-list');
-        const div = document.createElement('div');
-        div.className = 'receipt-entry';
-        div.innerHTML = `<span>${icon} SYMPTOM</span> <span>${pts} CP</span>`;
-        list.appendChild(div);
-        list.scrollTop = list.scrollHeight;
-        pendingCP += pts;
+        list.innerHTML += `<div class="receipt-entry"><span>${icon} SYMPTOM</span><span>${pts} CP</span></div>`;
+        list.scrollTop = list.scrollHeight; pendingCP += pts;
         document.getElementById('pending-pts').innerText = pendingCP;
     }
-    
-    function printReceipt() {
-        if(pendingCP > 0) {
-            DB.cp += pendingCP;
-            alert(`Processed! +${pendingCP} Care Points added to account.`);
-            pendingCP = 0;
-            document.getElementById('receipt-list').innerHTML = "";
-            document.getElementById('pending-pts').innerText = "0";
-            save(); loadUI();
-        }
-    }
-
+    function printReceipt() { if(pendingCP>0){ DB.cp+=pendingCP; alert(`+${pendingCP} CP`); pendingCP=0; document.getElementById('receipt-list').innerHTML=""; document.getElementById('pending-pts').innerText="0"; save(); loadUI(); } }
     function fillPrescription() {
-        if(DB.cp >= 50) {
-            DB.cp -= 50;
-            const item = PRESCRIPTIONS[Math.floor(Math.random()*PRESCRIPTIONS.length)];
-            DB.inventory.push(item);
-            alert(`Prescription Filled: Received ${item}`);
-            save(); loadUI();
-        } else {
-            alert("Insufficient Care Points. Log symptoms to earn more.");
-        }
-    }
-
-    // --- IMAGE COMPRESSOR (FILE UPLOAD) ---
-    function handleFile(input, previewId) {
-        const file = input.files[0];
-        if(!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.src = e.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                // Resize to max 150px to save localstorage space
-                const max = 150;
-                let w = img.width; let h = img.height;
-                if(w>h) { if(w>max){h*=max/w; w=max;} } else { if(h>max){w*=max/h; h=max;} }
-                
-                canvas.width = w; canvas.height = h;
-                ctx.drawImage(img, 0, 0, w, h);
-                uploadedAv = canvas.toDataURL('image/jpeg', 0.7); // Compress
-                document.getElementById(previewId).style.backgroundImage = `url(${uploadedAv})`;
-            };
-        };
-        reader.readAsDataURL(file);
+        if(DB.cp>=50){ DB.cp-=50; const i = PRESCRIPTIONS[Math.floor(Math.random()*PRESCRIPTIONS.length)]; DB.inventory.push(i); alert(`Received: ${i}`); save(); loadUI(); }
+        else alert("Need 50 CP");
     }
 
     // --- PROFILES ---
+    function handleFile(input, previewId) {
+        const file = input.files[0]; if(!file)return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image(); img.src = e.target.result;
+            img.onload = () => {
+                const c = document.createElement('canvas'); const ctx = c.getContext('2d');
+                const max = 150; let w=img.width; let h=img.height;
+                if(w>h){ if(w>max){h*=max/w; w=max;} } else { if(h>max){w*=max/h; h=max;} }
+                c.width=w; c.height=h; ctx.drawImage(img,0,0,w,h);
+                uploadedAv = c.toDataURL('image/jpeg', 0.7);
+                document.getElementById(previewId).style.backgroundImage = `url(${uploadedAv})`;
+            };
+        }; reader.readAsDataURL(file);
+    }
     function openProfileModal() {
         document.getElementById('modal-profile').style.display='flex';
-        const list = document.getElementById('prof-list');
-        list.innerHTML = "";
-        DB.profiles.forEach((p,i) => {
-            list.innerHTML += `
-            <div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #eee;">
+        const list = document.getElementById('prof-list'); list.innerHTML="";
+        DB.profiles.forEach((p,i)=>{
+            list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #eee;">
                 <span>${p.name}</span>
-                <button onclick="switchProf(${i})">Switch</button>
-            </div>`;
-        });
-    }
-    
-    function createProfile() {
-        const name = document.getElementById('new-name').value;
-        const color = document.getElementById('new-color').value;
-        if(name) {
-            DB.profiles.push({
-                name: name,
-                color: color,
-                av: uploadedAv,
-                id: Math.floor(Math.random()*9000)+1000
-            });
-            save(); closeModals();
-        }
-    }
-
-    function switchProf(i) {
-        DB.active = i;
-        save(); loadUI(); closeModals();
-    }
-
-    // --- DRAGGABLE DECOR (PET) ---
-    function openBackpack() {
-        document.getElementById('modal-backpack').style.display='flex';
-        const g = document.getElementById('inventory-grid');
-        g.innerHTML = "";
-        DB.inventory.forEach(item => {
-            const b = document.createElement('div');
-            b.style.fontSize = "2rem"; b.style.cursor="pointer"; b.innerText = item;
-            b.onclick = () => spawnDecor(item);
-            g.appendChild(b);
-        });
-    }
-
-    function spawnDecor(item) {
-        DB.decor.push({i:item, x:50, y:50});
-        save(); closeModals(); nav('pet');
-    }
-
-    function renderDecor() {
-        const layer = document.getElementById('decor-layer');
-        layer.innerHTML = "";
-        DB.decor.forEach(d => {
-            const el = document.createElement('div');
-            el.className = 'sticker';
-            el.innerText = d.i;
-            el.style.left = d.x + "%";
-            el.style.top = d.y + "%";
-            
-            // Touch Drag Logic
-            let isDrag = false;
-            const move = (e) => {
-                if(!isDrag) return;
-                const box = document.getElementById('pet-stage').getBoundingClientRect();
-                const cx = e.touches ? e.touches[0].clientX : e.clientX;
-                const cy = e.touches ? e.touches[0].clientY : e.clientY;
-                d.x = ((cx - box.left)/box.width)*100;
-                d.y = ((cy - box.top)/box.height)*100;
-                el.style.left = d.x + "%"; el.style.top = d.y + "%";
-            };
-            const end = () => { if(isDrag) { isDrag=false; save(); } };
-            
-            el.addEventListener('mousedown', ()=>{isDrag=true});
-            el.addEventListener('touchstart', ()=>{isDrag=true});
-            window.addEventListener('mousemove', move);
-            window.addEventListener('touchmove', move);
-            window.addEventListener('mouseup', end);
-            window.addEventListener('touchend', end);
-            
-            layer.appendChild(el);
-        });
-    }
-    
-    function clearDecor() { DB.decor=[]; save(); nav('pet'); closeModals(); }
-
-    // --- CHAT (PK) ---
-    function renderChat() {
-        const list = document.getElementById('chan-list');
-        list.innerHTML = "";
-        Object.keys(DB.channels).forEach(k => {
-            const b = document.createElement('div');
-            b.className = `chan-btn ${DB.curChan===k?'active':''}`;
-            b.innerText = DB.channels[k].name.substring(0,2).toUpperCase();
-            b.onclick = () => { DB.curChan=k; renderChat(); };
-            list.appendChild(b);
-        });
-        
-        // Feed
-        const c = DB.channels[DB.curChan];
-        document.getElementById('chan-title').innerText = "#" + c.name;
-        const feed = document.getElementById('chat-feed');
-        feed.innerHTML = "";
-        c.msgs.forEach(m => {
-            feed.innerHTML += `
-            <div class="pk-msg">
-                <img src="${m.av}" class="pk-av" style="background:${m.color}">
                 <div>
-                    <div class="pk-name" style="color:${m.color}">${m.name}</div>
-                    <div class="pk-txt">${m.txt}</div>
+                    ${i!==DB.active ? `<button onclick="switchProf(${i})">Switch</button>` : `<small>Active</small>`}
+                    ${i!==0 ? `<button style="color:red; margin-left:5px;" onclick="delProf(${i})">x</button>` : ''}
                 </div>
             </div>`;
         });
+    }
+    function createProfile() {
+        const n = document.getElementById('new-name').value;
+        if(n) {
+            DB.profiles.push({
+                name:n, color:document.getElementById('new-color').value, av:uploadedAv,
+                sign:document.getElementById('new-sign').value, species:document.getElementById('new-species').value, height:document.getElementById('new-height').value,
+                id: Math.floor(Math.random()*9000)+1000
+            }); save(); closeModals();
+        }
+    }
+    function switchProf(i) { DB.active=i; save(); loadUI(); closeModals(); }
+    function delProf(i) { if(confirm("Delete?")){ DB.profiles.splice(i,1); DB.active=0; save(); openProfileModal(); loadUI(); } }
+
+    // --- DECOR ---
+    function openBackpack() {
+        document.getElementById('modal-backpack').style.display='flex';
+        const g = document.getElementById('inventory-grid'); g.innerHTML="";
+        DB.inventory.forEach(item => {
+            const b = document.createElement('div'); b.style.fontSize="2rem"; b.style.cursor="pointer"; b.innerText=item;
+            b.onclick = () => { DB.decor.push({i:item, x:50, y:50}); save(); closeModals(); nav('pet'); };
+            g.appendChild(b);
+        });
+    }
+    function renderDecor() {
+        const l = document.getElementById('decor-layer'); l.innerHTML="";
+        DB.decor.forEach(d => {
+            const el = document.createElement('div'); el.className='sticker'; el.innerText=d.i;
+            el.style.left=d.x+"%"; el.style.top=d.y+"%";
+            let isDrag=false;
+            const move = (e) => {
+                if(!isDrag)return; const b=document.getElementById('pet-stage').getBoundingClientRect();
+                const cx=e.touches?e.touches[0].clientX:e.clientX; const cy=e.touches?e.touches[0].clientY:e.clientY;
+                d.x=((cx-b.left)/b.width)*100; d.y=((cy-b.top)/b.height)*100; el.style.left=d.x+"%"; el.style.top=d.y+"%";
+            };
+            const end = () => { if(isDrag){isDrag=false; save();} };
+            el.onmousedown=()=>{isDrag=true}; el.ontouchstart=()=>{isDrag=true};
+            window.onmousemove=move; window.ontouchmove=move; window.onmouseup=end; window.ontouchend=end;
+            l.appendChild(el);
+        });
+    }
+    function clearDecor(){ DB.decor=[]; save(); renderDecor(); closeModals(); }
+
+    // --- CHAT & CHANNELS ---
+    function renderChat() {
+        const list = document.getElementById('chan-list'); list.innerHTML="";
+        Object.keys(DB.channels).forEach(k => {
+            const isActive = DB.curChan===k;
+            const div = document.createElement('div');
+            div.className = `chan-btn ${isActive?'active':''}`;
+            div.innerText = DB.channels[k].name.substring(0,2).toUpperCase();
+            div.onclick = () => { DB.curChan=k; renderChat(); };
+            
+            // Delete button for non-general channels
+            if(k !== 'gen') {
+                const del = document.createElement('div'); del.className='del-chan'; del.innerText='x';
+                del.onclick = (e) => { e.stopPropagation(); if(confirm(`Delete ${DB.channels[k].name}?`)){ delete DB.channels[k]; DB.curChan='gen'; save(); renderChat(); }};
+                div.appendChild(del);
+            }
+            list.appendChild(div);
+        });
+        
+        // Add Button
+        const add = document.createElement('div'); add.className='chan-btn'; add.innerText='+';
+        add.onclick = () => { const n=prompt("New Channel Name:"); if(n){ const id=n.toLowerCase().replace(/\s/g,''); DB.channels[id]={name:n, msgs:[]}; save(); renderChat(); }};
+        list.appendChild(add);
+
+        // Feed
+        const c = DB.channels[DB.curChan]; document.getElementById('chan-title').innerText = "#" + c.name;
+        const feed = document.getElementById('chat-feed'); feed.innerHTML="";
+        c.msgs.forEach(m => {
+            feed.innerHTML += `<div class="pk-msg"><img src="${m.av}" class="pk-av" style="background:${m.color}"><div><div class="pk-name" style="color:${m.color}">${m.name}</div><div class="pk-txt">${m.txt}</div></div></div>`;
+        });
         feed.scrollTop = feed.scrollHeight;
     }
-
     function sendMsg() {
-        const inp = document.getElementById('msg-in');
-        if(inp.value.trim() === "") return;
+        const i = document.getElementById('msg-in'); if(!i.value)return;
         const p = DB.profiles[DB.active];
-        DB.channels[DB.curChan].msgs.push({
-            name: p.name,
-            av: p.av || "", // If empty, css makes it gray
-            color: p.color,
-            txt: inp.value
-        });
-        inp.value = "";
-        save(); renderChat();
+        DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value });
+        i.value=""; save(); renderChat();
     }
+
+    // --- DIARY ---
+    function postDiary() {
+        const t = document.getElementById('diary-in'); if(!t.value)return;
+        const p = DB.profiles[DB.active];
+        DB.diary.unshift({ date: new Date().toLocaleString(), name: p.name, txt: t.value });
+        t.value=""; save(); renderDiary();
+    }
+    function renderDiary() {
+        const f = document.getElementById('diary-feed'); f.innerHTML="";
+        DB.diary.forEach((e,i) => {
+            f.innerHTML += `<div class="diary-entry">
+                <div class="del-diary" onclick="delDiary(${i})">x</div>
+                <small style="color:#888;">${e.date} • ${e.name}</small>
+                <div>${e.txt}</div>
+            </div>`;
+        });
+    }
+    function delDiary(i) { if(confirm("Delete entry?")){ DB.diary.splice(i,1); save(); renderDiary(); } }
 
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }
 
