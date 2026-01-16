@@ -12,6 +12,7 @@
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
 
     <style>
+        /* --- CORE VARIABLES --- */
         :root {
             --main: #ff69b4; 
             --bg-overlay: rgba(255, 255, 255, 0.92);
@@ -26,14 +27,13 @@
             background-color: #ffe4e1; 
             background-image: radial-gradient(#ffb7b2 15%, transparent 16%), radial-gradient(#ffb7b2 15%, transparent 16%);
             background-size: 20px 20px; background-position: 0 0, 10px 10px;
-            /* Global Background Transition */
             background-repeat: repeat;
             transition: background-image 0.5s ease;
             margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
             color: #444; 
         }
 
-        /* --- FX --- */
+        /* --- VISUAL FX --- */
         .scanlines {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999; display: none;
             background: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%); background-size: 100% 4px;
@@ -47,7 +47,7 @@
         body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }
         @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
 
-        /* --- LAYOUT --- */
+        /* --- APP SHELL --- */
         .app-shell {
             width: 100%; max-width: 480px; background: var(--bg-overlay); backdrop-filter: blur(10px);
             display: none; flex-direction: column; position: relative; height: 100%;
@@ -58,15 +58,13 @@
         .page.active { display: block; }
         @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }
 
-        /* --- GLIMMER ID CARD (UPDATED) --- */
+        /* --- GLIMMER ID CARD --- */
         .id-card-wrap {
             background: #fff; border-radius: 15px; padding: 0;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px; 
             position: relative; overflow: hidden; border: 1px solid #ccc;
-            /* Taller to fit bio */
             min-height: 260px; 
         }
-        
         .id-card-wrap::before {
             content: ""; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
             background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.2) 45%, rgba(0,255,255,0.3) 50%, rgba(255,255,0,0.2) 55%, transparent 60%);
@@ -88,14 +86,13 @@
             object-fit: cover; display: block; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
         }
         .id-details { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 5px; font-size: 0.7rem; }
-        
         .id-label { color: var(--main); font-weight: bold; font-size: 0.6rem; text-transform: uppercase; display:block; }
-        .id-val { color: #333; font-weight: bold; display: block; border-bottom: 1px dotted #ccc; width: 100%;}
+        .id-val { color: #333; font-weight: bold; display: block; border-bottom: 1px dotted #ccc; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .bio-section {
             background: rgba(255,255,255,0.6); border: 1px solid #eee; border-radius: 8px;
             padding: 8px; font-size: 0.7rem; color: #555; flex: 1;
-            overflow-y: auto; max-height: 80px; margin-top: 5px;
+            overflow-y: auto; max-height: 80px; margin-top: 5px; white-space: pre-wrap;
         }
 
         /* --- DASHBOARD --- */
@@ -118,12 +115,13 @@
         .chat-feed { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background-image: radial-gradient(#f0f0f0 1px, transparent 1px); background-size: 20px 20px; }
         .pk-msg { display: flex; gap: 10px; align-items: flex-start; }
         .pk-av { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-        .pk-img { max-width: 150px; border-radius: 10px; margin-top: 5px; display: block; }
+        .pk-img { max-width: 150px; border-radius: 10px; margin-top: 5px; display: block; border: 2px solid #eee; }
+        .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; background: #fafafa; }
 
         /* --- PET --- */
         .pet-stage { height: 350px; position: relative; border: 4px ridge var(--main); border-radius: 20px; background: rgba(255,255,255,0.6); overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .ebi-img { width: 160px; pointer-events: none; z-index: 5; margin-top: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }
-        .sticker { position: absolute; font-size: 3rem; cursor: grab; z-index: 10; user-select: none; }
+        .sticker { position: absolute; font-size: 3rem; cursor: grab; z-index: 10; user-select: none; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
         .speech-bubble {
             position: absolute; top: 40px; left: 50%; transform: translateX(-50%) scale(0);
             background: white; padding: 10px 15px; border-radius: 20px; border: 2px solid var(--main);
@@ -140,7 +138,7 @@
         .bg-forest { background-color: #e8f5e9 !important; background-image: repeating-linear-gradient(45deg, #c8e6c9 25%, transparent 25%, transparent 75%, #c8e6c9 75%, #c8e6c9), repeating-linear-gradient(45deg, #c8e6c9 25%, #e8f5e9 25%, #e8f5e9 75%, #c8e6c9 75%, #c8e6c9) !important; background-size: 20px 20px !important;}
 
         /* --- PHARMACY --- */
-        .receipt-paper { background: #fff; border: 1px solid #ccc; padding: 15px; font-family: var(--font-receipt); font-size: 0.8rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 10px; position: relative; }
+        .receipt-paper { background: #fff; border: 1px solid #ccc; padding: 15px; font-family: var(--font-mono); font-size: 0.8rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 10px; position: relative; }
         .receipt-entry { display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px dotted #eee; }
         .mood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; max-height: 200px; overflow-y: auto; padding-right: 5px; }
         .mood-btn { background: white; border: 1px solid #ccc; border-radius: 8px; height: 40px; font-size: 1.2rem; cursor: pointer; }
@@ -156,7 +154,8 @@
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .modal-card { background: white; width: 90%; max-width: 380px; border-radius: 25px; padding: 25px; border: 4px ridge var(--main); max-height: 85vh; overflow-y: auto; }
-        input, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border: 2px inset #eee; border-radius: 10px; font-family: inherit;}
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border: 2px inset #eee; border-radius: 10px; font-family: inherit; outline:none;}
+        input:focus, textarea:focus { border-color: var(--main); background: #fff; }
 
         /* --- LOCK SCREEN --- */
         #lock-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--main); z-index: 20000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
@@ -173,7 +172,7 @@
 <div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-overlay); z-index:3000; display:flex; flex-direction:column; align-items:center; justify-content:center;">
     <div style="font-size:4rem; margin-bottom:10px;">💾</div>
     <h1 style="color:var(--main); margin:0 0 10px 0;">SEIREN OS</h1>
-    <p style="font-size:0.8rem; color:#666; margin-bottom:30px;">Guest Mode Ready</p>
+    <p style="font-size:0.8rem; color:#666; margin-bottom:30px;">Guest Mode Active</p>
     <button class="btn-action" style="width:220px;" onclick="enterSystem()">Enter System</button>
     <label class="btn-action" style="width:220px; background:#4fc3f7; text-align:center; display:block;">
         📂 Load Backup
@@ -391,12 +390,11 @@
     let uploadedAv = ""; 
     let chatImg = "";
 
-    // Data Pools
     const LOOT_ITEMS = ["🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴", "bg-clouds", "bg-night", "bg-forest"];
     const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!"];
 
     window.onload = () => {
-        const saved = localStorage.getItem('seiren_ultimate_v4');
+        const saved = localStorage.getItem('seiren_complete_v2');
         if(saved) { try { DB = JSON.parse(saved); } catch(e) { console.log("New DB"); } }
         
         // Guest Mode Init
@@ -419,7 +417,7 @@
     }
 
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); }
-    function save() { localStorage.setItem('seiren_ultimate_v4', JSON.stringify(DB)); }
+    function save() { localStorage.setItem('seiren_complete_v2', JSON.stringify(DB)); }
 
     // --- SYSTEM NAME ---
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }
@@ -461,7 +459,6 @@
         if(p.wallpaper) {
             document.body.classList.add(p.wallpaper);
         } else {
-            // Clear wallpapers
             document.body.classList.remove('bg-hearts', 'bg-clouds', 'bg-night', 'bg-forest');
         }
     }
@@ -471,7 +468,9 @@
         if(n) {
             if(DB.profiles[0].id === "GUEST") DB.profiles = [];
             DB.profiles.push({
-                name:n, color:document.getElementById('new-color').value, av:uploadedAv,
+                name:n, 
+                color:document.getElementById('new-color').value, 
+                av:uploadedAv,
                 sign:document.getElementById('new-sign').value, 
                 species:document.getElementById('new-species').value, 
                 age:document.getElementById('new-age').value,
@@ -606,7 +605,7 @@
 
     function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); }
     function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, t:t.value}); t.value=""; save(); renderDiary(); }}
-    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; DB.diary.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${i},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }
+    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; DB.diary.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-btn-corner" onclick="if(confirm('Del?')){DB.diary.splice(${i},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }
     function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }
     function openProfileModal() {
