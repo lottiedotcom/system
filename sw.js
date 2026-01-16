@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seiren-os-v88-force-update';
+const CACHE_NAME = 'seiren-os-v72-force-update';
 const ASSETS = [
     './',
     './index.html',
@@ -6,28 +6,28 @@ const ASSETS = [
     'https://cdn-icons-png.flaticon.com/512/2919/2919573.png'
 ];
 
-// INSTALL: Force new version to jump the line
+// 1. INSTALL: Force the new worker to jump the line
 self.addEventListener('install', (e) => {
-    self.skipWaiting(); // THIS LINE IS CRITICAL FOR UPDATES
+    self.skipWaiting(); 
     e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
 });
 
-// ACTIVATE: Delete all old caches immediately
+// 2. ACTIVATE: Delete all old versions of the site immediately
 self.addEventListener('activate', (e) => {
     e.waitUntil(
         caches.keys().then((keyList) => {
             return Promise.all(keyList.map((key) => {
                 if (key !== CACHE_NAME) {
-                    console.log('Removing old cache:', key);
+                    console.log('Cleaning up old cache:', key);
                     return caches.delete(key);
                 }
             }));
         })
     );
-    self.clients.claim(); // Grab control of the page immediately
+    self.clients.claim(); // Take control of the page right away
 });
 
-// FETCH: Try Cache, then Network
+// 3. FETCH: Serve cached files if available, otherwise fetch from network
 self.addEventListener('fetch', (e) => {
     e.respondWith(
         caches.match(e.request).then((res) => {
@@ -35,3 +35,4 @@ self.addEventListener('fetch', (e) => {
         })
     );
 });
+
