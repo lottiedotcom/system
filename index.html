@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ff69b4">
-    <title>Seiren OS: Glimmer</title>
+    <title>Seiren OS: Complete</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">
 
     <style>
-        /* --- 1. VARIABLES & RESET --- */
         :root {
             --main: #ff69b4; 
             --bg-overlay: rgba(255, 255, 255, 0.92);
@@ -27,11 +26,14 @@
             background-color: #ffe4e1; 
             background-image: radial-gradient(#ffb7b2 15%, transparent 16%), radial-gradient(#ffb7b2 15%, transparent 16%);
             background-size: 20px 20px; background-position: 0 0, 10px 10px;
+            /* Important for global background changes */
+            background-repeat: repeat;
+            transition: background-image 0.5s ease;
             margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;
             color: #444; 
         }
 
-        /* --- 2. FX LAYERS --- */
+        /* --- VISUALS --- */
         .scanlines {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999; display: none;
             background: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%); background-size: 100% 4px;
@@ -45,9 +47,9 @@
         body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }
         @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
 
-        /* --- 3. APP SHELL --- */
+        /* --- LAYOUT --- */
         .app-shell {
-            width: 100%; max-width: 480px; background: var(--bg-overlay); backdrop-filter: blur(10px);
+            width: 100%; max-width: 480px; background: var(--bg-overlay); backdrop-filter: blur(5px);
             display: none; flex-direction: column; position: relative; height: 100%;
             box-shadow: 0 0 50px rgba(0,0,0,0.2); z-index: 10; border-left: 1px solid white; border-right: 1px solid white;
         }
@@ -56,54 +58,60 @@
         .page.active { display: block; }
         @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }
 
-        /* --- 4. GLIMMER ID CARD --- */
+        /* --- REALISTIC GLIMMER ID --- */
         .id-card-wrap {
-            background: white; border: 4px ridge var(--main); border-radius: 20px; padding: 6px;
-            box-shadow: 3px 3px 10px rgba(0,0,0,0.1); margin-bottom: 20px; position: relative; overflow: hidden;
+            background: #fff; border-radius: 15px; padding: 0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px; 
+            position: relative; overflow: hidden; border: 1px solid #ccc;
+            height: 220px;
         }
         
-        /* The Holographic Foil Effect */
+        /* The Holographic Sheen */
         .id-card-wrap::before {
-            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            content: ""; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
             background: linear-gradient(
-                45deg, 
-                rgba(255,0,0,0), 
-                rgba(255,0,0,0) 40%, 
-                rgba(255,255,255,0.4) 45%, 
-                rgba(255,0,255,0.2) 50%, 
-                rgba(255,255,255,0.4) 55%, 
-                rgba(255,0,0,0) 60%, 
-                rgba(255,0,0,0)
+                115deg, 
+                transparent 40%, 
+                rgba(255, 0, 150, 0.2) 45%, 
+                rgba(0, 255, 255, 0.3) 50%, 
+                rgba(255, 255, 0, 0.2) 55%, 
+                transparent 60%
             );
-            transform: rotate(30deg); animation: glimmer 4s infinite linear; pointer-events: none; z-index: 5;
-            mix-blend-mode: color-dodge; opacity: 0.8;
+            mix-blend-mode: color-dodge; pointer-events: none; z-index: 10;
+            animation: foil 6s linear infinite; opacity: 0.7;
         }
-        @keyframes glimmer { 0% {transform: translateX(-100%) rotate(30deg);} 100% {transform: translateX(100%) rotate(30deg);} }
+        @keyframes foil { 0% {transform:translate(0,0);} 100% {transform:translate(50%,50%);} }
 
-        .id-inner {
-            background: #fff0f5; background-image: radial-gradient(#ffc1e3 2px, transparent 2px); background-size: 15px 15px;
-            border: 2px dashed var(--main); border-radius: 15px; padding: 15px; position: relative; z-index: 2;
+        .id-inner { padding: 15px; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; }
+        
+        .id-header { 
+            border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; font-weight: 900; letter-spacing: 1px; font-size: 0.7rem; color: #555;
         }
-        .id-header {
-            border-bottom: 2px solid var(--main); margin-bottom: 10px; padding-bottom: 5px;
-            display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: bold; color: #d12e87;
-        }
-        .id-body { display: flex; gap: 15px; align-items: center; }
+        
+        .id-main { display: flex; gap: 15px; }
         .id-photo { 
-            width: 90px; height: 90px; border-radius: 50%; border: 3px outset white; outline: 3px solid var(--main); 
-            background: white; object-fit: cover; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            width: 90px; height: 110px; background: #eee; border: 1px solid #999; 
+            object-fit: cover; display: block;
         }
-        .id-stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.65rem;
-            background: rgba(255,255,255,0.8); padding: 5px; border-radius: 5px; border: 1px inset white;
+        .id-details { flex: 1; display: flex; flex-direction: column; justify-content: space-between; font-size: 0.7rem; }
+        
+        .id-label { color: var(--main); font-weight: bold; font-size: 0.6rem; text-transform: uppercase; }
+        .id-val { color: #333; font-weight: bold; margin-bottom: 4px; display: block; }
+        
+        .id-row { display: flex; gap: 10px; }
+        
+        .id-barcode {
+            margin-top: auto; height: 25px; background: repeating-linear-gradient(90deg, #333 0px, #333 2px, transparent 2px, transparent 4px);
+            width: 100%; opacity: 0.6;
         }
 
-        /* --- 5. DASHBOARD --- */
+        /* --- DASHBOARD --- */
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
         .dash-btn { background: white; border: 2px solid #eee; border-radius: 18px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; }
         .dash-btn:active { transform: scale(0.96); background: #f9f9f9; border-color: var(--main); }
 
-        /* --- 6. CHAT --- */
+        /* --- CHAT --- */
         .chat-shell { display: flex; height: 100%; border: 2px solid var(--main); border-radius: 15px; background: white; overflow: hidden; position:relative; }
         .channel-sidebar { width: 75px; background: #f0f0f0; border-right: 1px solid #e0e0e0; padding-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 12px; overflow-y: auto; transition: margin-left 0.3s ease; }
         .channel-sidebar.hidden { margin-left: -75px; }
@@ -120,24 +128,39 @@
         .pk-av { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
         .pk-img { max-width: 150px; border-radius: 10px; margin-top: 5px; display: block; }
 
-        /* --- 7. PET --- */
+        /* --- PET --- */
         .pet-stage { height: 350px; position: relative; border: 4px ridge var(--main); border-radius: 20px; background: rgba(255,255,255,0.6); overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .ebi-img { width: 160px; pointer-events: none; z-index: 5; margin-top: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }
         .sticker { position: absolute; font-size: 3rem; cursor: grab; z-index: 10; user-select: none; }
         
-        /* WALLPAPERS (Added to CSS for random drops) */
+        /* SPEECH BUBBLE */
+        .speech-bubble {
+            position: absolute; top: 40px; left: 50%; transform: translateX(-50%) scale(0);
+            background: white; padding: 10px 15px; border-radius: 20px; border: 2px solid var(--main);
+            font-size: 0.8rem; font-weight: bold; z-index: 20; text-align: center;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none; white-space: nowrap;
+        }
+        .speech-bubble::after {
+            content: ''; position: absolute; bottom: -8px; left: 50%; margin-left: -8px;
+            border-width: 8px 8px 0; border-style: solid; border-color: var(--main) transparent;
+        }
+        .speech-bubble.show { transform: translateX(-50%) scale(1); }
+
+        /* WALLPAPER CLASSES FOR GLOBAL BG */
         .bg-hearts { background-color: #ffe4e1 !important; background-image: radial-gradient(#ff69b4 2px, transparent 2px), radial-gradient(#ff69b4 2px, transparent 2px) !important; background-size: 20px 20px !important; background-position: 0 0, 10px 10px !important; }
         .bg-clouds { background-color: #e3f2fd !important; background-image: radial-gradient(white 8px, transparent 9px), radial-gradient(white 8px, transparent 9px) !important; background-size: 40px 40px !important; background-position: 0 0, 20px 20px !important; }
         .bg-night { background-color: #1a237e !important; background-image: radial-gradient(white 1px, transparent 1px) !important; background-size: 30px 30px !important; }
+        .bg-forest { background-color: #e8f5e9 !important; background-image: repeating-linear-gradient(45deg, #c8e6c9 25%, transparent 25%, transparent 75%, #c8e6c9 75%, #c8e6c9), repeating-linear-gradient(45deg, #c8e6c9 25%, #e8f5e9 25%, #e8f5e9 75%, #c8e6c9 75%, #c8e6c9) !important; background-size: 20px 20px !important;}
 
-        /* --- 8. PHARMACY --- */
-        .receipt-paper { background: #fff; border: 1px solid #ccc; padding: 15px; font-family: var(--font-receipt); font-size: 0.8rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 10px; position: relative; }
+        /* --- PHARMACY --- */
+        .receipt-paper { background: #fff; border: 1px solid #ccc; padding: 15px; font-family: var(--font-mono); font-size: 0.8rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 10px; position: relative; }
         .receipt-entry { display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px dotted #eee; }
         .mood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; max-height: 200px; overflow-y: auto; padding-right: 5px; }
         .mood-btn { background: white; border: 1px solid #ccc; border-radius: 8px; height: 40px; font-size: 1.2rem; cursor: pointer; }
         .mood-btn:active { background: var(--main); }
 
-        /* --- 9. UI COMPONENTS --- */
+        /* --- COMPONENTS --- */
         .btn-action { background: var(--main); color: white; padding: 12px; width: 100%; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-bottom: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
         .btn-action:active { transform: translateY(3px); box-shadow: none; }
         
@@ -147,9 +170,9 @@
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .modal-card { background: white; width: 90%; max-width: 380px; border-radius: 25px; padding: 25px; border: 4px ridge var(--main); max-height: 85vh; overflow-y: auto; }
-        input, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border: 2px inset #eee; border-radius: 10px; }
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border: 2px inset #eee; border-radius: 10px; font-family: inherit;}
 
-        /* --- 10. LOCK SCREEN --- */
+        /* --- LOCK SCREEN --- */
         #lock-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--main); z-index: 20000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
         .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; }
         .pin-btn { width: 70px; height: 70px; border-radius: 50%; border: 2px solid white; background: rgba(255,255,255,0.15); color: white; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -164,7 +187,7 @@
 <div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-overlay); z-index:3000; display:flex; flex-direction:column; align-items:center; justify-content:center;">
     <div style="font-size:4rem; margin-bottom:10px;">💾</div>
     <h1 style="color:var(--main); margin:0 0 10px 0;">SEIREN OS</h1>
-    <p style="font-size:0.8rem; color:#666; margin-bottom:30px;">System Ready</p>
+    <p style="font-size:0.8rem; color:#666; margin-bottom:30px;">Guest Mode Ready</p>
     <button class="btn-action" style="width:220px;" onclick="enterSystem()">Enter System</button>
     <label class="btn-action" style="width:220px; background:#4fc3f7; text-align:center; display:block;">
         📂 Load Backup
@@ -189,24 +212,31 @@
     <div id="page-dash" class="page active" style="padding-top:20px;">
         <div class="id-card-wrap">
             <div class="id-inner">
-                <div class="id-deco-bow">🎀</div>
                 <div class="id-header">
                     <span id="sys-name-display">SEIREN OS</span>
-                    <span>GLIMMER ID</span>
+                    <span id="issue-date">ISSUED: 2024</span>
                 </div>
-                <div class="id-body">
+                <div class="id-main">
                     <img id="dash-av" class="id-photo" src="">
-                    <div class="id-data-block">
-                        <div id="dash-name" class="id-name">Guest</div>
-                        <div class="id-role">System Member</div>
-                        <div class="id-stats-grid">
-                            <span><b>ID:</b> <span id="dash-id">GUEST</span></span>
-                            <span><b>Sign:</b> <span id="dash-sign">?</span></span>
-                            <span><b>Type:</b> <span id="dash-species">?</span></span>
-                            <span><b>Hgt:</b> <span id="dash-height">?</span></span>
+                    <div class="id-details">
+                        <div>
+                            <span class="id-label">NAME</span>
+                            <span class="id-val" id="dash-name">Guest</span>
+                        </div>
+                        <div class="id-row">
+                            <div><span class="id-label">AGE</span><span class="id-val" id="dash-age">--</span></div>
+                            <div><span class="id-label">SIGN</span><span class="id-val" id="dash-sign">--</span></div>
+                        </div>
+                        <div>
+                            <span class="id-label">ID NO.</span>
+                            <span class="id-val" id="dash-id" style="font-family:monospace;">GUEST-000</span>
                         </div>
                     </div>
                 </div>
+                <div style="background:rgba(255,255,255,0.5); padding:5px; margin-top:5px; border-radius:5px; font-size:0.6rem; max-height:40px; overflow-y:auto;" id="dash-bio">
+                    Official System Member
+                </div>
+                <div class="id-barcode"></div>
             </div>
         </div>
 
@@ -277,6 +307,7 @@
         <h2 style="color:var(--main); text-align:center;">Patient Room</h2>
         <div class="pet-stage" id="pet-stage">
             <div id="decor-layer"></div>
+            <div id="pet-speech" class="speech-bubble">Hello!</div>
             <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img">
         </div>
         <p style="text-align:center; font-size:0.7rem; color:#888; margin-top:5px;">Check Backpack for Prescribed Items</p>
@@ -326,10 +357,12 @@
         <h4>New ID</h4>
         <input type="text" id="new-name" placeholder="Name">
         <div style="display:flex; gap:10px;">
-            <input type="text" id="new-sign" placeholder="Sign">
-            <input type="text" id="new-species" placeholder="Species">
+            <input type="number" id="new-age" placeholder="Age" style="width:30%;">
+            <input type="text" id="new-sign" placeholder="Sign" style="width:70%;">
         </div>
-        <input type="text" id="new-height" placeholder="Height">
+        <input type="text" id="new-species" placeholder="Species / Type">
+        <textarea id="new-bio" placeholder="Other Info / Notes..." style="height:50px;"></textarea>
+        
         <label class="file-upload-btn">
             📂 Upload Photo
             <input type="file" accept="image/*" style="display:none;" onchange="handleFile(this, 'av-preview')">
@@ -344,6 +377,7 @@
 <div id="modal-backpack" class="modal">
     <div class="modal-card">
         <h3>Medicine Cabinet</h3>
+        <p style="font-size:0.7rem; color:#666;">Click to place/wear. Backgrounds apply globally to current profile.</p>
         <div id="inventory-grid" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:10px; background:#f9f9f9; border-radius:10px; margin-bottom:10px;"></div>
         <button class="btn-action" style="background:#ff6b6b;" onclick="clearDecor()">🗑️ Clear Room</button>
         <button class="btn-action" style="margin-top:5px; background:#ccc;" onclick="closeModals()">Close</button>
@@ -371,19 +405,18 @@
     let uploadedAv = ""; 
     let chatImg = "";
 
-    // Data Pools
-    const LOOT_ITEMS = ["🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴", "bg-clouds", "bg-night"];
-    const TASKS = ["Drink Water", "Take a Nap", "Listen to Music", "Stretch", "Draw", "Breathe Deeply", "Read a Page", "Clean One Thing", "Step Outside"];
+    const LOOT_ITEMS = ["🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴", "bg-clouds", "bg-night", "bg-forest"];
+    const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!"];
 
     window.onload = () => {
-        const saved = localStorage.getItem('seiren_glimmer_v1');
+        const saved = localStorage.getItem('seiren_complete_v1');
         if(saved) { try { DB = JSON.parse(saved); } catch(e) { console.log("New DB"); } }
         
         // Guest Mode Init
         if(DB.profiles.length === 0) {
             DB.profiles.push({
                 name: "Guest", av: "https://cdn-icons-png.flaticon.com/512/3233/3233508.png", color: "#ff69b4", id: "GUEST",
-                sign: "-", species: "Visitor", height: "-"
+                sign: "-", species: "Visitor", age: "-", bio: "Guest Access"
             });
         }
 
@@ -399,10 +432,11 @@
     }
 
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); }
-    function save() { localStorage.setItem('seiren_glimmer_v1', JSON.stringify(DB)); }
+    function save() { localStorage.setItem('seiren_complete_v1', JSON.stringify(DB)); }
 
-    // --- SYSTEM NAME ---
+    // --- SYSTEM NAME & SETTINGS ---
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }
+    function toggleCRT() { DB.settings.crt = document.getElementById('toggle-crt').checked; if(DB.settings.crt) document.body.classList.add('fx-active'); else document.body.classList.remove('fx-active'); save(); }
 
     // --- IMAGES ---
     function compressImage(file, callback) {
@@ -421,21 +455,31 @@
     function handleFile(inpt, id) { compressImage(inpt.files[0], (d)=>{ uploadedAv=d; document.getElementById(id).src=d; }); }
     function handleChatImage(inpt) { compressImage(inpt.files[0], (d)=>{ chatImg=d; alert("Image attached!"); }); }
 
-    // --- UI ---
+    // --- UI & PROFILES ---
     function loadUI() {
         const p = DB.profiles[DB.active];
         document.documentElement.style.setProperty('--main', p.color);
         document.getElementById('sys-name-display').innerText = DB.sysName;
+        
+        // Populate ID Card
         document.getElementById('dash-name').innerText = p.name;
         document.getElementById('dash-id').innerText = p.id;
         document.getElementById('dash-sign').innerText = p.sign||"?";
         document.getElementById('dash-species').innerText = p.species||"?";
-        document.getElementById('dash-height').innerText = p.height||"?";
+        document.getElementById('dash-age').innerText = p.age||"?";
+        document.getElementById('dash-bio').innerText = p.bio || "No info provided.";
         document.getElementById('dash-av').src = p.av || "https://cdn-icons-png.flaticon.com/512/3233/3233508.png";
         document.getElementById('cp-display').innerText = DB.xp;
+        document.getElementById('issue-date').innerText = "UPDATED: " + new Date().toLocaleDateString();
         
-        // Dynamic Backgrounds for Profile
-        if(DB.wallpaper) document.getElementById('pet-stage').className = "pet-stage " + DB.wallpaper;
+        // Global Wallpaper Logic
+        document.body.className = DB.settings.crt ? 'fx-active' : '';
+        if(p.wallpaper) {
+            document.body.classList.add(p.wallpaper); // Apply wallpaper class to body
+        } else {
+            // Remove old wallpaper classes if none selected
+            document.body.classList.remove('bg-hearts', 'bg-clouds', 'bg-night', 'bg-forest');
+        }
     }
 
     function createProfile() {
@@ -443,8 +487,13 @@
         if(n) {
             if(DB.profiles[0].id === "GUEST") DB.profiles = [];
             DB.profiles.push({
-                name:n, color:document.getElementById('new-color').value, av:uploadedAv,
-                sign:document.getElementById('new-sign').value, species:document.getElementById('new-species').value, height:document.getElementById('new-height').value,
+                name:n, 
+                color:document.getElementById('new-color').value, 
+                av:uploadedAv,
+                sign:document.getElementById('new-sign').value, 
+                species:document.getElementById('new-species').value, 
+                age:document.getElementById('new-age').value,
+                bio:document.getElementById('new-bio').value,
                 id: Math.floor(Math.random()*9000)+1000
             });
             uploadedAv = ""; DB.active = DB.profiles.length - 1;
@@ -517,8 +566,11 @@
         DB.inventory.forEach(item => {
             const b = document.createElement('div'); b.style.fontSize="2.5rem"; b.style.cursor="pointer"; b.innerText=item;
             if(item.startsWith('bg-')) {
-                b.style.fontSize="1rem"; b.innerText="🖼️";
-                b.onclick = () => { DB.wallpaper = item; save(); refreshAll(); closeModals(); };
+                b.style.fontSize="1rem"; b.innerText="🖼️ " + item.replace('bg-', '');
+                b.onclick = () => { 
+                    DB.profiles[DB.active].wallpaper = item; // Save to current profile
+                    save(); refreshAll(); closeModals(); 
+                };
             } else {
                 b.onclick = () => { DB.decor.push({i:item, x:50, y:50}); save(); closeModals(); nav('pet'); };
             }
@@ -534,24 +586,43 @@
         if(DB.xp>=50){ 
             DB.xp-=50; 
             const item=LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)]; 
-            const task=TASKS[Math.floor(Math.random()*TASKS.length)];
-            DB.inventory.push(item); 
-            alert(`Rx Filled!\n\nITEM: ${item}\nTASK: ${task}`); 
+            DB.inventory.push(item);
+            
+            // Ebi Speech Bubble
+            const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)];
+            const bub = document.getElementById('pet-speech');
+            bub.innerText = speech; bub.classList.add('show');
+            setTimeout(()=>bub.classList.remove('show'), 2000);
+
+            alert(`Rx Filled!\n\nReceived: ${item}\nTask: Take a 5 min break.`); 
             save(); loadUI(); 
         } else alert("Need 50 XP"); 
     }
 
     // --- MISC ---
-    function toggleCRT() { DB.settings.crt = document.getElementById('toggle-crt').checked; if(DB.settings.crt) document.body.classList.add('fx-active'); else document.body.classList.remove('fx-active'); save(); }
     function enterPin(n) { tempPin+=n; document.getElementById('pin-dots').innerText="*".repeat(tempPin.length); if(tempPin.length===4){ if(tempPin===DB.lock){ document.getElementById('lock-screen').style.display='none'; document.querySelector('.app-shell').style.display='flex'; refreshAll(); } else { tempPin=""; document.getElementById('pin-dots').innerText="ERR"; }}}
     function clearPin(){ tempPin=""; document.getElementById('pin-dots').innerText=""; }
     function setLock(){ const p=document.getElementById('pin-set').value; if(p.length===4){ DB.lock=p; save(); alert("Locked!"); closeModals(); }}
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }
-    function importData(i) { const r=new FileReader(); r.onload=(e)=>{ try{DB=JSON.parse(e.target.result); save(); alert("Loaded!"); location.reload();}catch(x){alert("Error");}}; r.readAsText(i.files[0]); }
+    
+    // BACKUP FIX
+    function importData(input) { 
+        const file = input.files[0]; 
+        if(!file) return;
+        const reader = new FileReader(); 
+        reader.onload=(e)=>{ 
+            try{ 
+                DB=JSON.parse(e.target.result); save(); alert("Loaded!"); location.reload(); 
+            } catch(x){ alert("Error"); }
+        }; 
+        reader.readAsText(file);
+        input.value = ''; // Reset input to allow reloading same file
+    }
+
     function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); }
     function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, t:t.value}); t.value=""; save(); renderDiary(); }}
-    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; DB.diary.forEach((e,i)=>{ f.innerHTML+=`<div style="background:white;padding:10px;margin-bottom:10px;border-radius:10px;border-left:4px solid var(--main);position:relative;"><div style="position:absolute;top:5px;right:5px;color:red;cursor:pointer;" onclick="if(confirm('Del?')){DB.diary.splice(${i},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }
+    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; DB.diary.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${i},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }
     function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }
     function openProfileModal() {
