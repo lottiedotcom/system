@@ -14,7 +14,7 @@
     /* --- CORE VARIABLES --- */  
     :root {  
         --main: #ff69b4;   
-        /* FIXED: Made this much more transparent (0.6 instead of 0.94) */
+        /* Frosted Glass Opacity */
         --bg-overlay: rgba(255, 255, 255, 0.6);  
         --font-main: 'Verdana', sans-serif;  
         --font-mono: 'Courier New', monospace;  
@@ -25,18 +25,16 @@
     body {  
         font-family: var(--font-main);  
         background-color: #ffe4e1;   
-        /* Default Background */
         background-image: radial-gradient(#ffb7b2 15%, transparent 16%), radial-gradient(#ffb7b2 15%, transparent 16%);  
         background-size: 20px 20px; background-position: 0 0, 10px 10px;  
         background-repeat: repeat;  
-        /* FIXED: Keeps background static like a real wallpaper */
         background-attachment: fixed; 
         transition: background-image 0.5s ease;  
         margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;  
         color: #444;   
     }  
 
-    /* --- BACKGROUND PATTERNS (Applied via Body Class) --- */
+    /* --- BACKGROUND PATTERNS --- */
     .bg-polka {
         background-color: #fff0f5 !important;
         background-image: radial-gradient(var(--main) 20%, transparent 20%) !important;
@@ -86,9 +84,8 @@
     /* --- APP SHELL --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
-        /* FIXED: Use variable and strong blur */
         background: var(--bg-overlay); 
-        backdrop-filter: blur(15px); /* Stronger blur for readability */
+        backdrop-filter: blur(15px); 
         -webkit-backdrop-filter: blur(15px);
         display: none; flex-direction: column; position: relative; height: 100%;  
         box-shadow: 0 0 50px rgba(0,0,0,0.2); z-index: 10; border-left: 1px solid white; border-right: 1px solid white;  
@@ -285,22 +282,26 @@
               
             <div style="text-align:center; margin-bottom:5px; font-size:0.7rem; color:#888;">LOG SYMPTOMS:</div>  
             <div class="mood-grid">  
-                <button class="mood-btn" onclick="logMood('😊', 5)">😊</button>  
-                <button class="mood-btn" onclick="logMood('😢', 10)">😢</button>  
-                <button class="mood-btn" onclick="logMood('😡', 10)">😡</button>  
-                <button class="mood-btn" onclick="logMood('🌀', 15)">🌀</button>  
-                <button class="mood-btn" onclick="logMood('💤', 5)">💤</button>  
-                <button class="mood-btn" onclick="logMood('✨', 5)">✨</button>  
-                <button class="mood-btn" onclick="logMood('💀', 15)">💀</button>  
-                <button class="mood-btn" onclick="logMood('💖', 5)">💖</button>  
-                <button class="mood-btn" onclick="logMood('😰', 10)">😰</button>  
-                <button class="mood-btn" onclick="logMood('🌫️', 10)">🌫️</button>  
-                <button class="mood-btn" onclick="logMood('⚡', 15)">⚡</button>  
-                <button class="mood-btn" onclick="logMood('🥀', 10)">🥀</button>  
-                <button class="mood-btn" onclick="logMood('🎪', 5)">🎪</button>  
-                <button class="mood-btn" onclick="logMood('🩹', 5)">🩹</button>  
-                <button class="mood-btn" onclick="logMood('🎮', 5)">🎮</button>  
-                <button class="mood-btn" onclick="logMood('🧸', 5)">🧸</button>  
+                <button class="mood-btn" onclick="logMood('😊 Happy', 5)">😊</button>  
+                <button class="mood-btn" onclick="logMood('😢 Sad', 10)">😢</button>  
+                <button class="mood-btn" onclick="logMood('😡 Angry', 10)">😡</button>  
+                <button class="mood-btn" onclick="logMood('🌀 Anxious', 15)">🌀</button>  
+                <button class="mood-btn" onclick="logMood('💤 Tired', 5)">💤</button>  
+                <button class="mood-btn" onclick="logMood('✨ Hyper', 5)">✨</button>  
+                <button class="mood-btn" onclick="logMood('💀 Dead', 15)">💀</button>  
+                <button class="mood-btn" onclick="logMood('💖 Loved', 5)">💖</button>  
+                <button class="mood-btn" onclick="logMood('😰 Panic', 15)">😰</button>  
+                <button class="mood-btn" onclick="logMood('🌫️ Numb', 10)">🌫️</button>  
+                <button class="mood-btn" onclick="logMood('⚡ Manic', 15)">⚡</button>  
+                <button class="mood-btn" onclick="logMood('🥀 Lonely', 10)">🥀</button>  
+                <button class="mood-btn" onclick="logMood('🎪 Silly', 5)">🎪</button>  
+                <button class="mood-btn" onclick="logMood('🩹 Hurt', 10)">🩹</button>  
+                <button class="mood-btn" onclick="logMood('🎮 Bored', 5)">🎮</button>  
+                <button class="mood-btn" onclick="logMood('🧸 Soft', 5)">🧸</button>  
+                <button class="mood-btn" onclick="logMood('🤢 Sick', 15)">🤢</button>  
+                <button class="mood-btn" onclick="logMood('🤯 Overwhelmed', 15)">🤯</button>  
+                <button class="mood-btn" onclick="logMood('🥺 Sensitive', 10)">🥺</button>  
+                <button class="mood-btn" onclick="logMood('😤 Frustrated', 10)">😤</button>
             </div>  
 
             <button class="btn-action" style="margin-top:10px; background:#78909c;" onclick="processReceipt()">Print Receipt (+Self Care)</button>  
@@ -428,7 +429,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v64'); 
+        const saved = localStorage.getItem('seiren_fixed_v65'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -449,7 +450,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); }  
-    function save() { localStorage.setItem('seiren_fixed_v64', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v65', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -504,8 +505,6 @@
         document.getElementById('dash-av').src = p.av || DEFAULT_AV;  
         document.getElementById('cp-display').innerText = DB.xp;  
         
-        // APPLY WALLPAPER GLOBALLY
-        // Preserve fx-active status
         let classes = "";
         if(DB.settings.crt) classes += "fx-active ";
         if(p.wallpaper) classes += p.wallpaper;
@@ -535,7 +534,6 @@
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
         const p = DB.profiles[DB.active];
         
-        // Only update if field is NOT empty (allows partial updates)
         const newName = document.getElementById('new-name').value;
         if(newName) p.name = newName;
         const newAge = document.getElementById('new-age').value;
@@ -559,7 +557,6 @@
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
         
-        // CLEANER INPUTS (No pre-filling)
         document.getElementById('new-name').value = "";
         document.getElementById('new-age').value = "";
         document.getElementById('new-sign').value = "";
@@ -640,6 +637,8 @@
             l.appendChild(el);  
         });  
     }  
+    
+    // --- FIXED BACKPACK (CONSUMABLE ITEMS) ---
     function openBackpack() {  
         document.getElementById('modal-backpack').style.display='flex';  
         const g = document.getElementById('inventory-grid'); g.innerHTML="";  
@@ -647,12 +646,21 @@
         if(DB.inventory.length === 0) document.getElementById('empty-msg').style.display='block';
         else document.getElementById('empty-msg').style.display='none';
 
-        DB.inventory.forEach(item => {  
-            const b = document.createElement('div'); b.style.fontSize="2.5rem"; b.style.cursor="pointer"; b.innerText=item;  
+        // Sort items: Normal decor first, Backgrounds last
+        const sortedInv = [...DB.inventory].sort((a,b) => {
+            const aBg = a.startsWith('bg-');
+            const bBg = b.startsWith('bg-');
+            return aBg === bBg ? 0 : aBg ? 1 : -1;
+        });
+
+        sortedInv.forEach((item, index) => {  
+            const b = document.createElement('div'); 
+            b.style.fontSize="2.5rem"; 
+            b.style.cursor="pointer"; 
+            b.innerText=item;  
             
-            // CHECK IF ITEM IS BACKGROUND
+            // CHECK IF ITEM IS BACKGROUND (PERMANENT)
             if(item.startsWith('bg-')) {  
-                // Use mapped icon or fallback
                 let icon = BG_ICONS[item] || "🖼️";
                 b.style.fontSize="1.5rem"; 
                 b.innerText=icon; 
@@ -660,24 +668,44 @@
                 b.style.padding="10px"; 
                 b.style.borderRadius="10px";
                 
-                // INSTANT APPLY
                 b.onclick = () => { 
                     DB.profiles[DB.active].wallpaper = item; 
                     save(); 
-                    refreshAll(); // Changes background instantly
+                    refreshAll(); 
                     alert("Wallpaper Applied!"); 
-                    // Optional: closeModals(); 
                 };  
             } else {  
-                b.onclick = () => { DB.decor.push({i:item, x:50, y:50}); save(); closeModals(); nav('pet'); };  
+                // CONSUMABLE DECOR ITEM
+                b.onclick = () => { 
+                    // Add to room
+                    DB.decor.push({i:item, x:50, y:50}); 
+                    
+                    // Remove SPECIFIC item from inventory (find index in main DB array)
+                    const realIndex = DB.inventory.indexOf(item);
+                    if(realIndex > -1) {
+                        DB.inventory.splice(realIndex, 1);
+                    }
+                    
+                    save(); 
+                    closeModals(); 
+                    nav('pet'); 
+                };  
             }  
             g.appendChild(b);  
         });  
     }  
-    function clearDecor(){ DB.decor=[]; save(); renderDecor(); closeModals(); }  
+    function clearDecor(){ 
+        // OPTIONAL: Return items to inventory when cleared? 
+        // For now, let's just clear them (hard reset) or we could push them back.
+        // Let's just clear to keep it simple as requested.
+        DB.decor=[]; 
+        save(); 
+        renderDecor(); 
+        closeModals(); 
+    }  
   
     // --- PHARMACY ---  
-    function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div>${i} SYMPTOM ... ${p} XP</div>`; pendingXP+=p; }  
+    function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div>${i} ... ${p} XP</div>`; pendingXP+=p; }  
     
     function processReceipt() { 
         if(pendingXP>0){ 
@@ -697,13 +725,10 @@
             setTimeout(()=>bub.classList.remove('show'), 2000);  
             
             let msg = `Rx Filled!\n\nReceived: ${item}`;
-            
-            // Check if it's a background for better messaging
             if(item.startsWith('bg-')) {
                 const icon = BG_ICONS[item] || "🖼️";
                 msg += `\n(New System Wallpaper! Look for ${icon})`;
             }
-            
             alert(msg);   
             save(); loadUI();   
         } else alert("Need 50 XP");   
@@ -717,7 +742,6 @@
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
       
-    // FIXED IMPORT LOGIC - MORE ROBUST
     function importData(input) {   
         const file = input.files[0]; if(!file) return;  
         const reader = new FileReader();   
@@ -729,7 +753,7 @@
                 alert("Backup Loaded Successfully!"); 
                 location.reload(); 
             } catch(x) { 
-                alert("Error: Invalid Backup File. Please ensure it is a valid JSON backup."); 
+                alert("Error: Invalid Backup File."); 
                 console.error(x);
             } 
         };   
