@@ -61,10 +61,13 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL --- */  
+    /* --- APP SHELL (OPTIMIZED) --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
+        /* FIXED: Lower blur amount prevents crashing */
+        backdrop-filter: blur(10px); 
+        -webkit-backdrop-filter: blur(10px);
         display: none; flex-direction: column; position: relative; height: 100%;  
         z-index: 10; 
     }  
@@ -73,19 +76,29 @@
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
-    /* --- ID CARD --- */  
+    /* --- FIXED GLIMMER ID CARD (PERFORMANCE OPTIMIZED) --- */  
     .id-card-wrap {  
         background: #fff; border-radius: 15px; padding: 0;  
         box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px;   
         position: relative; overflow: hidden; border: 1px solid #ccc;  
-        min-height: 270px;   
+        min-height: 270px;
+        /* Fix for flickering */
+        transform: translate3d(0,0,0); 
     }  
     .id-card-wrap::before {  
-        content: ""; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;  
-        background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.4) 45%, rgba(0,255,255,0.5) 50%, rgba(255,255,0,0.4) 55%, transparent 60%);  
+        content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;  
+        /* Simplified gradient for better performance */
+        background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.2) 45%, rgba(0,255,255,0.3) 50%, rgba(255,255,0,0.2) 55%, transparent 60%);  
         mix-blend-mode: multiply; pointer-events: none; z-index: 10;  
-        animation: foil 6s linear infinite; opacity: 0.6;  
+        animation: foil 5s linear infinite; opacity: 0.6;  
+        /* Hardware Acceleration */
+        will-change: transform;
     }  
+    @keyframes foil { 
+        0% { transform: translate3d(0,0,0); } 
+        100% { transform: translate3d(50%,50%,0); } 
+    }  
+
     .id-inner { padding: 15px; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; }  
     .id-header { border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; font-weight: 900; letter-spacing: 1px; font-size: 0.7rem; color: #555; }  
     .id-main { display: flex; gap: 15px; margin-bottom: 10px; }  
