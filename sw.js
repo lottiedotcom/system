@@ -1,11 +1,9 @@
-const CACHE_NAME = 'seiren-os-v58'; 
+const CACHE_NAME = 'seiren-os-v59'; 
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  'https://cdn-icons-png.flaticon.com/512/2919/2919573.png',
-  'https://cdn-icons-png.flaticon.com/512/3233/3233508.png',
-  'https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png'
+  'https://cdn-icons-png.flaticon.com/512/2919/2919573.png'
 ];
 
 self.addEventListener('install', (e) => {
