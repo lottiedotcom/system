@@ -75,7 +75,7 @@
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
-    /* --- ID CARD --- */  
+    /* --- FIXED GLIMMER ID CARD --- */  
     .id-card-wrap {  
         background: #fff; border-radius: 15px; padding: 0;  
         box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px;   
@@ -492,7 +492,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v77'); 
+        const saved = localStorage.getItem('seiren_fixed_v78'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -526,7 +526,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); }  
-    function save() { localStorage.setItem('seiren_fixed_v77', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v78', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -547,11 +547,13 @@
             };
             img.src = e.target.result;
         };  
-        reader.readAsDataURL(file);  
+        reader.readAsDataURL(file);
+        inpt.value = ""; // RESET INPUT
     }  
     function handleChatImage(inpt) {   
         const file = inpt.files[0]; if(!file) return;  
         const reader = new FileReader(); reader.onload = (e) => { chatImg = e.target.result; alert("Image attached!"); }; reader.readAsDataURL(file);  
+        inpt.value = ""; // RESET INPUT
     }  
   
     // --- UI & PROFILES ---  
@@ -738,7 +740,6 @@
         const feed = document.getElementById('chat-feed'); feed.innerHTML="";  
         c.msgs.forEach(m => { 
             const imgHTML = m.img ? `<img src="${m.img}" class="pk-img">` : ''; 
-            // ADDED TIMESTAMP DISPLAY HERE
             feed.innerHTML += `
             <div class="pk-msg">
                 <img src="${m.av}" class="pk-av" style="background:${m.color}">
@@ -753,7 +754,6 @@
     function sendMsg() {  
         const i = document.getElementById('msg-in'); if(!i.value && !chatImg) return;  
         const p = DB.profiles[DB.active];  
-        // ADDED TIMESTAMP HERE
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value, img:chatImg, time:time });  
         i.value=""; chatImg=""; save(); renderChat();  
@@ -811,7 +811,7 @@
             
             if(item.startsWith('bg-')) {  
                 let icon = BG_ICONS[item] || "🖼️"; 
-                b.style.fontSize="1.5rem"; b.innerHTML=icon; // InnerHTML used for badge if needed (bg usually unique)
+                b.style.fontSize="1.5rem"; b.innerHTML=icon; 
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
                 b.onclick = () => { DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); };  
             } else {  
@@ -862,8 +862,8 @@
     function setLock(){ const p=document.getElementById('pin-set').value; if(p.length===4){ DB.lock=p; save(); alert("Locked!"); closeModals(); }}  
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
-    function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); }  
-    // PK Import
+    function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); input.value=""; }  
+    
     function importPluralKit(input) {
         const file = input.files[0]; if(!file) return;
         const reader = new FileReader();
@@ -883,31 +883,13 @@
             } catch(err) { alert("Error importing PK file. Make sure it is a valid system.json export."); console.error(err); }
         };
         reader.readAsText(file);
+        input.value="";
     }
 
     function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); }  
     
-    // --- FIXED DIARY (PRIVATE) ---
-    function postDiary() { 
-        const t=document.getElementById('diary-in'); 
-        if(t.value){ 
-            DB.diary.unshift({
-                d:new Date().toLocaleDateString(), 
-                n:DB.profiles[DB.active].name, 
-                uid: DB.profiles[DB.active].id, // Tag with ID
-                t:t.value
-            }); 
-            t.value=""; save(); renderDiary(); 
-        }
-    }  
-    function renderDiary() { 
-        const f=document.getElementById('diary-feed'); f.innerHTML=""; 
-        const currentID = DB.profiles[DB.active].id;
-        const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid);
-        myEntries.forEach((e,i)=>{ 
-            f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; 
-        }); 
-    }  
+    function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, uid: DB.profiles[DB.active].id, t:t.value}); t.value=""; save(); renderDiary(); } }  
+    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; const currentID = DB.profiles[DB.active].id; const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid); myEntries.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }  
     
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
     function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }  
