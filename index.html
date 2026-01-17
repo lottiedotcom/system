@@ -61,7 +61,7 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL --- */  
+    /* --- APP SHELL (OPTIMIZED) --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
@@ -492,7 +492,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v78'); 
+        const saved = localStorage.getItem('seiren_fixed_v80'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -526,7 +526,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); }  
-    function save() { localStorage.setItem('seiren_fixed_v78', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v80', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -780,18 +780,15 @@
         const g = document.getElementById('inventory-grid'); g.innerHTML="";  
         if(DB.inventory.length === 0) document.getElementById('empty-msg').style.display='block'; else document.getElementById('empty-msg').style.display='none';
 
-        // Add "Clear Wallpaper" option
         const clearBtn = document.createElement('div'); 
         clearBtn.style.fontSize="1.5rem"; clearBtn.innerText="🚫"; 
         clearBtn.style.border="2px dashed red"; clearBtn.style.padding="10px"; clearBtn.style.borderRadius="10px"; clearBtn.style.cursor="pointer";
         clearBtn.onclick = () => { DB.profiles[DB.active].wallpaper = ""; save(); refreshAll(); alert("Wallpaper Removed"); };
         g.appendChild(clearBtn);
 
-        // 1. COUNT ITEMS
         const counts = {};
         DB.inventory.forEach(x => { counts[x] = (counts[x] || 0) + 1; });
 
-        // 2. SORT AND DISPLAY UNIQUE ITEMS
         const uniqueItems = Object.keys(counts).sort((a,b) => { 
             const aBg = a.startsWith('bg-'); const bBg = b.startsWith('bg-'); 
             return aBg === bBg ? 0 : aBg ? 1 : -1; 
@@ -801,9 +798,8 @@
             const b = document.createElement('div'); 
             b.style.fontSize="2.5rem"; 
             b.style.cursor="pointer"; 
-            b.style.position="relative"; // For badge positioning
+            b.style.position="relative"; 
             
-            // Display Count Badge if > 1
             let badge = "";
             if(counts[item] > 1 && !item.startsWith('bg-')) {
                 badge = `<span style="position:absolute; bottom:0; right:0; background:red; color:white; font-size:0.6rem; padding:2px 5px; border-radius:10px;">x${counts[item]}</span>`;
@@ -815,10 +811,9 @@
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
                 b.onclick = () => { DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); };  
             } else {  
-                b.innerHTML = item + badge; // Add icon and badge
+                b.innerHTML = item + badge; 
                 b.onclick = () => { 
                     DB.decor.push({i:item, x:50, y:50}); 
-                    // Remove ONE instance of this item
                     const realIndex = DB.inventory.indexOf(item); 
                     if(realIndex > -1) DB.inventory.splice(realIndex, 1); 
                     save(); closeModals(); nav('pet'); 
@@ -828,17 +823,9 @@
         });  
     }  
 
-    // --- FIXED CLEAR DECOR (RETURN TO BACKPACK) ---
     function clearDecor(){ 
-        // Iterate through decor and push items back to inventory
-        DB.decor.forEach(d => {
-            DB.inventory.push(d.i);
-        });
-        DB.decor=[]; 
-        save(); 
-        renderDecor(); 
-        closeModals(); 
-        alert("Items returned to Backpack!");
+        DB.decor.forEach(d => { DB.inventory.push(d.i); });
+        DB.decor=[]; save(); renderDecor(); closeModals(); alert("Items returned to Backpack!");
     }  
   
     // --- PHARMACY ---  
@@ -862,30 +849,62 @@
     function setLock(){ const p=document.getElementById('pin-set').value; if(p.length===4){ DB.lock=p; save(); alert("Locked!"); closeModals(); }}  
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
-    function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); input.value=""; }  
     
+    // --- ROBUST PLURALKIT IMPORT ---
     function importPluralKit(input) {
-        const file = input.files[0]; if(!file) return;
+        const file = input.files[0];
+        if(!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
                 const json = JSON.parse(e.target.result);
-                let members = json.members || json; if (!Array.isArray(members)) throw new Error("Invalid PK file");
+                // Handle different PK formats (Full system vs Member list)
+                let members = [];
+                if (Array.isArray(json)) {
+                    members = json;
+                } else if (json.members && Array.isArray(json.members)) {
+                    members = json.members;
+                } else if (json.id && json.name) {
+                    // Single member export
+                    members = [json]; 
+                } else {
+                    throw new Error("Could not find members list in file. Please use 'pk;export' command.");
+                }
+
                 let count = 0;
                 members.forEach(m => {
+                    // Avoid duplicates
                     if (!DB.profiles.some(p => p.name === m.name)) {
                         DB.profiles.push({
-                            name: m.name || "Unknown", av: m.avatar_url || DEFAULT_AV, sign: m.pronouns || "?", age: m.birthday || "--", species: "System Member", height: "--", bio: m.description || "Imported from PluralKit", color: m.color ? "#"+m.color : "#ff69b4", id: m.id || Math.floor(Math.random()*900000), likes: [], dislikes: [], notes: ""
-                        }); count++;
+                            name: m.name || "Unknown",
+                            av: m.avatar_url || DEFAULT_AV,
+                            sign: m.pronouns || "?", 
+                            age: m.birthday || "--",
+                            species: "System Member",
+                            height: "--",
+                            bio: m.description || "Imported from PluralKit",
+                            color: m.color ? "#"+m.color : "#ff69b4",
+                            id: m.id || Math.floor(Math.random()*900000),
+                            likes: [], dislikes: [], notes: ""
+                        });
+                        count++;
                     }
                 });
-                save(); alert(`Successfully imported ${count} members from PluralKit!`); refreshAll();
-            } catch(err) { alert("Error importing PK file. Make sure it is a valid system.json export."); console.error(err); }
+                
+                save();
+                alert(`Success! Imported ${count} members.`);
+                refreshAll();
+            } catch(err) {
+                alert("Import Failed: " + err.message);
+                console.error(err);
+            }
         };
         reader.readAsText(file);
-        input.value="";
+        input.value = ""; // Always reset input to allow retrying
     }
 
+    function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); input.value = ""; }  
+  
     function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); }  
     
     function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, uid: DB.profiles[DB.active].id, t:t.value}); t.value=""; save(); renderDiary(); } }  
@@ -901,4 +920,3 @@
 </script>  
 </body>  
 </html>
-
