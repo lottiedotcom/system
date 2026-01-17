@@ -32,7 +32,7 @@
         color: #444;   
     }  
 
-    /* --- EXPANDED BACKGROUND LIBRARY --- */
+    /* --- BACKGROUNDS --- */
     .bg-polka { background-color: #fff0f5 !important; background-image: radial-gradient(#ff1493 20%, transparent 20%) !important; background-size: 30px 30px !important; background-attachment: fixed !important; }
     .bg-lines { background-color: #fff0f5 !important; background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 20, 147, 0.4) 10px, rgba(255, 20, 147, 0.4) 20px) !important; background-attachment: fixed !important; }
     .bg-grid { background-color: #fff !important; background-image: linear-gradient(rgba(255, 105, 180, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 105, 180, 0.5) 1px, transparent 1px) !important; background-size: 20px 20px !important; background-attachment: fixed !important; }
@@ -75,7 +75,7 @@
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
-    /* --- FIXED GLIMMER ID CARD --- */  
+    /* --- ID CARD --- */  
     .id-card-wrap {  
         background: #fff; border-radius: 15px; padding: 0;  
         box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px;   
@@ -171,8 +171,15 @@
     .dock-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }  
     .dock-btn.active { opacity: 1; transform: translateY(-8px); }  
 
-    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; }  
-    .modal-card { background: white; width: 90%; max-width: 380px; border-radius: 25px; padding: 25px; border: 4px ridge var(--main); max-height: 85vh; overflow-y: auto; }  
+    /* FIXED MODAL STYLE: Smaller max-height and extra padding at bottom */
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }  
+    .modal-card { 
+        background: white; width: 90%; max-width: 380px; border-radius: 25px; padding: 25px; 
+        border: 4px ridge var(--main); 
+        max-height: 80vh; /* Reduced from 85vh */
+        overflow-y: auto; 
+        padding-bottom: 40px; /* EXTRA padding so buttons don't get cut off */
+    }  
     input, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border: 2px inset #eee; border-radius: 10px; font-family: inherit;}  
 
     /* --- LOCK SCREEN --- */  
@@ -492,7 +499,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v80'); 
+        const saved = localStorage.getItem('seiren_fixed_v81'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -526,7 +533,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); }  
-    function save() { localStorage.setItem('seiren_fixed_v80', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v81', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -849,6 +856,7 @@
     function setLock(){ const p=document.getElementById('pin-set').value; if(p.length===4){ DB.lock=p; save(); alert("Locked!"); closeModals(); }}  
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
+    function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); input.value = ""; }  
     
     // --- ROBUST PLURALKIT IMPORT ---
     function importPluralKit(input) {
@@ -903,8 +911,6 @@
         input.value = ""; // Always reset input to allow retrying
     }
 
-    function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); input.value = ""; }  
-  
     function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); }  
     
     function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, uid: DB.profiles[DB.active].id, t:t.value}); t.value=""; save(); renderDiary(); } }  
