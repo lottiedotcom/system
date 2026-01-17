@@ -61,7 +61,7 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL (OPTIMIZED) --- */  
+    /* --- APP SHELL --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
@@ -171,6 +171,7 @@
     .dock-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }  
     .dock-btn.active { opacity: 1; transform: translateY(-8px); }  
 
+    /* FIXED MODAL STYLE: Smaller max-height and extra padding at bottom */
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }  
     .modal-card { 
         background: white; width: 90%; max-width: 380px; border-radius: 25px; padding: 25px; 
@@ -371,7 +372,6 @@
 
     <div class="dock">  
         <button class="dock-btn active" onclick="nav('dash')">🏠</button>  
-        <button class="dock-btn" onclick="nav('about')">👤</button>
         <button class="dock-btn" onclick="nav('pharmacy')">🏥</button>  
         <button class="dock-btn" onclick="nav('pet')">🍤</button>  
         <button class="dock-btn" onclick="nav('chat')">💬</button>  
@@ -498,7 +498,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v82'); 
+        const saved = localStorage.getItem('seiren_fixed_v83'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -532,7 +532,7 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); }  
-    function save() { localStorage.setItem('seiren_fixed_v82', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v83', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -864,7 +864,7 @@
         reader.onload = (e) => {
             try {
                 const json = JSON.parse(e.target.result);
-                // Handle different PK formats (Full system vs Member list)
+                // Handle different PK export formats (sometimes wrapped in "members", sometimes just the object)
                 let members = [];
                 if (Array.isArray(json)) {
                     members = json;
@@ -884,10 +884,13 @@
                         DB.profiles.push({
                             name: m.name || "Unknown",
                             av: m.avatar_url || DEFAULT_AV,
+                            // Map pronouns to sign (fits UI better), default to '?'
                             sign: m.pronouns || "?", 
+                            // Map birthday to age if present, else empty
                             age: m.birthday || "--",
                             species: "System Member",
                             height: "--",
+                            // Full bio goes here
                             bio: m.description || "Imported from PluralKit",
                             color: m.color ? "#"+m.color : "#ff69b4",
                             id: m.id || Math.floor(Math.random()*900000),
@@ -913,8 +916,31 @@
   
     function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); }  
     
-    function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, uid: DB.profiles[DB.active].id, t:t.value}); t.value=""; save(); renderDiary(); } }  
-    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; const currentID = DB.profiles[DB.active].id; const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid); myEntries.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }  
+    // --- FIXED DIARY (PRIVATE) ---
+    function postDiary() { 
+        const t=document.getElementById('diary-in'); 
+        if(t.value){ 
+            DB.diary.unshift({
+                d:new Date().toLocaleDateString(), 
+                n:DB.profiles[DB.active].name, 
+                uid: DB.profiles[DB.active].id, // Tag with ID
+                t:t.value
+            }); 
+            t.value=""; save(); renderDiary(); 
+        }
+    }  
+    function renderDiary() { 
+        const f=document.getElementById('diary-feed'); f.innerHTML=""; 
+        const currentID = DB.profiles[DB.active].id;
+        
+        // Filter: Show only if UID matches current active ID
+        // Fallback: If entry has no UID (old data), show it anyway
+        const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid);
+
+        myEntries.forEach((e,i)=>{ 
+            f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; 
+        }); 
+    }  
     
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
     function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }  
