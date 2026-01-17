@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seiren-os-v78-final';
+const CACHE_NAME = 'seiren-os-v80-pk-final';
 const ASSETS = [
     './',
     './index.html',
