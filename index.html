@@ -33,15 +33,13 @@
     }  
 
     /* --- NIGHT MODE (LIMINAL DREAM JOURNAL) --- */
-    /* FIXED: Specific image + Dreamy Blur */
     body.night-mode {
-        background-color: #050510 !important;
-        background-image: none !important; /* Remove old gradients */
+        background-color: #000 !important;
+        background-image: none !important; /* Remove default pattern */
         color: #b0c4de !important;
-        position: relative;
     }
     
-    /* New blurred background layer */
+    /* NEW DREAM BACKGROUND IMPLEMENTATION */
     body.night-mode::before {
         content: "";
         position: fixed;
@@ -49,13 +47,17 @@
         background-image: url('https://i.postimg.cc/Zn1jB8Lc/Untitled86-20260119120235.jpg');
         background-size: cover;
         background-position: center;
-        background-attachment: fixed;
-        filter: blur(8px) brightness(0.6); /* THE DREAMY BLUR */
+        background-repeat: no-repeat;
+        filter: blur(4px) brightness(0.8) contrast(1.1); /* Blurry and Dreamy */
+        transform: scale(1.1); /* Zoom slightly to hide blurred edges */
         z-index: -1;
-        opacity: 0;
-        animation: fadeInBg 2s forwards;
+        animation: dream-breathe 20s infinite alternate ease-in-out;
     }
-    @keyframes fadeInBg { to { opacity: 1; } }
+    
+    @keyframes dream-breathe {
+        from { transform: scale(1.1); }
+        to { transform: scale(1.2); }
+    }
 
     body.night-mode .app-shell { backdrop-filter: none; }
     body.night-mode .dock { background: rgba(10, 10, 30, 0.8); border-color: #333; }
@@ -80,11 +82,6 @@
         background: rgba(15, 15, 30, 0.9) !important;
         border: 1px solid rgba(126, 87, 194, 0.3);
         box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        animation: liminal-pulse 4s infinite alternate;
-    }
-    @keyframes liminal-pulse {
-        from { box-shadow: 0 0 10px rgba(126, 87, 194, 0.1); border-color: rgba(126, 87, 194, 0.2); }
-        to { box-shadow: 0 0 25px rgba(126, 87, 194, 0.4); border-color: rgba(126, 87, 194, 0.6); }
     }
 
     /* --- WALLPAPERS --- */
@@ -352,37 +349,58 @@
         border-radius: 10px; margin-bottom: 10px; cursor: pointer; font-weight: bold; color: #555;
     }
 
-    /* --- REWARD ANIMATION & CONFETTI --- */
-    #modal-reward { 
-        z-index: 5000; background: rgba(255,255,255,0.95); 
-        display: none; flex-direction: column; 
-        align-items: center; justify-content: center; 
+    /* --- REWARD OVERLAY (NEW) --- */
+    #reward-screen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(255,182,193, 0.95);
+        z-index: 10000; display: none;
+        flex-direction: column; align-items: center; justify-content: center;
+        text-align: center;
     }
-    .reward-item { 
-        width: 80px; height: 80px; background: white; 
-        border: 2px solid var(--main); border-radius: 15px; 
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        font-size: 2rem;
-        animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
-    }
-    .reward-item img { width: 80%; height: 80%; object-fit: contain; }
-    @keyframes popUp { from { transform: scale(0); } to { transform: scale(1); } }
-    
     .confetti {
-        position: absolute; width: 10px; height: 10px; background: #f00;
-        animation: confetti-fall 3s linear forwards;
+        position: absolute; width: 10px; height: 10px; background: #fff;
+        animation: fall linear forwards;
     }
-    @keyframes confetti-fall {
-        0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+    
+    .reward-box {
+        background: white; padding: 20px; border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        max-width: 90%;
+        z-index: 2;
+        border: 5px solid #fff;
+        outline: 5px dashed var(--main);
     }
+    @keyframes popUp { from{transform:scale(0);} to{transform:scale(1);} }
+    
+    .reward-items-container {
+        display: flex; gap: 15px; justify-content: center; margin: 20px 0;
+    }
+    .reward-item-display {
+        width: 70px; height: 70px; 
+        background: #f9f9f9; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2rem; border: 2px solid #eee;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    .reward-item-display img { width: 90%; height: 90%; object-fit: contain; }
 </style>
 
 </head>  
 <body class="fx-active">  
 <div class="scanlines"></div>  
 <div class="dream-overlay"></div>  
+
+<div id="reward-screen">
+    <div class="reward-box">
+        <h1 style="color:var(--main); margin:0;">CONGRATS!</h1>
+        <p style="color:#666; margin:5px 0;">Prescription Refilled Successfully</p>
+        <div class="reward-items-container" id="reward-showcase">
+            </div>
+        <button class="btn-action" onclick="closeRewardScreen()">Collect Items</button>
+    </div>
+</div>
 
 <div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:3000; display:flex; flex-direction:column; align-items:center; justify-content:center;">  
     <div style="font-size:4rem; margin-bottom:10px;">💾</div>  
@@ -412,16 +430,6 @@
         <div class="pin-btn" style="opacity:0"></div><div class="pin-btn" onclick="enterPin(0)">0</div><div class="pin-btn" style="background:rgba(255,200,200,0.3)" onclick="clearPin()">C</div>  
     </div>  
 </div>  
-
-<div id="modal-reward" class="modal">
-    <div style="text-align:center; z-index:10;">
-        <h1 style="color:var(--main); font-size:2rem; margin-bottom:10px; text-shadow: 2px 2px 0 white;">CONGRATS!</h1>
-        <p style="color:#555; margin-bottom:30px;">Prescription Refilled</p>
-        <div id="reward-items-container" style="display:flex; gap:15px; justify-content:center; margin-bottom:40px;">
-            </div>
-        <button class="btn-action" style="width:200px; background:#81c784; animation: pulse 1s infinite;" onclick="closeReward()">✨ COLLECT ✨</button>
-    </div>
-</div>
 
 <div class="app-shell" id="app">  
     <div id="sys-alert" class="sys-alert">
@@ -783,7 +791,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v88'); 
+        const saved = localStorage.getItem('seiren_fixed_v87'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
         if(DB.profiles.length === 0) {  
             DB.profiles.push({ name: "Guest", av: DEFAULT_AV, color: "#ff69b4", id: "GUEST", sign: "-", species: "Visitor", age: "-", height: "-", bio: "Guest Access", likes: [], dislikes: [], notes: "" });  
@@ -816,8 +824,8 @@
         else { document.querySelector('.app-shell').style.display='flex'; refreshAll(); }  
     }  
   
-    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); renderConsole(); renderDreamLog(); }  
-    function save() { localStorage.setItem('seiren_fixed_v88', JSON.stringify(DB)); }  
+    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); renderConsole(); renderDreamLog(); renderStamps(); /* FIXED: ADDED renderStamps call */ }  
+    function save() { localStorage.setItem('seiren_fixed_v87', JSON.stringify(DB)); }  
   
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
     
@@ -869,13 +877,6 @@
         if(DB.settings.crt) classes += "fx-active ";
         if(p.wallpaper) classes += p.wallpaper;
         document.body.className = classes;
-        
-        // Re-apply night mode if active (since className overwrite kills it)
-        if(document.body.classList.contains('bg-stars-blue')) { 
-            // Just an example, logic is handled by toggles usually 
-        }
-        // Ensure stamp grid is updated
-        renderStamps();
     }  
   
     function createProfile() {  
@@ -1186,7 +1187,7 @@
             logToConsole(`Processed: +${pendingXP} XP`); 
             pendingXP=0; 
             document.getElementById('receipt-list').innerHTML=""; 
-            save(); loadUI(); 
+            save(); refreshAll(); /* UPDATED: Changed from loadUI to refreshAll so stamps appear */
         } 
     }  
     
@@ -1212,54 +1213,51 @@
         }
     }
 
-    // --- NEW REWARD ANIMATION SYSTEM ---
-    function triggerConfetti() {
-        for(let i=0; i<30; i++) {
-            const c = document.createElement('div');
-            c.className = 'confetti';
-            c.style.left = Math.random() * 100 + 'vw';
-            c.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
-            c.style.animationDuration = (Math.random() * 2 + 1) + 's';
-            document.body.appendChild(c);
-            setTimeout(() => c.remove(), 3000);
-        }
-    }
-
+    // --- NEW REWARD ANIMATION FUNCTION ---
     function claimReward() {
         if(DB.stamps >= 10) {
-            DB.stamps = 0; // Reset
-            
             // Reward: 3 Random Items
             let rewards = [];
             for(let i=0; i<3; i++) rewards.push(LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)]);
+            
+            // Add to inventory immediately
             DB.inventory.push(...rewards);
-            save(); // Save immediately so items aren't lost if they refresh
-
-            // SHOW ANIMATION
-            const modal = document.getElementById('modal-reward');
-            const container = document.getElementById('reward-items-container');
-            container.innerHTML = "";
+            
+            // Show Overlay
+            const screen = document.getElementById('reward-screen');
+            const showcase = document.getElementById('reward-showcase');
+            showcase.innerHTML = "";
             
             rewards.forEach(r => {
-                const div = document.createElement('div');
-                div.className = 'reward-item';
-                if(r.startsWith('http')) {
-                    div.innerHTML = `<img src="${r}">`;
-                } else {
-                    div.innerHTML = BG_ICONS[r] || "🎁";
-                }
-                container.appendChild(div);
+                let inner = "";
+                if(r.startsWith('bg-')) inner = BG_ICONS[r] || "🖼️";
+                else inner = `<img src="${r}">`;
+                showcase.innerHTML += `<div class="reward-item-display">${inner}</div>`;
             });
 
-            modal.style.display = 'flex';
-            triggerConfetti();
-            renderStamps(); // Will hide the button and clear grid visually
+            // Create Confetti
+            for(let i=0; i<50; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + "%";
+                c.style.top = -10 + "px";
+                c.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+                c.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                screen.appendChild(c);
+            }
+            
+            screen.style.display = 'flex';
         }
     }
 
-    function closeReward() {
-        document.getElementById('modal-reward').style.display = 'none';
-        loadUI();
+    function closeRewardScreen() {
+        DB.stamps = 0;
+        save();
+        refreshAll();
+        document.getElementById('reward-screen').style.display = 'none';
+        // Remove confetti
+        const conf = document.querySelectorAll('.confetti');
+        conf.forEach(c => c.remove());
     }
 
     function fillPrescription() {   
