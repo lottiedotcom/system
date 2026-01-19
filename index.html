@@ -32,7 +32,7 @@
         color: #444;   
     }  
 
-    /* --- NIGHT MODE (DREAM JOURNAL) --- */
+    /* --- NIGHT MODE (LIMINAL DREAM JOURNAL) --- */
     body.night-mode {
         background-color: #050510 !important;
         background-image: 
@@ -47,10 +47,33 @@
     body.night-mode .dock { background: rgba(10, 10, 30, 0.8); border-color: #333; }
     body.night-mode .dock-btn { filter: grayscale(100%) brightness(200%); }
     body.night-mode .btn-action { background: #483d8b; color: #e6e6fa; box-shadow: 0 4px 0 #282250; }
-    body.night-mode input, body.night-mode textarea, body.night-mode .bio-container, body.night-mode .id-card-wrap { 
-        background: rgba(20,20,40,0.8) !important; color: #e6e6fa !important; border-color: #483d8b !important; 
+    
+    /* Liminal Inputs */
+    body.night-mode input, body.night-mode textarea, body.night-mode .id-card-wrap { 
+        background: rgba(10,10,20,0.6) !important; 
+        color: #e6e6fa !important; 
+        border: 1px solid #483d8b !important; 
+        font-family: var(--font-mono) !important; /* Monospace for terminal feel */
     }
-    body.night-mode h2 { background: #1a1a3a !important; color: #e6e6fa !important; }
+    body.night-mode h2 { 
+        background: transparent !important; 
+        color: #e6e6fa !important; 
+        text-shadow: 0 0 10px rgba(230, 230, 250, 0.5);
+        font-family: var(--font-mono) !important;
+        border: 1px solid #483d8b;
+    }
+    
+    /* Ghostly Pulse Animation for Dream Journal */
+    body.night-mode .bio-container {
+        background: rgba(15, 15, 30, 0.9) !important;
+        border: 1px solid rgba(126, 87, 194, 0.3);
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        animation: liminal-pulse 4s infinite alternate;
+    }
+    @keyframes liminal-pulse {
+        from { box-shadow: 0 0 10px rgba(126, 87, 194, 0.1); border-color: rgba(126, 87, 194, 0.2); }
+        to { box-shadow: 0 0 25px rgba(126, 87, 194, 0.4); border-color: rgba(126, 87, 194, 0.6); }
+    }
 
     /* --- WALLPAPERS --- */
     .bg-apple { background-image: url('https://i.postimg.cc/jSy15jN8/254dfc0d0652f67805de02ae1113f60a.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
@@ -257,20 +280,19 @@
         padding-bottom: 30px; 
     }  
     
-    /* UPDATED MOOD GRID FOR BIGGER BUTTONS */
+    /* UPDATED MOOD GRID FOR MEDIUM BUTTONS */
     .mood-grid { 
         display: grid; 
         grid-template-columns: repeat(4, 1fr); 
-        gap: 10px; /* Wider gap */
-        /* Removed max-height so it expands vertically */
+        gap: 10px; 
         padding: 10px 0;
     }  
     .mood-btn { 
         background: white; 
         border: 2px solid #eee; 
         border-radius: 12px; 
-        height: 65px; /* Taller buttons */
-        font-size: 2.2rem; /* Bigger emojis */
+        height: 55px; /* Reduced from 65px */
+        font-size: 1.8rem; /* Reduced from 2.2rem */
         cursor: pointer; 
         transition: transform 0.1s;
     }  
@@ -513,8 +535,7 @@
             <label>Clarity (Fuzzy -> Hyper-Real):</label>
             <input type="range" id="dream-clear" min="1" max="10" style="width:100%;">
             
-            <label>Visitors / Entities:</label>
-            <input type="text" id="dream-ent" placeholder="Who was there?">
+            <label>Visitors:</label> <input type="text" id="dream-ent" placeholder="Who was there?">
             
             <label>Residue (Feeling):</label>
             <input type="text" id="dream-feel" placeholder="e.g. Cold, Nostalgic">
