@@ -33,26 +33,29 @@
     }  
 
     /* --- NIGHT MODE (LIMINAL DREAM JOURNAL) --- */
+    /* FIXED: Specific image + Dreamy Blur */
     body.night-mode {
         background-color: #050510 !important;
-        /* Remove default patterns */
-        background-image: none !important;
+        background-image: none !important; /* Remove old gradients */
         color: #b0c4de !important;
+        position: relative;
     }
     
-    /* NEW DREAMY BACKGROUND */
+    /* New blurred background layer */
     body.night-mode::before {
         content: "";
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: url('https://i.postimg.cc/Zn1jB8Lc/Untitled86-20260119120235.jpg');
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: url('https://i.postimg.cc/Zn1jB8Lc/Untitled86-20260119120235.jpg');
         background-size: cover;
         background-position: center;
-        filter: blur(4px) brightness(0.7) contrast(1.1); /* The "Dreamy" Effect */
+        background-attachment: fixed;
+        filter: blur(8px) brightness(0.6); /* THE DREAMY BLUR */
         z-index: -1;
-        pointer-events: none;
-        animation: breathe 10s infinite alternate;
+        opacity: 0;
+        animation: fadeInBg 2s forwards;
     }
-    @keyframes breathe { from { transform: scale(1); } to { transform: scale(1.05); } }
+    @keyframes fadeInBg { to { opacity: 1; } }
 
     body.night-mode .app-shell { backdrop-filter: none; }
     body.night-mode .dock { background: rgba(10, 10, 30, 0.8); border-color: #333; }
@@ -77,6 +80,11 @@
         background: rgba(15, 15, 30, 0.9) !important;
         border: 1px solid rgba(126, 87, 194, 0.3);
         box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        animation: liminal-pulse 4s infinite alternate;
+    }
+    @keyframes liminal-pulse {
+        from { box-shadow: 0 0 10px rgba(126, 87, 194, 0.1); border-color: rgba(126, 87, 194, 0.2); }
+        to { box-shadow: 0 0 25px rgba(126, 87, 194, 0.4); border-color: rgba(126, 87, 194, 0.6); }
     }
 
     /* --- WALLPAPERS --- */
@@ -107,7 +115,7 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL --- */  
+    /* --- APP SHELL & SCROLLING FIX --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
@@ -126,9 +134,9 @@
         overflow-y: auto; 
         overflow-x: hidden;
         padding: 20px; 
-        padding-bottom: 120px;
+        padding-bottom: 120px; /* EXTRA PADDING FOR SCROLL */
         scroll-behavior: smooth; 
-        -webkit-overflow-scrolling: touch; 
+        -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
     }  
     
     .page { display: none; animation: popIn 0.3s; }  
@@ -252,7 +260,7 @@
 
     /* --- PHARMACY LOYALTY CARD --- */
     .loyalty-card {
-        background-image: url('https://i.postimg.cc/9fr6qn0r/152f88be4a1ea59ecb8283bd71e01aa5.jpg');
+        background-image: url('https://i.postimg.cc/9fr6qn0r/152f88be4a1ea59ecb8283bd71e01aa5.jpg'); /* NEW PAPER TEXTURE */
         background-size: cover;
         padding: 15px; border-radius: 10px; border: 1px solid #ccc;
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px; position: relative;
@@ -272,45 +280,6 @@
         font-weight: bold; cursor: pointer; animation: pulse 1s infinite; 
     }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-
-    /* --- NEW: REWARD OVERLAY (CONFETTI EXPLOSION) --- */
-    #reward-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.8); z-index: 5000;
-        display: none; flex-direction: column; align-items: center; justify-content: center;
-        animation: fadeIn 0.5s;
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    
-    .reward-card-big {
-        width: 80%; max-width: 300px; height: 180px;
-        background-image: url('https://i.postimg.cc/9fr6qn0r/152f88be4a1ea59ecb8283bd71e01aa5.jpg');
-        background-size: cover;
-        border-radius: 15px; border: 4px solid white;
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 0 50px rgba(255, 105, 180, 0.8);
-        animation: bigPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    @keyframes bigPop { 0% { transform: scale(0) rotate(0deg); } 80% { transform: scale(1.1) rotate(5deg); } 100% { transform: scale(1) rotate(0deg); } }
-
-    .reward-items {
-        display: flex; gap: 10px; margin-top: 20px;
-    }
-    .reward-item {
-        width: 60px; height: 60px; background: white; border-radius: 50%;
-        border: 3px solid var(--main); display: flex; align-items: center; justify-content: center;
-        font-size: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        opacity: 0; transform: translateY(20px);
-        animation: slideUp 0.5s forwards;
-    }
-    .reward-item img { width: 80%; height: 80%; object-fit: contain; }
-    @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
-
-    .confetti {
-        position: absolute; width: 10px; height: 10px; background: #ffd700;
-        animation: fall 2s linear forwards;
-    }
-    @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
 
     /* --- DREAM JOURNAL (NIGHT MODE) --- */
     .dream-entry { 
@@ -333,6 +302,7 @@
         padding-bottom: 30px; 
     }  
     
+    /* UPDATED MOOD GRID FOR MEDIUM BUTTONS */
     .mood-grid { 
         display: grid; 
         grid-template-columns: repeat(4, 1fr); 
@@ -343,8 +313,8 @@
         background: white; 
         border: 2px solid #eee; 
         border-radius: 12px; 
-        height: 55px; 
-        font-size: 1.8rem; 
+        height: 55px; /* SCALED DOWN */
+        font-size: 1.8rem; /* SCALED DOWN */
         cursor: pointer; 
         transition: transform 0.1s;
     }  
@@ -381,19 +351,38 @@
         display: block; width: 100%; padding: 10px; text-align: center; background: #eee;
         border-radius: 10px; margin-bottom: 10px; cursor: pointer; font-weight: bold; color: #555;
     }
+
+    /* --- REWARD ANIMATION & CONFETTI --- */
+    #modal-reward { 
+        z-index: 5000; background: rgba(255,255,255,0.95); 
+        display: none; flex-direction: column; 
+        align-items: center; justify-content: center; 
+    }
+    .reward-item { 
+        width: 80px; height: 80px; background: white; 
+        border: 2px solid var(--main); border-radius: 15px; 
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        font-size: 2rem;
+        animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
+    }
+    .reward-item img { width: 80%; height: 80%; object-fit: contain; }
+    @keyframes popUp { from { transform: scale(0); } to { transform: scale(1); } }
+    
+    .confetti {
+        position: absolute; width: 10px; height: 10px; background: #f00;
+        animation: confetti-fall 3s linear forwards;
+    }
+    @keyframes confetti-fall {
+        0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
 </style>
 
 </head>  
 <body class="fx-active">  
 <div class="scanlines"></div>  
 <div class="dream-overlay"></div>  
-
-<div id="reward-overlay" onclick="this.style.display='none'">
-    <div class="reward-card-big">
-        <h2 style="background:white; padding:5px; border-radius:5px;">REFILLED!</h2>
-    </div>
-    <div class="reward-items" id="reward-items-container"></div>
-</div>
 
 <div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:3000; display:flex; flex-direction:column; align-items:center; justify-content:center;">  
     <div style="font-size:4rem; margin-bottom:10px;">💾</div>  
@@ -423,6 +412,16 @@
         <div class="pin-btn" style="opacity:0"></div><div class="pin-btn" onclick="enterPin(0)">0</div><div class="pin-btn" style="background:rgba(255,200,200,0.3)" onclick="clearPin()">C</div>  
     </div>  
 </div>  
+
+<div id="modal-reward" class="modal">
+    <div style="text-align:center; z-index:10;">
+        <h1 style="color:var(--main); font-size:2rem; margin-bottom:10px; text-shadow: 2px 2px 0 white;">CONGRATS!</h1>
+        <p style="color:#555; margin-bottom:30px;">Prescription Refilled</p>
+        <div id="reward-items-container" style="display:flex; gap:15px; justify-content:center; margin-bottom:40px;">
+            </div>
+        <button class="btn-action" style="width:200px; background:#81c784; animation: pulse 1s infinite;" onclick="closeReward()">✨ COLLECT ✨</button>
+    </div>
+</div>
 
 <div class="app-shell" id="app">  
     <div id="sys-alert" class="sys-alert">
@@ -525,7 +524,7 @@
             <div class="loyalty-card">
                 <div class="loyalty-header">Seiren Clinic • Patient Card</div>
                 <div class="stamp-grid" id="stamp-grid"></div>
-                <button id="reward-btn" class="reward-btn" onclick="claimRewardAnimation()">
+                <button id="reward-btn" class="reward-btn" onclick="claimReward()">
                     <img src="https://i.postimg.cc/8C9qdmfN/a3f6c6b70ab5af6f58240dba296b7556.png" style="width:30px; vertical-align:middle; margin-right:5px;">
                     CLAIM REFILL
                 </button>
@@ -626,21 +625,123 @@
     </div>
 </div>  
 
+<div id="modal-chat-actions" class="modal">
+    <div class="modal-card" style="text-align:center;">
+        <h3>Message Options</h3>
+        <p id="chat-action-text" style="font-size:0.8rem; color:#666; margin-bottom:15px;">...</p>
+        <button class="btn-action" style="background:#64b5f6;" onclick="replyToMsg()">↩️ Reply</button>
+        <button class="btn-action" style="background:#ffb74d;" onclick="editMsg()">✏️ Edit</button>
+        <button class="btn-action" style="background:#ff4444;" onclick="deleteMsg()">🗑️ Delete</button>
+        <button class="btn-action" style="background:#ccc;" onclick="closeModals()">Cancel</button>
+    </div>
+</div>
+
+<div id="modal-settings" class="modal">  
+    <div class="modal-card">  
+        <h3>Settings</h3>  
+        <label>System Name:</label>  
+        <input type="text" id="sys-name-input" placeholder="Seiren OS">  
+        <button class="btn-action" style="margin-top:5px; margin-bottom:15px;" onclick="saveSystemName()">Update Name</button>  
+        <label style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:10px; border-radius:10px;">  
+            <span>📺 CRT Effects</span>  
+            <input type="checkbox" id="toggle-crt" onchange="toggleCRT()" checked style="width:auto; margin:0;">  
+        </label>  
+        <hr>  
+        <h4>Security</h4>  
+        <input type="number" id="pin-set" placeholder="New PIN (4 digits)" maxlength="4" style="text-align:center;">  
+        <button class="btn-action" style="margin-top:5px;" onclick="setLock()">Enable Lock</button>  
+        <button class="btn-action" style="margin-top:5px; background:#ff4444;" onclick="disableLock()">Disable Lock</button>  
+        <button class="btn-action" style="margin-top:15px; background:#ccc;" onclick="closeModals()">Close</button>  
+    </div>
+</div>  
+
+<div id="modal-profile" class="modal">  
+    <div class="modal-card">  
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3>Identity Card</h3>
+            <button class="btn-action" style="width:auto; padding:5px 10px; font-size:0.7rem;" onclick="openLogModal()">📜 History</button>
+        </div>
+        <div id="prof-list" style="margin-bottom:15px; max-height:150px; overflow-y:auto; border:1px solid #eee;"></div>  
+        <hr>  
+        <h4>Profile Editor</h4>  
+        <p style="font-size:0.7rem; color:#666;">Leave fields blank to keep current data.</p>
+        <input type="text" id="new-name" placeholder="Name">  
+        <div style="display:flex; gap:10px;">  
+            <input type="text" id="new-age" placeholder="Age" style="width:30%;">  
+            <input type="text" id="new-sign" placeholder="Sign" style="width:70%;">  
+        </div>  
+        <div style="display:flex; gap:10px;">  
+            <input type="text" id="new-species" placeholder="Species" style="width:70%;">  
+            <input type="text" id="new-height" placeholder="Height" style="width:30%;">  
+        </div>  
+        <textarea id="new-bio" placeholder="Profile Info / Notes..." style="height:60px; font-family:inherit;"></textarea>  
+        <label class="file-upload-btn">  
+            📂 Upload Photo  
+            <input type="file" accept="image/*" style="display:none;" onchange="handleFile(this, 'av-preview')">  
+        </label>  
+        <img id="av-preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23eee'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E" style="width:60px; height:60px; margin:0 auto; display:block; object-fit:cover; border-radius:50%; background:#eee;">  
+        <input type="color" id="new-color" value="#ff69b4" style="width:100%; border:none; height:30px; margin-top:5px;">  
+        <div style="display:flex; gap:5px; margin-top:10px; flex-wrap:wrap;">
+            <button class="btn-action" style="background:#81c784; flex:1;" onclick="updateCurrentProfile()">Save Changes</button>
+            <button class="btn-action" style="flex:1;" onclick="createProfile()">Create New</button>
+        </div>
+        <button class="btn-action" style="margin-top:5px; background:#ccc;" onclick="closeModals()">Close</button>  
+    </div>
+</div>  
+
+<div id="modal-log" class="modal">
+    <div class="modal-card">
+        <h3>Front Log</h3>
+        <div style="max-height:300px; overflow-y:auto; margin-bottom:10px;">
+            <table class="log-table">
+                <thead><tr><th>Who</th><th>Date</th><th>Start</th><th>Duration</th></tr></thead>
+                <tbody id="front-log-body"></tbody>
+            </table>
+        </div>
+        <button class="btn-action" style="background:#ccc;" onclick="closeModals()">Close</button>
+    </div>
+</div>
+
+<div id="modal-backpack" class="modal">  
+    <div class="modal-card">  
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>Inventory</h3>
+            <button id="sell-btn" class="btn-action" style="width:auto; padding:5px 10px; font-size:0.8rem; background:#4db6ac;" onclick="toggleSell()">💰 Sell Mode</button>
+        </div>
+        <p style="font-size:0.7rem; color:#666;">Items placed in Room. Backgrounds apply to SYSTEM.</p>  
+        <div id="inventory-grid" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:10px; background:#f9f9f9; border-radius:10px; margin-bottom:10px;"></div>  
+        <div id="empty-msg" style="text-align:center; color:#999; display:none;">Backpack is empty.<br>Visit Pharmacy.</div>
+        <button class="btn-action" style="background:#ff6b6b;" onclick="clearDecor()">🗑️ Clear Room</button>  
+        <button class="btn-action" style="margin-top:5px; background:#ccc;" onclick="closeModals()">Close</button>  
+    </div>  
+</div>  
+
 <script>  
-    // ... (STATE & LOOT_ITEMS are the same) ...
+    // --- STATE ---  
     let DB = {  
         sysName: "SEIREN OS",  
         profiles: [], active: 0, xp: 0, 
-        inventory: [], decor: [], cofront: [], frontHistory: [], consoleHistory: ["System Initialized..."], 
-        dreamLog: [], stamps: 0, 
-        currentFrontStart: 0, activeAlert: null, lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
+        inventory: [], 
+        decor: [],   
+        cofront: [], 
+        frontHistory: [], 
+        consoleHistory: ["System Initialized..."], 
+        dreamLog: [], 
+        stamps: 0, 
+        currentFrontStart: 0, 
+        activeAlert: null,
+        lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true }  
     };  
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
-    let isSelling = false; let selectedMsgIndex = -1; 
+    let isSelling = false;
+    let selectedMsgIndex = -1; 
 
+    // LOOT TABLE
     const LOOT_ITEMS = [
-        "bg-apple", "bg-polka-brown", "bg-clover", "bg-stars-blue", "bg-bow-y2k", "bg-stars-bw", "bg-music-pink", "bg-stars-classic", "bg-bow-classic", "bg-strawberry", "bg-heart-bp", "bg-polka-classic",
+        "bg-apple", "bg-polka-brown", "bg-clover", "bg-stars-blue", "bg-bow-y2k",
+        "bg-stars-bw", "bg-music-pink", "bg-stars-classic", "bg-bow-classic",
+        "bg-strawberry", "bg-heart-bp", "bg-polka-classic",
         "https://i.postimg.cc/4dFyJtrX/12d9131d2320519e1e23f5f678427396.png",
         "https://i.postimg.cc/zBPvJW46/3e4f2fa5b124701b5f17089d9ab9b737.png",
         "https://i.postimg.cc/hjGhWMZ5/62695aafc7da6361407abf3a87ecafb6.png",
@@ -669,45 +770,423 @@
         "https://i.postimg.cc/pXjrHmC1/eb31aaf8301282152f43f7050b39a5fd.png",
         "https://i.postimg.cc/SN9RhnVJ/ee455254fdc48289bf096e1eb048e089.png",
         "https://i.postimg.cc/KvTj21fw/f91a9c969269fdedf2e437391eda83e8.png"
-    ];
-    const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!", "Hydrate!", "Rest up!"];
-    const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath"];
-    const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";
-    const BG_ICONS = { 'bg-apple': '🍎', 'bg-polka-brown': '🟤', 'bg-clover': '🍀', 'bg-stars-blue': '⭐' }; // (Shortened for brevity)
+    ];  
+    const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!", "Hydrate!", "Rest up!", "Good job!", "Proud of u!", "Safe here."];  
+    const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
+    const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
+    
+    const BG_ICONS = {
+        'bg-apple': '🍎', 'bg-polka-brown': '🟤', 'bg-clover': '🍀', 'bg-stars-blue': '⭐',
+        'bg-bow-y2k': '🎀', 'bg-stars-bw': '✨', 'bg-music-pink': '🎵', 'bg-stars-classic': '🌟',
+        'bg-bow-classic': '🎗️', 'bg-strawberry': '🍓', 'bg-heart-bp': '💙',
+        'bg-polka-classic': '⚪'
+    };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v87'); 
+        const saved = localStorage.getItem('seiren_fixed_v88'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
-        if(DB.profiles.length === 0) DB.profiles.push({ name: "Guest", av: DEFAULT_AV, color: "#ff69b4", id: "GUEST" });
-        
-        // Init missing fields
+        if(DB.profiles.length === 0) {  
+            DB.profiles.push({ name: "Guest", av: DEFAULT_AV, color: "#ff69b4", id: "GUEST", sign: "-", species: "Visitor", age: "-", height: "-", bio: "Guest Access", likes: [], dislikes: [], notes: "" });  
+        }  
         if(!DB.cofront) DB.cofront = [];
         if(!DB.frontHistory) DB.frontHistory = [];
         if(!DB.consoleHistory) DB.consoleHistory = ["System Initialized..."];
         if(!DB.dreamLog) DB.dreamLog = [];
         if(!DB.stamps) DB.stamps = 0;
-        
-        loadUI(); renderStamps(); renderConsole(); // FORCE RENDER STAMPS
+        if(!DB.currentFrontStart) DB.currentFrontStart = Date.now();
+
+        DB.profiles.forEach(p => {
+            if(!p.likes) p.likes = [];
+            if(!p.dislikes) p.dislikes = [];
+            if(!p.notes) p.notes = "";
+            if(!p.id) p.id = Math.floor(Math.random()*900000);
+        });
+
+        document.getElementById('sys-name-input').value = DB.sysName || "SEIREN OS";  
+        document.getElementById('toggle-crt').checked = DB.settings.crt;  
+        toggleCRT();  
+        renderAlert();
+        renderConsole();
+        renderStamps();
     };  
+  
+    function enterSystem() {  
+        document.getElementById('welcome-screen').style.display = 'none';  
+        if(DB.lock) document.getElementById('lock-screen').style.display='flex';  
+        else { document.querySelector('.app-shell').style.display='flex'; refreshAll(); }  
+    }  
+  
+    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); renderConsole(); renderDreamLog(); }  
+    function save() { localStorage.setItem('seiren_fixed_v88', JSON.stringify(DB)); }  
+  
+    function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
+    
+    function handleFile(inpt, id) {   
+        const file = inpt.files[0]; if(!file) return;  
+        const reader = new FileReader();  
+        reader.onload = (e) => {  
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                const maxSize = 250; let w = img.width; let h = img.height;
+                if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } } else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
+                canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
+                uploadedAv = canvas.toDataURL('image/jpeg', 0.8);
+                document.getElementById(id).src = uploadedAv; 
+            };
+            img.src = e.target.result;
+        };  
+        reader.readAsDataURL(file); inpt.value = ""; 
+    }  
+    function handleChatImage(inpt) {   
+        const file = inpt.files[0]; if(!file) return;  
+        const reader = new FileReader(); reader.onload = (e) => { chatImg = e.target.result; alert("Image attached!"); }; reader.readAsDataURL(file); inpt.value = ""; 
+    }  
+  
+    function loadUI() {  
+        const p = DB.profiles[DB.active];  
+        document.documentElement.style.setProperty('--main', p.color);  
+        document.getElementById('sys-name-display').innerText = DB.sysName;  
+        document.getElementById('dash-name').innerText = p.name;  
+        document.getElementById('dash-sign').innerText = p.sign||"?";  
+        document.getElementById('dash-species').innerText = p.species||"?";  
+        document.getElementById('dash-age').innerText = p.age||"?";  
+        document.getElementById('dash-height').innerText = p.height||"?";  
+        document.getElementById('dash-bio').innerText = p.bio || "No info provided.";  
+        document.getElementById('dash-av').src = p.av || DEFAULT_AV;  
+        document.getElementById('cp-display').innerText = DB.xp;  
+        
+        const coDiv = document.getElementById('cofront-row');
+        if (DB.cofront && DB.cofront.length > 0) {
+            const names = DB.cofront.map(idx => DB.profiles[idx].name).join(", ");
+            document.getElementById('dash-co').innerText = names;
+            coDiv.style.display = 'block';
+        } else {
+            coDiv.style.display = 'none';
+        }
 
-    // ... (Navigation, Diary, Decor, Chat functions same as previous) ...
+        let classes = "";
+        if(DB.settings.crt) classes += "fx-active ";
+        if(p.wallpaper) classes += p.wallpaper;
+        document.body.className = classes;
+        
+        // Re-apply night mode if active (since className overwrite kills it)
+        if(document.body.classList.contains('bg-stars-blue')) { 
+            // Just an example, logic is handled by toggles usually 
+        }
+        // Ensure stamp grid is updated
+        renderStamps();
+    }  
+  
+    function createProfile() {  
+        const n = document.getElementById('new-name').value;  
+        if(n) {  
+            if(DB.profiles[0].id === "GUEST") DB.profiles = [];  
+            DB.profiles.push({  
+                name:n, color:document.getElementById('new-color').value,   
+                av: uploadedAv || DEFAULT_AV,  
+                sign:document.getElementById('new-sign').value,   
+                species:document.getElementById('new-species').value,   
+                age:document.getElementById('new-age').value,  
+                height:document.getElementById('new-height').value,  
+                bio:document.getElementById('new-bio').value,
+                likes: [], dislikes: [], notes: "",  
+                id: Math.floor(Math.random()*900000)  
+            });  
+            uploadedAv = ""; DB.active = DB.profiles.length - 1;  
+            save(); closeModals(); refreshAll();  
+        }  
+    }
 
+    // --- FIXED UPDATE FUNCTION (NO MORE GHOST WRITING) ---
+    function updateCurrentProfile() {
+        if(DB.active < 0 || DB.active >= DB.profiles.length) return;
+        const p = DB.profiles[DB.active];
+        
+        // Directly grab values since they are pre-filled now
+        p.name = document.getElementById('new-name').value;
+        p.age = document.getElementById('new-age').value;
+        p.sign = document.getElementById('new-sign').value;
+        p.species = document.getElementById('new-species').value;
+        p.height = document.getElementById('new-height').value;
+        p.bio = document.getElementById('new-bio').value;
+        p.color = document.getElementById('new-color').value;
+        
+        if(uploadedAv) { p.av = uploadedAv; uploadedAv = ""; }
+        save(); closeModals(); refreshAll(); alert("ID Updated!");
+    }
+  
+    function openProfileModal() {  
+        document.getElementById('modal-profile').style.display='flex';  
+        const p = DB.profiles[DB.active];
+        
+        // --- PRE-FILL INPUTS (FIXES EDITING) ---
+        document.getElementById('new-name').value = p.name;
+        document.getElementById('new-age').value = p.age !== "-" ? p.age : "";
+        document.getElementById('new-sign').value = p.sign !== "-" ? p.sign : "";
+        document.getElementById('new-species').value = p.species !== "Visitor" ? p.species : "";
+        document.getElementById('new-height').value = p.height !== "-" ? p.height : "";
+        document.getElementById('new-bio').value = p.bio !== "Guest Access" ? p.bio : "";
+        
+        document.getElementById('new-color').value = p.color;
+        document.getElementById('av-preview').src = p.av || DEFAULT_AV;
+
+        const list = document.getElementById('prof-list'); list.innerHTML="";  
+        DB.profiles.forEach((p,i)=>{  
+            list.innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">  
+                <b>${p.name}</b>  
+                <div>  
+                    <button style="margin-right:5px; font-size:0.8rem;" onclick="addToCofront(${i})">+ Co-Con</button>
+                    <button onclick="switchProfile(${i})">Switch</button>  
+                    ${i!==0 ? `<button style="color:red; margin-left:5px;" onclick="if(confirm('Delete?')){DB.profiles.splice(${i},1); DB.active=0; save(); openProfileModal();}">x</button>` : ''}  
+                </div>  
+            </div>`;  
+        });  
+    }  
+
+    function switchProfile(index) { logSwitch(DB.active); DB.active = index; DB.cofront = []; save(); refreshAll(); closeModals(); }
+    function addToCofront(index) {
+        if (!DB.cofront) DB.cofront = [];
+        if (index === DB.active) { alert("Already fronting!"); return; }
+        if (DB.cofront.includes(index)) { alert("Already co-fronting!"); return; }
+        DB.cofront.push(index); save(); refreshAll(); alert(DB.profiles[index].name + " added to Co-Con!");
+    }
+    function logSwitch(oldIndex) {
+        if (!DB.currentFrontStart) { DB.currentFrontStart = Date.now(); return; }
+        const now = Date.now(); const diff = now - DB.currentFrontStart;
+        const minutes = Math.floor(diff / 60000); const hours = Math.floor(minutes / 60);
+        const displayTime = (hours > 0 ? hours + "h " : "") + (minutes % 60) + "m";
+        const p = DB.profiles[oldIndex];
+        DB.frontHistory.unshift({ n: p.name, d: new Date(DB.currentFrontStart).toLocaleDateString(), t: new Date(DB.currentFrontStart).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), dur: displayTime || "<1m" });
+        if (DB.frontHistory.length > 50) DB.frontHistory.pop();
+        DB.currentFrontStart = now;
+    }
+    function openLogModal() {
+        document.getElementById('modal-log').style.display = 'flex';
+        const tbody = document.getElementById('front-log-body');
+        tbody.innerHTML = "";
+        DB.frontHistory.forEach(entry => { tbody.innerHTML += `<tr><td><b>${entry.n}</b></td><td>${entry.d}</td><td>${entry.t}</td><td>${entry.dur}</td></tr>`; });
+    }
+
+    function renderBio() {
+        const p = DB.profiles[DB.active];
+        if(!p.likes) p.likes=[]; if(!p.dislikes) p.dislikes=[]; if(!p.notes) p.notes="";
+        const likesList = document.getElementById('likes-list'); likesList.innerHTML = "";
+        p.likes.forEach((l, i) => { likesList.innerHTML += `<div class="bio-tag">${l} <span onclick="removeBioItem('likes',${i})">x</span></div>`; });
+        const dislikesList = document.getElementById('dislikes-list'); dislikesList.innerHTML = "";
+        p.dislikes.forEach((l, i) => { dislikesList.innerHTML += `<div class="bio-tag" style="background:#555;">${l} <span onclick="removeBioItem('dislikes',${i})">x</span></div>`; });
+        document.getElementById('notes-in').value = p.notes;
+    }
+    function addBioItem(type) {
+        const inputId = type === 'likes' ? 'like-in' : 'dislike-in'; const val = document.getElementById(inputId).value;
+        if(val) { DB.profiles[DB.active][type].push(val); document.getElementById(inputId).value = ""; save(); renderBio(); }
+    }
+    function removeBioItem(type, index) { DB.profiles[DB.active][type].splice(index, 1); save(); renderBio(); }
+    function saveBioNotes() { DB.profiles[DB.active].notes = document.getElementById('notes-in').value; save(); }
+  
+    function toggleSidebar() { document.getElementById('chan-list').classList.toggle('hidden'); const btn = document.querySelector('.sidebar-toggle'); btn.innerText = btn.innerText === '<' ? '>' : '<'; }  
+    function renderChat() {  
+        const list = document.getElementById('chan-list'); list.innerHTML="";  
+        Object.keys(DB.channels).forEach(k => {  
+            const div = document.createElement('div'); div.className = `chan-btn ${DB.curChan===k?'active':''}`;  
+            div.innerText = DB.channels[k].name.substring(0,2).toUpperCase(); div.onclick = () => { DB.curChan=k; renderChat(); };  
+            if(k!=='gen') { const del = document.createElement('div'); del.className='del-chan'; del.innerText='x'; div.appendChild(del); del.onclick=(e)=>{e.stopPropagation(); if(confirm("Delete?")){ delete DB.channels[k]; DB.curChan='gen'; save(); renderChat(); }}; }  
+            list.appendChild(div);  
+        });  
+        const add = document.createElement('div'); add.className='chan-btn'; add.style.background='#4fc3f7'; add.style.color='white'; add.innerText='+';  
+        add.onclick = () => { const n=prompt("Name:"); if(n){ const id=n.toLowerCase().replace(/\s/g,''); DB.channels[id]={name:n, msgs:[]}; save(); renderChat(); }};  
+        list.appendChild(add);  
+        const c = DB.channels[DB.curChan]; document.getElementById('chan-title').innerText = "#" + c.name;  
+        const feed = document.getElementById('chat-feed'); feed.innerHTML="";  
+        c.msgs.forEach((m, idx) => { 
+            const imgHTML = m.img ? `<img src="${m.img}" class="pk-img">` : ''; 
+            feed.innerHTML += `
+            <div class="pk-msg" onclick="openChatOptions(${idx})">
+                <img src="${m.av}" class="pk-av" style="background:${m.color}">
+                <div>
+                    <div class="pk-name" style="color:${m.color}">${m.name} <span style="color:#aaa; font-size:0.7em;">${m.time||''}</span></div>
+                    <div class="pk-txt">${m.txt}${imgHTML}</div>
+                </div>
+            </div>`; 
+        });  
+        feed.scrollTop = feed.scrollHeight;  
+    }  
+    function sendMsg() {  
+        const i = document.getElementById('msg-in'); 
+        let txt = i.value;
+        if(!txt && !chatImg) return;  
+        const p = DB.profiles[DB.active];  
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        if(txt.startsWith("> Quoting:")) { }
+        
+        DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:txt, img:chatImg, time:time });  
+        i.value=""; chatImg=""; save(); renderChat();  
+    } 
+    function sendAlert() {
+        const msg = prompt("Broadcast Message:");
+        if(msg) {
+            DB.activeAlert = msg.toUpperCase(); save(); renderAlert();
+        }
+    }
+    function renderAlert() {
+        const el = document.getElementById('sys-alert');
+        if(DB.activeAlert) {
+            document.getElementById('sys-alert-msg').innerText = "⚠️ " + DB.activeAlert;
+            el.style.display = 'flex';
+        } else {
+            el.style.display = 'none';
+        }
+    }
+    function dismissAlert() { DB.activeAlert = null; save(); renderAlert(); }
+
+    // --- CHAT ACTIONS ---
+    function openChatOptions(index) {
+        selectedMsgIndex = index;
+        const msg = DB.channels[DB.curChan].msgs[index];
+        document.getElementById('chat-action-text').innerText = msg.txt.substring(0, 30) + "...";
+        document.getElementById('modal-chat-actions').style.display = 'flex';
+    }
+    function deleteMsg() {
+        if(selectedMsgIndex > -1) {
+            DB.channels[DB.curChan].msgs.splice(selectedMsgIndex, 1);
+            save(); renderChat(); closeModals();
+        }
+    }
+    function replyToMsg() {
+        if(selectedMsgIndex > -1) {
+            const msg = DB.channels[DB.curChan].msgs[selectedMsgIndex];
+            const input = document.getElementById('msg-in');
+            input.value = `> Quoting ${msg.name}: "${msg.txt}"\n` + input.value;
+            closeModals();
+            input.focus();
+        }
+    }
+    function editMsg() {
+        if(selectedMsgIndex > -1) {
+            const msg = DB.channels[DB.curChan].msgs[selectedMsgIndex];
+            const newTxt = prompt("Edit message:", msg.txt);
+            if(newTxt !== null) {
+                msg.txt = newTxt + " (edited)";
+                save(); renderChat(); closeModals();
+            }
+        }
+    }
+  
+    // --- DECOR ---  
+    function renderDecor() {  
+        const l = document.getElementById('decor-layer'); l.innerHTML="";   
+        DB.decor.forEach(d => {  
+            const el = document.createElement('div'); el.className='sticker'; 
+            if (d.i.startsWith('http')) {
+                const img = document.createElement('img');
+                img.src = d.i;
+                el.appendChild(img);
+            } else {
+                el.innerText = d.i;
+            }
+            el.style.left=d.x+"%"; el.style.top=d.y+"%";  
+            let isDrag=false;  
+            const move = (e) => { if(!isDrag)return; const b=document.getElementById('pet-stage').getBoundingClientRect(); const cx=e.touches?e.touches[0].clientX:e.clientX; const cy=e.touches?e.touches[0].clientY:e.clientY; d.x=((cx-b.left)/b.width)*100; d.y=((cy-b.top)/b.height)*100; el.style.left=d.x+"%"; el.style.top=d.y+"%"; };  
+            const end = () => { if(isDrag){isDrag=false; save();} };  
+            el.onmousedown=()=>{isDrag=true}; el.ontouchstart=()=>{isDrag=true};  
+            window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive:false}); window.addEventListener('mouseup', end); window.addEventListener('touchend', end);  
+            l.appendChild(el);  
+        });  
+    }  
+    
+    // --- FIXED BACKPACK (STACKING LOGIC + SELL MODE) ---
+    function toggleSell() {
+        isSelling = !isSelling;
+        const btn = document.getElementById('sell-btn');
+        const grid = document.getElementById('inventory-grid');
+        if(isSelling) {
+            btn.style.background = "#ff4444"; btn.innerText = "🛑 Stop Selling"; grid.style.background = "#ffebee"; 
+        } else {
+            btn.style.background = "#4db6ac"; btn.innerText = "💰 Sell Mode"; grid.style.background = "#f9f9f9";
+        }
+        openBackpack(); 
+    }
+
+    function openBackpack() {  
+        document.getElementById('modal-backpack').style.display='flex';  
+        const g = document.getElementById('inventory-grid'); g.innerHTML="";  
+        if(DB.inventory.length === 0) document.getElementById('empty-msg').style.display='block'; else document.getElementById('empty-msg').style.display='none';
+
+        const clearBtn = document.createElement('div'); 
+        clearBtn.style.fontSize="1.5rem"; clearBtn.innerText="🚫"; 
+        clearBtn.style.border="2px dashed red"; clearBtn.style.padding="10px"; clearBtn.style.borderRadius="10px"; clearBtn.style.cursor="pointer";
+        clearBtn.onclick = () => { DB.profiles[DB.active].wallpaper = ""; save(); refreshAll(); alert("Wallpaper Removed"); };
+        g.appendChild(clearBtn);
+
+        const counts = {};
+        DB.inventory.forEach(x => { counts[x] = (counts[x] || 0) + 1; });
+
+        const uniqueItems = Object.keys(counts).sort((a,b) => { 
+            const aBg = a.startsWith('bg-'); const bBg = b.startsWith('bg-'); 
+            return aBg === bBg ? 0 : aBg ? 1 : -1; 
+        });
+
+        uniqueItems.forEach(item => {  
+            const b = document.createElement('div'); 
+            b.style.fontSize="2.5rem"; b.style.cursor="pointer"; b.style.position="relative"; 
+            
+            let badge = "";
+            if(counts[item] > 1 && !item.startsWith('bg-')) {
+                badge = `<span style="position:absolute; bottom:0; right:0; background:red; color:white; font-size:0.6rem; padding:2px 5px; border-radius:10px;">x${counts[item]}</span>`;
+            }
+            
+            if(item.startsWith('bg-')) {  
+                let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerHTML=icon; 
+                b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
+                
+                b.onclick = () => { 
+                    if(isSelling) {
+                        const realIndex = DB.inventory.indexOf(item); 
+                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } 
+                        save(); openBackpack(); 
+                    } else {
+                        DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); 
+                    }
+                };  
+            } else if (item.startsWith('http')) {
+                b.innerHTML = `<img src="${item}" style="width:50px; height:50px; object-fit:contain;">` + badge;
+                b.onclick = () => { 
+                    if(isSelling) {
+                        const realIndex = DB.inventory.indexOf(item); 
+                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 10; }
+                        save(); openBackpack(); 
+                    } else {
+                        DB.decor.push({i:item, x:50, y:50}); 
+                        const realIndex = DB.inventory.indexOf(item); 
+                        if(realIndex > -1) DB.inventory.splice(realIndex, 1); 
+                        save(); closeModals(); nav('pet'); 
+                    }
+                };
+            }
+            g.appendChild(b);  
+        });  
+    }  
+
+    function clearDecor(){ 
+        DB.decor.forEach(d => { DB.inventory.push(d.i); });
+        DB.decor=[]; save(); renderDecor(); closeModals(); alert("Items returned to Backpack!");
+    }  
+  
     // --- PHARMACY ---  
     function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div style="border-bottom:1px dotted #ccc; margin-bottom:5px;">${i} ... ${p} XP</div>`; pendingXP+=p; }  
-    
     function processReceipt() { 
         if(pendingXP>0){ 
             DB.xp+=pendingXP; 
-            DB.stamps = (DB.stamps || 0) + 1; 
-            if(DB.stamps > 10) DB.stamps = 10; 
+            DB.stamps = (DB.stamps || 0) + 1; // ADD STAMP
+            if(DB.stamps > 10) DB.stamps = 10; // Cap at 10 until redeemed
             
             const task = SELF_CARE[Math.floor(Math.random()*SELF_CARE.length)]; 
-            alert(`✅ Receipt Processed\n+${pendingXP} XP\nTask: "${task}"\n\n💊 STAMP ADDED`); 
-            
+            alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"\n\n💊 STAMP ADDED TO CARD`); 
             logToConsole(`Processed: +${pendingXP} XP`); 
             pendingXP=0; 
             document.getElementById('receipt-list').innerHTML=""; 
-            save(); loadUI(); renderStamps(); // UPDATE UI
+            save(); loadUI(); 
         } 
     }  
     
@@ -719,6 +1198,7 @@
             const slot = document.createElement('div');
             slot.className = 'stamp-slot';
             if(i < DB.stamps) {
+                // Use the user provided stamp URL
                 slot.innerHTML = '<img src="https://i.postimg.cc/q7zPC5qM/ec9635acf11fbbb9c3b0bbfec3b6eb30.png" class="stamp-mark">';
             }
             grid.appendChild(slot);
@@ -732,91 +1212,158 @@
         }
     }
 
-    // --- NEW REWARD ANIMATION ---
-    function claimRewardAnimation() {
-        const overlay = document.getElementById('reward-overlay');
-        const container = document.getElementById('reward-items-container');
-        container.innerHTML = ""; // Clear old
-        
-        // 1. Generate Rewards
-        let rewards = [];
-        for(let i=0; i<3; i++) {
-            let item = LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)];
-            rewards.push(item);
-            DB.inventory.push(item); // Add to inventory immediately
-        }
-        DB.stamps = 0; // Reset stamps
-        save(); renderStamps(); loadUI();
-
-        // 2. Show Overlay
-        overlay.style.display = 'flex';
-        
-        // 3. Spawn Confetti
+    // --- NEW REWARD ANIMATION SYSTEM ---
+    function triggerConfetti() {
         for(let i=0; i<30; i++) {
-            let conf = document.createElement('div');
-            conf.className = 'confetti';
-            conf.style.left = Math.random() * 100 + 'vw';
-            conf.style.backgroundColor = ['#ff69b4', '#87ceeb', '#ffd700', '#98fb98'][Math.floor(Math.random()*4)];
-            conf.style.animationDuration = (Math.random() * 2 + 1) + 's';
-            overlay.appendChild(conf);
-            setTimeout(() => conf.remove(), 3000);
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            c.style.left = Math.random() * 100 + 'vw';
+            c.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+            c.style.animationDuration = (Math.random() * 2 + 1) + 's';
+            document.body.appendChild(c);
+            setTimeout(() => c.remove(), 3000);
         }
+    }
 
-        // 4. Show Items with Delay
-        setTimeout(() => {
-            rewards.forEach((item, idx) => {
-                let div = document.createElement('div');
+    function claimReward() {
+        if(DB.stamps >= 10) {
+            DB.stamps = 0; // Reset
+            
+            // Reward: 3 Random Items
+            let rewards = [];
+            for(let i=0; i<3; i++) rewards.push(LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)]);
+            DB.inventory.push(...rewards);
+            save(); // Save immediately so items aren't lost if they refresh
+
+            // SHOW ANIMATION
+            const modal = document.getElementById('modal-reward');
+            const container = document.getElementById('reward-items-container');
+            container.innerHTML = "";
+            
+            rewards.forEach(r => {
+                const div = document.createElement('div');
                 div.className = 'reward-item';
-                div.style.animationDelay = (idx * 0.2) + 's';
-                
-                if(item.startsWith('http')) {
-                    div.innerHTML = `<img src="${item}">`;
-                } else if(item.startsWith('bg-')) {
-                    div.innerText = "🖼️";
+                if(r.startsWith('http')) {
+                    div.innerHTML = `<img src="${r}">`;
                 } else {
-                    div.innerText = item;
+                    div.innerHTML = BG_ICONS[r] || "🎁";
                 }
                 container.appendChild(div);
             });
-        }, 600);
+
+            modal.style.display = 'flex';
+            triggerConfetti();
+            renderStamps(); // Will hide the button and clear grid visually
+        }
     }
 
-    // ... (Rest of functions: fillPrescription, console logic, dream journal, misc) ...
-    // Note: Use previous code for nav, postDiary, etc. they are unchanged.
-    
+    function closeReward() {
+        document.getElementById('modal-reward').style.display = 'none';
+        loadUI();
+    }
+
+    function fillPrescription() {   
+        if(DB.xp>=50){   
+            DB.xp-=50; let item = ""; let attempts = 0;
+            do { item = LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)]; attempts++; if (item.startsWith('bg-') && DB.inventory.includes(item)) { item = "DUPE"; } } while (item === "DUPE" && attempts < 10);
+            if (item === "DUPE") { const consumables = LOOT_ITEMS.filter(i => !i.startsWith('bg-')); item = consumables[Math.floor(Math.random()*consumables.length)]; }
+            DB.inventory.push(item);  
+            
+            const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)]; 
+            const bub = document.getElementById('pet-speech'); bub.innerText = speech; bub.classList.add('show'); setTimeout(()=>bub.classList.remove('show'), 2000);  
+            
+            logToConsole(`Rx Filled. -50 XP`); 
+            
+            let msg = `Rx Filled!\n\nReceived: Item`; 
+            if(item.startsWith('bg-')) { 
+                const icon = BG_ICONS[item] || "🖼️"; 
+                msg = `Rx Filled!\n\nReceived: ${icon} Wallpaper`; 
+            } else if(item.startsWith('http')) {
+                msg = `Rx Filled!\n\nReceived: New Sticker!`;
+            }
+            alert(msg); save(); loadUI();   
+        } else alert("Need 50 XP");   
+    }  
+
+    // --- CONSOLE LOGIC ---
     function logToConsole(msg) {
         if(!DB.consoleHistory) DB.consoleHistory = [];
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         DB.consoleHistory.push(`${time} - ${msg}`);
         if(DB.consoleHistory.length > 50) DB.consoleHistory.shift(); 
-        save(); renderConsole();
+        save();
+        renderConsole();
     }
+
     function renderConsole() {
         const feed = document.getElementById('console-log-feed');
         if(!feed) return;
         feed.innerHTML = "";
-        if(DB.consoleHistory) { [...DB.consoleHistory].reverse().forEach(line => { feed.innerHTML += `<div class="log-line">${line}</div>`; }); }
+        if(DB.consoleHistory) {
+            [...DB.consoleHistory].reverse().forEach(line => {
+                feed.innerHTML += `<div class="log-line">${line}</div>`;
+            });
+        }
     }
+
     function triggerEbiChat() {
         const quote = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)];
         logToConsole(`Ebi says: "${quote}"`);
-        const bub = document.getElementById('pet-speech'); bub.innerText = quote; bub.classList.add('show'); setTimeout(()=>bub.classList.remove('show'), 2000); 
+        const bub = document.getElementById('pet-speech'); 
+        bub.innerText = quote; 
+        bub.classList.add('show'); 
+        setTimeout(()=>bub.classList.remove('show'), 2000); 
     }
-    function toggleNightMode() { document.body.classList.toggle('night-mode'); if(document.body.classList.contains('night-mode')) nav('dream'); else nav('dash'); }
+
+    // --- DREAM JOURNAL ---
+    function toggleNightMode() {
+        document.body.classList.toggle('night-mode');
+        // Auto navigate to dream journal if opening night mode
+        if(document.body.classList.contains('night-mode')) {
+            nav('dream');
+        } else {
+            nav('dash');
+        }
+    }
+
     function saveDream() {
-        const loc=document.getElementById('dream-loc').value, clr=document.getElementById('dream-clear').value, ent=document.getElementById('dream-ent').value, feel=document.getElementById('dream-feel').value, txt=document.getElementById('dream-text').value;
-        if(txt||loc){ DB.dreamLog.unshift({d:new Date().toLocaleDateString(), loc, clr, ent, feel, txt}); 
-        document.getElementById('dream-loc').value=""; document.getElementById('dream-ent').value=""; document.getElementById('dream-feel').value=""; document.getElementById('dream-text').value=""; save(); renderDreamLog(); }
+        const loc = document.getElementById('dream-loc').value;
+        const clr = document.getElementById('dream-clear').value;
+        const ent = document.getElementById('dream-ent').value;
+        const feel = document.getElementById('dream-feel').value;
+        const txt = document.getElementById('dream-text').value;
+        
+        if(txt || loc) {
+            DB.dreamLog.unshift({
+                d: new Date().toLocaleDateString(),
+                loc: loc, clr: clr, ent: ent, feel: feel, txt: txt
+            });
+            document.getElementById('dream-loc').value="";
+            document.getElementById('dream-ent').value="";
+            document.getElementById('dream-feel').value="";
+            document.getElementById('dream-text').value="";
+            save(); renderDreamLog();
+        }
     }
+
     function renderDreamLog() {
-        const f=document.getElementById('dream-feed'); f.innerHTML="";
-        DB.dreamLog.forEach((d,i)=>{ f.innerHTML+=`<div class="dream-entry"><div class="dream-blur" onclick="this.classList.remove('dream-blur')"><small style="opacity:0.7;">${d.d} • ${d.loc||'Unknown'} • Clarity: ${d.clr}/10</small><br>${d.ent?`<strong>Visitors:</strong> ${d.ent}<br>`:''}${d.feel?`<strong>Residue:</strong> ${d.feel}<br>`:''}<p style="margin-top:5px;">${d.txt}</p></div><button style="color:red; background:none; border:none; float:right; cursor:pointer;" onclick="if(confirm('Forget this dream?')){DB.dreamLog.splice(${i},1); save(); renderDreamLog();}">x</button></div>`; });
+        const f = document.getElementById('dream-feed');
+        f.innerHTML = "";
+        DB.dreamLog.forEach((d, i) => {
+            f.innerHTML += `
+            <div class="dream-entry">
+                <div class="dream-blur" onclick="this.classList.remove('dream-blur')">
+                    <small style="opacity:0.7;">${d.d} • ${d.loc || 'Unknown'} • Clarity: ${d.clr}/10</small><br>
+                    ${d.ent ? `<strong>Visitors:</strong> ${d.ent}<br>` : ''}
+                    ${d.feel ? `<strong>Residue:</strong> ${d.feel}<br>` : ''}
+                    <p style="margin-top:5px;">${d.txt}</p>
+                </div>
+                <button style="color:red; background:none; border:none; float:right; cursor:pointer;" onclick="if(confirm('Forget this dream?')){DB.dreamLog.splice(${i},1); save(); renderDreamLog();}">x</button>
+            </div>`;
+        });
     }
-    function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); if(id==='dream')renderDreamLog(); }  
-    function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, uid: DB.profiles[DB.active].id, t:t.value}); t.value=""; save(); renderDiary(); } }  
-    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; const currentID = DB.profiles[DB.active].id; const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid); myEntries.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }
-    function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
-    function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; } 
+  
+    // --- MISC & PRIVATE DIARY ---  
     function toggleCRT() { DB.settings.crt = document.getElementById('toggle-crt').checked; loadUI(); save(); }  
     function enterPin(n) { tempPin+=n; document.getElementById('pin-dots').innerText="*".repeat(tempPin.length); if(tempPin.length===4){ if(tempPin===DB.lock){ document.getElementById('lock-screen').style.display='none'; document.querySelector('.app-shell').style.display='flex'; refreshAll(); } else { tempPin=""; document.getElementById('pin-dots').innerText="ERR"; }}}  
     function clearPin(){ tempPin=""; document.getElementById('pin-dots').innerText=""; }  
@@ -825,13 +1372,142 @@
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
     function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); input.value = ""; }  
     
-    // --- REGISTER SERVICE WORKER ---
+    // --- HYBRID PLURALKIT IMPORT ---
+    function importPluralKit(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const json = JSON.parse(e.target.result);
+                let members = [];
+                if (Array.isArray(json)) members = json;
+                else if (json.members && Array.isArray(json.members)) members = json.members;
+                else if (json.id && json.name) members = [json]; 
+                else throw new Error("Could not find members list in file.");
+
+                let count = 0;
+                members.forEach(m => {
+                    if (!DB.profiles.some(p => p.name === m.name)) {
+                        
+                        // --- PARSER ---
+                        let likes = [], dislikes = [], notes = "", bioLines = [];
+                        let name = m.name || "Unknown";
+                        let sign = m.pronouns || "?";
+                        let age = m.birthday || "--";
+                        let species = "System Member";
+                        let height = "--";
+                        let bio = "";
+                        
+                        let currentMode = null; // 'likes' or 'dislikes' or null
+
+                        if (m.description) {
+                            const lines = m.description.split('\n');
+                            lines.forEach(rawLine => {
+                                // 1. Remove aesthetic symbols from start of line
+                                let line = rawLine.replace(/^[^a-zA-Z0-9]+/, '').trim();
+                                let lower = line.toLowerCase();
+                                
+                                // 2. Check for Specific Keys
+                                if(lower.startsWith('name:')) { name = line.substring(5).trim(); return; }
+                                if(lower.startsWith('age:')) { age = line.substring(4).trim(); return; }
+                                if(lower.startsWith('pronouns:') || lower.startsWith('prons:')) { sign = line.substring(line.indexOf(':')+1).trim(); return; }
+                                if(lower.startsWith('species:')) { species = line.substring(8).trim(); return; }
+                                if(lower.startsWith('height:')) { height = line.substring(7).trim(); return; }
+
+                                // 3. Check for Lists (Likes/Dislikes)
+                                if(lower.startsWith('likes:') || lower.startsWith('loves:')) {
+                                    const content = line.substring(line.indexOf(':')+1).trim();
+                                    if(content.length > 0) {
+                                        // Inline list (comma separated)
+                                        let items = content.split(/,|&|\//).map(s => s.trim()).filter(s => s);
+                                        likes.push(...items);
+                                        currentMode = null;
+                                    } else {
+                                        // Header for a list below
+                                        currentMode = 'likes';
+                                    }
+                                    return;
+                                }
+
+                                if(lower.startsWith('dislikes:') || lower.startsWith('hates:')) {
+                                    const content = line.substring(line.indexOf(':')+1).trim();
+                                    if(content.length > 0) {
+                                        let items = content.split(/,|&|\//).map(s => s.trim()).filter(s => s);
+                                        dislikes.push(...items);
+                                        currentMode = null;
+                                    } else {
+                                        currentMode = 'dislikes';
+                                    }
+                                    return;
+                                }
+
+                                // 4. Handle List Modes
+                                if(currentMode === 'likes' && line.length > 0) {
+                                    likes.push(line);
+                                    return;
+                                }
+                                if(currentMode === 'dislikes' && line.length > 0) {
+                                    dislikes.push(line);
+                                    return;
+                                }
+                                
+                                // 5. Catch boundaries/triggers as notes
+                                if(lower.startsWith('boundaries:') || lower.startsWith('triggers:') || lower.startsWith('t:')) {
+                                    notes += line + "\n";
+                                    currentMode = null;
+                                    return;
+                                }
+
+                                // 6. If none of above, add to general Bio
+                                // Filter out empty aesthetic lines
+                                if(line.length > 1) bioLines.push(rawLine); // Keep raw for bio to preserve formatting
+                            });
+                            
+                            bio = bioLines.join('\n').trim();
+                        }
+
+                        DB.profiles.push({
+                            name: name,
+                            av: m.avatar_url || DEFAULT_AV,
+                            sign: sign, 
+                            age: age,
+                            species: species,
+                            height: height,
+                            bio: bio || "Imported from PluralKit",
+                            color: m.color ? "#"+m.color : "#ff69b4",
+                            id: m.id || Math.floor(Math.random()*900000),
+                            likes: likes, 
+                            dislikes: dislikes, 
+                            notes: notes.trim()
+                        });
+                        count++;
+                    }
+                });
+                
+                save();
+                alert(`Success! Imported ${count} members.`);
+                refreshAll();
+            } catch(err) {
+                alert("Import Failed: " + err.message);
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+        input.value = ""; 
+    }
+
+    function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); if(id==='dream')renderDreamLog(); }  
+    
+    function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, uid: DB.profiles[DB.active].id, t:t.value}); t.value=""; save(); renderDiary(); } }  
+    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; const currentID = DB.profiles[DB.active].id; const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid); myEntries.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }  
+    
+    function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
+    function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }  
+  
+    // --- FORCE NUKE SW ---
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('Seiren OS: Service Worker Registered!', reg))
-                .catch(err => console.log('Seiren OS: SW Registration Failed', err));
-        });
+        navigator.serviceWorker.getRegistrations().then(function(registrations) { for(let registration of registrations) { registration.unregister(); } });
     }
 </script>  
 </body>  
