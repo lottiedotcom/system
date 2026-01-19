@@ -954,20 +954,37 @@
                 let count = 0;
                 members.forEach(m => {
                     if (!DB.profiles.some(p => p.name === m.name)) {
-                        // Parse Likes/Dislikes from description
-                        let likes = [], dislikes = [], notes = "";
+                        
+                        // --- PARSER START ---
+                        let likes = [], dislikes = [], notes = "", bioLines = [];
+                        
                         if (m.description) {
                             const lines = m.description.split('\n');
                             lines.forEach(line => {
-                                if(line.toLowerCase().startsWith('likes:')) {
-                                    likes = line.substring(6).split(',').map(s => s.trim());
-                                } else if(line.toLowerCase().startsWith('dislikes:')) {
-                                    dislikes = line.substring(9).split(',').map(s => s.trim());
-                                } else {
-                                    notes += line + "\n";
+                                // Clean line of Markdown bold/italics for checking keys
+                                const clean = line.replace(/[*_]/g, '').trim(); 
+                                const lower = clean.toLowerCase();
+
+                                if(lower.startsWith('likes:')) {
+                                    // Parse: "Likes: A, B, C"
+                                    const content = clean.substring(6); // remove "Likes:"
+                                    likes = content.split(',').map(s => s.trim()).filter(s => s);
+                                } 
+                                else if(lower.startsWith('dislikes:')) {
+                                    const content = clean.substring(9); // remove "Dislikes:"
+                                    dislikes = content.split(',').map(s => s.trim()).filter(s => s);
+                                }
+                                else if(lower.startsWith('triggers:') || lower.startsWith('t:')) {
+                                    const content = clean.substring(clean.indexOf(':')+1);
+                                    notes += "Triggers: " + content.trim() + "\n";
+                                }
+                                else {
+                                    bioLines.push(line);
                                 }
                             });
                         }
+                        const cleanBio = bioLines.join('\n').trim();
+                        // --- PARSER END ---
 
                         DB.profiles.push({
                             name: m.name || "Unknown",
@@ -976,7 +993,7 @@
                             age: m.birthday || "--",
                             species: "System Member",
                             height: "--",
-                            bio: m.description || "Imported from PluralKit",
+                            bio: cleanBio || "Imported from PluralKit",
                             color: m.color ? "#"+m.color : "#ff69b4",
                             id: m.id || Math.floor(Math.random()*900000),
                             likes: likes, 
