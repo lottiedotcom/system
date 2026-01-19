@@ -27,10 +27,30 @@
         background-size: 20px 20px; background-position: 0 0, 10px 10px;  
         background-repeat: repeat;  
         background-attachment: fixed; 
-        transition: background-image 0.5s ease;  
+        transition: all 0.8s ease;  
         margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden;  
         color: #444;   
     }  
+
+    /* --- NIGHT MODE (DREAM JOURNAL) --- */
+    body.night-mode {
+        background-color: #050510 !important;
+        background-image: 
+            radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+            radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+            radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px) !important;
+        background-size: 550px 550px, 350px 350px, 250px 250px !important;
+        background-position: 0 0, 40px 60px, 130px 270px !important;
+        color: #b0c4de !important;
+    }
+    body.night-mode .app-shell { backdrop-filter: none; }
+    body.night-mode .dock { background: rgba(10, 10, 30, 0.8); border-color: #333; }
+    body.night-mode .dock-btn { filter: grayscale(100%) brightness(200%); }
+    body.night-mode .btn-action { background: #483d8b; color: #e6e6fa; box-shadow: 0 4px 0 #282250; }
+    body.night-mode input, body.night-mode textarea, body.night-mode .bio-container, body.night-mode .id-card-wrap { 
+        background: rgba(20,20,40,0.8) !important; color: #e6e6fa !important; border-color: #483d8b !important; 
+    }
+    body.night-mode h2 { background: #1a1a3a !important; color: #e6e6fa !important; }
 
     /* --- WALLPAPERS --- */
     .bg-apple { background-image: url('https://i.postimg.cc/jSy15jN8/254dfc0d0652f67805de02ae1113f60a.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
@@ -41,7 +61,6 @@
     .bg-stars-bw { background-image: url('https://i.postimg.cc/TPG4WXqj/8da7b8d48d6823657b54988755d60dd9.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-music-pink { background-image: url('https://i.postimg.cc/Xv3zy0ck/bd4efa7fd2209b10fc4725c471ece520.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-stars-classic { background-image: url('https://i.postimg.cc/6QwmGNLL/d0d6e91da0105b958697e57a47a0d4ca.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
-    .bg-sprinkles { background-image: url('https://i.postimg.cc/g0dT6PHF/ee1051db44d2541bfc14d38bc9b07ef0.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-bow-classic { background-image: url('https://i.postimg.cc/DzFMbKd6/f17eaffa8a2d53f205b6e7b2718ff2ae.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-strawberry { background-image: url('https://i.postimg.cc/43ZShTb6/f9fc99a5267ad98f2760ee5846f21607.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-heart-bp { background-image: url('https://i.postimg.cc/KYFHgyDX/Untitled83_20260118063949.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
@@ -69,7 +88,6 @@
         z-index: 10; 
     }  
     
-    /* BLUR ONLY IF FX ACTIVE */
     body.fx-active .app-shell {
         backdrop-filter: blur(10px); 
         -webkit-backdrop-filter: blur(10px);
@@ -162,22 +180,16 @@
     .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; background: #fafafa; }  
 
     /* --- PET --- */  
-    /* FIXED: Transparent background for Ebi so wallpapers show */
     .pet-stage { 
         height: 350px; position: relative; 
         border: 4px ridge var(--main); border-radius: 20px; 
-        background: rgba(255,255,255,0.1); /* Mostly transparent */
+        background: rgba(255,255,255,0.1); 
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
         overflow: hidden; display: flex; align-items: center; justify-content: center; 
     }  
     .ebi-img { width: 160px; pointer-events: none; z-index: 5; margin-top: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }  
-    .sticker { 
-        position: absolute; cursor: grab; z-index: 10; user-select: none; 
-        /* UPDATED: Default size for images */
-        width: 80px; height: auto;
-    }
+    .sticker { position: absolute; cursor: grab; z-index: 10; user-select: none; width: 80px; height: auto; }
     .sticker img { width: 100%; pointer-events: none; display: block; }
-
     .speech-bubble {  
         position: absolute; top: 40px; left: 50%; transform: translateX(-50%) scale(0);  
         background: white; padding: 10px 15px; border-radius: 20px; border: 2px solid var(--main);  
@@ -187,71 +199,50 @@
     }  
     .speech-bubble.show { transform: translateX(-50%) scale(1); }  
 
-    /* --- NEW: SYSTEM LOG CONSOLE --- */
+    /* --- SYSTEM LOG CONSOLE --- */
     .console-box {
-        background: rgba(40, 40, 40, 0.85); /* Dark terminal background */
-        border: 2px solid var(--main);
-        border-radius: 10px;
-        margin-top: 15px;
-        padding: 10px;
-        font-family: var(--font-mono);
-        color: #ffb7b2; /* Pale pink terminal text */
-        font-size: 0.75rem;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        position: relative;
-        backdrop-filter: blur(4px);
+        background: rgba(40, 40, 40, 0.85); 
+        border: 2px solid var(--main); border-radius: 10px; margin-top: 15px; padding: 10px; 
+        font-family: var(--font-mono); color: #ffb7b2; font-size: 0.75rem; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; backdrop-filter: blur(4px); 
     }
-    .console-header {
-        border-bottom: 1px solid rgba(255,255,255,0.2);
-        padding-bottom: 5px;
-        margin-bottom: 5px;
-        display: flex;
-        justify-content: space-between;
-        font-weight: bold;
-        letter-spacing: 1px;
-    }
-    .console-log {
-        height: 80px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column-reverse; /* Keeps new messages at bottom */
-    }
+    .console-header { border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; font-weight: bold; letter-spacing: 1px; }
+    .console-log { height: 80px; overflow-y: auto; display: flex; flex-direction: column-reverse; }
     .log-line { margin-bottom: 2px; }
     .log-line::before { content: "> "; opacity: 0.6; }
-    .ebi-chat-btn {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        background: var(--main);
-        border: 2px solid white;
-        border-radius: 50%;
-        width: 35px;
-        height: 35px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        z-index: 20;
-    }
+    .ebi-chat-btn { position: absolute; bottom: 10px; right: 10px; background: var(--main); border: 2px solid white; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 20; }
     .ebi-chat-btn:active { transform: scale(0.9); }
 
-    /* --- PHARMACY --- */  
-    .receipt-paper { 
-        background: #fff; padding: 15px; 
-        font-family: 'Courier New', monospace; font-size: 0.8rem; 
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 10px; position: relative; 
-        border-top: 5px solid #333;
-        background-image: linear-gradient(135deg, transparent 50%, #fff 50%), linear-gradient(45deg, #fff 50%, transparent 50%);
-        background-size: 20px 20px;
-        background-repeat: repeat-x;
-        background-position: bottom;
-        padding-bottom: 30px; 
-    }  
-    .mood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; max-height: 200px; overflow-y: auto; padding-right: 5px; }  
-    .mood-btn { background: white; border: 1px solid #ccc; border-radius: 8px; height: 40px; font-size: 1.2rem; cursor: pointer; }  
-    .mood-btn:active { background: var(--main); }  
+    /* --- PHARMACY LOYALTY CARD --- */
+    .loyalty-card {
+        background-image: url('https://i.postimg.cc/9fr6qn0r/152f88be4a1ea59ecb8283bd71e01aa5.jpg'); /* NEW PAPER TEXTURE */
+        background-size: cover;
+        padding: 15px; border-radius: 10px; border: 1px solid #ccc;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px; position: relative;
+    }
+    .loyalty-header { text-align: center; font-weight: bold; color: #555; font-size: 0.8rem; margin-bottom: 10px; border-bottom: 1px dashed #999; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+    .stamp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .stamp-slot { 
+        aspect-ratio: 1/1; border: 2px dashed #bbb; border-radius: 50%; 
+        display: flex; align-items: center; justify-content: center; 
+        background: rgba(255,255,255,0.5); position: relative;
+    }
+    .stamp-mark { width: 100%; height: 100%; object-fit: contain; transform: rotate(-15deg); opacity: 0.8; animation: stomp 0.2s; }
+    @keyframes stomp { 0% { transform: scale(2) rotate(0deg); opacity: 0; } 100% { transform: scale(1) rotate(-15deg); opacity: 0.8; } }
+    .reward-btn { 
+        display: none; width: 100%; margin-top: 10px; background: #81c784; 
+        color: white; border: none; padding: 10px; border-radius: 8px; 
+        font-weight: bold; cursor: pointer; animation: pulse 1s infinite; 
+    }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+    /* --- DREAM JOURNAL (NIGHT MODE) --- */
+    .dream-entry { 
+        background: rgba(255,255,255,0.1); padding: 10px; border-left: 3px solid #81c784; 
+        margin-bottom: 10px; border-radius: 5px; color: inherit; 
+    }
+    .dream-blur { filter: blur(3px); transition: filter 0.3s; cursor: pointer; }
+    .dream-blur:hover { filter: blur(0); }
 
     /* --- UI COMPONENTS --- */  
     .btn-action { background: var(--main); color: white; padding: 12px; width: 100%; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-bottom: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }  
@@ -277,7 +268,7 @@
     .pin-btn { width: 70px; height: 70px; border-radius: 50%; border: 2px solid white; background: rgba(255,255,255,0.15); color: white; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }  
 
     /* --- DIARY --- */  
-    .diary-entry { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 5px solid var(--main); position: relative; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); }  
+    .diary-entry { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 5px solid var(--main); position: relative; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); color: #444; }  
     .del-diary { position: absolute; top: 8px; right: 8px; color: #ff4444; cursor: pointer; font-weight: bold; font-size: 0.9rem; padding: 5px; }  
     
     .file-upload-btn {
@@ -416,6 +407,17 @@
 
     <div id="page-pharmacy" class="page">  
         <h2 style="color:var(--main); text-align:center; margin-bottom:15px; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Pharmacy & Care</h2>  
+        
+        <div class="loyalty-card">
+            <div class="loyalty-header">Seiren Clinic • Patient Card</div>
+            <div class="stamp-grid" id="stamp-grid">
+                </div>
+            <button id="reward-btn" class="reward-btn" onclick="claimReward()">
+                <img src="https://i.postimg.cc/8C9qdmfN/a3f6c6b70ab5af6f58240dba296b7556.png" style="width:30px; vertical-align:middle; margin-right:5px;">
+                CLAIM REFILL
+            </button>
+        </div>
+
         <div style="background:white; padding:15px; border-radius:15px; border:2px solid var(--main);">  
             <div id="receipt-list" class="receipt-paper"></div>  
               
@@ -470,6 +472,29 @@
         </div>
     </div>  
 
+    <div id="page-dream" class="page">
+        <h2 style="text-align:center;">Dream Journal</h2>
+        <div class="bio-container">
+            <label>Location (In Between):</label>
+            <input type="text" id="dream-loc" placeholder="e.g. The Pool Rooms">
+            
+            <label>Clarity (Fuzzy -> Hyper-Real):</label>
+            <input type="range" id="dream-clear" min="1" max="10" style="width:100%;">
+            
+            <label>Visitors / Entities:</label>
+            <input type="text" id="dream-ent" placeholder="Who was there?">
+            
+            <label>Residue (Feeling):</label>
+            <input type="text" id="dream-feel" placeholder="e.g. Cold, Nostalgic">
+            
+            <label>Memory Dump:</label>
+            <textarea id="dream-text" style="height:80px;"></textarea>
+            
+            <button class="btn-action" style="background:#7e57c2;" onclick="saveDream()">Log Dream</button>
+        </div>
+        <div id="dream-feed" style="margin-top:20px;"></div>
+    </div>
+
     <div id="page-diary" class="page">  
         <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Diary</h2>  
         <textarea id="diary-in" style="width:100%; height:100px;" placeholder="Entry..."></textarea>  
@@ -483,7 +508,7 @@
         <button class="dock-btn" onclick="nav('pet')">🍤</button>  
         <button class="dock-btn" onclick="nav('chat')">💬</button>  
         <button class="dock-btn" onclick="nav('diary')">📓</button>  
-    </div>
+        <button class="dock-btn" onclick="toggleNightMode()">🌙</button> </div>
 </div>  
 
 <div id="modal-chat-actions" class="modal">
@@ -586,7 +611,9 @@
         decor: [],   
         cofront: [], 
         frontHistory: [], 
-        consoleHistory: ["System Initialized..."], // New console state
+        consoleHistory: ["System Initialized..."], 
+        dreamLog: [], // NEW
+        stamps: 0, // NEW
         currentFrontStart: 0, 
         activeAlert: null,
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
@@ -594,42 +621,41 @@
     };  
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
     let isSelling = false;
-    let selectedMsgIndex = -1; // For Chat Actions
+    let selectedMsgIndex = -1; 
 
     // LOOT TABLE
     const LOOT_ITEMS = [
         "bg-apple", "bg-polka-brown", "bg-clover", "bg-stars-blue", "bg-bow-y2k",
         "bg-stars-bw", "bg-music-pink", "bg-stars-classic", "bg-bow-classic",
         "bg-strawberry", "bg-heart-bp", "bg-polka-classic",
-        // New Image Items
-        "https://i.postimg.cc/4dFyJtrX/12d9131d2320519e1e23f5f678427396.png", // Cigarette
-        "https://i.postimg.cc/zBPvJW46/3e4f2fa5b124701b5f17089d9ab9b737.png", // Wings
-        "https://i.postimg.cc/hjGhWMZ5/62695aafc7da6361407abf3a87ecafb6.png", // Black hearts
-        "https://i.postimg.cc/1tYX96bb/65794fc54d21b0cdd7b3db4e813c6b11.png", // Rabbit
-        "https://i.postimg.cc/4dFyJtrR/9add2a23fa78c0e9fcc21c3a394b02cd.png", // Heart
-        "https://i.postimg.cc/bJFrzbKc/ed8d7acf0f1516a1b3de4b9df6a3b048.png", // Umbrella
-        "https://i.postimg.cc/DyG0TS6t/2f0f42dbd7882d400c9e4f651c9d438d.png", // Cat
-        "https://i.postimg.cc/P5kxrdFT/363a54d905dfd329fb095af572d6d580.png", // Books
-        "https://i.postimg.cc/8k9c9RR9/42616c918cd958cc301cb745852ff27e.png", // Zzz
-        "https://i.postimg.cc/tC6JjsD4/45ca3463cef73aa5c917b57ac0cfd971.png", // Clover
-        "https://i.postimg.cc/FF8z8yb5/56e20c61dbf4feb80179606c2699d5f1.png", // Crown
-        "https://i.postimg.cc/CL85gR7v/607d0537e36c5788fe96007288ae5ccc.png", // Fish
-        "https://i.postimg.cc/05FjFYYL/69e61b8d6420f427e4ac42a32f49eddf.png", // Fan
-        "https://i.postimg.cc/66gqgrr1/6b1bb26664a8aafcd16a6d4436bcf54a.png", // Star
-        "https://i.postimg.cc/PrDJjCKh/7e91ebbf0419972863f456a8aa7c904b.png", // CD
-        "https://i.postimg.cc/28WyD1Gs/93e86c6d6b567ece1a03b6c04d04892c.png", // Frog
-        "https://i.postimg.cc/nhtzcnwr/a09248b8a40f6c9f22285635b90be653.png", // Guitar
-        "https://i.postimg.cc/Mp8TKzrp/abb690b3250b998f75bbc788f7154c55.png", // Flower
-        "https://i.postimg.cc/fRhLTMgT/af7f389e3f9e09024197d9e164ad33e2.png", // Cherry
-        "https://i.postimg.cc/qMKqTNQt/d1b701f32c7e48282f4a20be48a7fd3f.png", // Camera
-        "https://i.postimg.cc/vHnTs4Xm/d3092ebc83ae4814d0e75e1af83646e1.png", // Alarm
-        "https://i.postimg.cc/WpCzCGGx/d754b77bd5a2ef644d29367b5ca3a51b.png", // Ballet
-        "https://i.postimg.cc/ncmrJXT8/da7d72fedbce39a1f0d35f89c184c29f.png", // Tea
-        "https://i.postimg.cc/DyG0TS5f/da828bc90e8f772100995a682a906233.png", // Fish 2
-        "https://i.postimg.cc/x1SCT9Fj/deb771ba2ff74c9af0871e8af7bb4cc0.png", // Lollipop
-        "https://i.postimg.cc/pXjrHmC1/eb31aaf8301282152f43f7050b39a5fd.png", // Blue heart
-        "https://i.postimg.cc/SN9RhnVJ/ee455254fdc48289bf096e1eb048e089.png", // Carousel
-        "https://i.postimg.cc/KvTj21fw/f91a9c969269fdedf2e437391eda83e8.png"  // Polaroid
+        "https://i.postimg.cc/4dFyJtrX/12d9131d2320519e1e23f5f678427396.png",
+        "https://i.postimg.cc/zBPvJW46/3e4f2fa5b124701b5f17089d9ab9b737.png",
+        "https://i.postimg.cc/hjGhWMZ5/62695aafc7da6361407abf3a87ecafb6.png",
+        "https://i.postimg.cc/1tYX96bb/65794fc54d21b0cdd7b3db4e813c6b11.png",
+        "https://i.postimg.cc/4dFyJtrR/9add2a23fa78c0e9fcc21c3a394b02cd.png",
+        "https://i.postimg.cc/bJFrzbKc/ed8d7acf0f1516a1b3de4b9df6a3b048.png",
+        "https://i.postimg.cc/DyG0TS6t/2f0f42dbd7882d400c9e4f651c9d438d.png",
+        "https://i.postimg.cc/P5kxrdFT/363a54d905dfd329fb095af572d6d580.png",
+        "https://i.postimg.cc/8k9c9RR9/42616c918cd958cc301cb745852ff27e.png",
+        "https://i.postimg.cc/tC6JjsD4/45ca3463cef73aa5c917b57ac0cfd971.png",
+        "https://i.postimg.cc/FF8z8yb5/56e20c61dbf4feb80179606c2699d5f1.png",
+        "https://i.postimg.cc/CL85gR7v/607d0537e36c5788fe96007288ae5ccc.png",
+        "https://i.postimg.cc/05FjFYYL/69e61b8d6420f427e4ac42a32f49eddf.png",
+        "https://i.postimg.cc/66gqgrr1/6b1bb26664a8aafcd16a6d4436bcf54a.png",
+        "https://i.postimg.cc/PrDJjCKh/7e91ebbf0419972863f456a8aa7c904b.png",
+        "https://i.postimg.cc/28WyD1Gs/93e86c6d6b567ece1a03b6c04d04892c.png",
+        "https://i.postimg.cc/nhtzcnwr/a09248b8a40f6c9f22285635b90be653.png",
+        "https://i.postimg.cc/Mp8TKzrp/abb690b3250b998f75bbc788f7154c55.png",
+        "https://i.postimg.cc/fRhLTMgT/af7f389e3f9e09024197d9e164ad33e2.png",
+        "https://i.postimg.cc/qMKqTNQt/d1b701f32c7e48282f4a20be48a7fd3f.png",
+        "https://i.postimg.cc/vHnTs4Xm/d3092ebc83ae4814d0e75e1af83646e1.png",
+        "https://i.postimg.cc/WpCzCGGx/d754b77bd5a2ef644d29367b5ca3a51b.png",
+        "https://i.postimg.cc/ncmrJXT8/da7d72fedbce39a1f0d35f89c184c29f.png",
+        "https://i.postimg.cc/DyG0TS5f/da828bc90e8f772100995a682a906233.png",
+        "https://i.postimg.cc/x1SCT9Fj/deb771ba2ff74c9af0871e8af7bb4cc0.png",
+        "https://i.postimg.cc/pXjrHmC1/eb31aaf8301282152f43f7050b39a5fd.png",
+        "https://i.postimg.cc/SN9RhnVJ/ee455254fdc48289bf096e1eb048e089.png",
+        "https://i.postimg.cc/KvTj21fw/f91a9c969269fdedf2e437391eda83e8.png"
     ];  
     const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!", "Hydrate!", "Rest up!", "Good job!", "Proud of u!", "Safe here."];  
     const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
@@ -651,6 +677,8 @@
         if(!DB.cofront) DB.cofront = [];
         if(!DB.frontHistory) DB.frontHistory = [];
         if(!DB.consoleHistory) DB.consoleHistory = ["System Initialized..."];
+        if(!DB.dreamLog) DB.dreamLog = [];
+        if(!DB.stamps) DB.stamps = 0;
         if(!DB.currentFrontStart) DB.currentFrontStart = Date.now();
 
         DB.profiles.forEach(p => {
@@ -665,6 +693,7 @@
         toggleCRT();  
         renderAlert();
         renderConsole();
+        renderStamps();
     };  
   
     function enterSystem() {  
@@ -673,7 +702,7 @@
         else { document.querySelector('.app-shell').style.display='flex'; refreshAll(); }  
     }  
   
-    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); renderConsole(); }  
+    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); renderConsole(); renderDreamLog(); }  
     function save() { localStorage.setItem('seiren_fixed_v87', JSON.stringify(DB)); }  
   
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -753,7 +782,6 @@
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
         const p = DB.profiles[DB.active];
         
-        // Directly grab values since they are pre-filled now
         p.name = document.getElementById('new-name').value;
         p.age = document.getElementById('new-age').value;
         p.sign = document.getElementById('new-sign').value;
@@ -770,7 +798,6 @@
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
         
-        // --- PRE-FILL INPUTS (FIXES EDITING) ---
         document.getElementById('new-name').value = p.name;
         document.getElementById('new-age').value = p.age !== "-" ? p.age : "";
         document.getElementById('new-sign').value = p.sign !== "-" ? p.sign : "";
@@ -868,10 +895,7 @@
         const p = DB.profiles[DB.active];  
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
-        // Handle Reply
-        if(txt.startsWith("> Quoting:")) {
-            // Already formatted
-        }
+        if(txt.startsWith("> Quoting:")) { }
         
         DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:txt, img:chatImg, time:time });  
         i.value=""; chatImg=""; save(); renderChat();  
@@ -931,7 +955,6 @@
         const l = document.getElementById('decor-layer'); l.innerHTML="";   
         DB.decor.forEach(d => {  
             const el = document.createElement('div'); el.className='sticker'; 
-            // CHECK IF ITEM IS URL OR TEXT
             if (d.i.startsWith('http')) {
                 const img = document.createElement('img');
                 img.src = d.i;
@@ -939,7 +962,6 @@
             } else {
                 el.innerText = d.i;
             }
-            
             el.style.left=d.x+"%"; el.style.top=d.y+"%";  
             let isDrag=false;  
             const move = (e) => { if(!isDrag)return; const b=document.getElementById('pet-stage').getBoundingClientRect(); const cx=e.touches?e.touches[0].clientX:e.clientX; const cy=e.touches?e.touches[0].clientY:e.clientY; d.x=((cx-b.left)/b.width)*100; d.y=((cy-b.top)/b.height)*100; el.style.left=d.x+"%"; el.style.top=d.y+"%"; };  
@@ -995,18 +1017,16 @@
                 let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerHTML=icon; 
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
                 
-                // UPDATED CLICK HANDLER: CHECKS SELL MODE
                 b.onclick = () => { 
                     if(isSelling) {
                         const realIndex = DB.inventory.indexOf(item); 
-                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } // Wallpapers sell for 30 XP
+                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } 
                         save(); openBackpack(); 
                     } else {
                         DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); 
                     }
                 };  
             } else if (item.startsWith('http')) {
-                // IMAGE ITEM LOGIC
                 b.innerHTML = `<img src="${item}" style="width:50px; height:50px; object-fit:contain;">` + badge;
                 b.onclick = () => { 
                     if(isSelling) {
@@ -1035,14 +1055,52 @@
     function processReceipt() { 
         if(pendingXP>0){ 
             DB.xp+=pendingXP; 
+            DB.stamps = (DB.stamps || 0) + 1; // ADD STAMP
+            if(DB.stamps > 10) DB.stamps = 10; // Cap at 10 until redeemed
+            
             const task = SELF_CARE[Math.floor(Math.random()*SELF_CARE.length)]; 
-            alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"`); 
-            logToConsole(`Processed: +${pendingXP} XP`); // NEW LOG
+            alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"\n\n💊 STAMP ADDED TO CARD`); 
+            logToConsole(`Processed: +${pendingXP} XP`); 
             pendingXP=0; 
             document.getElementById('receipt-list').innerHTML=""; 
             save(); loadUI(); 
         } 
     }  
+    
+    function renderStamps() {
+        const grid = document.getElementById('stamp-grid');
+        if(!grid) return;
+        grid.innerHTML = "";
+        for(let i=0; i<10; i++) {
+            const slot = document.createElement('div');
+            slot.className = 'stamp-slot';
+            if(i < DB.stamps) {
+                // Use the user provided stamp URL
+                slot.innerHTML = '<img src="https://i.postimg.cc/q7zPC5qM/ec9635acf11fbbb9c3b0bbfec3b6eb30.png" class="stamp-mark">';
+            }
+            grid.appendChild(slot);
+        }
+        
+        const btn = document.getElementById('reward-btn');
+        if(DB.stamps >= 10) {
+            btn.style.display = 'block';
+        } else {
+            btn.style.display = 'none';
+        }
+    }
+
+    function claimReward() {
+        if(DB.stamps >= 10) {
+            DB.stamps = 0;
+            // Reward: 3 Random Items
+            let rewards = [];
+            for(let i=0; i<3; i++) rewards.push(LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)]);
+            DB.inventory.push(...rewards);
+            alert("💊 PRESCRIPTION REFILLED!\n\nYou received 3 items.");
+            save(); loadUI();
+        }
+    }
+
     function fillPrescription() {   
         if(DB.xp>=50){   
             DB.xp-=50; let item = ""; let attempts = 0;
@@ -1053,7 +1111,7 @@
             const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)]; 
             const bub = document.getElementById('pet-speech'); bub.innerText = speech; bub.classList.add('show'); setTimeout(()=>bub.classList.remove('show'), 2000);  
             
-            logToConsole(`Rx Filled. -50 XP`); // NEW LOG
+            logToConsole(`Rx Filled. -50 XP`); 
             
             let msg = `Rx Filled!\n\nReceived: Item`; 
             if(item.startsWith('bg-')) { 
@@ -1071,7 +1129,7 @@
         if(!DB.consoleHistory) DB.consoleHistory = [];
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         DB.consoleHistory.push(`${time} - ${msg}`);
-        if(DB.consoleHistory.length > 50) DB.consoleHistory.shift(); // Keep last 50
+        if(DB.consoleHistory.length > 50) DB.consoleHistory.shift(); 
         save();
         renderConsole();
     }
@@ -1080,12 +1138,7 @@
         const feed = document.getElementById('console-log-feed');
         if(!feed) return;
         feed.innerHTML = "";
-        // Show newest at bottom (standard terminal style)
-        // Since flex-direction is column-reverse, we append normally and they stack up from bottom
         if(DB.consoleHistory) {
-            // We want the LATEST message at the VERY BOTTOM.
-            // With column-reverse, the first element in DOM is at the BOTTOM.
-            // So we need to reverse the array so the newest (last index) comes first in DOM
             [...DB.consoleHistory].reverse().forEach(line => {
                 feed.innerHTML += `<div class="log-line">${line}</div>`;
             });
@@ -1099,6 +1152,54 @@
         bub.innerText = quote; 
         bub.classList.add('show'); 
         setTimeout(()=>bub.classList.remove('show'), 2000); 
+    }
+
+    // --- DREAM JOURNAL ---
+    function toggleNightMode() {
+        document.body.classList.toggle('night-mode');
+        // Auto navigate to dream journal if opening night mode
+        if(document.body.classList.contains('night-mode')) {
+            nav('dream');
+        } else {
+            nav('dash');
+        }
+    }
+
+    function saveDream() {
+        const loc = document.getElementById('dream-loc').value;
+        const clr = document.getElementById('dream-clear').value;
+        const ent = document.getElementById('dream-ent').value;
+        const feel = document.getElementById('dream-feel').value;
+        const txt = document.getElementById('dream-text').value;
+        
+        if(txt || loc) {
+            DB.dreamLog.unshift({
+                d: new Date().toLocaleDateString(),
+                loc: loc, clr: clr, ent: ent, feel: feel, txt: txt
+            });
+            document.getElementById('dream-loc').value="";
+            document.getElementById('dream-ent').value="";
+            document.getElementById('dream-feel').value="";
+            document.getElementById('dream-text').value="";
+            save(); renderDreamLog();
+        }
+    }
+
+    function renderDreamLog() {
+        const f = document.getElementById('dream-feed');
+        f.innerHTML = "";
+        DB.dreamLog.forEach((d, i) => {
+            f.innerHTML += `
+            <div class="dream-entry">
+                <div class="dream-blur" onclick="this.classList.remove('dream-blur')">
+                    <small style="opacity:0.7;">${d.d} • ${d.loc || 'Unknown'} • Clarity: ${d.clr}/10</small><br>
+                    ${d.ent ? `<strong>Entities:</strong> ${d.ent}<br>` : ''}
+                    ${d.feel ? `<strong>Residue:</strong> ${d.feel}<br>` : ''}
+                    <p style="margin-top:5px;">${d.txt}</p>
+                </div>
+                <button style="color:red; background:none; border:none; float:right; cursor:pointer;" onclick="if(confirm('Forget this dream?')){DB.dreamLog.splice(${i},1); save(); renderDreamLog();}">x</button>
+            </div>`;
+        });
     }
   
     // --- MISC & PRIVATE DIARY ---  
@@ -1128,7 +1229,6 @@
                 members.forEach(m => {
                     if (!DB.profiles.some(p => p.name === m.name)) {
                         
-                        // --- PARSER ---
                         let likes = [], dislikes = [], notes = "", bioLines = [];
                         let name = m.name || "Unknown";
                         let sign = m.pronouns || "?";
@@ -1136,33 +1236,27 @@
                         let species = "System Member";
                         let height = "--";
                         let bio = "";
-                        
-                        let currentMode = null; // 'likes' or 'dislikes' or null
+                        let currentMode = null; 
 
                         if (m.description) {
                             const lines = m.description.split('\n');
                             lines.forEach(rawLine => {
-                                // 1. Remove aesthetic symbols from start of line
                                 let line = rawLine.replace(/^[^a-zA-Z0-9]+/, '').trim();
                                 let lower = line.toLowerCase();
                                 
-                                // 2. Check for Specific Keys
                                 if(lower.startsWith('name:')) { name = line.substring(5).trim(); return; }
                                 if(lower.startsWith('age:')) { age = line.substring(4).trim(); return; }
                                 if(lower.startsWith('pronouns:') || lower.startsWith('prons:')) { sign = line.substring(line.indexOf(':')+1).trim(); return; }
                                 if(lower.startsWith('species:')) { species = line.substring(8).trim(); return; }
                                 if(lower.startsWith('height:')) { height = line.substring(7).trim(); return; }
 
-                                // 3. Check for Lists (Likes/Dislikes)
                                 if(lower.startsWith('likes:') || lower.startsWith('loves:')) {
                                     const content = line.substring(line.indexOf(':')+1).trim();
                                     if(content.length > 0) {
-                                        // Inline list (comma separated)
                                         let items = content.split(/,|&|\//).map(s => s.trim()).filter(s => s);
                                         likes.push(...items);
                                         currentMode = null;
                                     } else {
-                                        // Header for a list below
                                         currentMode = 'likes';
                                     }
                                     return;
@@ -1180,62 +1274,41 @@
                                     return;
                                 }
 
-                                // 4. Handle List Modes
-                                if(currentMode === 'likes' && line.length > 0) {
-                                    likes.push(line);
-                                    return;
-                                }
-                                if(currentMode === 'dislikes' && line.length > 0) {
-                                    dislikes.push(line);
-                                    return;
-                                }
+                                if(currentMode === 'likes' && line.length > 0) { likes.push(line); return; }
+                                if(currentMode === 'dislikes' && line.length > 0) { dislikes.push(line); return; }
                                 
-                                // 5. Catch boundaries/triggers as notes
                                 if(lower.startsWith('boundaries:') || lower.startsWith('triggers:') || lower.startsWith('t:')) {
                                     notes += line + "\n";
                                     currentMode = null;
                                     return;
                                 }
 
-                                // 6. If none of above, add to general Bio
-                                // Filter out empty aesthetic lines
-                                if(line.length > 1) bioLines.push(rawLine); // Keep raw for bio to preserve formatting
+                                if(line.length > 1) bioLines.push(rawLine); 
                             });
-                            
                             bio = bioLines.join('\n').trim();
                         }
 
                         DB.profiles.push({
-                            name: name,
-                            av: m.avatar_url || DEFAULT_AV,
-                            sign: sign, 
-                            age: age,
-                            species: species,
-                            height: height,
-                            bio: bio || "Imported from PluralKit",
-                            color: m.color ? "#"+m.color : "#ff69b4",
-                            id: m.id || Math.floor(Math.random()*900000),
-                            likes: likes, 
-                            dislikes: dislikes, 
-                            notes: notes.trim()
+                            name: name, av: m.avatar_url || DEFAULT_AV, sign: sign, age: age,
+                            species: species, height: height, bio: bio || "Imported from PluralKit",
+                            color: m.color ? "#"+m.color : "#ff69b4", id: m.id || Math.floor(Math.random()*900000),
+                            likes: likes, dislikes: dislikes, notes: notes.trim()
                         });
                         count++;
                     }
                 });
-                
                 save();
                 alert(`Success! Imported ${count} members.`);
                 refreshAll();
             } catch(err) {
                 alert("Import Failed: " + err.message);
-                console.error(err);
             }
         };
         reader.readAsText(file);
         input.value = ""; 
     }
 
-    function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); }  
+    function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); if(id==='dream')renderDreamLog(); }  
     
     function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, uid: DB.profiles[DB.active].id, t:t.value}); t.value=""; save(); renderDiary(); } }  
     function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; const currentID = DB.profiles[DB.active].id; const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid); myEntries.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }  
