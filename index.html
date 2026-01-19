@@ -32,7 +32,7 @@
         color: #444;   
     }  
 
-    /* --- IMAGE WALLPAPERS --- */
+    /* --- WALLPAPERS --- */
     .bg-apple { background-image: url('https://i.postimg.cc/jSy15jN8/254dfc0d0652f67805de02ae1113f60a.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-polka-brown { background-image: url('https://i.postimg.cc/yNBbSzXn/53f33a2e730b5174988e4d58c7e6fbb7.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-clover { background-image: url('https://i.postimg.cc/Xv3zy0cw/684495e309f1e7a6b1d1609f033f905c.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
@@ -46,7 +46,7 @@
     .bg-strawberry { background-image: url('https://i.postimg.cc/43ZShTb6/f9fc99a5267ad98f2760ee5846f21607.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-heart-bp { background-image: url('https://i.postimg.cc/KYFHgyDX/Untitled83_20260118063949.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-polka-classic { background-image: url('https://i.postimg.cc/6QwmGNfB/Untitled84_20260118064140.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
-
+    
     /* --- VISUAL FX --- */  
     .scanlines {  
         position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999; display: none;  
@@ -75,7 +75,7 @@
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
-    /* --- GLOBAL ALERT BANNER --- */
+    /* --- ALERT BANNER --- */
     .sys-alert {
         background: #ff4444; color: white; padding: 12px;
         font-weight: bold; display: none; justify-content: space-between;
@@ -133,7 +133,7 @@
     .bio-tag span { cursor: pointer; opacity: 0.7; font-size: 0.7rem; }
     .bio-input-group { display: flex; gap: 5px; margin-bottom: 15px; }
 
-    /* --- FRONT LOG TABLE --- */
+    /* --- LOG TABLE --- */
     .log-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     .log-table th { text-align: left; border-bottom: 2px solid var(--main); padding: 5px; color: var(--main); }
     .log-table td { border-bottom: 1px solid #eee; padding: 8px 5px; color: #555; }
@@ -150,13 +150,21 @@
     .chan-btn:hover .del-chan { display: flex; }  
     .chat-view { flex: 1; display: flex; flex-direction: column; min-width: 0; }  
     .chat-feed { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background-image: radial-gradient(#f0f0f0 1px, transparent 1px); background-size: 20px 20px; }  
-    .pk-msg { display: flex; gap: 10px; align-items: flex-start; }  
+    .pk-msg { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }  
+    .pk-msg:active { background: rgba(0,0,0,0.05); border-radius: 10px; }
     .pk-av { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }  
     .pk-img { max-width: 150px; border-radius: 10px; margin-top: 5px; display: block; border: 2px solid #eee;}  
     .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; background: #fafafa; }  
 
     /* --- PET --- */  
-    .pet-stage { height: 350px; position: relative; border: 4px ridge var(--main); border-radius: 20px; background: rgba(255,255,255,0.85); box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; display: flex; align-items: center; justify-content: center; }  
+    /* FIXED: Transparent background for Ebi so wallpapers show */
+    .pet-stage { 
+        height: 350px; position: relative; 
+        border: 4px ridge var(--main); border-radius: 20px; 
+        background: rgba(255,255,255,0.1); /* Mostly transparent */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+        overflow: hidden; display: flex; align-items: center; justify-content: center; 
+    }  
     .ebi-img { width: 160px; pointer-events: none; z-index: 5; margin-top: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }  
     .sticker { position: absolute; font-size: 3rem; cursor: grab; z-index: 10; user-select: none; }  
     .speech-bubble {  
@@ -168,13 +176,12 @@
     }  
     .speech-bubble.show { transform: translateX(-50%) scale(1); }  
 
-    /* --- PHARMACY & RECEIPT --- */  
+    /* --- PHARMACY --- */  
     .receipt-paper { 
         background: #fff; padding: 15px; 
         font-family: 'Courier New', monospace; font-size: 0.8rem; 
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 10px; position: relative; 
         border-top: 5px solid #333;
-        /* Jagged bottom edge */
         background-image: linear-gradient(135deg, transparent 50%, #fff 50%), linear-gradient(45deg, #fff 50%, transparent 50%);
         background-size: 20px 20px;
         background-repeat: repeat-x;
@@ -193,7 +200,6 @@
     .dock-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }  
     .dock-btn.active { opacity: 1; transform: translateY(-8px); }  
 
-    /* MODAL STYLE */
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }  
     .modal-card { 
         background: white; width: 90%; max-width: 380px; border-radius: 25px; padding: 25px; 
@@ -411,13 +417,23 @@
     </div>
 </div>  
 
+<div id="modal-chat-actions" class="modal">
+    <div class="modal-card" style="text-align:center;">
+        <h3>Message Options</h3>
+        <p id="chat-action-text" style="font-size:0.8rem; color:#666; margin-bottom:15px;">...</p>
+        <button class="btn-action" style="background:#64b5f6;" onclick="replyToMsg()">↩️ Reply</button>
+        <button class="btn-action" style="background:#ffb74d;" onclick="editMsg()">✏️ Edit</button>
+        <button class="btn-action" style="background:#ff4444;" onclick="deleteMsg()">🗑️ Delete</button>
+        <button class="btn-action" style="background:#ccc;" onclick="closeModals()">Cancel</button>
+    </div>
+</div>
+
 <div id="modal-settings" class="modal">  
     <div class="modal-card">  
         <h3>Settings</h3>  
         <label>System Name:</label>  
         <input type="text" id="sys-name-input" placeholder="Seiren OS">  
         <button class="btn-action" style="margin-top:5px; margin-bottom:15px;" onclick="saveSystemName()">Update Name</button>  
-        
         <label style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:10px; border-radius:10px;">  
             <span>📺 CRT Effects</span>  
             <input type="checkbox" id="toggle-crt" onchange="toggleCRT()" checked style="width:auto; margin:0;">  
@@ -441,7 +457,6 @@
         <hr>  
         <h4>Profile Editor</h4>  
         <p style="font-size:0.7rem; color:#666;">Leave fields blank to keep current data.</p>
-        
         <input type="text" id="new-name" placeholder="Name">  
         <div style="display:flex; gap:10px;">  
             <input type="text" id="new-age" placeholder="Age" style="width:30%;">  
@@ -452,21 +467,16 @@
             <input type="text" id="new-height" placeholder="Height" style="width:30%;">  
         </div>  
         <textarea id="new-bio" placeholder="Profile Info / Notes..." style="height:60px; font-family:inherit;"></textarea>  
-        
         <label class="file-upload-btn">  
             📂 Upload Photo  
             <input type="file" accept="image/*" style="display:none;" onchange="handleFile(this, 'av-preview')">  
         </label>  
-        
         <img id="av-preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23eee'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E" style="width:60px; height:60px; margin:0 auto; display:block; object-fit:cover; border-radius:50%; background:#eee;">  
-          
         <input type="color" id="new-color" value="#ff69b4" style="width:100%; border:none; height:30px; margin-top:5px;">  
-        
         <div style="display:flex; gap:5px; margin-top:10px; flex-wrap:wrap;">
             <button class="btn-action" style="background:#81c784; flex:1;" onclick="updateCurrentProfile()">Save Changes</button>
             <button class="btn-action" style="flex:1;" onclick="createProfile()">Create New</button>
         </div>
-        
         <button class="btn-action" style="margin-top:5px; background:#ccc;" onclick="closeModals()">Close</button>  
     </div>
 </div>  
@@ -508,13 +518,14 @@
         cofront: [], 
         frontHistory: [], 
         currentFrontStart: 0, 
-        activeAlert: null, // Stores active system alert
+        activeAlert: null,
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true }  
     };  
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
-    let isSelling = false; // State for sell mode
-  
+    let isSelling = false;
+    let selectedMsgIndex = -1; // For Chat Actions
+
     // LOOT TABLE
     const LOOT_ITEMS = [
         "🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴",
@@ -527,7 +538,6 @@
     const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
     const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
     
-    // MAPPING ICONS FOR BACKGROUNDS
     const BG_ICONS = {
         'bg-apple': '🍎', 'bg-polka-brown': '🟤', 'bg-clover': '🍀', 'bg-stars-blue': '⭐',
         'bg-bow-y2k': '🎀', 'bg-stars-bw': '✨', 'bg-music-pink': '🎵', 'bg-stars-classic': '🌟',
@@ -536,17 +546,11 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v86'); 
+        const saved = localStorage.getItem('seiren_fixed_v87'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
-          
         if(DB.profiles.length === 0) {  
-            DB.profiles.push({  
-                name: "Guest", av: DEFAULT_AV, color: "#ff69b4", id: "GUEST",  
-                sign: "-", species: "Visitor", age: "-", height: "-", bio: "Guest Access",
-                likes: [], dislikes: [], notes: "" 
-            });  
+            DB.profiles.push({ name: "Guest", av: DEFAULT_AV, color: "#ff69b4", id: "GUEST", sign: "-", species: "Visitor", age: "-", height: "-", bio: "Guest Access", likes: [], dislikes: [], notes: "" });  
         }  
-        // Initialize new fields
         if(!DB.cofront) DB.cofront = [];
         if(!DB.frontHistory) DB.frontHistory = [];
         if(!DB.currentFrontStart) DB.currentFrontStart = Date.now();
@@ -571,12 +575,10 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); }  
-    function save() { localStorage.setItem('seiren_fixed_v86', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_fixed_v87', JSON.stringify(DB)); }  
   
-    // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
-  
-    // --- IMAGES ---  
+    
     function handleFile(inpt, id) {   
         const file = inpt.files[0]; if(!file) return;  
         const reader = new FileReader();  
@@ -592,16 +594,13 @@
             };
             img.src = e.target.result;
         };  
-        reader.readAsDataURL(file);
-        inpt.value = ""; 
+        reader.readAsDataURL(file); inpt.value = ""; 
     }  
     function handleChatImage(inpt) {   
         const file = inpt.files[0]; if(!file) return;  
-        const reader = new FileReader(); reader.onload = (e) => { chatImg = e.target.result; alert("Image attached!"); }; reader.readAsDataURL(file);  
-        inpt.value = ""; 
+        const reader = new FileReader(); reader.onload = (e) => { chatImg = e.target.result; alert("Image attached!"); }; reader.readAsDataURL(file); inpt.value = ""; 
     }  
   
-    // --- UI & PROFILES ---  
     function loadUI() {  
         const p = DB.profiles[DB.active];  
         document.documentElement.style.setProperty('--main', p.color);  
@@ -653,7 +652,6 @@
     function updateCurrentProfile() {
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
         const p = DB.profiles[DB.active];
-        
         const newName = document.getElementById('new-name').value; if(newName) p.name = newName;
         const newAge = document.getElementById('new-age').value; if(newAge) p.age = newAge;
         const newSign = document.getElementById('new-sign').value; if(newSign) p.sign = newSign;
@@ -662,14 +660,12 @@
         const newBio = document.getElementById('new-bio').value; if(newBio) p.bio = newBio;
         const newColor = document.getElementById('new-color').value; p.color = newColor;
         if(uploadedAv) { p.av = uploadedAv; uploadedAv = ""; }
-        
         save(); closeModals(); refreshAll(); alert("ID Updated!");
     }
   
     function openProfileModal() {  
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
-        
         document.getElementById('new-name').value = ""; document.getElementById('new-name').placeholder = "Name: " + p.name;
         document.getElementById('new-age').value = ""; document.getElementById('new-age').placeholder = "Age: " + p.age;
         document.getElementById('new-sign').value = ""; document.getElementById('new-sign').placeholder = "Sign: " + p.sign;
@@ -692,74 +688,46 @@
         });  
     }  
 
-    // --- SWITCH, CO-FRONT, AND LOGGING ---
-    function switchProfile(index) {
-        logSwitch(DB.active); // Log the session ending
-        DB.active = index;
-        DB.cofront = []; // Clear co-front when switching main
-        save(); refreshAll(); closeModals();
-    }
-
+    function switchProfile(index) { logSwitch(DB.active); DB.active = index; DB.cofront = []; save(); refreshAll(); closeModals(); }
     function addToCofront(index) {
         if (!DB.cofront) DB.cofront = [];
         if (index === DB.active) { alert("Already fronting!"); return; }
         if (DB.cofront.includes(index)) { alert("Already co-fronting!"); return; }
-        DB.cofront.push(index);
-        save(); refreshAll(); 
-        alert(DB.profiles[index].name + " added to Co-Con!");
+        DB.cofront.push(index); save(); refreshAll(); alert(DB.profiles[index].name + " added to Co-Con!");
     }
-
-    // --- FRONT LOGIC ---
     function logSwitch(oldIndex) {
         if (!DB.currentFrontStart) { DB.currentFrontStart = Date.now(); return; }
-        const now = Date.now();
-        const diff = now - DB.currentFrontStart;
-        const minutes = Math.floor(diff / 60000);
-        const hours = Math.floor(minutes / 60);
+        const now = Date.now(); const diff = now - DB.currentFrontStart;
+        const minutes = Math.floor(diff / 60000); const hours = Math.floor(minutes / 60);
         const displayTime = (hours > 0 ? hours + "h " : "") + (minutes % 60) + "m";
         const p = DB.profiles[oldIndex];
-        
-        DB.frontHistory.unshift({
-            n: p.name,
-            d: new Date(DB.currentFrontStart).toLocaleDateString(),
-            t: new Date(DB.currentFrontStart).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-            dur: displayTime || "<1m"
-        });
+        DB.frontHistory.unshift({ n: p.name, d: new Date(DB.currentFrontStart).toLocaleDateString(), t: new Date(DB.currentFrontStart).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), dur: displayTime || "<1m" });
         if (DB.frontHistory.length > 50) DB.frontHistory.pop();
         DB.currentFrontStart = now;
     }
-
     function openLogModal() {
         document.getElementById('modal-log').style.display = 'flex';
         const tbody = document.getElementById('front-log-body');
         tbody.innerHTML = "";
-        DB.frontHistory.forEach(entry => {
-            tbody.innerHTML += `<tr><td><b>${entry.n}</b></td><td>${entry.d}</td><td>${entry.t}</td><td>${entry.dur}</td></tr>`;
-        });
+        DB.frontHistory.forEach(entry => { tbody.innerHTML += `<tr><td><b>${entry.n}</b></td><td>${entry.d}</td><td>${entry.t}</td><td>${entry.dur}</td></tr>`; });
     }
 
-    // --- BIO TAB LOGIC ---
     function renderBio() {
         const p = DB.profiles[DB.active];
         if(!p.likes) p.likes=[]; if(!p.dislikes) p.dislikes=[]; if(!p.notes) p.notes="";
-
         const likesList = document.getElementById('likes-list'); likesList.innerHTML = "";
         p.likes.forEach((l, i) => { likesList.innerHTML += `<div class="bio-tag">${l} <span onclick="removeBioItem('likes',${i})">x</span></div>`; });
-
         const dislikesList = document.getElementById('dislikes-list'); dislikesList.innerHTML = "";
         p.dislikes.forEach((l, i) => { dislikesList.innerHTML += `<div class="bio-tag" style="background:#555;">${l} <span onclick="removeBioItem('dislikes',${i})">x</span></div>`; });
-
         document.getElementById('notes-in').value = p.notes;
     }
     function addBioItem(type) {
-        const inputId = type === 'likes' ? 'like-in' : 'dislike-in';
-        const val = document.getElementById(inputId).value;
+        const inputId = type === 'likes' ? 'like-in' : 'dislike-in'; const val = document.getElementById(inputId).value;
         if(val) { DB.profiles[DB.active][type].push(val); document.getElementById(inputId).value = ""; save(); renderBio(); }
     }
     function removeBioItem(type, index) { DB.profiles[DB.active][type].splice(index, 1); save(); renderBio(); }
     function saveBioNotes() { DB.profiles[DB.active].notes = document.getElementById('notes-in').value; save(); }
   
-    // --- CHAT & ALERTS ---  
     function toggleSidebar() { document.getElementById('chan-list').classList.toggle('hidden'); const btn = document.querySelector('.sidebar-toggle'); btn.innerText = btn.innerText === '<' ? '>' : '<'; }  
     function renderChat() {  
         const list = document.getElementById('chan-list'); list.innerHTML="";  
@@ -774,10 +742,10 @@
         list.appendChild(add);  
         const c = DB.channels[DB.curChan]; document.getElementById('chan-title').innerText = "#" + c.name;  
         const feed = document.getElementById('chat-feed'); feed.innerHTML="";  
-        c.msgs.forEach(m => { 
+        c.msgs.forEach((m, idx) => { 
             const imgHTML = m.img ? `<img src="${m.img}" class="pk-img">` : ''; 
             feed.innerHTML += `
-            <div class="pk-msg">
+            <div class="pk-msg" onclick="openChatOptions(${idx})">
                 <img src="${m.av}" class="pk-av" style="background:${m.color}">
                 <div>
                     <div class="pk-name" style="color:${m.color}">${m.name} <span style="color:#aaa; font-size:0.7em;">${m.time||''}</span></div>
@@ -788,17 +756,24 @@
         feed.scrollTop = feed.scrollHeight;  
     }  
     function sendMsg() {  
-        const i = document.getElementById('msg-in'); if(!i.value && !chatImg) return;  
+        const i = document.getElementById('msg-in'); 
+        let txt = i.value;
+        if(!txt && !chatImg) return;  
         const p = DB.profiles[DB.active];  
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value, img:chatImg, time:time });  
+        
+        // Handle Reply
+        if(txt.startsWith("> Quoting:")) {
+            // Already formatted
+        }
+        
+        DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:txt, img:chatImg, time:time });  
         i.value=""; chatImg=""; save(); renderChat();  
     } 
     function sendAlert() {
         const msg = prompt("Broadcast Message:");
         if(msg) {
-            DB.activeAlert = msg.toUpperCase();
-            save(); renderAlert();
+            DB.activeAlert = msg.toUpperCase(); save(); renderAlert();
         }
     }
     function renderAlert() {
@@ -810,9 +785,39 @@
             el.style.display = 'none';
         }
     }
-    function dismissAlert() {
-        DB.activeAlert = null;
-        save(); renderAlert();
+    function dismissAlert() { DB.activeAlert = null; save(); renderAlert(); }
+
+    // --- CHAT ACTIONS ---
+    function openChatOptions(index) {
+        selectedMsgIndex = index;
+        const msg = DB.channels[DB.curChan].msgs[index];
+        document.getElementById('chat-action-text').innerText = msg.txt.substring(0, 30) + "...";
+        document.getElementById('modal-chat-actions').style.display = 'flex';
+    }
+    function deleteMsg() {
+        if(selectedMsgIndex > -1) {
+            DB.channels[DB.curChan].msgs.splice(selectedMsgIndex, 1);
+            save(); renderChat(); closeModals();
+        }
+    }
+    function replyToMsg() {
+        if(selectedMsgIndex > -1) {
+            const msg = DB.channels[DB.curChan].msgs[selectedMsgIndex];
+            const input = document.getElementById('msg-in');
+            input.value = `> Quoting ${msg.name}: "${msg.txt}"\n` + input.value;
+            closeModals();
+            input.focus();
+        }
+    }
+    function editMsg() {
+        if(selectedMsgIndex > -1) {
+            const msg = DB.channels[DB.curChan].msgs[selectedMsgIndex];
+            const newTxt = prompt("Edit message:", msg.txt);
+            if(newTxt !== null) {
+                msg.txt = newTxt + " (edited)";
+                save(); renderChat(); closeModals();
+            }
+        }
     }
   
     // --- DECOR ---  
@@ -836,15 +841,11 @@
         const btn = document.getElementById('sell-btn');
         const grid = document.getElementById('inventory-grid');
         if(isSelling) {
-            btn.style.background = "#ff4444";
-            btn.innerText = "🛑 Stop Selling";
-            grid.style.background = "#ffebee"; // Red tint
+            btn.style.background = "#ff4444"; btn.innerText = "🛑 Stop Selling"; grid.style.background = "#ffebee"; 
         } else {
-            btn.style.background = "#4db6ac";
-            btn.innerText = "💰 Sell Mode";
-            grid.style.background = "#f9f9f9";
+            btn.style.background = "#4db6ac"; btn.innerText = "💰 Sell Mode"; grid.style.background = "#f9f9f9";
         }
-        openBackpack(); // Re-render items
+        openBackpack(); 
     }
 
     function openBackpack() {  
@@ -868,9 +869,7 @@
 
         uniqueItems.forEach(item => {  
             const b = document.createElement('div'); 
-            b.style.fontSize="2.5rem"; 
-            b.style.cursor="pointer"; 
-            b.style.position="relative"; 
+            b.style.fontSize="2.5rem"; b.style.cursor="pointer"; b.style.position="relative"; 
             
             let badge = "";
             if(counts[item] > 1 && !item.startsWith('bg-')) {
@@ -878,24 +877,17 @@
             }
             
             if(item.startsWith('bg-')) {  
-                let icon = BG_ICONS[item] || "🖼️"; 
-                b.style.fontSize="1.5rem"; b.innerHTML=icon; 
+                let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerHTML=icon; 
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
                 b.onclick = () => { DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); };  
             } else {  
                 b.innerHTML = item + badge; 
                 b.onclick = () => { 
                     if(isSelling) {
-                         // SELL ITEM
                         const realIndex = DB.inventory.indexOf(item); 
-                        if(realIndex > -1) {
-                            DB.inventory.splice(realIndex, 1); 
-                            DB.xp += 10; // Earn XP
-                        }
-                        save(); 
-                        openBackpack(); // Re-render to update counts
+                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 10; }
+                        save(); openBackpack(); 
                     } else {
-                        // USE ITEM
                         DB.decor.push({i:item, x:50, y:50}); 
                         const realIndex = DB.inventory.indexOf(item); 
                         if(realIndex > -1) DB.inventory.splice(realIndex, 1); 
