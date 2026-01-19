@@ -61,7 +61,7 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL (OPTIMIZED) --- */  
+    /* --- APP SHELL --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
@@ -74,6 +74,17 @@
     .page { display: none; animation: popIn 0.3s; }  
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
+
+    /* --- GLOBAL ALERT BANNER --- */
+    .sys-alert {
+        background: #ff4444; color: white; padding: 12px;
+        font-weight: bold; display: none; justify-content: space-between;
+        align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        z-index: 200; animation: slideDown 0.3s;
+        border-bottom: 2px solid white;
+        text-transform: uppercase; font-size: 0.9rem;
+    }
+    @keyframes slideDown { from {transform:translateY(-100%)} to {transform:translateY(0)} }
 
     /* --- ID CARD --- */  
     .id-card-wrap {  
@@ -163,12 +174,12 @@
         font-family: 'Courier New', monospace; font-size: 0.8rem; 
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 10px; position: relative; 
         border-top: 5px solid #333;
-        /* Jagged bottom edge using CSS gradient */
+        /* Jagged bottom edge */
         background-image: linear-gradient(135deg, transparent 50%, #fff 50%), linear-gradient(45deg, #fff 50%, transparent 50%);
         background-size: 20px 20px;
         background-repeat: repeat-x;
         background-position: bottom;
-        padding-bottom: 30px; /* Space for the jagged edge */
+        padding-bottom: 30px; 
     }  
     .mood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; max-height: 200px; overflow-y: auto; padding-right: 5px; }  
     .mood-btn { background: white; border: 1px solid #ccc; border-radius: 8px; height: 40px; font-size: 1.2rem; cursor: pointer; }  
@@ -182,7 +193,7 @@
     .dock-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }  
     .dock-btn.active { opacity: 1; transform: translateY(-8px); }  
 
-    /* FIXED MODAL STYLE: Smaller max-height and extra padding at bottom */
+    /* MODAL STYLE */
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }  
     .modal-card { 
         background: white; width: 90%; max-width: 380px; border-radius: 25px; padding: 25px; 
@@ -243,6 +254,11 @@
 </div>  
 
 <div class="app-shell" id="app">  
+    <div id="sys-alert" class="sys-alert">
+        <span id="sys-alert-msg"></span>
+        <button onclick="dismissAlert()" style="background:transparent; border:none; color:white; font-weight:bold; cursor:pointer;">X</button>
+    </div>
+
     <div id="page-dash" class="page active" style="padding-top:20px;">  
         <div class="id-card-wrap">  
             <div class="id-inner">  
@@ -470,7 +486,10 @@
 
 <div id="modal-backpack" class="modal">  
     <div class="modal-card">  
-        <h3>Inventory</h3>  
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>Inventory</h3>
+            <button id="sell-btn" class="btn-action" style="width:auto; padding:5px 10px; font-size:0.8rem; background:#4db6ac;" onclick="toggleSell()">💰 Sell Mode</button>
+        </div>
         <p style="font-size:0.7rem; color:#666;">Items placed in Room. Backgrounds apply to SYSTEM.</p>  
         <div id="inventory-grid" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:10px; background:#f9f9f9; border-radius:10px; margin-bottom:10px;"></div>  
         <div id="empty-msg" style="text-align:center; color:#999; display:none;">Backpack is empty.<br>Visit Pharmacy.</div>
@@ -489,10 +508,12 @@
         cofront: [], 
         frontHistory: [], 
         currentFrontStart: 0, 
+        activeAlert: null, // Stores active system alert
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true }  
     };  
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
+    let isSelling = false; // State for sell mode
   
     // LOOT TABLE
     const LOOT_ITEMS = [
@@ -515,7 +536,7 @@
     };
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_fixed_v85'); 
+        const saved = localStorage.getItem('seiren_fixed_v86'); 
         if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
           
         if(DB.profiles.length === 0) {  
@@ -525,6 +546,7 @@
                 likes: [], dislikes: [], notes: "" 
             });  
         }  
+        // Initialize new fields
         if(!DB.cofront) DB.cofront = [];
         if(!DB.frontHistory) DB.frontHistory = [];
         if(!DB.currentFrontStart) DB.currentFrontStart = Date.now();
@@ -539,6 +561,7 @@
         document.getElementById('sys-name-input').value = DB.sysName || "SEIREN OS";  
         document.getElementById('toggle-crt').checked = DB.settings.crt;  
         toggleCRT();  
+        renderAlert();
     };  
   
     function enterSystem() {  
@@ -547,8 +570,8 @@
         else { document.querySelector('.app-shell').style.display='flex'; refreshAll(); }  
     }  
   
-    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); }  
-    function save() { localStorage.setItem('seiren_fixed_v85', JSON.stringify(DB)); }  
+    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); }  
+    function save() { localStorage.setItem('seiren_fixed_v86', JSON.stringify(DB)); }  
   
     // --- SYSTEM NAME ---  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -736,7 +759,7 @@
     function removeBioItem(type, index) { DB.profiles[DB.active][type].splice(index, 1); save(); renderBio(); }
     function saveBioNotes() { DB.profiles[DB.active].notes = document.getElementById('notes-in').value; save(); }
   
-    // --- CHAT ---  
+    // --- CHAT & ALERTS ---  
     function toggleSidebar() { document.getElementById('chan-list').classList.toggle('hidden'); const btn = document.querySelector('.sidebar-toggle'); btn.innerText = btn.innerText === '<' ? '>' : '<'; }  
     function renderChat() {  
         const list = document.getElementById('chan-list'); list.innerHTML="";  
@@ -774,11 +797,22 @@
     function sendAlert() {
         const msg = prompt("Broadcast Message:");
         if(msg) {
-            const p = DB.profiles[DB.active];
-            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            DB.channels[DB.curChan].msgs.push({ name:"⚠️ SYSTEM ALERT", av:DEFAULT_AV, color:"red", txt:`<b>${msg.toUpperCase()}</b>`, time:time });
-            save(); renderChat();
+            DB.activeAlert = msg.toUpperCase();
+            save(); renderAlert();
         }
+    }
+    function renderAlert() {
+        const el = document.getElementById('sys-alert');
+        if(DB.activeAlert) {
+            document.getElementById('sys-alert-msg').innerText = "⚠️ " + DB.activeAlert;
+            el.style.display = 'flex';
+        } else {
+            el.style.display = 'none';
+        }
+    }
+    function dismissAlert() {
+        DB.activeAlert = null;
+        save(); renderAlert();
     }
   
     // --- DECOR ---  
@@ -796,7 +830,23 @@
         });  
     }  
     
-    // --- FIXED BACKPACK (STACKING LOGIC) ---
+    // --- FIXED BACKPACK (STACKING LOGIC + SELL MODE) ---
+    function toggleSell() {
+        isSelling = !isSelling;
+        const btn = document.getElementById('sell-btn');
+        const grid = document.getElementById('inventory-grid');
+        if(isSelling) {
+            btn.style.background = "#ff4444";
+            btn.innerText = "🛑 Stop Selling";
+            grid.style.background = "#ffebee"; // Red tint
+        } else {
+            btn.style.background = "#4db6ac";
+            btn.innerText = "💰 Sell Mode";
+            grid.style.background = "#f9f9f9";
+        }
+        openBackpack(); // Re-render items
+    }
+
     function openBackpack() {  
         document.getElementById('modal-backpack').style.display='flex';  
         const g = document.getElementById('inventory-grid'); g.innerHTML="";  
@@ -835,10 +885,22 @@
             } else {  
                 b.innerHTML = item + badge; 
                 b.onclick = () => { 
-                    DB.decor.push({i:item, x:50, y:50}); 
-                    const realIndex = DB.inventory.indexOf(item); 
-                    if(realIndex > -1) DB.inventory.splice(realIndex, 1); 
-                    save(); closeModals(); nav('pet'); 
+                    if(isSelling) {
+                         // SELL ITEM
+                        const realIndex = DB.inventory.indexOf(item); 
+                        if(realIndex > -1) {
+                            DB.inventory.splice(realIndex, 1); 
+                            DB.xp += 10; // Earn XP
+                        }
+                        save(); 
+                        openBackpack(); // Re-render to update counts
+                    } else {
+                        // USE ITEM
+                        DB.decor.push({i:item, x:50, y:50}); 
+                        const realIndex = DB.inventory.indexOf(item); 
+                        if(realIndex > -1) DB.inventory.splice(realIndex, 1); 
+                        save(); closeModals(); nav('pet'); 
+                    }
                 };  
             }  
             g.appendChild(b);  
