@@ -649,16 +649,20 @@
         }  
     }
 
+    // --- FIXED UPDATE FUNCTION (NO MORE GHOST WRITING) ---
     function updateCurrentProfile() {
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
         const p = DB.profiles[DB.active];
-        const newName = document.getElementById('new-name').value; if(newName) p.name = newName;
-        const newAge = document.getElementById('new-age').value; if(newAge) p.age = newAge;
-        const newSign = document.getElementById('new-sign').value; if(newSign) p.sign = newSign;
-        const newSpec = document.getElementById('new-species').value; if(newSpec) p.species = newSpec;
-        const newH = document.getElementById('new-height').value; if(newH) p.height = newH;
-        const newBio = document.getElementById('new-bio').value; if(newBio) p.bio = newBio;
-        const newColor = document.getElementById('new-color').value; p.color = newColor;
+        
+        // Directly grab values since they are pre-filled now
+        p.name = document.getElementById('new-name').value;
+        p.age = document.getElementById('new-age').value;
+        p.sign = document.getElementById('new-sign').value;
+        p.species = document.getElementById('new-species').value;
+        p.height = document.getElementById('new-height').value;
+        p.bio = document.getElementById('new-bio').value;
+        p.color = document.getElementById('new-color').value;
+        
         if(uploadedAv) { p.av = uploadedAv; uploadedAv = ""; }
         save(); closeModals(); refreshAll(); alert("ID Updated!");
     }
@@ -666,12 +670,15 @@
     function openProfileModal() {  
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
-        document.getElementById('new-name').value = ""; document.getElementById('new-name').placeholder = "Name: " + p.name;
-        document.getElementById('new-age').value = ""; document.getElementById('new-age').placeholder = "Age: " + p.age;
-        document.getElementById('new-sign').value = ""; document.getElementById('new-sign').placeholder = "Sign: " + p.sign;
-        document.getElementById('new-species').value = ""; document.getElementById('new-species').placeholder = "Species: " + p.species;
-        document.getElementById('new-height').value = ""; document.getElementById('new-height').placeholder = "Height: " + p.height;
-        document.getElementById('new-bio').value = ""; document.getElementById('new-bio').placeholder = "Bio: " + p.bio;
+        
+        // --- PRE-FILL INPUTS (FIXES EDITING) ---
+        document.getElementById('new-name').value = p.name;
+        document.getElementById('new-age').value = p.age !== "-" ? p.age : "";
+        document.getElementById('new-sign').value = p.sign !== "-" ? p.sign : "";
+        document.getElementById('new-species').value = p.species !== "Visitor" ? p.species : "";
+        document.getElementById('new-height').value = p.height !== "-" ? p.height : "";
+        document.getElementById('new-bio').value = p.bio !== "Guest Access" ? p.bio : "";
+        
         document.getElementById('new-color').value = p.color;
         document.getElementById('av-preview').src = p.av || DEFAULT_AV;
 
@@ -1030,4 +1037,4 @@
     }
 </script>  
 </body>  
-</html>
+    </html>
