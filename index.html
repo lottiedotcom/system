@@ -244,6 +244,38 @@
     .dream-blur { filter: blur(3px); transition: filter 0.3s; cursor: pointer; }
     .dream-blur:hover { filter: blur(0); }
 
+    /* --- PHARMACY --- */  
+    .receipt-paper { 
+        background: #fff; padding: 15px; 
+        font-family: 'Courier New', monospace; font-size: 0.8rem; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 10px; position: relative; 
+        border-top: 5px solid #333;
+        background-image: linear-gradient(135deg, transparent 50%, #fff 50%), linear-gradient(45deg, #fff 50%, transparent 50%);
+        background-size: 20px 20px;
+        background-repeat: repeat-x;
+        background-position: bottom;
+        padding-bottom: 30px; 
+    }  
+    
+    /* UPDATED MOOD GRID FOR BIGGER BUTTONS */
+    .mood-grid { 
+        display: grid; 
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 10px; /* Wider gap */
+        /* Removed max-height so it expands vertically */
+        padding: 10px 0;
+    }  
+    .mood-btn { 
+        background: white; 
+        border: 2px solid #eee; 
+        border-radius: 12px; 
+        height: 65px; /* Taller buttons */
+        font-size: 2.2rem; /* Bigger emojis */
+        cursor: pointer; 
+        transition: transform 0.1s;
+    }  
+    .mood-btn:active { transform: scale(0.95); background: var(--main); border-color: var(--main); }
+
     /* --- UI COMPONENTS --- */  
     .btn-action { background: var(--main); color: white; padding: 12px; width: 100%; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-bottom: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }  
     .btn-action:active { transform: translateY(3px); box-shadow: none; }  
@@ -612,8 +644,8 @@
         cofront: [], 
         frontHistory: [], 
         consoleHistory: ["System Initialized..."], 
-        dreamLog: [], // NEW
-        stamps: 0, // NEW
+        dreamLog: [], 
+        stamps: 0, 
         currentFrontStart: 0, 
         activeAlert: null,
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
@@ -782,6 +814,7 @@
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
         const p = DB.profiles[DB.active];
         
+        // Directly grab values since they are pre-filled now
         p.name = document.getElementById('new-name').value;
         p.age = document.getElementById('new-age').value;
         p.sign = document.getElementById('new-sign').value;
@@ -798,6 +831,7 @@
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
         
+        // --- PRE-FILL INPUTS (FIXES EDITING) ---
         document.getElementById('new-name').value = p.name;
         document.getElementById('new-age').value = p.age !== "-" ? p.age : "";
         document.getElementById('new-sign').value = p.sign !== "-" ? p.sign : "";
@@ -895,7 +929,10 @@
         const p = DB.profiles[DB.active];  
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
-        if(txt.startsWith("> Quoting:")) { }
+        // Handle Reply
+        if(txt.startsWith("> Quoting:")) {
+            // Already formatted
+        }
         
         DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:txt, img:chatImg, time:time });  
         i.value=""; chatImg=""; save(); renderChat();  
@@ -955,6 +992,7 @@
         const l = document.getElementById('decor-layer'); l.innerHTML="";   
         DB.decor.forEach(d => {  
             const el = document.createElement('div'); el.className='sticker'; 
+            // CHECK IF ITEM IS URL OR TEXT
             if (d.i.startsWith('http')) {
                 const img = document.createElement('img');
                 img.src = d.i;
@@ -962,6 +1000,7 @@
             } else {
                 el.innerText = d.i;
             }
+            
             el.style.left=d.x+"%"; el.style.top=d.y+"%";  
             let isDrag=false;  
             const move = (e) => { if(!isDrag)return; const b=document.getElementById('pet-stage').getBoundingClientRect(); const cx=e.touches?e.touches[0].clientX:e.clientX; const cy=e.touches?e.touches[0].clientY:e.clientY; d.x=((cx-b.left)/b.width)*100; d.y=((cy-b.top)/b.height)*100; el.style.left=d.x+"%"; el.style.top=d.y+"%"; };  
@@ -1017,16 +1056,18 @@
                 let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerHTML=icon; 
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
                 
+                // UPDATED CLICK HANDLER: CHECKS SELL MODE
                 b.onclick = () => { 
                     if(isSelling) {
                         const realIndex = DB.inventory.indexOf(item); 
-                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } 
+                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } // Wallpapers sell for 30 XP
                         save(); openBackpack(); 
                     } else {
                         DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); 
                     }
                 };  
             } else if (item.startsWith('http')) {
+                // IMAGE ITEM LOGIC
                 b.innerHTML = `<img src="${item}" style="width:50px; height:50px; object-fit:contain;">` + badge;
                 b.onclick = () => { 
                     if(isSelling) {
@@ -1060,7 +1101,7 @@
             
             const task = SELF_CARE[Math.floor(Math.random()*SELF_CARE.length)]; 
             alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"\n\n💊 STAMP ADDED TO CARD`); 
-            logToConsole(`Processed: +${pendingXP} XP`); 
+            logToConsole(`Processed: +${pendingXP} XP`); // NEW LOG
             pendingXP=0; 
             document.getElementById('receipt-list').innerHTML=""; 
             save(); loadUI(); 
@@ -1111,7 +1152,7 @@
             const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)]; 
             const bub = document.getElementById('pet-speech'); bub.innerText = speech; bub.classList.add('show'); setTimeout(()=>bub.classList.remove('show'), 2000);  
             
-            logToConsole(`Rx Filled. -50 XP`); 
+            logToConsole(`Rx Filled. -50 XP`); // NEW LOG
             
             let msg = `Rx Filled!\n\nReceived: Item`; 
             if(item.startsWith('bg-')) { 
@@ -1129,7 +1170,7 @@
         if(!DB.consoleHistory) DB.consoleHistory = [];
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         DB.consoleHistory.push(`${time} - ${msg}`);
-        if(DB.consoleHistory.length > 50) DB.consoleHistory.shift(); 
+        if(DB.consoleHistory.length > 50) DB.consoleHistory.shift(); // Keep last 50
         save();
         renderConsole();
     }
@@ -1138,7 +1179,12 @@
         const feed = document.getElementById('console-log-feed');
         if(!feed) return;
         feed.innerHTML = "";
+        // Show newest at bottom (standard terminal style)
+        // Since flex-direction is column-reverse, we append normally and they stack up from bottom
         if(DB.consoleHistory) {
+            // We want the LATEST message at the VERY BOTTOM.
+            // With column-reverse, the first element in DOM is at the BOTTOM.
+            // So we need to reverse the array so the newest (last index) comes first in DOM
             [...DB.consoleHistory].reverse().forEach(line => {
                 feed.innerHTML += `<div class="log-line">${line}</div>`;
             });
@@ -1229,6 +1275,7 @@
                 members.forEach(m => {
                     if (!DB.profiles.some(p => p.name === m.name)) {
                         
+                        // --- PARSER ---
                         let likes = [], dislikes = [], notes = "", bioLines = [];
                         let name = m.name || "Unknown";
                         let sign = m.pronouns || "?";
@@ -1236,27 +1283,33 @@
                         let species = "System Member";
                         let height = "--";
                         let bio = "";
-                        let currentMode = null; 
+                        
+                        let currentMode = null; // 'likes' or 'dislikes' or null
 
                         if (m.description) {
                             const lines = m.description.split('\n');
                             lines.forEach(rawLine => {
+                                // 1. Remove aesthetic symbols from start of line
                                 let line = rawLine.replace(/^[^a-zA-Z0-9]+/, '').trim();
                                 let lower = line.toLowerCase();
                                 
+                                // 2. Check for Specific Keys
                                 if(lower.startsWith('name:')) { name = line.substring(5).trim(); return; }
                                 if(lower.startsWith('age:')) { age = line.substring(4).trim(); return; }
                                 if(lower.startsWith('pronouns:') || lower.startsWith('prons:')) { sign = line.substring(line.indexOf(':')+1).trim(); return; }
                                 if(lower.startsWith('species:')) { species = line.substring(8).trim(); return; }
                                 if(lower.startsWith('height:')) { height = line.substring(7).trim(); return; }
 
+                                // 3. Check for Lists (Likes/Dislikes)
                                 if(lower.startsWith('likes:') || lower.startsWith('loves:')) {
                                     const content = line.substring(line.indexOf(':')+1).trim();
                                     if(content.length > 0) {
+                                        // Inline list (comma separated)
                                         let items = content.split(/,|&|\//).map(s => s.trim()).filter(s => s);
                                         likes.push(...items);
                                         currentMode = null;
                                     } else {
+                                        // Header for a list below
                                         currentMode = 'likes';
                                     }
                                     return;
@@ -1274,34 +1327,55 @@
                                     return;
                                 }
 
-                                if(currentMode === 'likes' && line.length > 0) { likes.push(line); return; }
-                                if(currentMode === 'dislikes' && line.length > 0) { dislikes.push(line); return; }
+                                // 4. Handle List Modes
+                                if(currentMode === 'likes' && line.length > 0) {
+                                    likes.push(line);
+                                    return;
+                                }
+                                if(currentMode === 'dislikes' && line.length > 0) {
+                                    dislikes.push(line);
+                                    return;
+                                }
                                 
+                                // 5. Catch boundaries/triggers as notes
                                 if(lower.startsWith('boundaries:') || lower.startsWith('triggers:') || lower.startsWith('t:')) {
                                     notes += line + "\n";
                                     currentMode = null;
                                     return;
                                 }
 
-                                if(line.length > 1) bioLines.push(rawLine); 
+                                // 6. If none of above, add to general Bio
+                                // Filter out empty aesthetic lines
+                                if(line.length > 1) bioLines.push(rawLine); // Keep raw for bio to preserve formatting
                             });
+                            
                             bio = bioLines.join('\n').trim();
                         }
 
                         DB.profiles.push({
-                            name: name, av: m.avatar_url || DEFAULT_AV, sign: sign, age: age,
-                            species: species, height: height, bio: bio || "Imported from PluralKit",
-                            color: m.color ? "#"+m.color : "#ff69b4", id: m.id || Math.floor(Math.random()*900000),
-                            likes: likes, dislikes: dislikes, notes: notes.trim()
+                            name: name,
+                            av: m.avatar_url || DEFAULT_AV,
+                            sign: sign, 
+                            age: age,
+                            species: species,
+                            height: height,
+                            bio: bio || "Imported from PluralKit",
+                            color: m.color ? "#"+m.color : "#ff69b4",
+                            id: m.id || Math.floor(Math.random()*900000),
+                            likes: likes, 
+                            dislikes: dislikes, 
+                            notes: notes.trim()
                         });
                         count++;
                     }
                 });
+                
                 save();
                 alert(`Success! Imported ${count} members.`);
                 refreshAll();
             } catch(err) {
                 alert("Import Failed: " + err.message);
+                console.error(err);
             }
         };
         reader.readAsText(file);
