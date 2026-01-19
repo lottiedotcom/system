@@ -61,20 +61,26 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-/* --- APP SHELL --- */  
+    /* --- APP SHELL --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
-        /* Removed the permanent blur from here */
+        /* REMOVED DEFAULT BLUR HERE */
         display: none; flex-direction: column; position: relative; height: 100%;  
         z-index: 10; 
     }  
-
-    /* Now the blur only happens if CRT/FX is ON */
+    
+    /* ADDED CONDITIONAL BLUR */
     body.fx-active .app-shell {
         backdrop-filter: blur(10px); 
         -webkit-backdrop-filter: blur(10px);
     }
+
+    .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; scroll-behavior: smooth; }  
+    .page { display: none; animation: popIn 0.3s; }  
+    .page.active { display: block; }  
+    @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
+
     /* --- ALERT BANNER --- */
     .sys-alert {
         background: #ff4444; color: white; padding: 12px;
