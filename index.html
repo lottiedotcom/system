@@ -41,7 +41,6 @@
     .bg-stars-bw { background-image: url('https://i.postimg.cc/TPG4WXqj/8da7b8d48d6823657b54988755d60dd9.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-music-pink { background-image: url('https://i.postimg.cc/Xv3zy0ck/bd4efa7fd2209b10fc4725c471ece520.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-stars-classic { background-image: url('https://i.postimg.cc/6QwmGNLL/d0d6e91da0105b958697e57a47a0d4ca.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
-    .bg-sprinkles { background-image: url('https://i.postimg.cc/g0dT6PHF/ee1051db44d2541bfc14d38bc9b07ef0.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-bow-classic { background-image: url('https://i.postimg.cc/DzFMbKd6/f17eaffa8a2d53f205b6e7b2718ff2ae.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-strawberry { background-image: url('https://i.postimg.cc/43ZShTb6/f9fc99a5267ad98f2760ee5846f21607.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-heart-bp { background-image: url('https://i.postimg.cc/KYFHgyDX/Untitled83_20260118063949.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
@@ -65,12 +64,10 @@
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
-        /* REMOVED DEFAULT BLUR HERE */
         display: none; flex-direction: column; position: relative; height: 100%;  
         z-index: 10; 
     }  
     
-    /* ADDED CONDITIONAL BLUR */
     body.fx-active .app-shell {
         backdrop-filter: blur(10px); 
         -webkit-backdrop-filter: blur(10px);
@@ -172,7 +169,13 @@
         overflow: hidden; display: flex; align-items: center; justify-content: center; 
     }  
     .ebi-img { width: 160px; pointer-events: none; z-index: 5; margin-top: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }  
-    .sticker { position: absolute; font-size: 3rem; cursor: grab; z-index: 10; user-select: none; }  
+    .sticker { 
+        position: absolute; cursor: grab; z-index: 10; user-select: none; 
+        /* UPDATED: Default size for images */
+        width: 80px; height: auto;
+    }
+    .sticker img { width: 100%; pointer-events: none; display: block; }
+
     .speech-bubble {  
         position: absolute; top: 40px; left: 50%; transform: translateX(-50%) scale(0);  
         background: white; padding: 10px 15px; border-radius: 20px; border: 2px solid var(--main);  
@@ -534,11 +537,38 @@
 
     // LOOT TABLE
     const LOOT_ITEMS = [
-        "🩹", "💊", "💉", "🩺", "🧸", "🎀", "🧃", "🍫", "🍵", "🌸", "🍄", "⭐", "💤", "🧼", "🧴",
-        "🥤", "🍰", "🍙", "🍬", "🍭", "🎨", "🪁", "☂️", "🎵", "📷", "💡", "🔮", "🧹", "🪴",
-        "bg-apple", "bg-polka-brown", "bg-clover", "bg-stars-blue", "bg-bow-y2k", "bg-stars-bw",
-        "bg-music-pink", "bg-stars-classic", "bg-sprinkles", "bg-bow-classic", "bg-strawberry", 
-        "bg-heart-bp", "bg-polka-classic"
+        "bg-apple", "bg-polka-brown", "bg-clover", "bg-stars-blue", "bg-bow-y2k",
+        "bg-stars-bw", "bg-music-pink", "bg-stars-classic", "bg-bow-classic",
+        "bg-strawberry", "bg-heart-bp", "bg-polka-classic",
+        // New Image Items
+        "https://i.postimg.cc/4dFyJtrX/12d9131d2320519e1e23f5f678427396.png", // Cigarette
+        "https://i.postimg.cc/zBPvJW46/3e4f2fa5b124701b5f17089d9ab9b737.png", // Wings
+        "https://i.postimg.cc/hjGhWMZ5/62695aafc7da6361407abf3a87ecafb6.png", // Black hearts
+        "https://i.postimg.cc/1tYX96bb/65794fc54d21b0cdd7b3db4e813c6b11.png", // Rabbit
+        "https://i.postimg.cc/4dFyJtrR/9add2a23fa78c0e9fcc21c3a394b02cd.png", // Heart
+        "https://i.postimg.cc/bJFrzbKc/ed8d7acf0f1516a1b3de4b9df6a3b048.png", // Umbrella
+        "https://i.postimg.cc/DyG0TS6t/2f0f42dbd7882d400c9e4f651c9d438d.png", // Cat
+        "https://i.postimg.cc/P5kxrdFT/363a54d905dfd329fb095af572d6d580.png", // Books
+        "https://i.postimg.cc/8k9c9RR9/42616c918cd958cc301cb745852ff27e.png", // Zzz
+        "https://i.postimg.cc/tC6JjsD4/45ca3463cef73aa5c917b57ac0cfd971.png", // Clover
+        "https://i.postimg.cc/FF8z8yb5/56e20c61dbf4feb80179606c2699d5f1.png", // Crown
+        "https://i.postimg.cc/CL85gR7v/607d0537e36c5788fe96007288ae5ccc.png", // Fish
+        "https://i.postimg.cc/05FjFYYL/69e61b8d6420f427e4ac42a32f49eddf.png", // Fan
+        "https://i.postimg.cc/66gqgrr1/6b1bb26664a8aafcd16a6d4436bcf54a.png", // Star
+        "https://i.postimg.cc/PrDJjCKh/7e91ebbf0419972863f456a8aa7c904b.png", // CD
+        "https://i.postimg.cc/28WyD1Gs/93e86c6d6b567ece1a03b6c04d04892c.png", // Frog
+        "https://i.postimg.cc/nhtzcnwr/a09248b8a40f6c9f22285635b90be653.png", // Guitar
+        "https://i.postimg.cc/Mp8TKzrp/abb690b3250b998f75bbc788f7154c55.png", // Flower
+        "https://i.postimg.cc/fRhLTMgT/af7f389e3f9e09024197d9e164ad33e2.png", // Cherry
+        "https://i.postimg.cc/qMKqTNQt/d1b701f32c7e48282f4a20be48a7fd3f.png", // Camera
+        "https://i.postimg.cc/vHnTs4Xm/d3092ebc83ae4814d0e75e1af83646e1.png", // Alarm
+        "https://i.postimg.cc/WpCzCGGx/d754b77bd5a2ef644d29367b5ca3a51b.png", // Ballet
+        "https://i.postimg.cc/ncmrJXT8/da7d72fedbce39a1f0d35f89c184c29f.png", // Tea
+        "https://i.postimg.cc/DyG0TS5f/da828bc90e8f772100995a682a906233.png", // Fish 2
+        "https://i.postimg.cc/x1SCT9Fj/deb771ba2ff74c9af0871e8af7bb4cc0.png", // Lollipop
+        "https://i.postimg.cc/pXjrHmC1/eb31aaf8301282152f43f7050b39a5fd.png", // Blue heart
+        "https://i.postimg.cc/SN9RhnVJ/ee455254fdc48289bf096e1eb048e089.png", // Carousel
+        "https://i.postimg.cc/KvTj21fw/f91a9c969269fdedf2e437391eda83e8.png"  // Polaroid
     ];  
     const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!"];  
     const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
@@ -547,7 +577,7 @@
     const BG_ICONS = {
         'bg-apple': '🍎', 'bg-polka-brown': '🟤', 'bg-clover': '🍀', 'bg-stars-blue': '⭐',
         'bg-bow-y2k': '🎀', 'bg-stars-bw': '✨', 'bg-music-pink': '🎵', 'bg-stars-classic': '🌟',
-        'bg-sprinkles': '🧁', 'bg-bow-classic': '🎗️', 'bg-strawberry': '🍓', 'bg-heart-bp': '💙',
+        'bg-bow-classic': '🎗️', 'bg-strawberry': '🍓', 'bg-heart-bp': '💙',
         'bg-polka-classic': '⚪'
     };
 
@@ -837,7 +867,16 @@
     function renderDecor() {  
         const l = document.getElementById('decor-layer'); l.innerHTML="";   
         DB.decor.forEach(d => {  
-            const el = document.createElement('div'); el.className='sticker'; el.innerText=d.i;  
+            const el = document.createElement('div'); el.className='sticker'; 
+            // CHECK IF ITEM IS URL OR TEXT
+            if (d.i.startsWith('http')) {
+                const img = document.createElement('img');
+                img.src = d.i;
+                el.appendChild(img);
+            } else {
+                el.innerText = d.i;
+            }
+            
             el.style.left=d.x+"%"; el.style.top=d.y+"%";  
             let isDrag=false;  
             const move = (e) => { if(!isDrag)return; const b=document.getElementById('pet-stage').getBoundingClientRect(); const cx=e.touches?e.touches[0].clientX:e.clientX; const cy=e.touches?e.touches[0].clientY:e.clientY; d.x=((cx-b.left)/b.width)*100; d.y=((cy-b.top)/b.height)*100; el.style.left=d.x+"%"; el.style.top=d.y+"%"; };  
@@ -903,8 +942,9 @@
                         DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); 
                     }
                 };  
-            } else {  
-                b.innerHTML = item + badge; 
+            } else if (item.startsWith('http')) {
+                // IMAGE ITEM LOGIC
+                b.innerHTML = `<img src="${item}" style="width:50px; height:50px; object-fit:contain;">` + badge;
                 b.onclick = () => { 
                     if(isSelling) {
                         const realIndex = DB.inventory.indexOf(item); 
@@ -916,8 +956,8 @@
                         if(realIndex > -1) DB.inventory.splice(realIndex, 1); 
                         save(); closeModals(); nav('pet'); 
                     }
-                };  
-            }  
+                };
+            }
             g.appendChild(b);  
         });  
     }  
