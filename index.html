@@ -879,7 +879,17 @@
             if(item.startsWith('bg-')) {  
                 let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerHTML=icon; 
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
-                b.onclick = () => { DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); };  
+                
+                // UPDATED CLICK HANDLER: CHECKS SELL MODE
+                b.onclick = () => { 
+                    if(isSelling) {
+                        const realIndex = DB.inventory.indexOf(item); 
+                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } // Wallpapers sell for 30 XP
+                        save(); openBackpack(); 
+                    } else {
+                        DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); 
+                    }
+                };  
             } else {  
                 b.innerHTML = item + badge; 
                 b.onclick = () => { 
