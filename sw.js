@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seiren-os-v82-about-fix';
+const CACHE_NAME = 'seiren-os-v86-sell-mode';
 const ASSETS = [
     './',
     './index.html',
