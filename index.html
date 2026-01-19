@@ -35,47 +35,31 @@
     /* --- NIGHT MODE (LIMINAL DREAM JOURNAL) --- */
     body.night-mode {
         background-color: #000 !important;
-        background-image: none !important; /* Remove default pattern */
+        background-image: none !important; 
         color: #b0c4de !important;
     }
     
-    /* NEW DREAM BACKGROUND IMPLEMENTATION */
     body.night-mode::before {
         content: "";
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
         background-image: url('https://i.postimg.cc/Zn1jB8Lc/Untitled86-20260119120235.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        filter: blur(4px) brightness(0.8) contrast(1.1); /* Blurry and Dreamy */
-        transform: scale(1.1); /* Zoom slightly to hide blurred edges */
-        z-index: -1;
+        background-size: cover; background-position: center; background-repeat: no-repeat;
+        filter: blur(4px) brightness(0.8) contrast(1.1);
+        transform: scale(1.1); z-index: -1;
         animation: dream-breathe 20s infinite alternate ease-in-out;
     }
-    
-    @keyframes dream-breathe {
-        from { transform: scale(1.1); }
-        to { transform: scale(1.2); }
-    }
+    @keyframes dream-breathe { from { transform: scale(1.1); } to { transform: scale(1.2); } }
 
     body.night-mode .app-shell { backdrop-filter: none; }
     body.night-mode .dock { background: rgba(10, 10, 30, 0.8); border-color: #333; }
     body.night-mode .dock-btn { filter: grayscale(100%) brightness(200%); }
     body.night-mode .btn-action { background: #483d8b; color: #e6e6fa; box-shadow: 0 4px 0 #282250; }
     
-    body.night-mode input, body.night-mode textarea, body.night-mode .id-card-wrap { 
+    body.night-mode input, body.night-mode textarea, body.night-mode select, body.night-mode .id-card-wrap { 
         background: rgba(10,10,20,0.6) !important; 
         color: #e6e6fa !important; 
         border: 1px solid #483d8b !important; 
         font-family: var(--font-mono) !important;
-    }
-    body.night-mode h2 { 
-        background: transparent !important; 
-        color: #e6e6fa !important; 
-        text-shadow: 0 0 10px rgba(230, 230, 250, 0.5);
-        font-family: var(--font-mono) !important;
-        border: 1px solid #483d8b;
     }
     
     body.night-mode .bio-container {
@@ -98,6 +82,14 @@
     .bg-heart-bp { background-image: url('https://i.postimg.cc/KYFHgyDX/Untitled83_20260118063949.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-polka-classic { background-image: url('https://i.postimg.cc/6QwmGNfB/Untitled84_20260118064140.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     
+    /* NEW WALLPAPERS */
+    .bg-stars-2 { background-image: url('https://i.postimg.cc/XYfPyYDs/Untitled86_20260119115349.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
+    .bg-heart-pink { background-image: url('https://i.postimg.cc/dV2fTVS4/Untitled86_20260119115047.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
+    .bg-stars-y2k { background-image: url('https://i.postimg.cc/nrX5sK67/Untitled86_20260119115537.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
+    .bg-stars-pink { background-image: url('https://i.postimg.cc/wM1Pt5Sc/Untitled86_20260119115338.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
+    .bg-heart-by { background-image: url('https://i.postimg.cc/NFKVy8Wx/Untitled86_20260119115121.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
+    .bg-polka-pink { background-image: url('https://i.postimg.cc/WzdKDmQw/Untitled85_20260119113009.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
+
     /* --- VISUAL FX --- */  
     .scanlines {  
         position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999; display: none;  
@@ -119,23 +111,8 @@
         display: none; flex-direction: column; position: relative; height: 100%;  
         z-index: 10; 
     }  
-    
-    body.fx-active .app-shell {
-        backdrop-filter: blur(10px); 
-        -webkit-backdrop-filter: blur(10px);
-    }
-
-    /* SCROLL CONTAINER */
-    .content { 
-        flex: 1; 
-        overflow-y: auto; 
-        overflow-x: hidden;
-        padding: 20px; 
-        padding-bottom: 120px; /* EXTRA PADDING FOR SCROLL */
-        scroll-behavior: smooth; 
-        -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
-    }  
-    
+    body.fx-active .app-shell { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; padding-bottom: 120px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }  
     .page { display: none; animation: popIn 0.3s; }  
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
@@ -145,8 +122,7 @@
         background: #ff4444; color: white; padding: 12px;
         font-weight: bold; display: none; justify-content: space-between;
         align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        z-index: 200; animation: slideDown 0.3s;
-        border-bottom: 2px solid white;
+        z-index: 200; animation: slideDown 0.3s; border-bottom: 2px solid white;
         text-transform: uppercase; font-size: 0.9rem;
     }
     @keyframes slideDown { from {transform:translateY(-100%)} to {transform:translateY(0)} }
@@ -156,21 +132,15 @@
         background: #fff; border-radius: 15px; padding: 0;  
         box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px;   
         position: relative; overflow: hidden; border: 1px solid #ccc;  
-        min-height: 270px;
-        transform: translate3d(0,0,0); 
+        min-height: 270px; transform: translate3d(0,0,0); 
     }  
     .id-card-wrap::before {  
         content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;  
         background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.2) 45%, rgba(0,255,255,0.3) 50%, rgba(255,255,0,0.2) 55%, transparent 60%);  
         mix-blend-mode: multiply; pointer-events: none; z-index: 10;  
-        animation: foil 5s linear infinite; opacity: 0.6;  
-        will-change: transform;
+        animation: foil 5s linear infinite; opacity: 0.6; will-change: transform;
     }  
-    @keyframes foil { 
-        0% { transform: translate3d(0,0,0); } 
-        100% { transform: translate3d(50%,50%,0); } 
-    }  
-
+    @keyframes foil { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(50%,50%,0); } }  
     .id-inner { padding: 15px; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; }  
     .id-header { border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; font-weight: 900; letter-spacing: 1px; font-size: 0.7rem; color: #555; }  
     .id-main { display: flex; gap: 15px; margin-bottom: 10px; }  
@@ -187,14 +157,8 @@
 
     /* --- BIO/ABOUT TAB --- */
     .bio-container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    .bio-list-box { 
-        border: 2px dashed #eee; padding: 10px; border-radius: 10px; min-height: 60px; 
-        display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px;
-    }
-    .bio-tag { 
-        background: var(--main); color: white; padding: 4px 10px; border-radius: 15px; 
-        font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 5px;
-    }
+    .bio-list-box { border: 2px dashed #eee; padding: 10px; border-radius: 10px; min-height: 60px; display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .bio-tag { background: var(--main); color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 5px; }
     .bio-tag span { cursor: pointer; opacity: 0.7; font-size: 0.7rem; }
     .bio-input-group { display: flex; gap: 5px; margin-bottom: 15px; }
 
@@ -278,13 +242,33 @@
     }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-    /* --- DREAM JOURNAL (NIGHT MODE) --- */
+    /* --- DREAM JOURNAL UI (RESIDUE & SLIDERS) --- */
     .dream-entry { 
         background: rgba(255,255,255,0.1); padding: 10px; border-left: 3px solid #81c784; 
-        margin-bottom: 10px; border-radius: 5px; color: inherit; 
+        margin-bottom: 10px; border-radius: 5px; color: inherit; position: relative;
     }
     .dream-blur { filter: blur(3px); transition: filter 0.3s; cursor: pointer; }
     .dream-blur:hover { filter: blur(0); }
+    
+    .sensory-slider {
+        margin-bottom: 15px;
+    }
+    .sensory-label {
+        display: flex; justify-content: space-between; font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;
+    }
+    .sensory-range {
+        width: 100%; -webkit-appearance: none; height: 5px; border-radius: 5px; background: #333; outline: none;
+    }
+    .sensory-range::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none; width: 15px; height: 15px; border-radius: 50%; background: #e6e6fa; cursor: pointer; border: 2px solid #483d8b;
+    }
+    
+    .residue-scanner {
+        border: 2px dashed #483d8b; background: rgba(0,0,0,0.2); padding: 15px; text-align: center; border-radius: 10px; margin-top: 10px; cursor: pointer;
+    }
+    .residue-preview {
+        width: 100%; height: 100px; object-fit: cover; margin-top: 10px; filter: grayscale(100%) contrast(150%); border: 1px solid #555; display: none;
+    }
 
     /* --- PHARMACY --- */  
     .receipt-paper { 
@@ -298,23 +282,8 @@
         background-position: bottom;
         padding-bottom: 30px; 
     }  
-    
-    /* UPDATED MOOD GRID FOR MEDIUM BUTTONS */
-    .mood-grid { 
-        display: grid; 
-        grid-template-columns: repeat(4, 1fr); 
-        gap: 10px; 
-        padding: 10px 0;
-    }  
-    .mood-btn { 
-        background: white; 
-        border: 2px solid #eee; 
-        border-radius: 12px; 
-        height: 55px; /* SCALED DOWN */
-        font-size: 1.8rem; /* SCALED DOWN */
-        cursor: pointer; 
-        transition: transform 0.1s;
-    }  
+    .mood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px 0; }  
+    .mood-btn { background: white; border: 2px solid #eee; border-radius: 12px; height: 55px; font-size: 1.8rem; cursor: pointer; transition: transform 0.1s; }  
     .mood-btn:active { transform: scale(0.95); background: var(--main); border-color: var(--main); }
 
     /* --- UI COMPONENTS --- */  
@@ -333,7 +302,7 @@
         overflow-y: auto; 
         padding-bottom: 40px; 
     }  
-    input, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border: 2px inset #eee; border-radius: 10px; font-family: inherit;}  
+    input, textarea, select { width: 100%; padding: 10px; margin-bottom: 8px; border: 2px inset #eee; border-radius: 10px; font-family: inherit;}  
 
     /* --- LOCK SCREEN --- */  
     #lock-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--main); z-index: 20000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }  
@@ -595,22 +564,46 @@
         <div id="page-dream" class="page">
             <h2 style="text-align:center;">Dream Journal</h2>
             <div class="bio-container">
-                <label>Location (In Between):</label>
-                <input type="text" id="dream-loc" placeholder="e.g. The Pool Rooms">
+                <label>Location / Level:</label>
+                <input list="dream-levels" id="dream-loc" placeholder="Select or type location...">
+                <datalist id="dream-levels">
+                    <option value="The In Between"></option>
+                    <option value="The Pool Rooms"></option>
+                    <option value="The Mall (Empty)"></option>
+                    <option value="The Infinite Hotel"></option>
+                    <option value="The Waiting Room"></option>
+                    <option value="The Garden"></option>
+                </datalist>
+
+                <div class="sensory-slider">
+                    <div class="sensory-label"><span>Nostalgia</span><span>Anemoia</span></div>
+                    <input type="range" id="dream-nostalgia" min="0" max="100" class="sensory-range">
+                </div>
                 
-                <label>Clarity (Fuzzy -> Hyper-Real):</label>
-                <input type="range" id="dream-clear" min="1" max="10" style="width:100%;">
-                
-                <label>Visitors:</label>
+                <div class="sensory-slider">
+                    <div class="sensory-label"><span>Presence</span><span>Watched</span></div>
+                    <input type="range" id="dream-presence" min="0" max="100" class="sensory-range">
+                </div>
+
+                <div class="sensory-slider">
+                    <div class="sensory-label"><span>Reality</span><span>Glitched</span></div>
+                    <input type="range" id="dream-reality" min="0" max="100" class="sensory-range">
+                </div>
+
+                <label>Entities / Visitors:</label>
                 <input type="text" id="dream-ent" placeholder="Who was there?">
-                
-                <label>Residue (Feeling):</label>
-                <input type="text" id="dream-feel" placeholder="e.g. Cold, Nostalgic">
                 
                 <label>Memory Dump:</label>
                 <textarea id="dream-text" style="height:80px;"></textarea>
+
+                <label class="residue-scanner">
+                    <div style="font-weight:bold; color:#e6e6fa; font-family:var(--font-mono);">[ SCAN RESIDUE ]</div>
+                    <div style="font-size:0.7rem; color:#888;">Upload Evidence</div>
+                    <input type="file" accept="image/*" style="display:none;" onchange="handleDreamImage(this)">
+                    <img id="dream-preview" class="residue-preview">
+                </label>
                 
-                <button class="btn-action" style="background:#7e57c2;" onclick="saveDream()">Log Dream</button>
+                <button class="btn-action" style="background:#7e57c2; margin-top:10px;" onclick="saveDream()">Log Dream</button>
             </div>
             <div id="dream-feed" style="margin-top:20px;"></div>
         </div>
@@ -743,13 +736,15 @@
     };  
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
     let isSelling = false;
-    let selectedMsgIndex = -1; 
+    let selectedMsgIndex = -1;
+    let tempDreamImg = ""; // For Residue Scanner
 
     // LOOT TABLE
     const LOOT_ITEMS = [
         "bg-apple", "bg-polka-brown", "bg-clover", "bg-stars-blue", "bg-bow-y2k",
         "bg-stars-bw", "bg-music-pink", "bg-stars-classic", "bg-bow-classic",
         "bg-strawberry", "bg-heart-bp", "bg-polka-classic",
+        "bg-stars-2", "bg-heart-pink", "bg-stars-y2k", "bg-stars-pink", "bg-heart-by", "bg-polka-pink",
         "https://i.postimg.cc/4dFyJtrX/12d9131d2320519e1e23f5f678427396.png",
         "https://i.postimg.cc/zBPvJW46/3e4f2fa5b124701b5f17089d9ab9b737.png",
         "https://i.postimg.cc/hjGhWMZ5/62695aafc7da6361407abf3a87ecafb6.png",
@@ -787,7 +782,9 @@
         'bg-apple': '🍎', 'bg-polka-brown': '🟤', 'bg-clover': '🍀', 'bg-stars-blue': '⭐',
         'bg-bow-y2k': '🎀', 'bg-stars-bw': '✨', 'bg-music-pink': '🎵', 'bg-stars-classic': '🌟',
         'bg-bow-classic': '🎗️', 'bg-strawberry': '🍓', 'bg-heart-bp': '💙',
-        'bg-polka-classic': '⚪'
+        'bg-polka-classic': '⚪',
+        'bg-stars-2': '🌟', 'bg-heart-pink': '💖', 'bg-stars-y2k': '💫', 
+        'bg-stars-pink': '🌸', 'bg-heart-by': '💙', 'bg-polka-pink': '🟣'
     };
 
     window.onload = () => {  
@@ -824,7 +821,7 @@
         else { document.querySelector('.app-shell').style.display='flex'; refreshAll(); }  
     }  
   
-    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); renderConsole(); renderDreamLog(); renderStamps(); /* FIXED: ADDED renderStamps call */ }  
+    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); renderConsole(); renderDreamLog(); renderStamps(); }  
     function save() { localStorage.setItem('seiren_fixed_v87', JSON.stringify(DB)); }  
   
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -1187,7 +1184,7 @@
             logToConsole(`Processed: +${pendingXP} XP`); 
             pendingXP=0; 
             document.getElementById('receipt-list').innerHTML=""; 
-            save(); refreshAll(); /* UPDATED: Changed from loadUI to refreshAll so stamps appear */
+            save(); refreshAll();
         } 
     }  
     
@@ -1323,23 +1320,42 @@
             nav('dash');
         }
     }
+    
+    function handleDreamImage(inpt) {
+        const file = inpt.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            tempDreamImg = e.target.result;
+            const prev = document.getElementById('dream-preview');
+            prev.src = tempDreamImg;
+            prev.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
 
     function saveDream() {
         const loc = document.getElementById('dream-loc').value;
-        const clr = document.getElementById('dream-clear').value;
         const ent = document.getElementById('dream-ent').value;
-        const feel = document.getElementById('dream-feel').value;
         const txt = document.getElementById('dream-text').value;
         
-        if(txt || loc) {
+        const nostalgia = document.getElementById('dream-nostalgia').value;
+        const presence = document.getElementById('dream-presence').value;
+        const reality = document.getElementById('dream-reality').value;
+        
+        if(txt || loc || tempDreamImg) {
             DB.dreamLog.unshift({
                 d: new Date().toLocaleDateString(),
-                loc: loc, clr: clr, ent: ent, feel: feel, txt: txt
+                loc: loc, 
+                nostalgia: nostalgia, presence: presence, reality: reality,
+                ent: ent, txt: txt,
+                img: tempDreamImg // Save image
             });
+            // Reset form
             document.getElementById('dream-loc').value="";
             document.getElementById('dream-ent').value="";
-            document.getElementById('dream-feel').value="";
             document.getElementById('dream-text').value="";
+            document.getElementById('dream-preview').style.display='none';
+            tempDreamImg = "";
             save(); renderDreamLog();
         }
     }
@@ -1348,13 +1364,26 @@
         const f = document.getElementById('dream-feed');
         f.innerHTML = "";
         DB.dreamLog.forEach((d, i) => {
+            // Safe fallback for old logs
+            const nos = d.nostalgia || 0;
+            const pre = d.presence || 0;
+            const rea = d.reality || 0;
+            
             f.innerHTML += `
             <div class="dream-entry">
                 <div class="dream-blur" onclick="this.classList.remove('dream-blur')">
-                    <small style="opacity:0.7;">${d.d} • ${d.loc || 'Unknown'} • Clarity: ${d.clr}/10</small><br>
+                    <small style="opacity:0.7;">${d.d} • ${d.loc || 'Unknown'}</small><br>
                     ${d.ent ? `<strong>Visitors:</strong> ${d.ent}<br>` : ''}
-                    ${d.feel ? `<strong>Residue:</strong> ${d.feel}<br>` : ''}
-                    <p style="margin-top:5px;">${d.txt}</p>
+                    
+                    <div style="display:flex; gap:5px; margin:5px 0;">
+                        <span style="font-size:0.6rem; border:1px solid #ccc; padding:2px 5px; border-radius:4px;">N: ${nos}%</span>
+                        <span style="font-size:0.6rem; border:1px solid #ccc; padding:2px 5px; border-radius:4px;">P: ${pre}%</span>
+                        <span style="font-size:0.6rem; border:1px solid #ccc; padding:2px 5px; border-radius:4px;">R: ${rea}%</span>
+                    </div>
+
+                    ${d.img ? `<img src="${d.img}" style="width:100%; height:auto; border-radius:5px; margin:5px 0; filter:grayscale(100%) contrast(150%); border:1px solid #7e57c2;">` : ''}
+
+                    <p style="margin-top:5px; white-space:pre-wrap;">${d.txt}</p>
                 </div>
                 <button style="color:red; background:none; border:none; float:right; cursor:pointer;" onclick="if(confirm('Forget this dream?')){DB.dreamLog.splice(${i},1); save(); renderDreamLog();}">x</button>
             </div>`;
