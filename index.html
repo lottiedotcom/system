@@ -1410,9 +1410,13 @@
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
     function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }  
   
-    // --- FORCE NUKE SW ---
+
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) { for(let registration of registrations) { registration.unregister(); } });
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Seiren OS: Service Worker Registered!', reg))
+                .catch(err => console.log('Seiren OS: SW Registration Failed', err));
+        });
     }
 </script>  
 </body>  
