@@ -48,12 +48,11 @@
     body.night-mode .dock-btn { filter: grayscale(100%) brightness(200%); }
     body.night-mode .btn-action { background: #483d8b; color: #e6e6fa; box-shadow: 0 4px 0 #282250; }
     
-    /* Liminal Inputs */
     body.night-mode input, body.night-mode textarea, body.night-mode .id-card-wrap { 
         background: rgba(10,10,20,0.6) !important; 
         color: #e6e6fa !important; 
         border: 1px solid #483d8b !important; 
-        font-family: var(--font-mono) !important; /* Monospace for terminal feel */
+        font-family: var(--font-mono) !important;
     }
     body.night-mode h2 { 
         background: transparent !important; 
@@ -63,7 +62,6 @@
         border: 1px solid #483d8b;
     }
     
-    /* Ghostly Pulse Animation for Dream Journal */
     body.night-mode .bio-container {
         background: rgba(15, 15, 30, 0.9) !important;
         border: 1px solid rgba(126, 87, 194, 0.3);
@@ -103,7 +101,7 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL --- */  
+    /* --- APP SHELL & SCROLLING FIX --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
@@ -116,7 +114,17 @@
         -webkit-backdrop-filter: blur(10px);
     }
 
-    .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; scroll-behavior: smooth; }  
+    /* SCROLL CONTAINER */
+    .content { 
+        flex: 1; 
+        overflow-y: auto; 
+        overflow-x: hidden;
+        padding: 20px; 
+        padding-bottom: 120px; /* EXTRA PADDING FOR SCROLL */
+        scroll-behavior: smooth; 
+        -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+    }  
+    
     .page { display: none; animation: popIn 0.3s; }  
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
@@ -291,8 +299,8 @@
         background: white; 
         border: 2px solid #eee; 
         border-radius: 12px; 
-        height: 55px; /* Reduced from 65px */
-        font-size: 1.8rem; /* Reduced from 2.2rem */
+        height: 55px; /* SCALED DOWN */
+        font-size: 1.8rem; /* SCALED DOWN */
         cursor: pointer; 
         transition: transform 0.1s;
     }  
@@ -371,189 +379,191 @@
         <button onclick="dismissAlert()" style="background:transparent; border:none; color:white; font-weight:bold; cursor:pointer;">X</button>
     </div>
 
-    <div id="page-dash" class="page active" style="padding-top:20px;">  
-        <div class="id-card-wrap">  
-            <div class="id-inner">  
-                <div class="id-header">  
-                    <span id="sys-name-display">SEIREN OS</span>  
-                    <span>GLIMMER ID</span>  
-                </div>  
-                <div class="id-main">  
-                    <img id="dash-av" class="id-photo" src="">  
-                    <div class="id-details">  
-                        <div><span class="id-label">NAME</span><span class="id-val" id="dash-name">Guest</span></div>  
-                        <div style="display:flex; gap:10px;">  
-                            <div style="flex:1;"><span class="id-label">AGE</span><span class="id-val" id="dash-age">--</span></div>  
-                            <div style="flex:1;"><span class="id-label">HEIGHT</span><span class="id-val" id="dash-height">--</span></div>  
+    <div class="content">
+        <div id="page-dash" class="page active" style="padding-top:20px;">  
+            <div class="id-card-wrap">  
+                <div class="id-inner">  
+                    <div class="id-header">  
+                        <span id="sys-name-display">SEIREN OS</span>  
+                        <span>GLIMMER ID</span>  
+                    </div>  
+                    <div class="id-main">  
+                        <img id="dash-av" class="id-photo" src="">  
+                        <div class="id-details">  
+                            <div><span class="id-label">NAME</span><span class="id-val" id="dash-name">Guest</span></div>  
+                            <div style="display:flex; gap:10px;">  
+                                <div style="flex:1;"><span class="id-label">AGE</span><span class="id-val" id="dash-age">--</span></div>  
+                                <div style="flex:1;"><span class="id-label">HEIGHT</span><span class="id-val" id="dash-height">--</span></div>  
+                            </div>  
+                            <div style="display:flex; gap:10px;">  
+                                <div style="flex:1;"><span class="id-label">SIGN</span><span class="id-val" id="dash-sign">--</span></div>  
+                                <div style="flex:1;"><span class="id-label">SPECIES</span><span class="id-val" id="dash-species">--</span></div>  
+                            </div>  
+                            <div id="cofront-row" style="display:none; margin-top:5px;">
+                                <span class="id-label">CO-CON</span>
+                                <span class="id-val" id="dash-co"></span>
+                            </div>
                         </div>  
-                        <div style="display:flex; gap:10px;">  
-                            <div style="flex:1;"><span class="id-label">SIGN</span><span class="id-val" id="dash-sign">--</span></div>  
-                            <div style="flex:1;"><span class="id-label">SPECIES</span><span class="id-val" id="dash-species">--</span></div>  
-                        </div>  
-                        <div id="cofront-row" style="display:none; margin-top:5px;">
-                            <span class="id-label">CO-CON</span>
-                            <span class="id-val" id="dash-co"></span>
-                        </div>
+                    </div>  
+                    <span class="id-label">PERSONNEL NOTES</span>  
+                    <div class="bio-section" id="dash-bio">  
+                        Official System Member  
                     </div>  
                 </div>  
-                <span class="id-label">PERSONNEL NOTES</span>  
-                <div class="bio-section" id="dash-bio">  
-                    Official System Member  
-                </div>  
             </div>  
-        </div>  
 
-        <div style="background:white; padding:12px; border-radius:15px; text-align:center; margin-bottom:20px; border:2px inset #eee; color:#666;">  
-            <b>XP Points:</b> <span id="cp-display" style="color:var(--main); font-weight:bold; font-size:1.2rem;">0</span>  
-        </div>  
-
-        <div class="dash-grid">  
-            <div class="dash-btn" onclick="openProfileModal()"><span>👥</span><br>Switch/Edit</div>  
-            <div class="dash-btn" onclick="openSettingsModal()"><span>⚙️</span><br>Settings</div>  
-            <div class="dash-btn" onclick="openBackpack()"><span>🎒</span><br>Items</div>  
-            <div class="dash-btn" onclick="nav('about')"><span>👤</span><br>About Me</div>  
-        </div>  
-          
-        <button class="btn-action" style="background:#607d8b; margin-top:25px; width:auto; font-size:0.8rem;" onclick="exportData()">💾 Save Backup</button>  
-    </div>  
-
-    <div id="page-about" class="page" style="padding-top:20px;">
-        <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px; margin:0 auto 15px auto; display:table;">About Me</h2>
-        
-        <div class="bio-container">
-            <h4 style="color:#555; margin:0 0 5px 0;">💖 Likes</h4>
-            <div id="likes-list" class="bio-list-box"></div>
-            <div class="bio-input-group">
-                <input type="text" id="like-in" placeholder="Add like..." style="margin:0;">
-                <button class="btn-action" style="width:auto; margin:0;" onclick="addBioItem('likes')">+</button>
-            </div>
-
-            <h4 style="color:#555; margin:15px 0 5px 0;">🚫 Dislikes</h4>
-            <div id="dislikes-list" class="bio-list-box"></div>
-            <div class="bio-input-group">
-                <input type="text" id="dislike-in" placeholder="Add dislike..." style="margin:0;">
-                <button class="btn-action" style="width:auto; margin:0;" onclick="addBioItem('dislikes')">+</button>
-            </div>
-
-            <h4 style="color:#555; margin:15px 0 5px 0;">📝 Notes / Triggers</h4>
-            <textarea id="notes-in" style="height:100px;" placeholder="Extra details here..." onblur="saveBioNotes()"></textarea>
-        </div>
-    </div>
-
-    <div id="page-chat" class="page" style="height:100%; padding-bottom:80px;">  
-        <div class="chat-shell">  
-            <button class="sidebar-toggle" onclick="toggleSidebar()">&lt;</button>  
-            <div class="channel-sidebar" id="chan-list"></div>  
-            <div class="chat-view">  
-                <div class="chat-header">  
-                    <span id="chan-title">#general</span>  
-                    <button class="btn-action" style="width:auto; padding:2px 8px; font-size:0.7rem; margin:0; background:#ff4444;" onclick="sendAlert()">⚠️ Broadcast</button>
-                </div>  
-                <div class="chat-feed" id="chat-feed"></div>  
-                <div class="chat-input-area">  
-                    <label style="cursor:pointer; font-size:1.5rem; color:#888;">📎<input type="file" accept="image/*" style="display:none;" onchange="handleChatImage(this)"></label>  
-                    <input type="text" id="msg-in" style="width:100%; margin:0;" placeholder="Message...">  
-                    <button class="btn-action" style="width:auto; margin:0;" onclick="sendMsg()">Send</button>  
-                </div>  
+            <div style="background:white; padding:12px; border-radius:15px; text-align:center; margin-bottom:20px; border:2px inset #eee; color:#666;">  
+                <b>XP Points:</b> <span id="cp-display" style="color:var(--main); font-weight:bold; font-size:1.2rem;">0</span>  
             </div>  
-        </div>  
-    </div>  
 
-    <div id="page-pharmacy" class="page">  
-        <h2 style="color:var(--main); text-align:center; margin-bottom:15px; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Pharmacy & Care</h2>  
-        
-        <div class="loyalty-card">
-            <div class="loyalty-header">Seiren Clinic • Patient Card</div>
-            <div class="stamp-grid" id="stamp-grid">
+            <div class="dash-grid">  
+                <div class="dash-btn" onclick="openProfileModal()"><span>👥</span><br>Switch/Edit</div>  
+                <div class="dash-btn" onclick="openSettingsModal()"><span>⚙️</span><br>Settings</div>  
+                <div class="dash-btn" onclick="openBackpack()"><span>🎒</span><br>Items</div>  
+                <div class="dash-btn" onclick="nav('about')"><span>👤</span><br>About Me</div>  
+            </div>  
+            
+            <button class="btn-action" style="background:#607d8b; margin-top:25px; width:auto; font-size:0.8rem;" onclick="exportData()">💾 Save Backup</button>  
+        </div>  
+
+        <div id="page-about" class="page" style="padding-top:20px;">
+            <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px; margin:0 auto 15px auto; display:table;">About Me</h2>
+            
+            <div class="bio-container">
+                <h4 style="color:#555; margin:0 0 5px 0;">💖 Likes</h4>
+                <div id="likes-list" class="bio-list-box"></div>
+                <div class="bio-input-group">
+                    <input type="text" id="like-in" placeholder="Add like..." style="margin:0;">
+                    <button class="btn-action" style="width:auto; margin:0;" onclick="addBioItem('likes')">+</button>
                 </div>
-            <button id="reward-btn" class="reward-btn" onclick="claimReward()">
-                <img src="https://i.postimg.cc/8C9qdmfN/a3f6c6b70ab5af6f58240dba296b7556.png" style="width:30px; vertical-align:middle; margin-right:5px;">
-                CLAIM REFILL
-            </button>
-        </div>
 
-        <div style="background:white; padding:15px; border-radius:15px; border:2px solid var(--main);">  
-            <div id="receipt-list" class="receipt-paper"></div>  
-              
-            <div style="text-align:center; margin-bottom:5px; font-size:0.7rem; color:#888;">LOG SYMPTOMS:</div>  
-            <div class="mood-grid">  
-                <button class="mood-btn" onclick="logMood('😊 Happy', 5)">😊</button>  
-                <button class="mood-btn" onclick="logMood('😢 Sad', 10)">😢</button>  
-                <button class="mood-btn" onclick="logMood('😡 Angry', 10)">😡</button>  
-                <button class="mood-btn" onclick="logMood('🌀 Anxious', 15)">🌀</button>  
-                <button class="mood-btn" onclick="logMood('💤 Tired', 5)">💤</button>  
-                <button class="mood-btn" onclick="logMood('✨ Hyper', 5)">✨</button>  
-                <button class="mood-btn" onclick="logMood('💀 Dead', 15)">💀</button>  
-                <button class="mood-btn" onclick="logMood('💖 Loved', 5)">💖</button>  
-                <button class="mood-btn" onclick="logMood('😰 Panic', 15)">😰</button>  
-                <button class="mood-btn" onclick="logMood('🌫️ Numb', 10)">🌫️</button>  
-                <button class="mood-btn" onclick="logMood('⚡ Manic', 15)">⚡</button>  
-                <button class="mood-btn" onclick="logMood('🥀 Lonely', 10)">🥀</button>  
-                <button class="mood-btn" onclick="logMood('🎪 Silly', 5)">🎪</button>  
-                <button class="mood-btn" onclick="logMood('🩹 Hurt', 10)">🩹</button>  
-                <button class="mood-btn" onclick="logMood('🎮 Bored', 5)">🎮</button>  
-                <button class="mood-btn" onclick="logMood('🧸 Soft', 5)">🧸</button>  
-                <button class="mood-btn" onclick="logMood('🤢 Sick', 15)">🤢</button>  
-                <button class="mood-btn" onclick="logMood('🤯 Overwhelmed', 15)">🤯</button>  
-                <button class="mood-btn" onclick="logMood('🥺 Sensitive', 10)">🥺</button>  
-                <button class="mood-btn" onclick="logMood('😤 Frustrated', 10)">😤</button>
-                <button class="mood-btn" onclick="logMood('🍼 Little', 10)">🍼</button>
-                <button class="mood-btn" onclick="logMood('😶 Non-verbal', 10)">😶</button>
-                <button class="mood-btn" onclick="logMood('🌫️ Dissociated', 15)">🌫️</button>
-                <button class="mood-btn" onclick="logMood('💥 Overstimulated', 15)">💥</button>
-            </div>  
+                <h4 style="color:#555; margin:15px 0 5px 0;">🚫 Dislikes</h4>
+                <div id="dislikes-list" class="bio-list-box"></div>
+                <div class="bio-input-group">
+                    <input type="text" id="dislike-in" placeholder="Add dislike..." style="margin:0;">
+                    <button class="btn-action" style="width:auto; margin:0;" onclick="addBioItem('dislikes')">+</button>
+                </div>
 
-            <button class="btn-action" style="margin-top:10px; background:#78909c;" onclick="processReceipt()">Print Receipt (+Self Care)</button>  
-            <button class="btn-action" style="margin-top:10px; background:#4db6ac;" onclick="fillPrescription()">💊 Fill Rx (50 XP)</button>  
-        </div>  
-    </div>  
-
-    <div id="page-pet" class="page">  
-        <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Patient Room</h2>  
-        <div class="pet-stage" id="pet-stage">  
-            <div id="decor-layer"></div>  
-            <div id="pet-speech" class="speech-bubble">Hello!</div>  
-            <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img">  
-        </div>  
-        
-        <div class="console-box">
-            <div class="console-header">
-                <span>SYSTEM LOG</span>
-                <span>v1.0</span>
+                <h4 style="color:#555; margin:15px 0 5px 0;">📝 Notes / Triggers</h4>
+                <textarea id="notes-in" style="height:100px;" placeholder="Extra details here..." onblur="saveBioNotes()"></textarea>
             </div>
-            <div class="console-log" id="console-log-feed"></div>
-            <button class="ebi-chat-btn" onclick="triggerEbiChat()">💬</button>
         </div>
-    </div>  
 
-    <div id="page-dream" class="page">
-        <h2 style="text-align:center;">Dream Journal</h2>
-        <div class="bio-container">
-            <label>Location (In Between):</label>
-            <input type="text" id="dream-loc" placeholder="e.g. The Pool Rooms">
+        <div id="page-chat" class="page" style="height:100%; padding-bottom:80px;">  
+            <div class="chat-shell">  
+                <button class="sidebar-toggle" onclick="toggleSidebar()">&lt;</button>  
+                <div class="channel-sidebar" id="chan-list"></div>  
+                <div class="chat-view">  
+                    <div class="chat-header">  
+                        <span id="chan-title">#general</span>  
+                        <button class="btn-action" style="width:auto; padding:2px 8px; font-size:0.7rem; margin:0; background:#ff4444;" onclick="sendAlert()">⚠️ Broadcast</button>
+                    </div>  
+                    <div class="chat-feed" id="chat-feed"></div>  
+                    <div class="chat-input-area">  
+                        <label style="cursor:pointer; font-size:1.5rem; color:#888;">📎<input type="file" accept="image/*" style="display:none;" onchange="handleChatImage(this)"></label>  
+                        <input type="text" id="msg-in" style="width:100%; margin:0;" placeholder="Message...">  
+                        <button class="btn-action" style="width:auto; margin:0;" onclick="sendMsg()">Send</button>  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+
+        <div id="page-pharmacy" class="page">  
+            <h2 style="color:var(--main); text-align:center; margin-bottom:15px; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Pharmacy & Care</h2>  
             
-            <label>Clarity (Fuzzy -> Hyper-Real):</label>
-            <input type="range" id="dream-clear" min="1" max="10" style="width:100%;">
+            <div class="loyalty-card">
+                <div class="loyalty-header">Seiren Clinic • Patient Card</div>
+                <div class="stamp-grid" id="stamp-grid"></div>
+                <button id="reward-btn" class="reward-btn" onclick="claimReward()">
+                    <img src="https://i.postimg.cc/8C9qdmfN/a3f6c6b70ab5af6f58240dba296b7556.png" style="width:30px; vertical-align:middle; margin-right:5px;">
+                    CLAIM REFILL
+                </button>
+            </div>
+
+            <div style="background:white; padding:15px; border-radius:15px; border:2px solid var(--main);">  
+                <div id="receipt-list" class="receipt-paper"></div>  
+                
+                <div style="text-align:center; margin-bottom:5px; font-size:0.7rem; color:#888;">LOG SYMPTOMS:</div>  
+                <div class="mood-grid">  
+                    <button class="mood-btn" onclick="logMood('😊 Happy', 5)">😊</button>  
+                    <button class="mood-btn" onclick="logMood('😢 Sad', 10)">😢</button>  
+                    <button class="mood-btn" onclick="logMood('😡 Angry', 10)">😡</button>  
+                    <button class="mood-btn" onclick="logMood('🌀 Anxious', 15)">🌀</button>  
+                    <button class="mood-btn" onclick="logMood('💤 Tired', 5)">💤</button>  
+                    <button class="mood-btn" onclick="logMood('✨ Hyper', 5)">✨</button>  
+                    <button class="mood-btn" onclick="logMood('💀 Dead', 15)">💀</button>  
+                    <button class="mood-btn" onclick="logMood('💖 Loved', 5)">💖</button>  
+                    <button class="mood-btn" onclick="logMood('😰 Panic', 15)">😰</button>  
+                    <button class="mood-btn" onclick="logMood('🌫️ Numb', 10)">🌫️</button>  
+                    <button class="mood-btn" onclick="logMood('⚡ Manic', 15)">⚡</button>  
+                    <button class="mood-btn" onclick="logMood('🥀 Lonely', 10)">🥀</button>  
+                    <button class="mood-btn" onclick="logMood('🎪 Silly', 5)">🎪</button>  
+                    <button class="mood-btn" onclick="logMood('🩹 Hurt', 10)">🩹</button>  
+                    <button class="mood-btn" onclick="logMood('🎮 Bored', 5)">🎮</button>  
+                    <button class="mood-btn" onclick="logMood('🧸 Soft', 5)">🧸</button>  
+                    <button class="mood-btn" onclick="logMood('🤢 Sick', 15)">🤢</button>  
+                    <button class="mood-btn" onclick="logMood('🤯 Overwhelmed', 15)">🤯</button>  
+                    <button class="mood-btn" onclick="logMood('🥺 Sensitive', 10)">🥺</button>  
+                    <button class="mood-btn" onclick="logMood('😤 Frustrated', 10)">😤</button>
+                    <button class="mood-btn" onclick="logMood('🍼 Little', 10)">🍼</button>
+                    <button class="mood-btn" onclick="logMood('😶 Non-verbal', 10)">😶</button>
+                    <button class="mood-btn" onclick="logMood('🌫️ Dissociated', 15)">🌫️</button>
+                    <button class="mood-btn" onclick="logMood('💥 Overstimulated', 15)">💥</button>
+                </div>  
+
+                <button class="btn-action" style="margin-top:10px; background:#78909c;" onclick="processReceipt()">Print Receipt (+Self Care)</button>  
+                <button class="btn-action" style="margin-top:10px; background:#4db6ac;" onclick="fillPrescription()">💊 Fill Rx (50 XP)</button>  
+            </div>  
+        </div>  
+
+        <div id="page-pet" class="page">  
+            <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Patient Room</h2>  
+            <div class="pet-stage" id="pet-stage">  
+                <div id="decor-layer"></div>  
+                <div id="pet-speech" class="speech-bubble">Hello!</div>  
+                <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img">  
+            </div>  
             
-            <label>Visitors:</label> <input type="text" id="dream-ent" placeholder="Who was there?">
-            
-            <label>Residue (Feeling):</label>
-            <input type="text" id="dream-feel" placeholder="e.g. Cold, Nostalgic">
-            
-            <label>Memory Dump:</label>
-            <textarea id="dream-text" style="height:80px;"></textarea>
-            
-            <button class="btn-action" style="background:#7e57c2;" onclick="saveDream()">Log Dream</button>
+            <div class="console-box">
+                <div class="console-header">
+                    <span>SYSTEM LOG</span>
+                    <span>v1.0</span>
+                </div>
+                <div class="console-log" id="console-log-feed"></div>
+                <button class="ebi-chat-btn" onclick="triggerEbiChat()">💬</button>
+            </div>
+        </div>  
+
+        <div id="page-dream" class="page">
+            <h2 style="text-align:center;">Dream Journal</h2>
+            <div class="bio-container">
+                <label>Location (In Between):</label>
+                <input type="text" id="dream-loc" placeholder="e.g. The Pool Rooms">
+                
+                <label>Clarity (Fuzzy -> Hyper-Real):</label>
+                <input type="range" id="dream-clear" min="1" max="10" style="width:100%;">
+                
+                <label>Visitors:</label>
+                <input type="text" id="dream-ent" placeholder="Who was there?">
+                
+                <label>Residue (Feeling):</label>
+                <input type="text" id="dream-feel" placeholder="e.g. Cold, Nostalgic">
+                
+                <label>Memory Dump:</label>
+                <textarea id="dream-text" style="height:80px;"></textarea>
+                
+                <button class="btn-action" style="background:#7e57c2;" onclick="saveDream()">Log Dream</button>
+            </div>
+            <div id="dream-feed" style="margin-top:20px;"></div>
         </div>
-        <div id="dream-feed" style="margin-top:20px;"></div>
-    </div>
 
-    <div id="page-diary" class="page">  
-        <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Diary</h2>  
-        <textarea id="diary-in" style="width:100%; height:100px;" placeholder="Entry..."></textarea>  
-        <button class="btn-action" onclick="postDiary()">Save</button>  
-        <div id="diary-feed" style="margin-top:20px;"></div>  
-    </div>  
+        <div id="page-diary" class="page">  
+            <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Diary</h2>  
+            <textarea id="diary-in" style="width:100%; height:100px;" placeholder="Entry..."></textarea>  
+            <button class="btn-action" onclick="postDiary()">Save</button>  
+            <div id="diary-feed" style="margin-top:20px;"></div>  
+        </div> 
+    </div> 
 
     <div class="dock">  
         <button class="dock-btn active" onclick="nav('dash')">🏠</button>  
@@ -561,7 +571,8 @@
         <button class="dock-btn" onclick="nav('pet')">🍤</button>  
         <button class="dock-btn" onclick="nav('chat')">💬</button>  
         <button class="dock-btn" onclick="nav('diary')">📓</button>  
-        <button class="dock-btn" onclick="toggleNightMode()">🌙</button> </div>
+        <button class="dock-btn" onclick="toggleNightMode()">🌙</button>
+    </div>
 </div>  
 
 <div id="modal-chat-actions" class="modal">
@@ -950,10 +961,7 @@
         const p = DB.profiles[DB.active];  
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
-        // Handle Reply
-        if(txt.startsWith("> Quoting:")) {
-            // Already formatted
-        }
+        if(txt.startsWith("> Quoting:")) { }
         
         DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:txt, img:chatImg, time:time });  
         i.value=""; chatImg=""; save(); renderChat();  
@@ -1013,7 +1021,6 @@
         const l = document.getElementById('decor-layer'); l.innerHTML="";   
         DB.decor.forEach(d => {  
             const el = document.createElement('div'); el.className='sticker'; 
-            // CHECK IF ITEM IS URL OR TEXT
             if (d.i.startsWith('http')) {
                 const img = document.createElement('img');
                 img.src = d.i;
@@ -1021,7 +1028,6 @@
             } else {
                 el.innerText = d.i;
             }
-            
             el.style.left=d.x+"%"; el.style.top=d.y+"%";  
             let isDrag=false;  
             const move = (e) => { if(!isDrag)return; const b=document.getElementById('pet-stage').getBoundingClientRect(); const cx=e.touches?e.touches[0].clientX:e.clientX; const cy=e.touches?e.touches[0].clientY:e.clientY; d.x=((cx-b.left)/b.width)*100; d.y=((cy-b.top)/b.height)*100; el.style.left=d.x+"%"; el.style.top=d.y+"%"; };  
@@ -1077,18 +1083,16 @@
                 let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerHTML=icon; 
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
                 
-                // UPDATED CLICK HANDLER: CHECKS SELL MODE
                 b.onclick = () => { 
                     if(isSelling) {
                         const realIndex = DB.inventory.indexOf(item); 
-                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } // Wallpapers sell for 30 XP
+                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } 
                         save(); openBackpack(); 
                     } else {
                         DB.profiles[DB.active].wallpaper = item; save(); refreshAll(); alert("Wallpaper Applied!"); 
                     }
                 };  
             } else if (item.startsWith('http')) {
-                // IMAGE ITEM LOGIC
                 b.innerHTML = `<img src="${item}" style="width:50px; height:50px; object-fit:contain;">` + badge;
                 b.onclick = () => { 
                     if(isSelling) {
@@ -1122,7 +1126,7 @@
             
             const task = SELF_CARE[Math.floor(Math.random()*SELF_CARE.length)]; 
             alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"\n\n💊 STAMP ADDED TO CARD`); 
-            logToConsole(`Processed: +${pendingXP} XP`); // NEW LOG
+            logToConsole(`Processed: +${pendingXP} XP`); 
             pendingXP=0; 
             document.getElementById('receipt-list').innerHTML=""; 
             save(); loadUI(); 
@@ -1173,7 +1177,7 @@
             const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)]; 
             const bub = document.getElementById('pet-speech'); bub.innerText = speech; bub.classList.add('show'); setTimeout(()=>bub.classList.remove('show'), 2000);  
             
-            logToConsole(`Rx Filled. -50 XP`); // NEW LOG
+            logToConsole(`Rx Filled. -50 XP`); 
             
             let msg = `Rx Filled!\n\nReceived: Item`; 
             if(item.startsWith('bg-')) { 
@@ -1191,7 +1195,7 @@
         if(!DB.consoleHistory) DB.consoleHistory = [];
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         DB.consoleHistory.push(`${time} - ${msg}`);
-        if(DB.consoleHistory.length > 50) DB.consoleHistory.shift(); // Keep last 50
+        if(DB.consoleHistory.length > 50) DB.consoleHistory.shift(); 
         save();
         renderConsole();
     }
@@ -1200,12 +1204,7 @@
         const feed = document.getElementById('console-log-feed');
         if(!feed) return;
         feed.innerHTML = "";
-        // Show newest at bottom (standard terminal style)
-        // Since flex-direction is column-reverse, we append normally and they stack up from bottom
         if(DB.consoleHistory) {
-            // We want the LATEST message at the VERY BOTTOM.
-            // With column-reverse, the first element in DOM is at the BOTTOM.
-            // So we need to reverse the array so the newest (last index) comes first in DOM
             [...DB.consoleHistory].reverse().forEach(line => {
                 feed.innerHTML += `<div class="log-line">${line}</div>`;
             });
@@ -1260,7 +1259,7 @@
             <div class="dream-entry">
                 <div class="dream-blur" onclick="this.classList.remove('dream-blur')">
                     <small style="opacity:0.7;">${d.d} • ${d.loc || 'Unknown'} • Clarity: ${d.clr}/10</small><br>
-                    ${d.ent ? `<strong>Entities:</strong> ${d.ent}<br>` : ''}
+                    ${d.ent ? `<strong>Visitors:</strong> ${d.ent}<br>` : ''}
                     ${d.feel ? `<strong>Residue:</strong> ${d.feel}<br>` : ''}
                     <p style="margin-top:5px;">${d.txt}</p>
                 </div>
