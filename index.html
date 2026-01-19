@@ -41,6 +41,7 @@
     .bg-stars-bw { background-image: url('https://i.postimg.cc/TPG4WXqj/8da7b8d48d6823657b54988755d60dd9.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-music-pink { background-image: url('https://i.postimg.cc/Xv3zy0ck/bd4efa7fd2209b10fc4725c471ece520.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-stars-classic { background-image: url('https://i.postimg.cc/6QwmGNLL/d0d6e91da0105b958697e57a47a0d4ca.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
+    .bg-sprinkles { background-image: url('https://i.postimg.cc/g0dT6PHF/ee1051db44d2541bfc14d38bc9b07ef0.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-bow-classic { background-image: url('https://i.postimg.cc/DzFMbKd6/f17eaffa8a2d53f205b6e7b2718ff2ae.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-strawberry { background-image: url('https://i.postimg.cc/43ZShTb6/f9fc99a5267ad98f2760ee5846f21607.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-heart-bp { background-image: url('https://i.postimg.cc/KYFHgyDX/Untitled83_20260118063949.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
@@ -68,6 +69,7 @@
         z-index: 10; 
     }  
     
+    /* BLUR ONLY IF FX ACTIVE */
     body.fx-active .app-shell {
         backdrop-filter: blur(10px); 
         -webkit-backdrop-filter: blur(10px);
@@ -184,6 +186,56 @@
         pointer-events: none; white-space: nowrap;  
     }  
     .speech-bubble.show { transform: translateX(-50%) scale(1); }  
+
+    /* --- NEW: SYSTEM LOG CONSOLE --- */
+    .console-box {
+        background: rgba(40, 40, 40, 0.85); /* Dark terminal background */
+        border: 2px solid var(--main);
+        border-radius: 10px;
+        margin-top: 15px;
+        padding: 10px;
+        font-family: var(--font-mono);
+        color: #ffb7b2; /* Pale pink terminal text */
+        font-size: 0.75rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        position: relative;
+        backdrop-filter: blur(4px);
+    }
+    .console-header {
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+    .console-log {
+        height: 80px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column-reverse; /* Keeps new messages at bottom */
+    }
+    .log-line { margin-bottom: 2px; }
+    .log-line::before { content: "> "; opacity: 0.6; }
+    .ebi-chat-btn {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: var(--main);
+        border: 2px solid white;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 20;
+    }
+    .ebi-chat-btn:active { transform: scale(0.9); }
 
     /* --- PHARMACY --- */  
     .receipt-paper { 
@@ -407,7 +459,15 @@
             <div id="pet-speech" class="speech-bubble">Hello!</div>  
             <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img">  
         </div>  
-        <p style="text-align:center; font-size:0.7rem; color:#888; margin-top:5px; background:rgba(255,255,255,0.8); border-radius:5px; padding:2px;">Check Backpack for Prescribed Items</p>  
+        
+        <div class="console-box">
+            <div class="console-header">
+                <span>SYSTEM LOG</span>
+                <span>v1.0</span>
+            </div>
+            <div class="console-log" id="console-log-feed"></div>
+            <button class="ebi-chat-btn" onclick="triggerEbiChat()">💬</button>
+        </div>
     </div>  
 
     <div id="page-diary" class="page">  
@@ -526,6 +586,7 @@
         decor: [],   
         cofront: [], 
         frontHistory: [], 
+        consoleHistory: ["System Initialized..."], // New console state
         currentFrontStart: 0, 
         activeAlert: null,
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
@@ -570,7 +631,7 @@
         "https://i.postimg.cc/SN9RhnVJ/ee455254fdc48289bf096e1eb048e089.png", // Carousel
         "https://i.postimg.cc/KvTj21fw/f91a9c969269fdedf2e437391eda83e8.png"  // Polaroid
     ];  
-    const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!"];  
+    const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!", "Hydrate!", "Rest up!", "Good job!", "Proud of u!", "Safe here."];  
     const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
     const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
     
@@ -589,6 +650,7 @@
         }  
         if(!DB.cofront) DB.cofront = [];
         if(!DB.frontHistory) DB.frontHistory = [];
+        if(!DB.consoleHistory) DB.consoleHistory = ["System Initialized..."];
         if(!DB.currentFrontStart) DB.currentFrontStart = Date.now();
 
         DB.profiles.forEach(p => {
@@ -602,6 +664,7 @@
         document.getElementById('toggle-crt').checked = DB.settings.crt;  
         toggleCRT();  
         renderAlert();
+        renderConsole();
     };  
   
     function enterSystem() {  
@@ -610,7 +673,7 @@
         else { document.querySelector('.app-shell').style.display='flex'; refreshAll(); }  
     }  
   
-    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); }  
+    function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); renderConsole(); }  
     function save() { localStorage.setItem('seiren_fixed_v87', JSON.stringify(DB)); }  
   
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
@@ -969,17 +1032,74 @@
   
     // --- PHARMACY ---  
     function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div style="border-bottom:1px dotted #ccc; margin-bottom:5px;">${i} ... ${p} XP</div>`; pendingXP+=p; }  
-    function processReceipt() { if(pendingXP>0){ DB.xp+=pendingXP; const task = SELF_CARE[Math.floor(Math.random()*SELF_CARE.length)]; alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"`); pendingXP=0; document.getElementById('receipt-list').innerHTML=""; save(); loadUI(); } }  
+    function processReceipt() { 
+        if(pendingXP>0){ 
+            DB.xp+=pendingXP; 
+            const task = SELF_CARE[Math.floor(Math.random()*SELF_CARE.length)]; 
+            alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"`); 
+            logToConsole(`Processed: +${pendingXP} XP`); // NEW LOG
+            pendingXP=0; 
+            document.getElementById('receipt-list').innerHTML=""; 
+            save(); loadUI(); 
+        } 
+    }  
     function fillPrescription() {   
         if(DB.xp>=50){   
             DB.xp-=50; let item = ""; let attempts = 0;
             do { item = LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)]; attempts++; if (item.startsWith('bg-') && DB.inventory.includes(item)) { item = "DUPE"; } } while (item === "DUPE" && attempts < 10);
             if (item === "DUPE") { const consumables = LOOT_ITEMS.filter(i => !i.startsWith('bg-')); item = consumables[Math.floor(Math.random()*consumables.length)]; }
             DB.inventory.push(item);  
-            const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)]; const bub = document.getElementById('pet-speech'); bub.innerText = speech; bub.classList.add('show'); setTimeout(()=>bub.classList.remove('show'), 2000);  
-            let msg = `Rx Filled!\n\nReceived: ${item}`; if(item.startsWith('bg-')) { const icon = BG_ICONS[item] || "🖼️"; msg += `\n(New System Wallpaper! Look for ${icon})`; } alert(msg); save(); loadUI();   
+            
+            const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)]; 
+            const bub = document.getElementById('pet-speech'); bub.innerText = speech; bub.classList.add('show'); setTimeout(()=>bub.classList.remove('show'), 2000);  
+            
+            logToConsole(`Rx Filled. -50 XP`); // NEW LOG
+            
+            let msg = `Rx Filled!\n\nReceived: Item`; 
+            if(item.startsWith('bg-')) { 
+                const icon = BG_ICONS[item] || "🖼️"; 
+                msg = `Rx Filled!\n\nReceived: ${icon} Wallpaper`; 
+            } else if(item.startsWith('http')) {
+                msg = `Rx Filled!\n\nReceived: New Sticker!`;
+            }
+            alert(msg); save(); loadUI();   
         } else alert("Need 50 XP");   
     }  
+
+    // --- CONSOLE LOGIC ---
+    function logToConsole(msg) {
+        if(!DB.consoleHistory) DB.consoleHistory = [];
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        DB.consoleHistory.push(`${time} - ${msg}`);
+        if(DB.consoleHistory.length > 50) DB.consoleHistory.shift(); // Keep last 50
+        save();
+        renderConsole();
+    }
+
+    function renderConsole() {
+        const feed = document.getElementById('console-log-feed');
+        if(!feed) return;
+        feed.innerHTML = "";
+        // Show newest at bottom (standard terminal style)
+        // Since flex-direction is column-reverse, we append normally and they stack up from bottom
+        if(DB.consoleHistory) {
+            // We want the LATEST message at the VERY BOTTOM.
+            // With column-reverse, the first element in DOM is at the BOTTOM.
+            // So we need to reverse the array so the newest (last index) comes first in DOM
+            [...DB.consoleHistory].reverse().forEach(line => {
+                feed.innerHTML += `<div class="log-line">${line}</div>`;
+            });
+        }
+    }
+
+    function triggerEbiChat() {
+        const quote = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)];
+        logToConsole(`Ebi says: "${quote}"`);
+        const bub = document.getElementById('pet-speech'); 
+        bub.innerText = quote; 
+        bub.classList.add('show'); 
+        setTimeout(()=>bub.classList.remove('show'), 2000); 
+    }
   
     // --- MISC & PRIVATE DIARY ---  
     function toggleCRT() { DB.settings.crt = document.getElementById('toggle-crt').checked; loadUI(); save(); }  
