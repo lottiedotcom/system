@@ -944,7 +944,7 @@
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
     function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); input.value = ""; }  
     
-    // --- ROBUST PLURALKIT IMPORT + LIKES/DISLIKES ---
+    // --- HYBRID PLURALKIT IMPORT ---
     function importPluralKit(input) {
         const file = input.files[0];
         if(!file) return;
@@ -962,45 +962,91 @@
                 members.forEach(m => {
                     if (!DB.profiles.some(p => p.name === m.name)) {
                         
-                        // --- PARSER START ---
+                        // --- PARSER ---
                         let likes = [], dislikes = [], notes = "", bioLines = [];
+                        let name = m.name || "Unknown";
+                        let sign = m.pronouns || "?";
+                        let age = m.birthday || "--";
+                        let species = "System Member";
+                        let height = "--";
+                        let bio = "";
                         
+                        let currentMode = null; // 'likes' or 'dislikes' or null
+
                         if (m.description) {
                             const lines = m.description.split('\n');
-                            lines.forEach(line => {
-                                // Clean line of Markdown bold/italics for checking keys
-                                const clean = line.replace(/[*_]/g, '').trim(); 
-                                const lower = clean.toLowerCase();
+                            lines.forEach(rawLine => {
+                                // 1. Remove aesthetic symbols from start of line
+                                let line = rawLine.replace(/^[^a-zA-Z0-9]+/, '').trim();
+                                let lower = line.toLowerCase();
+                                
+                                // 2. Check for Specific Keys
+                                if(lower.startsWith('name:')) { name = line.substring(5).trim(); return; }
+                                if(lower.startsWith('age:')) { age = line.substring(4).trim(); return; }
+                                if(lower.startsWith('pronouns:') || lower.startsWith('prons:')) { sign = line.substring(line.indexOf(':')+1).trim(); return; }
+                                if(lower.startsWith('species:')) { species = line.substring(8).trim(); return; }
+                                if(lower.startsWith('height:')) { height = line.substring(7).trim(); return; }
 
-                                if(lower.startsWith('likes:')) {
-                                    // Parse: "Likes: A, B, C"
-                                    const content = clean.substring(6); // remove "Likes:"
-                                    likes = content.split(',').map(s => s.trim()).filter(s => s);
-                                } 
-                                else if(lower.startsWith('dislikes:')) {
-                                    const content = clean.substring(9); // remove "Dislikes:"
-                                    dislikes = content.split(',').map(s => s.trim()).filter(s => s);
+                                // 3. Check for Lists (Likes/Dislikes)
+                                if(lower.startsWith('likes:') || lower.startsWith('loves:')) {
+                                    const content = line.substring(line.indexOf(':')+1).trim();
+                                    if(content.length > 0) {
+                                        // Inline list (comma separated)
+                                        let items = content.split(/,|&|\//).map(s => s.trim()).filter(s => s);
+                                        likes.push(...items);
+                                        currentMode = null;
+                                    } else {
+                                        // Header for a list below
+                                        currentMode = 'likes';
+                                    }
+                                    return;
                                 }
-                                else if(lower.startsWith('triggers:') || lower.startsWith('t:')) {
-                                    const content = clean.substring(clean.indexOf(':')+1);
-                                    notes += "Triggers: " + content.trim() + "\n";
+
+                                if(lower.startsWith('dislikes:') || lower.startsWith('hates:')) {
+                                    const content = line.substring(line.indexOf(':')+1).trim();
+                                    if(content.length > 0) {
+                                        let items = content.split(/,|&|\//).map(s => s.trim()).filter(s => s);
+                                        dislikes.push(...items);
+                                        currentMode = null;
+                                    } else {
+                                        currentMode = 'dislikes';
+                                    }
+                                    return;
                                 }
-                                else {
-                                    bioLines.push(line);
+
+                                // 4. Handle List Modes
+                                if(currentMode === 'likes' && line.length > 0) {
+                                    likes.push(line);
+                                    return;
                                 }
+                                if(currentMode === 'dislikes' && line.length > 0) {
+                                    dislikes.push(line);
+                                    return;
+                                }
+                                
+                                // 5. Catch boundaries/triggers as notes
+                                if(lower.startsWith('boundaries:') || lower.startsWith('triggers:') || lower.startsWith('t:')) {
+                                    notes += line + "\n";
+                                    currentMode = null;
+                                    return;
+                                }
+
+                                // 6. If none of above, add to general Bio
+                                // Filter out empty aesthetic lines
+                                if(line.length > 1) bioLines.push(rawLine); // Keep raw for bio to preserve formatting
                             });
+                            
+                            bio = bioLines.join('\n').trim();
                         }
-                        const cleanBio = bioLines.join('\n').trim();
-                        // --- PARSER END ---
 
                         DB.profiles.push({
-                            name: m.name || "Unknown",
+                            name: name,
                             av: m.avatar_url || DEFAULT_AV,
-                            sign: m.pronouns || "?", 
-                            age: m.birthday || "--",
-                            species: "System Member",
-                            height: "--",
-                            bio: cleanBio || "Imported from PluralKit",
+                            sign: sign, 
+                            age: age,
+                            species: species,
+                            height: height,
+                            bio: bio || "Imported from PluralKit",
                             color: m.color ? "#"+m.color : "#ff69b4",
                             id: m.id || Math.floor(Math.random()*900000),
                             likes: likes, 
@@ -1037,4 +1083,4 @@
     }
 </script>  
 </body>  
-    </html>
+</html>
