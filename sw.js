@@ -105,3 +105,63 @@ self.addEventListener('fetch', (e) => {
         })
     );
 });
+
+
+const CACHE_NAME = 'seiren-os-v90'; // Bump this version number if you change your HTML!
+const URLS_TO_CACHE = [
+    './',
+    './index.html',
+    './manifest.json'
+];
+
+// 1. INSTALL: Cache the app shell immediately
+self.addEventListener('install', (event) => {
+    self.skipWaiting(); // Force this new SW to wake up immediately
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                console.log('Opened cache');
+                return cache.addAll(URLS_TO_CACHE);
+            })
+    );
+});
+
+// 2. ACTIVATE: Delete old caches (Fixes "App not updating" issues)
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Deleting old cache:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+    self.clients.claim(); // Take control of all open tabs instantly
+});
+
+// 3. FETCH: Network First, then Cache (Ensures you always get the latest saves/code)
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        fetch(event.request)
+            .then((response) => {
+                // If network works, return response AND update cache
+                if (!response || response.status !== 200 || response.type !== 'basic') {
+                    return response;
+                }
+                const responseToCache = response.clone();
+                caches.open(CACHE_NAME)
+                    .then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
+                return response;
+            })
+            .catch(() => {
+                // If offline, serve from cache
+                return caches.match(event.request);
+            })
+    );
+});
