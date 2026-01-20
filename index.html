@@ -1725,9 +1725,13 @@
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
     function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }  
   
-    // --- FORCE NUKE SW ---
+    // --- SERVICE WORKER REGISTRATION ---
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) { for(let registration of registrations) { registration.unregister(); } });
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('SW registered!', reg.scope))
+                .catch(err => console.log('SW failed:', err));
+        });
     }
 </script>  
 </body>  
