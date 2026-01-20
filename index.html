@@ -107,7 +107,7 @@
         overflow-y: auto; 
         overflow-x: hidden; 
         padding: 20px; 
-        padding-bottom: 120px; 
+        padding-bottom: 160px; /* INCREASED BOTTOM PADDING */
         scroll-behavior: smooth; 
         -webkit-overflow-scrolling: touch; 
     }  
@@ -118,7 +118,7 @@
     #page-pet { display: none; flex-direction: column; height: auto; }
     #page-pet.active { display: flex; }
     
-    .page { display: none; animation: popIn 0.3s; }  
+    .page { display: none; animation: popIn 0.3s; padding-top: 5px; /* MOVED UP */ }  
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
@@ -192,7 +192,7 @@
 
     /* --- PET STAGE --- */  
     .pet-stage { 
-        width: 100%; height: 400px; 
+        width: 100%; height: 340px; /* REDUCED HEIGHT TO FIT BETTER */
         position: relative; 
         border: 4px ridge var(--main); border-radius: 20px; 
         background-color: rgba(255,255,255,0.1); 
@@ -602,7 +602,7 @@
         </div>  
 
         <div id="page-pet" class="page">  
-            <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Patient Room</h2>
+            <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px; margin:0 auto 5px auto;">Patient Room</h2>
             
             <div class="pet-stage" id="pet-stage">  
                 <div id="decor-layer"></div>  
@@ -624,6 +624,8 @@
                 <div class="console-log" id="console-log-feed"></div>
                 <button class="ebi-chat-btn" onclick="triggerEbiChat()">💬</button>
             </div>
+            
+            <div style="height:100px;"></div>
         </div>  
 
         <div id="page-dream" class="page">
