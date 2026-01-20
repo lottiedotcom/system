@@ -199,7 +199,7 @@
         background-size: cover; background-position: center; 
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
         overflow: hidden; 
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         /* CRITICAL: This stops the page from scrolling when dragging stickers */
         touch-action: none; 
     }  
@@ -239,6 +239,19 @@
         border-width: 10px 10px 0; border-style: solid; border-color: var(--main) transparent transparent transparent;
     }
     .speech-bubble.show { transform: translateX(-50%) scale(1); } 
+
+    /* WALLPAPER PICKER (NEW) */
+    #wallpaper-picker {
+        display: flex; overflow-x: auto; gap: 10px; padding: 10px; 
+        background: white; border-radius: 15px; margin-bottom: 10px;
+        border: 2px dashed #eee;
+    }
+    .wp-thumb {
+        width: 60px; height: 60px; flex-shrink: 0; 
+        border-radius: 10px; border: 2px solid transparent; 
+        cursor: pointer; object-fit: cover;
+    }
+    .wp-thumb.active { border-color: var(--main); transform: scale(0.95); }
 
     /* STICKER CONTROLS */
     #decor-controls {
@@ -609,6 +622,8 @@
                 <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img" onclick="clickEbi(event)">  
                 <div id="pet-speech" class="speech-bubble">Hello!</div>  
             </div>
+
+            <div id="wallpaper-picker"></div>
             
             <div id="decor-controls">
                 <b>Size:</b>
@@ -833,19 +848,12 @@
         "Stretch: 2 minutes", "Snack: Eat something", "Breathe: Deep breaths"
     ];
 
-    // LOOT TABLE
+    // LOOT TABLE (WALLPAPERS REMOVED from random pool)
     const LOOT_ITEMS = [
         "bg-apple", "bg-polka-brown", "bg-clover", "bg-stars-blue", "bg-bow-y2k",
         "bg-stars-bw", "bg-music-pink", "bg-stars-classic", "bg-bow-classic",
         "bg-strawberry", "bg-heart-bp", "bg-polka-classic",
         "bg-stars-2", "bg-heart-pink", "bg-stars-y2k", "bg-stars-pink", "bg-heart-by", "bg-polka-pink",
-        
-        // BEDROOM WALLPAPERS
-        "https://i.postimg.cc/DZ5qstqb/10b51003f5fc0df41075f24861363d7d.jpg",
-        "https://i.postimg.cc/qRQ8n983/327b16e3d5893b32482b5642782105d5.jpg",
-        "https://i.postimg.cc/wvFhJSht/7de5e7ad4933d616d390e74c5405ebc8.jpg",
-        "https://i.postimg.cc/mDTYPbFM/891e1ee9f917421887230a1f93c50e74.jpg",
-        "https://i.postimg.cc/pTkD8gD5/fdfddf6e776fd0428aa1e486741fe780.jpg",
 
         // STICKERS
         "https://i.postimg.cc/4dFyJtrX/12d9131d2320519e1e23f5f678427396.png",
@@ -1196,6 +1204,9 @@
         } else {
             stage.style.backgroundImage = "none";
         }
+        
+        // RENDER WALLPAPER PICKER (NEW)
+        renderWallpaperPicker();
 
         // RENDER EBI
         const ebi = document.querySelector('.ebi-img');
@@ -1257,6 +1268,38 @@
                 deselectSticker();
             }
         };
+    }
+    
+    // --- WALLPAPER PICKER LOGIC ---
+    function renderWallpaperPicker() {
+        const picker = document.getElementById('wallpaper-picker');
+        picker.innerHTML = "";
+        
+        // Default (Empty) option
+        const noneDiv = document.createElement('div');
+        noneDiv.className = 'wp-thumb';
+        noneDiv.style.background = '#eee';
+        noneDiv.style.display = 'flex';
+        noneDiv.style.alignItems = 'center';
+        noneDiv.style.justifyContent = 'center';
+        noneDiv.innerText = "✖️";
+        noneDiv.onclick = () => setWallpaper("");
+        picker.appendChild(noneDiv);
+        
+        ROOM_WALLPAPERS.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.className = 'wp-thumb';
+            if(DB.roomWallpaper === url) img.classList.add('active');
+            img.onclick = () => setWallpaper(url);
+            picker.appendChild(img);
+        });
+    }
+    
+    function setWallpaper(url) {
+        DB.roomWallpaper = url;
+        save();
+        renderDecor(); // Re-renders stage with new BG
     }
     
     // --- EBI DRAG LOGIC ---
@@ -1429,20 +1472,9 @@
                 badge = `<span style="position:absolute; bottom:0; right:0; background:red; color:white; font-size:0.6rem; padding:2px 5px; border-radius:10px;">x${counts[item]}</span>`;
             }
             
-            // LOGIC FOR BEDROOM vs OS WALLPAPERS
-            if(ROOM_WALLPAPERS.includes(item)) {
-                // IT IS A BEDROOM WALLPAPER
-                b.innerHTML = `<img src="${item}" style="width:50px; height:50px; object-fit:cover; border:2px solid #7e57c2; border-radius:5px;">` + badge;
-                b.onclick = () => {
-                    if(isSelling) {
-                        const realIndex = DB.inventory.indexOf(item); 
-                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } 
-                        save(); openBackpack();
-                    } else {
-                        DB.roomWallpaper = item; save(); refreshAll(); closeModals(); nav('pet');
-                    }
-                };
-            } else if(item.startsWith('bg-')) {  
+            // LOGIC: ROOM WALLPAPERS REMOVED FROM BACKPACK (now in strip)
+            // Only show OS wallpapers or Stickers here
+            if(item.startsWith('bg-')) {  
                 let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerHTML=icon; 
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
                 
@@ -1574,6 +1606,7 @@
     function fillPrescription() {   
         if(DB.xp>=50){   
             DB.xp-=50; let item = ""; let attempts = 0;
+            // FIXED: Don't pick wallpaper duplicates, and don't pick room wallpapers (removed from LOOT)
             do { item = LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)]; attempts++; if (item.startsWith('bg-') && DB.inventory.includes(item)) { item = "DUPE"; } } while (item === "DUPE" && attempts < 10);
             if (item === "DUPE") { const consumables = LOOT_ITEMS.filter(i => !i.startsWith('bg-')); item = consumables[Math.floor(Math.random()*consumables.length)]; }
             DB.inventory.push(item);  
@@ -1587,8 +1620,6 @@
             if(item.startsWith('bg-')) { 
                 const icon = BG_ICONS[item] || "🖼️"; 
                 msg = `Rx Filled!\n\nReceived: ${icon} Wallpaper`; 
-            } else if (ROOM_WALLPAPERS.includes(item)) {
-                msg = `Rx Filled!\n\nReceived: New Room Wallpaper`;
             } else if(item.startsWith('http')) {
                 msg = `Rx Filled!\n\nReceived: New Sticker!`;
             }
