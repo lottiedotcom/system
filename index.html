@@ -117,11 +117,10 @@
     .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; padding-bottom: 120px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }  
     .content.no-scroll { overflow: hidden; } /* LOCK SCROLL FOR PET ROOM */
 
-    /* UPDATED: REMOVE HEIGHT 100% SO OTHER PAGES SCROLL */
     .page { display: none; animation: popIn 0.3s; }  
-    
-    /* ONLY PET PAGE IS LOCKED */
-    #page-pet { height: 100%; overflow: hidden; }
+    /* ONLY PET PAGE IS LOCKED to screen height */
+    #page-pet { height: 100%; display: none; flex-direction: column; }
+    #page-pet.active { display: flex; }
     
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
@@ -196,12 +195,13 @@
 
     /* --- PET --- */  
     .pet-stage { 
-        height: 100%; width: 100%; position: relative; 
+        width: 100%; flex: 1; position: relative; 
         border: 4px ridge var(--main); border-radius: 20px; 
         background-color: rgba(255,255,255,0.1); 
         background-size: cover; background-position: center; /* FOR BEDROOM WALLPAPERS */
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
-        overflow: hidden; display: flex; align-items: center; justify-content: center; 
+        overflow: hidden; display: flex; align-items: center; justify-content: center;
+        margin-bottom: 10px;
     }  
     
     /* SCALABLE & MOVEABLE EBI */
@@ -237,33 +237,32 @@
     }  
     .speech-bubble.show { transform: translateX(-50%) scale(1); } 
 
-    /* STICKER CONTROLS */
+    /* STICKER CONTROLS - NOW STATIC UNDER STAGE */
     #decor-controls {
-        position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
-        background: white; padding: 8px 15px; border-radius: 20px;
-        display: none; align-items: center; gap: 10px; z-index: 100;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        background: white; padding: 12px; border-radius: 15px;
+        display: none; align-items: center; justify-content: center; gap: 10px; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 10px;
+        border: 2px solid #eee;
     }
-    #decor-controls input[type="range"] { width: 100px; margin: 0; }
-    #decor-controls button { background: #ff4444; color: white; border: none; border-radius: 5px; padding: 5px 8px; cursor: pointer; font-size: 0.8rem; }
+    #decor-controls input[type="range"] { flex: 1; max-width: 150px; }
+    #decor-controls button { background: #ff4444; color: white; border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; font-size: 0.9rem; }
 
-    /* --- SYSTEM LOG CONSOLE --- */
+    /* --- SYSTEM LOG CONSOLE - NOW STATIC UNDER STAGE --- */
     .console-box {
-        position: absolute; bottom: 20px; left: 20px; right: 20px;
         background: rgba(40, 40, 40, 0.85); 
         border: 2px solid var(--main); border-radius: 10px; padding: 10px; 
         font-family: var(--font-mono); color: #ffb7b2; font-size: 0.75rem; 
         box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(4px); 
-        z-index: 50;
+        height: 100px; position: relative;
     }
     .console-header { border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; font-weight: bold; letter-spacing: 1px; }
-    .console-log { height: 60px; overflow-y: auto; display: flex; flex-direction: column-reverse; }
+    .console-log { height: 70px; overflow-y: auto; display: flex; flex-direction: column-reverse; }
     .log-line { margin-bottom: 2px; }
     .log-line::before { content: "> "; opacity: 0.6; }
     .ebi-chat-btn { 
-        position: absolute; bottom: 5px; right: 5px; /* Inside Console Box */
-        background: var(--main); border: 2px solid white; border-radius: 50%; width: 30px; height: 30px; 
-        cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; 
+        position: absolute; bottom: 10px; right: 10px; 
+        background: var(--main); border: 2px solid white; border-radius: 50%; width: 40px; height: 40px; 
+        cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; 
         box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 60; 
     }
     .ebi-chat-btn:active { transform: scale(0.9); }
@@ -600,27 +599,28 @@
         </div>  
 
         <div id="page-pet" class="page">  
+            <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Patient Room</h2>
+            
             <div class="pet-stage" id="pet-stage">  
                 <div id="decor-layer"></div>  
                 <div id="pet-speech" class="speech-bubble">Hello!</div>  
-                
                 <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img" onclick="clickEbi(event)">  
-                
-                <div id="decor-controls">
-                    <span>Size:</span>
-                    <input type="range" id="scale-slider" min="0.5" max="2.5" step="0.1" oninput="updateDecorScale(this.value)">
-                    <button onclick="deleteSelectedDecor()">🗑️</button>
-                </div>
+            </div>
+            
+            <div id="decor-controls">
+                <b>Size:</b>
+                <input type="range" id="scale-slider" min="0.5" max="2.5" step="0.1" oninput="updateDecorScale(this.value)">
+                <button onclick="deleteSelectedDecor()">🗑️ Delete</button>
+            </div>
 
-                <div class="console-box">
-                    <div class="console-header">
-                        <span>SYSTEM LOG</span>
-                        <span>v1.0</span>
-                    </div>
-                    <div class="console-log" id="console-log-feed"></div>
-                    <button class="ebi-chat-btn" onclick="triggerEbiChat()">💬</button>
+            <div class="console-box">
+                <div class="console-header">
+                    <span>SYSTEM LOG</span>
+                    <span>v1.0</span>
                 </div>
-            </div>  
+                <div class="console-log" id="console-log-feed"></div>
+                <button class="ebi-chat-btn" onclick="triggerEbiChat()">💬</button>
+            </div>
         </div>  
 
         <div id="page-dream" class="page">
@@ -804,16 +804,17 @@
         activeAlert: null,
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true },
-        roomWallpaper: "", // New Bedroom BG state
-        ebiScale: 1 // New Ebi Scale state
-    };  
+        roomWallpaper: "", 
+        ebiScale: 1 
+    };
+    
     let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
 
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
     let isSelling = false;
     let selectedMsgIndex = -1;
-    let tempDreamImg = ""; // For Residue Scanner
-    let selectedDecorIndex = -2; // -2 = None, -1 = Ebi, 0+ = Stickers
+    let tempDreamImg = ""; 
+    let selectedDecorIndex = -2; 
 
     // LOOT TABLE
     const LOOT_ITEMS = [
@@ -1452,7 +1453,10 @@
             pendingXP=0; 
             document.getElementById('receipt-list').innerHTML=""; 
             save(); refreshAll();
-        } 
+        } else {
+            // FIX: ALERT USER IF NOTHING LOGGED
+            alert("⚠️ No symptoms logged!\n\nTap some buttons above first.");
+        }
     }  
     
     function renderStamps() {
@@ -1772,7 +1776,7 @@
         const page = document.getElementById('page-'+id);
         page.classList.add('active'); 
         
-        // --- LOCK SCROLL ON PET PAGE ---
+        // --- LOCK SCROLL ON PET PAGE ONLY ---
         const content = document.querySelector('.content');
         if(id === 'pet') {
             content.classList.add('no-scroll');
@@ -1794,10 +1798,14 @@
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
     function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }  
   
-    // --- FORCE NUKE SW ---
+    // --- SERVICE WORKER REGISTRATION ---
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) { for(let registration of registrations) { registration.unregister(); } });
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('SW registered!', reg.scope))
+                .catch(err => console.log('SW failed:', err));
+        });
     }
 </script>  
 </body>  
-    </html>
+</html>
