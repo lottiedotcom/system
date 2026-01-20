@@ -112,8 +112,12 @@
         z-index: 10; 
     }  
     body.fx-active .app-shell { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    
+    /* SCROLL CONTROLS */
     .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; padding-bottom: 120px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }  
-    .page { display: none; animation: popIn 0.3s; }  
+    .content.no-scroll { overflow: hidden; } /* NEW CLASS TO LOCK SCROLL */
+
+    .page { display: none; animation: popIn 0.3s; height: 100%; }  /* Ensure height for lock */
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
@@ -187,14 +191,15 @@
 
     /* --- PET --- */  
     .pet-stage { 
-        height: 350px; position: relative; 
+        height: 100%; width: 100%; position: relative; /* FULL SCREEN */
         border: 4px ridge var(--main); border-radius: 20px; 
         background: rgba(255,255,255,0.1); 
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
         overflow: hidden; display: flex; align-items: center; justify-content: center; 
     }  
-    .ebi-img { width: 160px; pointer-events: none; z-index: 5; margin-top: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }  
-    
+    .ebi-img { width: 160px; pointer-events: none; z-index: 5; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto; }  
+    .ebi-img:active { transform: scale(0.95); filter: brightness(1.2); } /* Click effect */
+
     /* UPDATED STICKER CLASS FOR SCALING */
     .sticker { 
         position: absolute; cursor: grab; z-index: 10; user-select: none; width: 80px; height: auto; 
@@ -207,7 +212,7 @@
     .sticker img { width: 100%; pointer-events: none; display: block; }
     
     .speech-bubble {  
-        position: absolute; top: 40px; left: 50%; transform: translateX(-50%) scale(0);  
+        position: absolute; top: 30%; left: 50%; transform: translateX(-50%) scale(0);  
         background: white; padding: 10px 15px; border-radius: 20px; border: 2px solid var(--main);  
         font-size: 0.8rem; font-weight: bold; z-index: 20; text-align: center;  
         transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
@@ -215,9 +220,9 @@
     }  
     .speech-bubble.show { transform: translateX(-50%) scale(1); } 
 
-    /* STICKER CONTROLS (NEW) */
+    /* STICKER CONTROLS */
     #decor-controls {
-        position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+        position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
         background: white; padding: 8px 15px; border-radius: 20px;
         display: none; align-items: center; gap: 10px; z-index: 100;
         box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -227,17 +232,17 @@
 
     /* --- SYSTEM LOG CONSOLE --- */
     .console-box {
+        position: absolute; bottom: 20px; left: 20px; right: 20px;
         background: rgba(40, 40, 40, 0.85); 
-        border: 2px solid var(--main); border-radius: 10px; margin-top: 15px; padding: 10px; 
+        border: 2px solid var(--main); border-radius: 10px; padding: 10px; 
         font-family: var(--font-mono); color: #ffb7b2; font-size: 0.75rem; 
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; backdrop-filter: blur(4px); 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(4px); 
+        z-index: 50;
     }
     .console-header { border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; font-weight: bold; letter-spacing: 1px; }
-    .console-log { height: 80px; overflow-y: auto; display: flex; flex-direction: column-reverse; }
+    .console-log { height: 60px; overflow-y: auto; display: flex; flex-direction: column-reverse; }
     .log-line { margin-bottom: 2px; }
     .log-line::before { content: "> "; opacity: 0.6; }
-    .ebi-chat-btn { position: absolute; bottom: 10px; right: 10px; background: var(--main); border: 2px solid white; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 20; }
-    .ebi-chat-btn:active { transform: scale(0.9); }
 
     /* --- PHARMACY LOYALTY CARD --- */
     .loyalty-card {
@@ -568,26 +573,26 @@
         </div>  
 
         <div id="page-pet" class="page">  
-            <h2 style="color:var(--main); text-align:center; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Patient Room</h2>  
             <div class="pet-stage" id="pet-stage">  
                 <div id="decor-layer"></div>  
                 <div id="pet-speech" class="speech-bubble">Hello!</div>  
-                <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img">  
+                
+                <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img" onclick="clickEbi(event)">  
+                
                 <div id="decor-controls">
                     <span>Size:</span>
                     <input type="range" id="scale-slider" min="0.5" max="2.5" step="0.1" oninput="updateDecorScale(this.value)">
                     <button onclick="deleteSelectedDecor()">🗑️</button>
                 </div>
-            </div>  
-            
-            <div class="console-box">
-                <div class="console-header">
-                    <span>SYSTEM LOG</span>
-                    <span>v1.0</span>
+
+                <div class="console-box">
+                    <div class="console-header">
+                        <span>SYSTEM LOG</span>
+                        <span>v1.0</span>
+                    </div>
+                    <div class="console-log" id="console-log-feed"></div>
                 </div>
-                <div class="console-log" id="console-log-feed"></div>
-                <button class="ebi-chat-btn" onclick="triggerEbiChat()">💬</button>
-            </div>
+            </div>  
         </div>  
 
         <div id="page-dream" class="page">
@@ -805,7 +810,21 @@
         "https://i.postimg.cc/KvTj21fw/f91a9c969269fdedf2e437391eda83e8.png"
     ];  
     const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!", "Hydrate!", "Rest up!", "Good job!", "Proud of u!", "Safe here."];  
-    const SELF_CARE = ["Drink a glass of water", "Stretch for 2 mins", "Fix your posture", "Take a deep breath", "Look away from screen", "Relax your shoulders", "Eat a snack", "Listen to 1 song"];
+    
+    // EXPANDED CLINICAL ORDERS
+    const CLINICAL_ORDERS = [
+        "HYDRATION ORDER: Administer 200ml H2O immediately.",
+        "POSTURE CHECK: Realignment of spine required.",
+        "REALITY ANCHOR: Name 5 blue objects in vicinity.",
+        "DOPAMINE REGULATION: Listen to one (1) comfort track.",
+        "SENSORY RESET: Close eyes for 120 seconds.",
+        "NUTRITION PROTOCOL: Consume one small unit of protein.",
+        "OXYGEN INTAKE: Perform 4-7-8 breathing sequence.",
+        "VISION PRESERVATION: Look at object 20ft away.",
+        "STIMULATION CONTROL: Reduce screen brightness by 20%.",
+        "GROUNDING: Touch a cold surface."
+    ];
+    
     const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
     
     const BG_ICONS = {
@@ -1149,6 +1168,7 @@
         
         // Hide controls if clicked outside
         document.getElementById('pet-stage').onclick = (e) => {
+            // Only deselect if clicking the background, not if clicking Ebi
             if(e.target.id === 'pet-stage' || e.target.id === 'decor-layer') {
                 deselectSticker();
             }
@@ -1200,6 +1220,32 @@
             renderDecor();
             alert("Item returned to backpack.");
         }
+    }
+
+    // --- CLICKER FUNCTIONALITY (NEW) ---
+    function clickEbi(e) {
+        // Prevent event bubbling if clicking Ebi so it doesn't deselect stickers instantly
+        e.stopPropagation(); 
+        
+        // Add XP
+        DB.xp += 1;
+        document.getElementById('cp-display').innerText = DB.xp;
+        
+        // Animation effect
+        const img = document.querySelector('.ebi-img');
+        img.style.transform = "scale(0.9)";
+        setTimeout(() => img.style.transform = "scale(1)", 100);
+
+        // Random chance for "Glitch" reward or dialogue
+        const rng = Math.random();
+        if(rng < 0.2) {
+            triggerEbiChat();
+        } else if(rng > 0.95) {
+            logToConsole("⚠️ GLITCH DETECTED: +5 XP");
+            DB.xp += 5;
+        }
+
+        save();
     }
 
     // --- FIXED BACKPACK (STACKING LOGIC + SELL MODE) ---
@@ -1289,8 +1335,10 @@
             DB.stamps = (DB.stamps || 0) + 1; // ADD STAMP
             if(DB.stamps > 10) DB.stamps = 10; // Cap at 10 until redeemed
             
-            const task = SELF_CARE[Math.floor(Math.random()*SELF_CARE.length)]; 
-            alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n✨ Self Care Task:\n"${task}"\n\n💊 STAMP ADDED TO CARD`); 
+            // NEW EXPANDED PRESCRIPTION LOGIC
+            const task = CLINICAL_ORDERS[Math.floor(Math.random()*CLINICAL_ORDERS.length)]; 
+            
+            alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n📋 CLINICAL ORDER:\n"${task}"\n\n💊 STAMP ADDED TO CARD`); 
             logToConsole(`Processed: +${pendingXP} XP`); 
             pendingXP=0; 
             document.getElementById('receipt-list').innerHTML=""; 
@@ -1634,7 +1682,26 @@
         input.value = ""; 
     }
 
-    function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); if(id==='pet')renderDecor(); if(id==='chat')renderChat(); if(id==='diary')renderDiary(); if(id==='about')renderBio(); if(id==='dream')renderDreamLog(); }  
+    function nav(id) { 
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
+        const page = document.getElementById('page-'+id);
+        page.classList.add('active'); 
+        
+        // --- LOCK SCROLL ON PET PAGE ---
+        const content = document.querySelector('.content');
+        if(id === 'pet') {
+            content.classList.add('no-scroll');
+        } else {
+            content.classList.remove('no-scroll');
+        }
+
+        document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); 
+        if(id==='pet')renderDecor(); 
+        if(id==='chat')renderChat(); 
+        if(id==='diary')renderDiary(); 
+        if(id==='about')renderBio(); 
+        if(id==='dream')renderDreamLog(); 
+    }  
     
     function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, uid: DB.profiles[DB.active].id, t:t.value}); t.value=""; save(); renderDiary(); } }  
     function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; const currentID = DB.profiles[DB.active].id; const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid); myEntries.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }  
@@ -1648,4 +1715,4 @@
     }
 </script>  
 </body>  
-</html>
+    </html>
