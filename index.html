@@ -194,8 +194,18 @@
         overflow: hidden; display: flex; align-items: center; justify-content: center; 
     }  
     .ebi-img { width: 160px; pointer-events: none; z-index: 5; margin-top: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }  
-    .sticker { position: absolute; cursor: grab; z-index: 10; user-select: none; width: 80px; height: auto; }
+    
+    /* UPDATED STICKER CLASS FOR SCALING */
+    .sticker { 
+        position: absolute; cursor: grab; z-index: 10; user-select: none; width: 80px; height: auto; 
+        transition: transform 0.1s; /* Smooth scaling */
+    }
+    .sticker.selected {
+        filter: drop-shadow(0 0 5px var(--main));
+        border: 1px dashed white;
+    }
     .sticker img { width: 100%; pointer-events: none; display: block; }
+    
     .speech-bubble {  
         position: absolute; top: 40px; left: 50%; transform: translateX(-50%) scale(0);  
         background: white; padding: 10px 15px; border-radius: 20px; border: 2px solid var(--main);  
@@ -203,7 +213,17 @@
         transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
         pointer-events: none; white-space: nowrap;  
     }  
-    .speech-bubble.show { transform: translateX(-50%) scale(1); }  
+    .speech-bubble.show { transform: translateX(-50%) scale(1); } 
+
+    /* STICKER CONTROLS (NEW) */
+    #decor-controls {
+        position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+        background: white; padding: 8px 15px; border-radius: 20px;
+        display: none; align-items: center; gap: 10px; z-index: 100;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    #decor-controls input[type="range"] { width: 100px; margin: 0; }
+    #decor-controls button { background: #ff4444; color: white; border: none; border-radius: 5px; padding: 5px 8px; cursor: pointer; font-size: 0.8rem; }
 
     /* --- SYSTEM LOG CONSOLE --- */
     .console-box {
@@ -263,8 +283,12 @@
         -webkit-appearance: none; appearance: none; width: 15px; height: 15px; border-radius: 50%; background: #e6e6fa; cursor: pointer; border: 2px solid #483d8b;
     }
     
+    /* FIXED RESIDUE SCANNER STYLING */
     .residue-scanner {
-        border: 2px dashed #483d8b; background: rgba(0,0,0,0.2); padding: 15px; text-align: center; border-radius: 10px; margin-top: 10px; cursor: pointer;
+        display: block; width: 100%; box-sizing: border-box;
+        border: 2px dashed #483d8b; background: rgba(0,0,0,0.2); 
+        padding: 15px; text-align: center; border-radius: 10px; margin-top: 10px; margin-bottom: 15px; 
+        cursor: pointer;
     }
     .residue-preview {
         width: 100%; height: 100px; object-fit: cover; margin-top: 10px; filter: grayscale(100%) contrast(150%); border: 1px solid #555; display: none;
@@ -549,6 +573,11 @@
                 <div id="decor-layer"></div>  
                 <div id="pet-speech" class="speech-bubble">Hello!</div>  
                 <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img">  
+                <div id="decor-controls">
+                    <span>Size:</span>
+                    <input type="range" id="scale-slider" min="0.5" max="2.5" step="0.1" oninput="updateDecorScale(this.value)">
+                    <button onclick="deleteSelectedDecor()">🗑️</button>
+                </div>
             </div>  
             
             <div class="console-box">
@@ -738,6 +767,7 @@
     let isSelling = false;
     let selectedMsgIndex = -1;
     let tempDreamImg = ""; // For Residue Scanner
+    let selectedDecorIndex = -1; // For sticker resizing
 
     // LOOT TABLE
     const LOOT_ITEMS = [
@@ -1074,8 +1104,12 @@
     // --- DECOR ---  
     function renderDecor() {  
         const l = document.getElementById('decor-layer'); l.innerHTML="";   
-        DB.decor.forEach(d => {  
+        DB.decor.forEach((d, index) => {  
             const el = document.createElement('div'); el.className='sticker'; 
+            // APPLY SCALE
+            const scale = d.s || 1;
+            el.style.transform = `scale(${scale})`;
+            
             if (d.i.startsWith('http')) {
                 const img = document.createElement('img');
                 img.src = d.i;
@@ -1084,15 +1118,90 @@
                 el.innerText = d.i;
             }
             el.style.left=d.x+"%"; el.style.top=d.y+"%";  
+            
+            // Interaction: Select & Drag
             let isDrag=false;  
-            const move = (e) => { if(!isDrag)return; const b=document.getElementById('pet-stage').getBoundingClientRect(); const cx=e.touches?e.touches[0].clientX:e.clientX; const cy=e.touches?e.touches[0].clientY:e.clientY; d.x=((cx-b.left)/b.width)*100; d.y=((cy-b.top)/b.height)*100; el.style.left=d.x+"%"; el.style.top=d.y+"%"; };  
-            const end = () => { if(isDrag){isDrag=false; save();} };  
-            el.onmousedown=()=>{isDrag=true}; el.ontouchstart=()=>{isDrag=true};  
+            const move = (e) => { 
+                if(!isDrag) return; 
+                const b = document.getElementById('pet-stage').getBoundingClientRect(); 
+                const cx = e.touches ? e.touches[0].clientX : e.clientX; 
+                const cy = e.touches ? e.touches[0].clientY : e.clientY; 
+                d.x = ((cx - b.left) / b.width) * 100; 
+                d.y = ((cy - b.top) / b.height) * 100; 
+                el.style.left = d.x+"%"; el.style.top = d.y+"%"; 
+            };  
+            const end = () => { if(isDrag){ isDrag=false; save(); } };  
+            
+            el.onmousedown = (e) => { 
+                e.stopPropagation(); 
+                isDrag=true; 
+                selectSticker(index); // SELECT STICKER
+            }; 
+            el.ontouchstart = (e) => { 
+                e.stopPropagation(); 
+                isDrag=true; 
+                selectSticker(index); // SELECT STICKER
+            };  
+            
             window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive:false}); window.addEventListener('mouseup', end); window.addEventListener('touchend', end);  
             l.appendChild(el);  
-        });  
+        });
+        
+        // Hide controls if clicked outside
+        document.getElementById('pet-stage').onclick = (e) => {
+            if(e.target.id === 'pet-stage' || e.target.id === 'decor-layer') {
+                deselectSticker();
+            }
+        };
     }  
     
+    // --- STICKER CONTROLS ---
+    function selectSticker(index) {
+        selectedDecorIndex = index;
+        const ctrls = document.getElementById('decor-controls');
+        const slider = document.getElementById('scale-slider');
+        const d = DB.decor[index];
+        
+        // Highlight logic could go here (add class)
+        document.querySelectorAll('.sticker').forEach((s, i) => {
+            if(i === index) s.classList.add('selected');
+            else s.classList.remove('selected');
+        });
+
+        slider.value = d.s || 1;
+        ctrls.style.display = 'flex';
+    }
+
+    function deselectSticker() {
+        selectedDecorIndex = -1;
+        document.getElementById('decor-controls').style.display = 'none';
+        document.querySelectorAll('.sticker').forEach(s => s.classList.remove('selected'));
+    }
+
+    function updateDecorScale(val) {
+        if(selectedDecorIndex > -1) {
+            DB.decor[selectedDecorIndex].s = val;
+            const stickers = document.querySelectorAll('.sticker');
+            if(stickers[selectedDecorIndex]) {
+                stickers[selectedDecorIndex].style.transform = `scale(${val})`;
+            }
+            save();
+        }
+    }
+
+    function deleteSelectedDecor() {
+        if(selectedDecorIndex > -1) {
+            // Return to inventory
+            DB.inventory.push(DB.decor[selectedDecorIndex].i);
+            // Remove from decor
+            DB.decor.splice(selectedDecorIndex, 1);
+            save();
+            deselectSticker();
+            renderDecor();
+            alert("Item returned to backpack.");
+        }
+    }
+
     // --- FIXED BACKPACK (STACKING LOGIC + SELL MODE) ---
     function toggleSell() {
         isSelling = !isSelling;
@@ -1155,7 +1264,8 @@
                         if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 10; }
                         save(); openBackpack(); 
                     } else {
-                        DB.decor.push({i:item, x:50, y:50}); 
+                        // ADD TO DECOR WITH DEFAULT SCALE
+                        DB.decor.push({i:item, x:50, y:50, s:1}); 
                         const realIndex = DB.inventory.indexOf(item); 
                         if(realIndex > -1) DB.inventory.splice(realIndex, 1); 
                         save(); closeModals(); nav('pet'); 
