@@ -111,7 +111,10 @@
         scroll-behavior: smooth; 
         -webkit-overflow-scrolling: touch; 
     }  
-    /* FIXED: Pet Page grows with content, but Stage handles touch */
+    
+    /* PREVENT SCROLLING ON THE STAGE BUT ALLOW IT ON THE PAGE */
+    .content.no-scroll-on-stage { overflow: hidden; }
+
     #page-pet { display: none; flex-direction: column; height: auto; }
     #page-pet.active { display: flex; }
     
@@ -197,7 +200,7 @@
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
         overflow: hidden; 
         margin-bottom: 15px;
-        /* CRITICAL: ONLY THIS AREA BLOCKS SCROLLING FOR DRAGGING */
+        /* CRITICAL: This stops the page from scrolling when dragging stickers */
         touch-action: none; 
     }  
     
@@ -219,18 +222,22 @@
     .sticker.selected { filter: drop-shadow(0 0 5px var(--main)); border: 1px dashed white; }
     .sticker img { width: 100%; pointer-events: none; display: block; }
     
-    /* SPEECH BUBBLE: FIXED TO TOP OF PET STAGE */
+    /* SPEECH BUBBLE: FIXED VISIBILITY */
     .speech-bubble {  
         position: absolute; 
-        top: 10%; left: 50%; transform: translateX(-50%) scale(0);  
-        background: white; padding: 10px 15px; border-radius: 20px; border: 2px solid var(--main);  
-        font-size: 0.9rem; font-weight: bold; 
-        z-index: 9999; /* MAX VISIBILITY */
+        top: 20%; left: 50%; transform: translateX(-50%) scale(0);  
+        background: white; padding: 15px 25px; border-radius: 30px; border: 3px solid var(--main);  
+        font-size: 1rem; font-weight: bold; 
+        z-index: 99999; /* MAX VISIBILITY */
         text-align: center;  
-        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
         pointer-events: none; white-space: nowrap;  
-    }  
+    } 
+    .speech-bubble::after {
+        content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        border-width: 10px 10px 0; border-style: solid; border-color: var(--main) transparent transparent transparent;
+    }
     .speech-bubble.show { transform: translateX(-50%) scale(1); } 
 
     /* STICKER CONTROLS */
@@ -787,7 +794,7 @@
     // --- STATE ---  
     let DEFAULT_DB = {  
         sysName: "SEIREN OS",  
-        profiles: [{ name: "Guest", av: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E", color: "#ff69b4", id: "GUEST", sign: "-", species: "Visitor", age: "-", height: "-", bio: "Guest Access", likes: [], dislikes: [], notes: "" }], 
+        profiles: [{ name: "Guest", av: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E", color: "#ff69b4", id: "GUEST", sign: "-", species: "Visitor", age: "-", height: "-", bio: "Guest Access", likes: [], dislikes: [], notes: "" }], 
         active: 0, xp: 0, 
         inventory: [], 
         decor: [],   
@@ -811,6 +818,18 @@
     let selectedMsgIndex = -1;
     let tempDreamImg = ""; 
     let selectedDecorIndex = -2; 
+
+    // --- MISSING LISTS ADDED HERE ---
+    const EBI_TALK = [
+        "do i look cute?", "feed me?", "im bored...", "system check", 
+        "i love you!", "are we dreaming?", "need xp...", "click me!",
+        "new decor?", "glitch mode", "pet me more", "hmmm..."
+    ];
+
+    const CLINICAL_ORDERS = [
+        "Hydrate: 500ml Water", "Rest: 10m Quiet Time", "Journal: Write 1 thought",
+        "Stretch: 2 minutes", "Snack: Eat something", "Breathe: Deep breaths"
+    ];
 
     // LOOT TABLE
     const LOOT_ITEMS = [
@@ -856,6 +875,14 @@
         "https://i.postimg.cc/SN9RhnVJ/ee455254fdc48289bf096e1eb048e089.png",
         "https://i.postimg.cc/KvTj21fw/f91a9c969269fdedf2e437391eda83e8.png"
     ];  
+
+    const ROOM_WALLPAPERS = [
+        "https://i.postimg.cc/DZ5qstqb/10b51003f5fc0df41075f24861363d7d.jpg",
+        "https://i.postimg.cc/qRQ8n983/327b16e3d5893b32482b5642782105d5.jpg",
+        "https://i.postimg.cc/wvFhJSht/7de5e7ad4933d616d390e74c5405ebc8.jpg",
+        "https://i.postimg.cc/mDTYPbFM/891e1ee9f917421887230a1f93c50e74.jpg",
+        "https://i.postimg.cc/pTkD8gD5/fdfddf6e776fd0428aa1e486741fe780.jpg"
+    ];
     
     const BG_ICONS = {
         'bg-apple': '🍎', 'bg-polka-brown': '🟤', 'bg-clover': '🍀', 'bg-stars-blue': '⭐',
@@ -1200,7 +1227,9 @@
             
             let isDrag=false;  
             const move = (e) => { 
-                if(!isDrag) return; 
+                if(!isDrag) return;
+                // FIX: Stop Page Scroll on Sticker Drag
+                e.preventDefault(); 
                 const b = document.getElementById('pet-stage').getBoundingClientRect(); 
                 const cx = e.touches ? e.touches[0].clientX : e.clientX; 
                 const cy = e.touches ? e.touches[0].clientY : e.clientY; 
@@ -1234,6 +1263,9 @@
 
         const move = (e) => {
             if (!isDrag) return;
+            // FIX: Stop Page Scroll on Ebi Drag
+            e.preventDefault();
+
             const b = document.getElementById('pet-stage').getBoundingClientRect();
             const cx = e.touches ? e.touches[0].clientX : e.clientX;
             const cy = e.touches ? e.touches[0].clientY : e.clientY;
@@ -1787,9 +1819,9 @@
         // --- LOCK SCROLL ON PET PAGE ONLY ---
         const content = document.querySelector('.content');
         if(id === 'pet') {
-            content.classList.add('no-scroll');
+            content.classList.add('no-scroll-on-stage');
         } else {
-            content.classList.remove('no-scroll');
+            content.classList.remove('no-scroll-on-stage');
         }
 
         document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); 
