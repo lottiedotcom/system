@@ -115,9 +115,9 @@
     
     /* SCROLL CONTROLS */
     .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; padding-bottom: 120px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }  
-    .content.no-scroll { overflow: hidden; } /* NEW CLASS TO LOCK SCROLL */
+    .content.no-scroll { overflow: hidden; } /* LOCK SCROLL */
 
-    .page { display: none; animation: popIn 0.3s; height: 100%; }  /* Ensure height for lock */
+    .page { display: none; animation: popIn 0.3s; height: 100%; }  
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
@@ -191,19 +191,27 @@
 
     /* --- PET --- */  
     .pet-stage { 
-        height: 100%; width: 100%; position: relative; /* FULL SCREEN */
+        height: 100%; width: 100%; position: relative; 
         border: 4px ridge var(--main); border-radius: 20px; 
-        background: rgba(255,255,255,0.1); 
+        background-color: rgba(255,255,255,0.1); 
+        background-size: cover; background-position: center; /* FOR BEDROOM WALLPAPERS */
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
         overflow: hidden; display: flex; align-items: center; justify-content: center; 
     }  
-    .ebi-img { width: 160px; pointer-events: none; z-index: 5; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto; }  
-    .ebi-img:active { transform: scale(0.95); filter: brightness(1.2); } /* Click effect */
+    
+    /* SCALABLE EBI */
+    .ebi-img { 
+        width: 160px; pointer-events: auto; z-index: 5; 
+        filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); cursor: pointer; 
+        transition: transform 0.1s;
+    }  
+    .ebi-img:active { filter: brightness(1.2); }
+    .ebi-img.selected { filter: drop-shadow(0 0 10px var(--main)); }
 
-    /* UPDATED STICKER CLASS FOR SCALING */
+    /* UPDATED STICKER CLASS */
     .sticker { 
         position: absolute; cursor: grab; z-index: 10; user-select: none; width: 80px; height: auto; 
-        transition: transform 0.1s; /* Smooth scaling */
+        transition: transform 0.1s; 
     }
     .sticker.selected {
         filter: drop-shadow(0 0 5px var(--main));
@@ -275,17 +283,20 @@
     .dream-blur { filter: blur(3px); transition: filter 0.3s; cursor: pointer; }
     .dream-blur:hover { filter: blur(0); }
     
-    .sensory-slider {
-        margin-bottom: 15px;
-    }
+    /* NEW CUSTOM SLIDERS */
+    .sensory-slider { margin-bottom: 15px; }
     .sensory-label {
         display: flex; justify-content: space-between; font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;
     }
     .sensory-range {
-        width: 100%; -webkit-appearance: none; height: 5px; border-radius: 5px; background: #333; outline: none;
+        width: 100%; -webkit-appearance: none; height: 10px; background: transparent; cursor: pointer;
+    }
+    .sensory-range::-webkit-slider-runnable-track {
+        width: 100%; height: 8px; background: repeating-linear-gradient(90deg, #333 0, #333 2px, transparent 2px, transparent 4px);
+        border: 1px solid #555;
     }
     .sensory-range::-webkit-slider-thumb {
-        -webkit-appearance: none; appearance: none; width: 15px; height: 15px; border-radius: 50%; background: #e6e6fa; cursor: pointer; border: 2px solid #483d8b;
+        -webkit-appearance: none; height: 16px; width: 16px; background: #e6e6fa; margin-top: -5px; border: 2px solid #483d8b; box-shadow: 0 0 5px #e6e6fa;
     }
     
     /* FIXED RESIDUE SCANNER STYLING */
@@ -638,8 +649,8 @@
                 </label>
                 
                 <button class="btn-action" style="background:#7e57c2; margin-top:10px;" onclick="saveDream()">Log Dream</button>
+                <button class="btn-action" style="background:#555; margin-top:5px;" onclick="openDreamArchive()">📖 Open Dream Diary</button>
             </div>
-            <div id="dream-feed" style="margin-top:20px;"></div>
         </div>
 
         <div id="page-diary" class="page">  
@@ -737,6 +748,14 @@
     </div>
 </div>
 
+<div id="modal-dream-archive" class="modal">
+    <div class="modal-card">
+        <h3>Dream Archives</h3>
+        <div id="dream-feed" style="max-height:60vh; overflow-y:auto; margin-bottom:10px;"></div>
+        <button class="btn-action" style="background:#ccc;" onclick="closeModals()">Close</button>
+    </div>
+</div>
+
 <div id="modal-backpack" class="modal">  
     <div class="modal-card">  
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -766,13 +785,15 @@
         currentFrontStart: 0, 
         activeAlert: null,
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
-        diary: [], settings: { crt: true }  
+        diary: [], settings: { crt: true },
+        roomWallpaper: "", // New Bedroom BG state
+        ebiScale: 1 // New Ebi Scale state
     };  
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
     let isSelling = false;
     let selectedMsgIndex = -1;
     let tempDreamImg = ""; // For Residue Scanner
-    let selectedDecorIndex = -1; // For sticker resizing
+    let selectedDecorIndex = -2; // -2 = None, -1 = Ebi, 0+ = Stickers
 
     // LOOT TABLE
     const LOOT_ITEMS = [
@@ -780,6 +801,15 @@
         "bg-stars-bw", "bg-music-pink", "bg-stars-classic", "bg-bow-classic",
         "bg-strawberry", "bg-heart-bp", "bg-polka-classic",
         "bg-stars-2", "bg-heart-pink", "bg-stars-y2k", "bg-stars-pink", "bg-heart-by", "bg-polka-pink",
+        
+        // BEDROOM WALLPAPERS
+        "https://i.postimg.cc/DZ5qstqb/10b51003f5fc0df41075f24861363d7d.jpg",
+        "https://i.postimg.cc/qRQ8n983/327b16e3d5893b32482b5642782105d5.jpg",
+        "https://i.postimg.cc/wvFhJSht/7de5e7ad4933d616d390e74c5405ebc8.jpg",
+        "https://i.postimg.cc/mDTYPbFM/891e1ee9f917421887230a1f93c50e74.jpg",
+        "https://i.postimg.cc/pTkD8gD5/fdfddf6e776fd0428aa1e486741fe780.jpg",
+
+        // STICKERS
         "https://i.postimg.cc/4dFyJtrX/12d9131d2320519e1e23f5f678427396.png",
         "https://i.postimg.cc/zBPvJW46/3e4f2fa5b124701b5f17089d9ab9b737.png",
         "https://i.postimg.cc/hjGhWMZ5/62695aafc7da6361407abf3a87ecafb6.png",
@@ -809,9 +839,17 @@
         "https://i.postimg.cc/SN9RhnVJ/ee455254fdc48289bf096e1eb048e089.png",
         "https://i.postimg.cc/KvTj21fw/f91a9c969269fdedf2e437391eda83e8.png"
     ];  
-    const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!", "Hydrate!", "Rest up!", "Good job!", "Proud of u!", "Safe here."];  
     
-    // EXPANDED CLINICAL ORDERS
+    // BEDROOM ONLY BACKGROUNDS
+    const ROOM_WALLPAPERS = [
+        "https://i.postimg.cc/DZ5qstqb/10b51003f5fc0df41075f24861363d7d.jpg",
+        "https://i.postimg.cc/qRQ8n983/327b16e3d5893b32482b5642782105d5.jpg",
+        "https://i.postimg.cc/wvFhJSht/7de5e7ad4933d616d390e74c5405ebc8.jpg",
+        "https://i.postimg.cc/mDTYPbFM/891e1ee9f917421887230a1f93c50e74.jpg",
+        "https://i.postimg.cc/pTkD8gD5/fdfddf6e776fd0428aa1e486741fe780.jpg"
+    ];
+
+    const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!", "Hydrate!", "Rest up!", "Good job!", "Proud of u!", "Safe here."];  
     const CLINICAL_ORDERS = [
         "HYDRATION ORDER: Administer 200ml H2O immediately.",
         "POSTURE CHECK: Realignment of spine required.",
@@ -848,6 +886,7 @@
         if(!DB.dreamLog) DB.dreamLog = [];
         if(!DB.stamps) DB.stamps = 0;
         if(!DB.currentFrontStart) DB.currentFrontStart = Date.now();
+        if(!DB.ebiScale) DB.ebiScale = 1;
 
         DB.profiles.forEach(p => {
             if(!p.likes) p.likes = [];
@@ -1123,6 +1162,21 @@
     // --- DECOR ---  
     function renderDecor() {  
         const l = document.getElementById('decor-layer'); l.innerHTML="";   
+        
+        // APPLY ROOM BG IF EXISTS
+        const stage = document.getElementById('pet-stage');
+        if (DB.roomWallpaper) {
+            stage.style.backgroundImage = `url('${DB.roomWallpaper}')`;
+        } else {
+            stage.style.backgroundImage = "none";
+        }
+
+        // RENDER EBI
+        const ebi = document.querySelector('.ebi-img');
+        const eScale = DB.ebiScale || 1;
+        ebi.style.transform = `scale(${eScale})`;
+
+        // RENDER STICKERS
         DB.decor.forEach((d, index) => {  
             const el = document.createElement('div'); el.className='sticker'; 
             // APPLY SCALE
@@ -1168,52 +1222,88 @@
         
         // Hide controls if clicked outside
         document.getElementById('pet-stage').onclick = (e) => {
-            // Only deselect if clicking the background, not if clicking Ebi
             if(e.target.id === 'pet-stage' || e.target.id === 'decor-layer') {
                 deselectSticker();
             }
         };
     }  
     
-    // --- STICKER CONTROLS ---
-    function selectSticker(index) {
-        selectedDecorIndex = index;
+    // --- CLICKER & SELECTION FUNCTIONALITY ---
+    function clickEbi(e) {
+        e.stopPropagation(); 
+        
+        // 1. SELECT EBI FOR SCALING
+        selectedDecorIndex = -1; // -1 represents Ebi
         const ctrls = document.getElementById('decor-controls');
         const slider = document.getElementById('scale-slider');
+        const delBtn = ctrls.querySelector('button');
+        
+        // Highlight logic
+        document.querySelector('.ebi-img').classList.add('selected');
+        document.querySelectorAll('.sticker').forEach(s => s.classList.remove('selected'));
+
+        slider.value = DB.ebiScale || 1;
+        delBtn.style.display = 'none'; // Cannot delete Ebi
+        ctrls.style.display = 'flex';
+
+        // 2. ADD XP LOGIC
+        DB.xp += 1;
+        document.getElementById('cp-display').innerText = DB.xp;
+        
+        const rng = Math.random();
+        if(rng < 0.2) {
+            triggerEbiChat();
+        } else if(rng > 0.95) {
+            logToConsole("⚠️ GLITCH DETECTED: +5 XP");
+            DB.xp += 5;
+        }
+        save();
+    }
+
+    function selectSticker(index) {
+        selectedDecorIndex = index; // 0+ represents stickers
+        const ctrls = document.getElementById('decor-controls');
+        const slider = document.getElementById('scale-slider');
+        const delBtn = ctrls.querySelector('button');
         const d = DB.decor[index];
         
-        // Highlight logic could go here (add class)
+        document.querySelector('.ebi-img').classList.remove('selected');
         document.querySelectorAll('.sticker').forEach((s, i) => {
             if(i === index) s.classList.add('selected');
             else s.classList.remove('selected');
         });
 
         slider.value = d.s || 1;
+        delBtn.style.display = 'block'; // Can delete stickers
         ctrls.style.display = 'flex';
     }
 
     function deselectSticker() {
-        selectedDecorIndex = -1;
+        selectedDecorIndex = -2; // None selected
         document.getElementById('decor-controls').style.display = 'none';
         document.querySelectorAll('.sticker').forEach(s => s.classList.remove('selected'));
+        document.querySelector('.ebi-img').classList.remove('selected');
     }
 
     function updateDecorScale(val) {
-        if(selectedDecorIndex > -1) {
+        if(selectedDecorIndex === -1) {
+            // Scale Ebi
+            DB.ebiScale = val;
+            document.querySelector('.ebi-img').style.transform = `scale(${val})`;
+        } else if (selectedDecorIndex >= 0) {
+            // Scale Sticker
             DB.decor[selectedDecorIndex].s = val;
             const stickers = document.querySelectorAll('.sticker');
             if(stickers[selectedDecorIndex]) {
                 stickers[selectedDecorIndex].style.transform = `scale(${val})`;
             }
-            save();
         }
+        save();
     }
 
     function deleteSelectedDecor() {
-        if(selectedDecorIndex > -1) {
-            // Return to inventory
+        if(selectedDecorIndex >= 0) {
             DB.inventory.push(DB.decor[selectedDecorIndex].i);
-            // Remove from decor
             DB.decor.splice(selectedDecorIndex, 1);
             save();
             deselectSticker();
@@ -1222,33 +1312,7 @@
         }
     }
 
-    // --- CLICKER FUNCTIONALITY (NEW) ---
-    function clickEbi(e) {
-        // Prevent event bubbling if clicking Ebi so it doesn't deselect stickers instantly
-        e.stopPropagation(); 
-        
-        // Add XP
-        DB.xp += 1;
-        document.getElementById('cp-display').innerText = DB.xp;
-        
-        // Animation effect
-        const img = document.querySelector('.ebi-img');
-        img.style.transform = "scale(0.9)";
-        setTimeout(() => img.style.transform = "scale(1)", 100);
-
-        // Random chance for "Glitch" reward or dialogue
-        const rng = Math.random();
-        if(rng < 0.2) {
-            triggerEbiChat();
-        } else if(rng > 0.95) {
-            logToConsole("⚠️ GLITCH DETECTED: +5 XP");
-            DB.xp += 5;
-        }
-
-        save();
-    }
-
-    // --- FIXED BACKPACK (STACKING LOGIC + SELL MODE) ---
+    // --- FIXED BACKPACK ---
     function toggleSell() {
         isSelling = !isSelling;
         const btn = document.getElementById('sell-btn');
@@ -1289,7 +1353,20 @@
                 badge = `<span style="position:absolute; bottom:0; right:0; background:red; color:white; font-size:0.6rem; padding:2px 5px; border-radius:10px;">x${counts[item]}</span>`;
             }
             
-            if(item.startsWith('bg-')) {  
+            // LOGIC FOR BEDROOM vs OS WALLPAPERS
+            if(ROOM_WALLPAPERS.includes(item)) {
+                // IT IS A BEDROOM WALLPAPER
+                b.innerHTML = `<img src="${item}" style="width:50px; height:50px; object-fit:cover; border:2px solid #7e57c2; border-radius:5px;">` + badge;
+                b.onclick = () => {
+                    if(isSelling) {
+                        const realIndex = DB.inventory.indexOf(item); 
+                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } 
+                        save(); openBackpack();
+                    } else {
+                        DB.roomWallpaper = item; save(); refreshAll(); closeModals(); nav('pet');
+                    }
+                };
+            } else if(item.startsWith('bg-')) {  
                 let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerHTML=icon; 
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
                 
@@ -1310,7 +1387,6 @@
                         if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 10; }
                         save(); openBackpack(); 
                     } else {
-                        // ADD TO DECOR WITH DEFAULT SCALE
                         DB.decor.push({i:item, x:50, y:50, s:1}); 
                         const realIndex = DB.inventory.indexOf(item); 
                         if(realIndex > -1) DB.inventory.splice(realIndex, 1); 
@@ -1386,6 +1462,7 @@
             rewards.forEach(r => {
                 let inner = "";
                 if(r.startsWith('bg-')) inner = BG_ICONS[r] || "🖼️";
+                else if (ROOM_WALLPAPERS.includes(r)) inner = `<img src="${r}" style="border:2px solid #7e57c2">`;
                 else inner = `<img src="${r}">`;
                 showcase.innerHTML += `<div class="reward-item-display">${inner}</div>`;
             });
@@ -1431,6 +1508,8 @@
             if(item.startsWith('bg-')) { 
                 const icon = BG_ICONS[item] || "🖼️"; 
                 msg = `Rx Filled!\n\nReceived: ${icon} Wallpaper`; 
+            } else if (ROOM_WALLPAPERS.includes(item)) {
+                msg = `Rx Filled!\n\nReceived: New Room Wallpaper`;
             } else if(item.startsWith('http')) {
                 msg = `Rx Filled!\n\nReceived: New Sticker!`;
             }
@@ -1506,7 +1585,7 @@
                 loc: loc, 
                 nostalgia: nostalgia, presence: presence, reality: reality,
                 ent: ent, txt: txt,
-                img: tempDreamImg // Save image
+                img: tempDreamImg 
             });
             // Reset form
             document.getElementById('dream-loc').value="";
@@ -1514,7 +1593,11 @@
             document.getElementById('dream-text').value="";
             document.getElementById('dream-preview').style.display='none';
             tempDreamImg = "";
-            save(); renderDreamLog();
+            save(); 
+            
+            // INSTANT CONFIRMATION
+            alert("Archive Logged.");
+            renderDreamLog(); // Updates the hidden feed
         }
     }
 
@@ -1522,7 +1605,6 @@
         const f = document.getElementById('dream-feed');
         f.innerHTML = "";
         DB.dreamLog.forEach((d, i) => {
-            // Safe fallback for old logs
             const nos = d.nostalgia || 0;
             const pre = d.presence || 0;
             const rea = d.reality || 0;
@@ -1546,6 +1628,11 @@
                 <button style="color:red; background:none; border:none; float:right; cursor:pointer;" onclick="if(confirm('Forget this dream?')){DB.dreamLog.splice(${i},1); save(); renderDreamLog();}">x</button>
             </div>`;
         });
+    }
+    
+    function openDreamArchive() {
+        renderDreamLog();
+        document.getElementById('modal-dream-archive').style.display = 'flex';
     }
   
     // --- MISC & PRIVATE DIARY ---  
