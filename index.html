@@ -92,7 +92,7 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL --- */  
+    /* --- APP SHELL & SCROLLING FIX --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
@@ -102,15 +102,8 @@
     body.fx-active .app-shell { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
     
     /* SCROLL CONTROLS */
-    .content { 
-        flex: 1; 
-        overflow-y: auto; 
-        overflow-x: hidden; 
-        padding: 20px; 
-        padding-bottom: 120px; 
-        scroll-behavior: smooth; 
-        -webkit-overflow-scrolling: touch; 
-    }  
+    .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; padding-bottom: 120px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }  
+    
     /* FIXED: Pet Page grows with content, but Stage handles touch */
     #page-pet { display: none; flex-direction: column; height: auto; }
     #page-pet.active { display: flex; }
@@ -222,10 +215,10 @@
     /* SPEECH BUBBLE: FIXED TO TOP OF PET STAGE */
     .speech-bubble {  
         position: absolute; 
-        top: 10%; left: 50%; transform: translateX(-50%) scale(0);  
+        top: 20px; left: 50%; transform: translateX(-50%) scale(0);  
         background: white; padding: 10px 15px; border-radius: 20px; border: 2px solid var(--main);  
         font-size: 0.9rem; font-weight: bold; 
-        z-index: 9999; /* MAX VISIBILITY */
+        z-index: 10000; /* MAX VISIBILITY OVER STICKERS */
         text-align: center;  
         box-shadow: 0 5px 10px rgba(0,0,0,0.2);
         transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
@@ -801,7 +794,8 @@
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true },
         roomWallpaper: "", 
-        ebiScale: 1 
+        ebiScale: 1,
+        ebiPos: { x: 50, y: 50 }
     };
     
     let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
@@ -810,7 +804,8 @@
     let isSelling = false;
     let selectedMsgIndex = -1;
     let tempDreamImg = ""; 
-    let selectedDecorIndex = -2; 
+    let selectedDecorIndex = -2; // -2=None, -1=Ebi, 0+=Sticker
+    let chatTimeout = null;
 
     // LOOT TABLE
     const LOOT_ITEMS = [
@@ -865,28 +860,46 @@
         'bg-stars-2': '🌟', 'bg-heart-pink': '💖', 'bg-stars-y2k': '💫', 
         'bg-stars-pink': '🌸', 'bg-heart-by': '💙', 'bg-polka-pink': '🟣'
     };
+    
+    const ROOM_WALLPAPERS = [
+        "https://i.postimg.cc/DZ5qstqb/10b51003f5fc0df41075f24861363d7d.jpg",
+        "https://i.postimg.cc/qRQ8n983/327b16e3d5893b32482b5642782105d5.jpg",
+        "https://i.postimg.cc/wvFhJSht/7de5e7ad4933d616d390e74c5405ebc8.jpg",
+        "https://i.postimg.cc/mDTYPbFM/891e1ee9f917421887230a1f93c50e74.jpg",
+        "https://i.postimg.cc/pTkD8gD5/fdfddf6e776fd0428aa1e486741fe780.jpg"
+    ];
+
+    const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!", "Hydrate!", "Rest up!", "Good job!", "Proud of u!", "Safe here."];  
+    const CLINICAL_ORDERS = [
+        "HYDRATION ORDER: Administer 200ml H2O immediately.",
+        "POSTURE CHECK: Realignment of spine required.",
+        "REALITY ANCHOR: Name 5 blue objects in vicinity.",
+        "DOPAMINE REGULATION: Listen to one (1) comfort track.",
+        "SENSORY RESET: Close eyes for 120 seconds.",
+        "NUTRITION PROTOCOL: Consume one small unit of protein.",
+        "OXYGEN INTAKE: Perform 4-7-8 breathing sequence.",
+        "VISION PRESERVATION: Look at object 20ft away.",
+        "STIMULATION CONTROL: Reduce screen brightness by 20%.",
+        "GROUNDING: Touch a cold surface."
+    ];
+    
+    const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
 
     window.onload = () => {  
         const saved = localStorage.getItem('seiren_fixed_v87'); 
         if(saved) { 
             try { 
                 const parsed = JSON.parse(saved); 
-                // MERGE SAVED DATA WITH DEFAULT STRUCTURE TO PREVENT CRASHES ON OLD BACKUPS
                 DB = { ...DEFAULT_DB, ...parsed };
-                
-                // Ensure arrays exist
                 if(!DB.profiles) DB.profiles = DEFAULT_DB.profiles;
                 if(!DB.inventory) DB.inventory = [];
                 if(!DB.decor) DB.decor = [];
                 
-                // SAFETY CHECK: Ensure channels exist (Fixes "Chat Not Working" bug)
+                // ENSURE CHANNELS EXIST
                 if(!DB.channels || Object.keys(DB.channels).length === 0) {
                      DB.channels = { 'gen': {name:'general', msgs:[]} };
                 }
-
-            } catch(e) { 
-                console.error("Save corrupted, resetting.");
-            } 
+            } catch(e) { console.error("Save corrupted, resetting."); } 
         }  
 
         document.getElementById('sys-name-input').value = DB.sysName || "SEIREN OS";  
@@ -931,7 +944,7 @@
     }  
   
     function loadUI() {  
-        const p = DB.profiles[DB.active] || DB.profiles[0]; // Fallback safety
+        const p = DB.profiles[DB.active] || DB.profiles[0]; 
         document.documentElement.style.setProperty('--main', p.color);  
         document.getElementById('sys-name-display').innerText = DB.sysName;  
         document.getElementById('dash-name').innerText = p.name;  
@@ -1063,8 +1076,8 @@
     function saveBioNotes() { DB.profiles[DB.active].notes = document.getElementById('notes-in').value; save(); }
   
     function toggleSidebar() { document.getElementById('chan-list').classList.toggle('hidden'); const btn = document.querySelector('.sidebar-toggle'); btn.innerText = btn.innerText === '<' ? '>' : '<'; }  
-    function renderChat() {
-        // SAFETY CHECK: Re-initialize channels if missing
+    function renderChat() {  
+        // FIX: Ensure Channels exist
         if(!DB.channels) DB.channels = { 'gen': {name:'general', msgs:[]} };
         
         const list = document.getElementById('chan-list'); list.innerHTML="";  
@@ -1078,7 +1091,7 @@
         add.onclick = () => { const n=prompt("Name:"); if(n){ const id=n.toLowerCase().replace(/\s/g,''); DB.channels[id]={name:n, msgs:[]}; save(); renderChat(); }};  
         list.appendChild(add);  
         
-        const c = DB.channels[DB.curChan] || DB.channels['gen']; // Fallback
+        const c = DB.channels[DB.curChan] || DB.channels['gen'];
         document.getElementById('chan-title').innerText = "#" + c.name;  
         const feed = document.getElementById('chat-feed'); feed.innerHTML="";  
         c.msgs.forEach((m, idx) => { 
@@ -1103,6 +1116,9 @@
         
         if(txt.startsWith("> Quoting:")) { }
         
+        // FIX: Ensure channel exists before pushing
+        if(!DB.channels[DB.curChan]) DB.channels[DB.curChan] = {name:'general', msgs:[]};
+
         DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:txt, img:chatImg, time:time });  
         i.value=""; chatImg=""; save(); renderChat();  
     } 
@@ -1160,7 +1176,7 @@
     function renderDecor() {  
         const l = document.getElementById('decor-layer'); l.innerHTML="";   
         
-        // APPLY ROOM BG IF EXISTS
+        // APPLY ROOM BG
         const stage = document.getElementById('pet-stage');
         if (DB.roomWallpaper) {
             stage.style.backgroundImage = `url('${DB.roomWallpaper}')`;
@@ -1170,17 +1186,12 @@
 
         // RENDER EBI
         const ebi = document.querySelector('.ebi-img');
-        
-        // Initialize position if missing
         if(!DB.ebiPos) DB.ebiPos = { x: 50, y: 50 };
-        
-        // Apply position and scale
         ebi.style.left = DB.ebiPos.x + "%";
         ebi.style.top = DB.ebiPos.y + "%";
         const eScale = DB.ebiScale || 1;
         ebi.style.transform = `translate(-50%, -50%) scale(${eScale})`;
         
-        // Re-attach listeners for Ebi dragging
         makeEbiDraggable(ebi);
 
         // RENDER STICKERS
@@ -1210,12 +1221,8 @@
             };  
             const end = () => { if(isDrag){ isDrag=false; save(); } };  
             
-            el.onmousedown = (e) => { 
-                e.stopPropagation(); isDrag=true; selectSticker(index); 
-            }; 
-            el.ontouchstart = (e) => { 
-                e.stopPropagation(); isDrag=true; selectSticker(index); 
-            };  
+            el.onmousedown = (e) => { e.stopPropagation(); isDrag=true; selectSticker(index); }; 
+            el.ontouchstart = (e) => { e.stopPropagation(); isDrag=true; selectSticker(index); };  
             
             window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive:false}); window.addEventListener('mouseup', end); window.addEventListener('touchend', end);  
             l.appendChild(el);  
@@ -1228,59 +1235,34 @@
         };
     }
     
-    // --- EBI DRAG LOGIC ---
+    // --- EBI DRAG ---
     function makeEbiDraggable(el) {
         let isDrag = false;
-
         const move = (e) => {
             if (!isDrag) return;
             const b = document.getElementById('pet-stage').getBoundingClientRect();
             const cx = e.touches ? e.touches[0].clientX : e.clientX;
             const cy = e.touches ? e.touches[0].clientY : e.clientY;
-
-            // Calculate percentage position
             let nx = ((cx - b.left) / b.width) * 100;
             let ny = ((cy - b.top) / b.height) * 100;
-
-            // Update state and visual
             DB.ebiPos = { x: nx, y: ny };
             el.style.left = nx + "%";
             el.style.top = ny + "%";
         };
-
-        const end = () => {
-            if (isDrag) {
-                isDrag = false;
-                save();
-            }
-        };
-
+        const end = () => { if (isDrag) { isDrag = false; save(); } };
         const start = (e) => {
-            // Only drag if NOT selected for scale
-            if(selectedDecorIndex === -1) {
-                e.preventDefault(); 
-                e.stopPropagation();
-                isDrag = true;
-            } else {
-                clickEbi(e);
-            }
+            if(selectedDecorIndex === -1) { e.preventDefault(); e.stopPropagation(); isDrag = true; } 
+            else { clickEbi(e); }
         };
-
-        el.onmousedown = start;
-        el.ontouchstart = start;
-        
-        // Use window listeners to ensure drag doesn't break if mouse leaves element
-        window.addEventListener('mousemove', move);
-        window.addEventListener('touchmove', move, { passive: false });
-        window.addEventListener('mouseup', end);
-        window.addEventListener('touchend', end);
+        el.onmousedown = start; el.ontouchstart = start;
+        window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, { passive: false });
+        window.addEventListener('mouseup', end); window.addEventListener('touchend', end);
     }
     
-    // --- CLICKER & SELECTION FUNCTIONALITY ---
+    // --- CLICKER / CHAT ---
     function clickEbi(e) {
         e.stopPropagation(); 
-        
-        selectedDecorIndex = -1; // -1 represents Ebi
+        selectedDecorIndex = -1; 
         const ctrls = document.getElementById('decor-controls');
         const slider = document.getElementById('scale-slider');
         const delBtn = ctrls.querySelector('button');
@@ -1289,16 +1271,13 @@
         document.querySelectorAll('.sticker').forEach(s => s.classList.remove('selected'));
 
         slider.value = DB.ebiScale || 1;
-        delBtn.style.display = 'none'; // Cannot delete Ebi
+        delBtn.style.display = 'none'; 
         ctrls.style.display = 'flex';
 
-        // Add XP
         DB.xp += 1;
         document.getElementById('cp-display').innerText = DB.xp;
         
-        // TRIGGER CHAT (100% chance on click now for feedback)
         triggerEbiChat();
-        
         save();
     }
 
@@ -1331,7 +1310,6 @@
         if(selectedDecorIndex === -1) {
             DB.ebiScale = val;
             const ebi = document.querySelector('.ebi-img');
-            // Must re-apply translate for centering
             ebi.style.transform = `translate(-50%, -50%) scale(${val})`;
         } else if (selectedDecorIndex >= 0) {
             DB.decor[selectedDecorIndex].s = val;
@@ -1354,7 +1332,45 @@
         }
     }
 
-    // --- FIXED BACKPACK ---
+    // --- CONSOLE & BUBBLE ---
+    function logToConsole(msg) {
+        if(!DB.consoleHistory) DB.consoleHistory = [];
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        DB.consoleHistory.push(`${time} - ${msg}`);
+        if(DB.consoleHistory.length > 50) DB.consoleHistory.shift(); 
+        save();
+        renderConsole();
+    }
+
+    function renderConsole() {
+        const feed = document.getElementById('console-log-feed');
+        if(!feed) return;
+        feed.innerHTML = "";
+        if(DB.consoleHistory) {
+            [...DB.consoleHistory].reverse().forEach(line => {
+                feed.innerHTML += `<div class="log-line">${line}</div>`;
+            });
+        }
+    }
+
+    function triggerEbiChat() {
+        // Clear old timeout to prevent glitches
+        if(chatTimeout) clearTimeout(chatTimeout);
+
+        const quote = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)];
+        logToConsole(`Ebi says: "${quote}"`);
+        
+        const bub = document.getElementById('pet-speech'); 
+        bub.innerText = quote; 
+        
+        // Force reflow
+        bub.classList.remove('show');
+        void bub.offsetWidth; 
+        bub.classList.add('show'); 
+        
+        chatTimeout = setTimeout(()=>bub.classList.remove('show'), 3000); 
+    }
+
     function toggleSell() {
         isSelling = !isSelling;
         const btn = document.getElementById('sell-btn');
@@ -1386,6 +1402,14 @@
             return aBg === bBg ? 0 : aBg ? 1 : -1; 
         });
 
+        const ROOM_WALLPAPERS = [
+        "https://i.postimg.cc/DZ5qstqb/10b51003f5fc0df41075f24861363d7d.jpg",
+        "https://i.postimg.cc/qRQ8n983/327b16e3d5893b32482b5642782105d5.jpg",
+        "https://i.postimg.cc/wvFhJSht/7de5e7ad4933d616d390e74c5405ebc8.jpg",
+        "https://i.postimg.cc/mDTYPbFM/891e1ee9f917421887230a1f93c50e74.jpg",
+        "https://i.postimg.cc/pTkD8gD5/fdfddf6e776fd0428aa1e486741fe780.jpg"
+        ];
+
         uniqueItems.forEach(item => {  
             const b = document.createElement('div'); 
             b.style.fontSize="2.5rem"; b.style.cursor="pointer"; b.style.position="relative"; 
@@ -1395,9 +1419,7 @@
                 badge = `<span style="position:absolute; bottom:0; right:0; background:red; color:white; font-size:0.6rem; padding:2px 5px; border-radius:10px;">x${counts[item]}</span>`;
             }
             
-            // LOGIC FOR BEDROOM vs OS WALLPAPERS
             if(ROOM_WALLPAPERS.includes(item)) {
-                // IT IS A BEDROOM WALLPAPER
                 b.innerHTML = `<img src="${item}" style="width:50px; height:50px; object-fit:cover; border:2px solid #7e57c2; border-radius:5px;">` + badge;
                 b.onclick = () => {
                     if(isSelling) {
@@ -1411,7 +1433,6 @@
             } else if(item.startsWith('bg-')) {  
                 let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerHTML=icon; 
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
-                
                 b.onclick = () => { 
                     if(isSelling) {
                         const realIndex = DB.inventory.indexOf(item); 
@@ -1440,372 +1461,6 @@
         });  
     }  
 
-    function clearDecor(){ 
-        DB.decor.forEach(d => { DB.inventory.push(d.i); });
-        DB.decor=[]; save(); renderDecor(); closeModals(); alert("Items returned to Backpack!");
-    }  
-  
-    // --- PHARMACY ---  
-    function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div style="border-bottom:1px dotted #ccc; margin-bottom:5px;">${i} ... ${p} XP</div>`; pendingXP+=p; }  
-    function processReceipt() { 
-        if(pendingXP>0){ 
-            DB.xp+=pendingXP; 
-            DB.stamps = (DB.stamps || 0) + 1; // ADD STAMP
-            if(DB.stamps > 10) DB.stamps = 10; // Cap at 10 until redeemed
-            
-            // NEW EXPANDED PRESCRIPTION LOGIC
-            const task = CLINICAL_ORDERS[Math.floor(Math.random()*CLINICAL_ORDERS.length)]; 
-            
-            alert(`✅ Receipt Processed\n\n+${pendingXP} XP\n\n📋 CLINICAL ORDER:\n"${task}"\n\n💊 STAMP ADDED TO CARD`); 
-            logToConsole(`Processed: +${pendingXP} XP`); 
-            pendingXP=0; 
-            document.getElementById('receipt-list').innerHTML=""; 
-            save(); refreshAll();
-        } else {
-            // FIX: ALERT USER IF NOTHING LOGGED
-            alert("⚠️ No symptoms logged!\n\nTap some buttons above first.");
-        }
-    }  
-    
-    function renderStamps() {
-        const grid = document.getElementById('stamp-grid');
-        if(!grid) return;
-        grid.innerHTML = "";
-        for(let i=0; i<10; i++) {
-            const slot = document.createElement('div');
-            slot.className = 'stamp-slot';
-            if(i < DB.stamps) {
-                // Use the user provided stamp URL
-                slot.innerHTML = '<img src="https://i.postimg.cc/q7zPC5qM/ec9635acf11fbbb9c3b0bbfec3b6eb30.png" class="stamp-mark">';
-            }
-            grid.appendChild(slot);
-        }
-        
-        const btn = document.getElementById('reward-btn');
-        if(DB.stamps >= 10) {
-            btn.style.display = 'block';
-        } else {
-            btn.style.display = 'none';
-        }
-    }
-
-    // --- NEW REWARD ANIMATION FUNCTION ---
-    function claimReward() {
-        if(DB.stamps >= 10) {
-            // Reward: 3 Random Items
-            let rewards = [];
-            for(let i=0; i<3; i++) rewards.push(LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)]);
-            
-            // Add to inventory immediately
-            DB.inventory.push(...rewards);
-            
-            // Show Overlay
-            const screen = document.getElementById('reward-screen');
-            const showcase = document.getElementById('reward-showcase');
-            showcase.innerHTML = "";
-            
-            rewards.forEach(r => {
-                let inner = "";
-                if(r.startsWith('bg-')) inner = BG_ICONS[r] || "🖼️";
-                else if (ROOM_WALLPAPERS.includes(r)) inner = `<img src="${r}" style="border:2px solid #7e57c2">`;
-                else inner = `<img src="${r}">`;
-                showcase.innerHTML += `<div class="reward-item-display">${inner}</div>`;
-            });
-
-            // Create Confetti
-            for(let i=0; i<50; i++) {
-                const c = document.createElement('div');
-                c.className = 'confetti';
-                c.style.left = Math.random() * 100 + "%";
-                c.style.top = -10 + "px";
-                c.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
-                c.style.animationDuration = (Math.random() * 3 + 2) + "s";
-                screen.appendChild(c);
-            }
-            
-            screen.style.display = 'flex';
-        }
-    }
-
-    function closeRewardScreen() {
-        DB.stamps = 0;
-        save();
-        refreshAll();
-        document.getElementById('reward-screen').style.display = 'none';
-        // Remove confetti
-        const conf = document.querySelectorAll('.confetti');
-        conf.forEach(c => c.remove());
-    }
-
-    function fillPrescription() {   
-        if(DB.xp>=50){   
-            DB.xp-=50; let item = ""; let attempts = 0;
-            do { item = LOOT_ITEMS[Math.floor(Math.random()*LOOT_ITEMS.length)]; attempts++; if (item.startsWith('bg-') && DB.inventory.includes(item)) { item = "DUPE"; } } while (item === "DUPE" && attempts < 10);
-            if (item === "DUPE") { const consumables = LOOT_ITEMS.filter(i => !i.startsWith('bg-')); item = consumables[Math.floor(Math.random()*consumables.length)]; }
-            DB.inventory.push(item);  
-            
-            const speech = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)]; 
-            const bub = document.getElementById('pet-speech'); bub.innerText = speech; bub.classList.add('show'); setTimeout(()=>bub.classList.remove('show'), 2000);  
-            
-            logToConsole(`Rx Filled. -50 XP`); 
-            
-            let msg = `Rx Filled!\n\nReceived: Item`; 
-            if(item.startsWith('bg-')) { 
-                const icon = BG_ICONS[item] || "🖼️"; 
-                msg = `Rx Filled!\n\nReceived: ${icon} Wallpaper`; 
-            } else if (ROOM_WALLPAPERS.includes(item)) {
-                msg = `Rx Filled!\n\nReceived: New Room Wallpaper`;
-            } else if(item.startsWith('http')) {
-                msg = `Rx Filled!\n\nReceived: New Sticker!`;
-            }
-            alert(msg); save(); loadUI();   
-        } else alert("Need 50 XP");   
-    }  
-
-    // --- CONSOLE LOGIC ---
-    function logToConsole(msg) {
-        if(!DB.consoleHistory) DB.consoleHistory = [];
-        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        DB.consoleHistory.push(`${time} - ${msg}`);
-        if(DB.consoleHistory.length > 50) DB.consoleHistory.shift(); 
-        save();
-        renderConsole();
-    }
-
-    function renderConsole() {
-        const feed = document.getElementById('console-log-feed');
-        if(!feed) return;
-        feed.innerHTML = "";
-        if(DB.consoleHistory) {
-            [...DB.consoleHistory].reverse().forEach(line => {
-                feed.innerHTML += `<div class="log-line">${line}</div>`;
-            });
-        }
-    }
-
-    function triggerEbiChat() {
-        const quote = EBI_TALK[Math.floor(Math.random()*EBI_TALK.length)];
-        logToConsole(`Ebi says: "${quote}"`);
-        const bub = document.getElementById('pet-speech'); 
-        bub.innerText = quote; 
-        bub.classList.add('show'); 
-        setTimeout(()=>bub.classList.remove('show'), 2000); 
-    }
-
-    // --- DREAM JOURNAL ---
-    function toggleNightMode() {
-        document.body.classList.toggle('night-mode');
-        // Auto navigate to dream journal if opening night mode
-        if(document.body.classList.contains('night-mode')) {
-            nav('dream');
-        } else {
-            nav('dash');
-        }
-    }
-    
-    function handleDreamImage(inpt) {
-        const file = inpt.files[0]; if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            tempDreamImg = e.target.result;
-            const prev = document.getElementById('dream-preview');
-            prev.src = tempDreamImg;
-            prev.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function saveDream() {
-        const loc = document.getElementById('dream-loc').value;
-        const ent = document.getElementById('dream-ent').value;
-        const txt = document.getElementById('dream-text').value;
-        
-        const nostalgia = document.getElementById('dream-nostalgia').value;
-        const presence = document.getElementById('dream-presence').value;
-        const reality = document.getElementById('dream-reality').value;
-        
-        if(txt || loc || tempDreamImg) {
-            DB.dreamLog.unshift({
-                d: new Date().toLocaleDateString(),
-                loc: loc, 
-                nostalgia: nostalgia, presence: presence, reality: reality,
-                ent: ent, txt: txt,
-                img: tempDreamImg 
-            });
-            // Reset form
-            document.getElementById('dream-loc').value="";
-            document.getElementById('dream-ent').value="";
-            document.getElementById('dream-text').value="";
-            document.getElementById('dream-preview').style.display='none';
-            tempDreamImg = "";
-            save(); 
-            
-            // INSTANT CONFIRMATION
-            alert("Archive Logged.");
-            renderDreamLog(); // Updates the hidden feed
-        }
-    }
-
-    function renderDreamLog() {
-        const f = document.getElementById('dream-feed');
-        f.innerHTML = "";
-        DB.dreamLog.forEach((d, i) => {
-            const nos = d.nostalgia || 0;
-            const pre = d.presence || 0;
-            const rea = d.reality || 0;
-            
-            f.innerHTML += `
-            <div class="dream-entry">
-                <div class="dream-blur" onclick="this.classList.remove('dream-blur')">
-                    <small style="opacity:0.7;">${d.d} • ${d.loc || 'Unknown'}</small><br>
-                    ${d.ent ? `<strong>Visitors:</strong> ${d.ent}<br>` : ''}
-                    
-                    <div style="display:flex; gap:5px; margin:5px 0;">
-                        <span style="font-size:0.6rem; border:1px solid #ccc; padding:2px 5px; border-radius:4px;">N: ${nos}%</span>
-                        <span style="font-size:0.6rem; border:1px solid #ccc; padding:2px 5px; border-radius:4px;">P: ${pre}%</span>
-                        <span style="font-size:0.6rem; border:1px solid #ccc; padding:2px 5px; border-radius:4px;">R: ${rea}%</span>
-                    </div>
-
-                    ${d.img ? `<img src="${d.img}" style="width:100%; height:auto; border-radius:5px; margin:5px 0; filter:grayscale(100%) contrast(150%); border:1px solid #7e57c2;">` : ''}
-
-                    <p style="margin-top:5px; white-space:pre-wrap;">${d.txt}</p>
-                </div>
-                <button style="color:red; background:none; border:none; float:right; cursor:pointer;" onclick="if(confirm('Forget this dream?')){DB.dreamLog.splice(${i},1); save(); renderDreamLog();}">x</button>
-            </div>`;
-        });
-    }
-    
-    function openDreamArchive() {
-        renderDreamLog();
-        document.getElementById('modal-dream-archive').style.display = 'flex';
-    }
-  
-    // --- MISC & PRIVATE DIARY ---  
-    function toggleCRT() { DB.settings.crt = document.getElementById('toggle-crt').checked; loadUI(); save(); }  
-    function enterPin(n) { tempPin+=n; document.getElementById('pin-dots').innerText="*".repeat(tempPin.length); if(tempPin.length===4){ if(tempPin===DB.lock){ document.getElementById('lock-screen').style.display='none'; document.querySelector('.app-shell').style.display='flex'; refreshAll(); } else { tempPin=""; document.getElementById('pin-dots').innerText="ERR"; }}}  
-    function clearPin(){ tempPin=""; document.getElementById('pin-dots').innerText=""; }  
-    function setLock(){ const p=document.getElementById('pin-set').value; if(p.length===4){ DB.lock=p; save(); alert("Locked!"); closeModals(); }}  
-    function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
-    function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
-    function importData(input) { 
-        const file = input.files[0]; 
-        if(!file) return; 
-        
-        const reader = new FileReader(); 
-        reader.onload=(e)=>{ 
-            try { 
-                const json = JSON.parse(e.target.result); 
-                
-                // CHECK IF THIS IS A SYSTEM BACKUP (LOOK FOR sysName)
-                if(!json.sysName && !json.profiles) {
-                    alert("⚠️ WARNING: This does not look like a System Backup file.\n\nIf this is a PluralKit file, please use the PURPLE 'Import PluralKit' button below.");
-                    input.value = "";
-                    return;
-                }
-
-                // SMART MERGE (Fixes old backups breaking new features)
-                // We keep current DB structure (DEFAULT_DB) and overwrite with loaded data
-                // This ensures new fields like 'ebiScale' or 'roomWallpaper' are not lost/undefined
-                DB = { ...DEFAULT_DB, ...json };
-                
-                // Sanity check for critical arrays
-                if(!DB.profiles) DB.profiles = DEFAULT_DB.profiles;
-                if(!DB.inventory) DB.inventory = [];
-                if(!DB.decor) DB.decor = [];
-
-                save(); 
-                alert("Backup Loaded Successfully!"); 
-                location.reload(); 
-            } catch(x) { 
-                alert("Error: Invalid Backup File. It might be corrupted."); 
-                console.error(x); 
-            } 
-        }; 
-        reader.readAsText(file); 
-        input.value = ""; 
-    }  
-    
-    // --- SIMPLIFIED PLURALKIT IMPORT ---
-    function importPluralKit(input) {
-        const file = input.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const json = JSON.parse(e.target.result);
-                let members = [];
-                
-                // 1. Detect format (Pk, Tupperbox, or raw array)
-                if (json.members && Array.isArray(json.members)) members = json.members;
-                else if (json.tuppers && Array.isArray(json.tuppers)) members = json.tuppers;
-                else if (Array.isArray(json)) members = json;
-                else if (json.name) members = [json]; // Single file
-
-                if (members.length === 0) throw new Error("No members found. Check file format.");
-
-                let count = 0;
-                members.forEach(m => {
-                    // Simple check to avoid duplicates
-                    if (!DB.profiles.some(p => p.name === m.name)) {
-                        DB.profiles.push({
-                            name: m.name || "Unknown",
-                            av: m.avatar_url || DEFAULT_AV,
-                            sign: m.pronouns || "?",
-                            age: m.birthday || "--",
-                            species: "System Member",
-                            height: "--",
-                            // JUST DUMP THE DESCRIPTION. No parsing.
-                            bio: m.description || "Imported Member",
-                            color: m.color ? "#"+m.color : "#ff69b4",
-                            id: m.id || Math.floor(Math.random()*900000),
-                            // Initialize empty arrays so the UI doesn't break
-                            likes: [],
-                            dislikes: [],
-                            notes: ""
-                        });
-                        count++;
-                    }
-                });
-
-                save();
-                alert(`Success! Imported ${count} members.`);
-                refreshAll();
-            } catch(err) {
-                alert("Import Failed: " + err.message);
-                console.error(err);
-            }
-        };
-        reader.readAsText(file);
-        input.value = ""; 
-    }
-
-    function nav(id) { 
-        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
-        const page = document.getElementById('page-'+id);
-        page.classList.add('active'); 
-        
-        // --- LOCK SCROLL ON PET PAGE ONLY ---
-        const content = document.querySelector('.content');
-        if(id === 'pet') {
-            content.classList.add('no-scroll');
-        } else {
-            content.classList.remove('no-scroll');
-        }
-
-        document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); 
-        if(id==='pet')renderDecor(); 
-        if(id==='chat')renderChat(); 
-        if(id==='diary')renderDiary(); 
-        if(id==='about')renderBio(); 
-        if(id==='dream')renderDreamLog(); 
-    }  
-    
-    function postDiary() { const t=document.getElementById('diary-in'); if(t.value){ DB.diary.unshift({d:new Date().toLocaleDateString(), n:DB.profiles[DB.active].name, uid: DB.profiles[DB.active].id, t:t.value}); t.value=""; save(); renderDiary(); } }  
-    function renderDiary() { const f=document.getElementById('diary-feed'); f.innerHTML=""; const currentID = DB.profiles[DB.active].id; const myEntries = DB.diary.filter(e => e.uid === currentID || !e.uid); myEntries.forEach((e,i)=>{ f.innerHTML+=`<div class="diary-entry"><div class="del-diary" onclick="if(confirm('Del?')){DB.diary.splice(${DB.diary.indexOf(e)},1);save();renderDiary();}">x</div><small>${e.d} • ${e.n}</small><div style="white-space:pre-wrap;">${e.t}</div></div>`; }); }  
-    
-    function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
-    function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }  
-  
     // --- SERVICE WORKER REGISTRATION ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
