@@ -204,11 +204,15 @@
         overflow: hidden; display: flex; align-items: center; justify-content: center; 
     }  
     
-    /* SCALABLE EBI */
+    /* SCALABLE & MOVEABLE EBI */
     .ebi-img { 
         width: 160px; pointer-events: auto; z-index: 5; 
+        position: absolute; /* ENABLE MOVEMENT */
+        left: 50%; top: 50%; /* Default center */
+        transform: translate(-50%, -50%); /* Center pivot */
         filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); cursor: pointer; 
-        transition: transform 0.1s;
+        transition: transform 0.1s; /* Scale animation */
+        margin: 0;
     }  
     .ebi-img:active { filter: brightness(1.2); }
     .ebi-img.selected { filter: drop-shadow(0 0 10px var(--main)); }
@@ -800,17 +804,16 @@
         activeAlert: null,
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true },
-        roomWallpaper: "", 
-        ebiScale: 1 
-    };
-    
+        roomWallpaper: "", // New Bedroom BG state
+        ebiScale: 1 // New Ebi Scale state
+    };  
     let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
 
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
     let isSelling = false;
     let selectedMsgIndex = -1;
-    let tempDreamImg = ""; 
-    let selectedDecorIndex = -2; 
+    let tempDreamImg = ""; // For Residue Scanner
+    let selectedDecorIndex = -2; // -2 = None, -1 = Ebi, 0+ = Stickers
 
     // LOOT TABLE
     const LOOT_ITEMS = [
@@ -925,7 +928,7 @@
     }  
   
     function loadUI() {  
-        const p = DB.profiles[DB.active];  
+        const p = DB.profiles[DB.active] || DB.profiles[0]; // Fallback safety
         document.documentElement.style.setProperty('--main', p.color);  
         document.getElementById('sys-name-display').innerText = DB.sysName;  
         document.getElementById('dash-name').innerText = p.name;  
@@ -977,7 +980,6 @@
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
         const p = DB.profiles[DB.active];
         
-        // Directly grab values since they are pre-filled now
         p.name = document.getElementById('new-name').value;
         p.age = document.getElementById('new-age').value;
         p.sign = document.getElementById('new-sign').value;
@@ -994,7 +996,6 @@
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
         
-        // --- PRE-FILL INPUTS (FIXES EDITING) ---
         document.getElementById('new-name').value = p.name;
         document.getElementById('new-age').value = p.age !== "-" ? p.age : "";
         document.getElementById('new-sign').value = p.sign !== "-" ? p.sign : "";
@@ -1161,13 +1162,22 @@
 
         // RENDER EBI
         const ebi = document.querySelector('.ebi-img');
+        
+        // Initialize position if missing
+        if(!DB.ebiPos) DB.ebiPos = { x: 50, y: 50 };
+        
+        // Apply position and scale
+        ebi.style.left = DB.ebiPos.x + "%";
+        ebi.style.top = DB.ebiPos.y + "%";
         const eScale = DB.ebiScale || 1;
-        ebi.style.transform = `scale(${eScale})`;
+        ebi.style.transform = `translate(-50%, -50%) scale(${eScale})`;
+        
+        // Re-attach listeners for Ebi dragging
+        makeEbiDraggable(ebi);
 
         // RENDER STICKERS
         DB.decor.forEach((d, index) => {  
             const el = document.createElement('div'); el.className='sticker'; 
-            // APPLY SCALE
             const scale = d.s || 1;
             el.style.transform = `scale(${scale})`;
             
@@ -1180,7 +1190,6 @@
             }
             el.style.left=d.x+"%"; el.style.top=d.y+"%";  
             
-            // Interaction: Select & Drag
             let isDrag=false;  
             const move = (e) => { 
                 if(!isDrag) return; 
@@ -1194,39 +1203,75 @@
             const end = () => { if(isDrag){ isDrag=false; save(); } };  
             
             el.onmousedown = (e) => { 
-                e.stopPropagation(); 
-                isDrag=true; 
-                selectSticker(index); // SELECT STICKER
+                e.stopPropagation(); isDrag=true; selectSticker(index); 
             }; 
             el.ontouchstart = (e) => { 
-                e.stopPropagation(); 
-                isDrag=true; 
-                selectSticker(index); // SELECT STICKER
+                e.stopPropagation(); isDrag=true; selectSticker(index); 
             };  
             
             window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive:false}); window.addEventListener('mouseup', end); window.addEventListener('touchend', end);  
             l.appendChild(el);  
         });
         
-        // Hide controls if clicked outside
         document.getElementById('pet-stage').onclick = (e) => {
             if(e.target.id === 'pet-stage' || e.target.id === 'decor-layer') {
                 deselectSticker();
             }
         };
-    }  
+    }
+    
+    // --- EBI DRAG LOGIC ---
+    function makeEbiDraggable(el) {
+        let isDrag = false;
+
+        const move = (e) => {
+            if (!isDrag) return;
+            const b = document.getElementById('pet-stage').getBoundingClientRect();
+            const cx = e.touches ? e.touches[0].clientX : e.clientX;
+            const cy = e.touches ? e.touches[0].clientY : e.clientY;
+
+            // Calculate percentage position
+            let nx = ((cx - b.left) / b.width) * 100;
+            let ny = ((cy - b.top) / b.height) * 100;
+
+            // Update state and visual
+            DB.ebiPos = { x: nx, y: ny };
+            el.style.left = nx + "%";
+            el.style.top = ny + "%";
+        };
+
+        const end = () => {
+            if (isDrag) {
+                isDrag = false;
+                save();
+            }
+        };
+
+        const start = (e) => {
+            e.preventDefault(); 
+            e.stopPropagation();
+            isDrag = true;
+            // Also trigger selection/click logic
+            clickEbi(e); 
+        };
+
+        el.onmousedown = start;
+        el.ontouchstart = start;
+        
+        // Use window listeners to ensure drag doesn't break if mouse leaves element
+        window.addEventListener('mousemove', move);
+        window.addEventListener('touchmove', move, { passive: false });
+        window.addEventListener('mouseup', end);
+        window.addEventListener('touchend', end);
+    }
     
     // --- CLICKER & SELECTION FUNCTIONALITY ---
     function clickEbi(e) {
-        e.stopPropagation(); 
-        
-        // 1. SELECT EBI FOR SCALING
         selectedDecorIndex = -1; // -1 represents Ebi
         const ctrls = document.getElementById('decor-controls');
         const slider = document.getElementById('scale-slider');
         const delBtn = ctrls.querySelector('button');
         
-        // Highlight logic
         document.querySelector('.ebi-img').classList.add('selected');
         document.querySelectorAll('.sticker').forEach(s => s.classList.remove('selected'));
 
@@ -1234,7 +1279,7 @@
         delBtn.style.display = 'none'; // Cannot delete Ebi
         ctrls.style.display = 'flex';
 
-        // 2. ADD XP LOGIC
+        // Add XP
         DB.xp += 1;
         document.getElementById('cp-display').innerText = DB.xp;
         
@@ -1249,7 +1294,7 @@
     }
 
     function selectSticker(index) {
-        selectedDecorIndex = index; // 0+ represents stickers
+        selectedDecorIndex = index; 
         const ctrls = document.getElementById('decor-controls');
         const slider = document.getElementById('scale-slider');
         const delBtn = ctrls.querySelector('button');
@@ -1262,12 +1307,12 @@
         });
 
         slider.value = d.s || 1;
-        delBtn.style.display = 'block'; // Can delete stickers
+        delBtn.style.display = 'block'; 
         ctrls.style.display = 'flex';
     }
 
     function deselectSticker() {
-        selectedDecorIndex = -2; // None selected
+        selectedDecorIndex = -2; 
         document.getElementById('decor-controls').style.display = 'none';
         document.querySelectorAll('.sticker').forEach(s => s.classList.remove('selected'));
         document.querySelector('.ebi-img').classList.remove('selected');
@@ -1275,11 +1320,11 @@
 
     function updateDecorScale(val) {
         if(selectedDecorIndex === -1) {
-            // Scale Ebi
             DB.ebiScale = val;
-            document.querySelector('.ebi-img').style.transform = `scale(${val})`;
+            const ebi = document.querySelector('.ebi-img');
+            // Must re-apply translate for centering
+            ebi.style.transform = `translate(-50%, -50%) scale(${val})`;
         } else if (selectedDecorIndex >= 0) {
-            // Scale Sticker
             DB.decor[selectedDecorIndex].s = val;
             const stickers = document.querySelectorAll('.sticker');
             if(stickers[selectedDecorIndex]) {
@@ -1668,12 +1713,11 @@
         input.value = ""; 
     }  
     
-    // --- BULLETPROOF PLURALKIT IMPORT ---
+    // --- SIMPLIFIED PLURALKIT IMPORT ---
     function importPluralKit(input) {
         const file = input.files[0];
         if(!file) return;
         const reader = new FileReader();
-        
         reader.onload = (e) => {
             try {
                 const json = JSON.parse(e.target.result);
@@ -1750,14 +1794,10 @@
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
     function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }  
   
-    // --- SERVICE WORKER REGISTRATION ---
+    // --- FORCE NUKE SW ---
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('SW registered!', reg.scope))
-                .catch(err => console.log('SW failed:', err));
-        });
+        navigator.serviceWorker.getRegistrations().then(function(registrations) { for(let registration of registrations) { registration.unregister(); } });
     }
 </script>  
 </body>  
-        </html>
+    </html>
