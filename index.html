@@ -1644,7 +1644,7 @@
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
     function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); input.value = ""; }  
     
-    // --- HYBRID PLURALKIT IMPORT ---
+    // --- SIMPLIFIED PLURALKIT IMPORT ---
     function importPluralKit(input) {
         const file = input.files[0];
         if(!file) return;
@@ -1654,116 +1654,38 @@
                 const json = JSON.parse(e.target.result);
                 let members = [];
                 
-                // 1. Try standard PK format
+                // 1. Detect format (Pk, Tupperbox, or raw array)
                 if (json.members && Array.isArray(json.members)) members = json.members;
-                // 2. Try direct array (bulk export?)
-                else if (Array.isArray(json)) members = json;
-                // 3. Try Tupperbox format
                 else if (json.tuppers && Array.isArray(json.tuppers)) members = json.tuppers;
-                // 4. Single Member
-                else if (json.name && (json.id || json.avatar_url)) members = [json];
-                
+                else if (Array.isArray(json)) members = json;
+                else if (json.name) members = [json]; // Single file
+
                 if (members.length === 0) throw new Error("No members found. Check file format.");
 
                 let count = 0;
                 members.forEach(m => {
+                    // Simple check to avoid duplicates
                     if (!DB.profiles.some(p => p.name === m.name)) {
-                        
-                        // --- PARSER ---
-                        let likes = [], dislikes = [], notes = "", bioLines = [];
-                        let name = m.name || "Unknown";
-                        let sign = m.pronouns || "?";
-                        let age = m.birthday || "--";
-                        let species = "System Member";
-                        let height = "--";
-                        let bio = "";
-                        
-                        let currentMode = null; // 'likes' or 'dislikes' or null
-
-                        if (m.description) {
-                            const lines = m.description.split('\n');
-                            lines.forEach(rawLine => {
-                                // 1. Remove aesthetic symbols from start of line
-                                let line = rawLine.replace(/^[^a-zA-Z0-9]+/, '').trim();
-                                let lower = line.toLowerCase();
-                                
-                                // 2. Check for Specific Keys
-                                if(lower.startsWith('name:')) { name = line.substring(5).trim(); return; }
-                                if(lower.startsWith('age:')) { age = line.substring(4).trim(); return; }
-                                if(lower.startsWith('pronouns:') || lower.startsWith('prons:')) { sign = line.substring(line.indexOf(':')+1).trim(); return; }
-                                if(lower.startsWith('species:')) { species = line.substring(8).trim(); return; }
-                                if(lower.startsWith('height:')) { height = line.substring(7).trim(); return; }
-
-                                // 3. Check for Lists (Likes/Dislikes)
-                                if(lower.startsWith('likes:') || lower.startsWith('loves:')) {
-                                    const content = line.substring(line.indexOf(':')+1).trim();
-                                    if(content.length > 0) {
-                                        // Inline list (comma separated)
-                                        let items = content.split(/,|&|\//).map(s => s.trim()).filter(s => s);
-                                        likes.push(...items);
-                                        currentMode = null;
-                                    } else {
-                                        // Header for a list below
-                                        currentMode = 'likes';
-                                    }
-                                    return;
-                                }
-
-                                if(lower.startsWith('dislikes:') || lower.startsWith('hates:')) {
-                                    const content = line.substring(line.indexOf(':')+1).trim();
-                                    if(content.length > 0) {
-                                        let items = content.split(/,|&|\//).map(s => s.trim()).filter(s => s);
-                                        dislikes.push(...items);
-                                        currentMode = null;
-                                    } else {
-                                        currentMode = 'dislikes';
-                                    }
-                                    return;
-                                }
-
-                                // 4. Handle List Modes
-                                if(currentMode === 'likes' && line.length > 0) {
-                                    likes.push(line);
-                                    return;
-                                }
-                                if(currentMode === 'dislikes' && line.length > 0) {
-                                    dislikes.push(line);
-                                    return;
-                                }
-                                
-                                // 5. Catch boundaries/triggers as notes
-                                if(lower.startsWith('boundaries:') || lower.startsWith('triggers:') || lower.startsWith('t:')) {
-                                    notes += line + "\n";
-                                    currentMode = null;
-                                    return;
-                                }
-
-                                // 6. If none of above, add to general Bio
-                                // Filter out empty aesthetic lines
-                                if(line.length > 1) bioLines.push(rawLine); // Keep raw for bio to preserve formatting
-                            });
-                            
-                            bio = bioLines.join('\n').trim();
-                        }
-
                         DB.profiles.push({
-                            name: name,
+                            name: m.name || "Unknown",
                             av: m.avatar_url || DEFAULT_AV,
-                            sign: sign, 
-                            age: age,
-                            species: species,
-                            height: height,
-                            bio: bio || "Imported from PluralKit",
+                            sign: m.pronouns || "?",
+                            age: m.birthday || "--",
+                            species: "System Member",
+                            height: "--",
+                            // JUST DUMP THE DESCRIPTION. No parsing.
+                            bio: m.description || "Imported Member",
                             color: m.color ? "#"+m.color : "#ff69b4",
                             id: m.id || Math.floor(Math.random()*900000),
-                            likes: likes, 
-                            dislikes: dislikes, 
-                            notes: notes.trim()
+                            // Initialize empty arrays so the UI doesn't break
+                            likes: [],
+                            dislikes: [],
+                            notes: ""
                         });
                         count++;
                     }
                 });
-                
+
                 save();
                 alert(`Success! Imported ${count} members.`);
                 refreshAll();
