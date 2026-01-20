@@ -115,9 +115,14 @@
     
     /* SCROLL CONTROLS */
     .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; padding-bottom: 120px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }  
-    .content.no-scroll { overflow: hidden; } /* LOCK SCROLL */
+    .content.no-scroll { overflow: hidden; } /* LOCK SCROLL FOR PET ROOM */
 
-    .page { display: none; animation: popIn 0.3s; height: 100%; }  
+    /* UPDATED: REMOVE HEIGHT 100% SO OTHER PAGES SCROLL */
+    .page { display: none; animation: popIn 0.3s; }  
+    
+    /* ONLY PET PAGE IS LOCKED */
+    #page-pet { height: 100%; overflow: hidden; }
+    
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
@@ -251,6 +256,13 @@
     .console-log { height: 60px; overflow-y: auto; display: flex; flex-direction: column-reverse; }
     .log-line { margin-bottom: 2px; }
     .log-line::before { content: "> "; opacity: 0.6; }
+    .ebi-chat-btn { 
+        position: absolute; bottom: 5px; right: 5px; /* Inside Console Box */
+        background: var(--main); border: 2px solid white; border-radius: 50%; width: 30px; height: 30px; 
+        cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 60; 
+    }
+    .ebi-chat-btn:active { transform: scale(0.9); }
 
     /* --- PHARMACY LOYALTY CARD --- */
     .loyalty-card {
@@ -602,6 +614,7 @@
                         <span>v1.0</span>
                     </div>
                     <div class="console-log" id="console-log-feed"></div>
+                    <button class="ebi-chat-btn" onclick="triggerEbiChat()">💬</button>
                 </div>
             </div>  
         </div>  
@@ -844,31 +857,6 @@
         "https://i.postimg.cc/KvTj21fw/f91a9c969269fdedf2e437391eda83e8.png"
     ];  
     
-    // BEDROOM ONLY BACKGROUNDS
-    const ROOM_WALLPAPERS = [
-        "https://i.postimg.cc/DZ5qstqb/10b51003f5fc0df41075f24861363d7d.jpg",
-        "https://i.postimg.cc/qRQ8n983/327b16e3d5893b32482b5642782105d5.jpg",
-        "https://i.postimg.cc/wvFhJSht/7de5e7ad4933d616d390e74c5405ebc8.jpg",
-        "https://i.postimg.cc/mDTYPbFM/891e1ee9f917421887230a1f93c50e74.jpg",
-        "https://i.postimg.cc/pTkD8gD5/fdfddf6e776fd0428aa1e486741fe780.jpg"
-    ];
-
-    const EBI_TALK = ["Thank you!", "I feel better!", "Yummy!", "So cozy!", "Yay!", "Take care!", "Hydrate!", "Rest up!", "Good job!", "Proud of u!", "Safe here."];  
-    const CLINICAL_ORDERS = [
-        "HYDRATION ORDER: Administer 200ml H2O immediately.",
-        "POSTURE CHECK: Realignment of spine required.",
-        "REALITY ANCHOR: Name 5 blue objects in vicinity.",
-        "DOPAMINE REGULATION: Listen to one (1) comfort track.",
-        "SENSORY RESET: Close eyes for 120 seconds.",
-        "NUTRITION PROTOCOL: Consume one small unit of protein.",
-        "OXYGEN INTAKE: Perform 4-7-8 breathing sequence.",
-        "VISION PRESERVATION: Look at object 20ft away.",
-        "STIMULATION CONTROL: Reduce screen brightness by 20%.",
-        "GROUNDING: Touch a cold surface."
-    ];
-    
-    const DEFAULT_AV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E";  
-    
     const BG_ICONS = {
         'bg-apple': '🍎', 'bg-polka-brown': '🟤', 'bg-clover': '🍀', 'bg-stars-blue': '⭐',
         'bg-bow-y2k': '🎀', 'bg-stars-bw': '✨', 'bg-music-pink': '🎵', 'bg-stars-classic': '🌟',
@@ -937,7 +925,7 @@
     }  
   
     function loadUI() {  
-        const p = DB.profiles[DB.active] || DB.profiles[0]; // Fallback safety
+        const p = DB.profiles[DB.active];  
         document.documentElement.style.setProperty('--main', p.color);  
         document.getElementById('sys-name-display').innerText = DB.sysName;  
         document.getElementById('dash-name').innerText = p.name;  
@@ -984,10 +972,12 @@
         }  
     }
 
+    // --- FIXED UPDATE FUNCTION (NO MORE GHOST WRITING) ---
     function updateCurrentProfile() {
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
         const p = DB.profiles[DB.active];
         
+        // Directly grab values since they are pre-filled now
         p.name = document.getElementById('new-name').value;
         p.age = document.getElementById('new-age').value;
         p.sign = document.getElementById('new-sign').value;
@@ -1004,6 +994,7 @@
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
         
+        // --- PRE-FILL INPUTS (FIXES EDITING) ---
         document.getElementById('new-name').value = p.name;
         document.getElementById('new-age').value = p.age !== "-" ? p.age : "";
         document.getElementById('new-sign').value = p.sign !== "-" ? p.sign : "";
@@ -1769,4 +1760,4 @@
     }
 </script>  
 </body>  
-</html>
+        </html>
