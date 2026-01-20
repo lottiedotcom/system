@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seiren-os-v1';
+const CACHE_NAME = 'seiren-os-v3'; // Version bumped to force update
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -11,7 +11,7 @@ const ASSETS_TO_CACHE = [
     'https://i.postimg.cc/9fr6qn0r/152f88be4a1ea59ecb8283bd71e01aa5.jpg', // Pharmacy Card
     'https://i.postimg.cc/8C9qdmfN/a3f6c6b70ab5af6f58240dba296b7556.png', // Reward Icon
     
-    // WALLPAPERS (OS)
+    // WALLPAPERS (OS & GACHA)
     'https://i.postimg.cc/jSy15jN8/254dfc0d0652f67805de02ae1113f60a.jpg',
     'https://i.postimg.cc/yNBbSzXn/53f33a2e730b5174988e4d58c7e6fbb7.jpg',
     'https://i.postimg.cc/Xv3zy0cw/684495e309f1e7a6b1d1609f033f905c.jpg',
@@ -31,12 +31,15 @@ const ASSETS_TO_CACHE = [
     'https://i.postimg.cc/NFKVy8Wx/Untitled86_20260119115121.jpg',
     'https://i.postimg.cc/WzdKDmQw/Untitled85_20260119113009.jpg',
 
-    // WALLPAPERS (BEDROOM)
+    // WALLPAPERS (BEDROOM ONLY - NEW)
     'https://i.postimg.cc/DZ5qstqb/10b51003f5fc0df41075f24861363d7d.jpg',
     'https://i.postimg.cc/qRQ8n983/327b16e3d5893b32482b5642782105d5.jpg',
     'https://i.postimg.cc/wvFhJSht/7de5e7ad4933d616d390e74c5405ebc8.jpg',
     'https://i.postimg.cc/mDTYPbFM/891e1ee9f917421887230a1f93c50e74.jpg',
     'https://i.postimg.cc/pTkD8gD5/fdfddf6e776fd0428aa1e486741fe780.jpg',
+
+    // DREAM JOURNAL
+    'https://i.postimg.cc/Zn1jB8Lc/Untitled86-20260119120235.jpg',
 
     // STICKERS (GACHA)
     'https://i.postimg.cc/4dFyJtrX/12d9131d2320519e1e23f5f678427396.png',
@@ -71,6 +74,7 @@ const ASSETS_TO_CACHE = [
 
 // 1. INSTALL: Cache all assets
 self.addEventListener('install', (e) => {
+    self.skipWaiting(); // FORCE INSTALL
     e.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll(ASSETS_TO_CACHE);
@@ -78,24 +82,26 @@ self.addEventListener('install', (e) => {
     );
 });
 
-// 2. FETCH: Serve from cache, fall back to network
-self.addEventListener('fetch', (e) => {
-    e.respondWith(
-        caches.match(e.request).then((response) => {
-            return response || fetch(e.request);
-        })
-    );
-});
-
-// 3. ACTIVATE: Clean up old caches
+// 2. ACTIVATE: Clean up old caches & take control
 self.addEventListener('activate', (e) => {
     e.waitUntil(
         caches.keys().then((keyList) => {
             return Promise.all(keyList.map((key) => {
                 if (key !== CACHE_NAME) {
+                    console.log('[SW] Removing old cache', key);
                     return caches.delete(key);
                 }
             }));
+        })
+    );
+    return self.clients.claim(); // FORCE CONTROL
+});
+
+// 3. FETCH: Serve from cache, fall back to network
+self.addEventListener('fetch', (e) => {
+    e.respondWith(
+        caches.match(e.request).then((response) => {
+            return response || fetch(e.request);
         })
     );
 });
