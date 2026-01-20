@@ -1653,10 +1653,17 @@
             try {
                 const json = JSON.parse(e.target.result);
                 let members = [];
-                if (Array.isArray(json)) members = json;
-                else if (json.members && Array.isArray(json.members)) members = json.members;
-                else if (json.id && json.name) members = [json]; 
-                else throw new Error("Could not find members list in file.");
+                
+                // 1. Try standard PK format
+                if (json.members && Array.isArray(json.members)) members = json.members;
+                // 2. Try direct array (bulk export?)
+                else if (Array.isArray(json)) members = json;
+                // 3. Try Tupperbox format
+                else if (json.tuppers && Array.isArray(json.tuppers)) members = json.tuppers;
+                // 4. Single Member
+                else if (json.name && (json.id || json.avatar_url)) members = [json];
+                
+                if (members.length === 0) throw new Error("No members found. Check file format.");
 
                 let count = 0;
                 members.forEach(m => {
