@@ -772,9 +772,10 @@
 
 <script>  
     // --- STATE ---  
-    let DB = {  
+    let DEFAULT_DB = {  
         sysName: "SEIREN OS",  
-        profiles: [], active: 0, xp: 0, 
+        profiles: [{ name: "Guest", av: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20,90 Q50,60 80,90' fill='%23ccc'/%3E%3C/svg%3E", color: "#ff69b4", id: "GUEST", sign: "-", species: "Visitor", age: "-", height: "-", bio: "Guest Access", likes: [], dislikes: [], notes: "" }], 
+        active: 0, xp: 0, 
         inventory: [], 
         decor: [],   
         cofront: [], 
@@ -782,18 +783,21 @@
         consoleHistory: ["System Initialized..."], 
         dreamLog: [], 
         stamps: 0, 
-        currentFrontStart: 0, 
+        currentFrontStart: Date.now(), 
         activeAlert: null,
         lock: null, channels: { 'gen': {name:'general', msgs:[]} }, curChan: 'gen',  
         diary: [], settings: { crt: true },
-        roomWallpaper: "", // New Bedroom BG state
-        ebiScale: 1 // New Ebi Scale state
-    };  
+        roomWallpaper: "", 
+        ebiScale: 1 
+    };
+    
+    let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
+
     let pendingXP = 0; let tempPin = ""; let uploadedAv = ""; let chatImg = "";  
     let isSelling = false;
     let selectedMsgIndex = -1;
-    let tempDreamImg = ""; // For Residue Scanner
-    let selectedDecorIndex = -2; // -2 = None, -1 = Ebi, 0+ = Stickers
+    let tempDreamImg = ""; 
+    let selectedDecorIndex = -2; 
 
     // LOOT TABLE
     const LOOT_ITEMS = [
@@ -876,24 +880,20 @@
 
     window.onload = () => {  
         const saved = localStorage.getItem('seiren_fixed_v87'); 
-        if(saved) { try { DB = JSON.parse(saved); } catch(e) {} }  
-        if(DB.profiles.length === 0) {  
-            DB.profiles.push({ name: "Guest", av: DEFAULT_AV, color: "#ff69b4", id: "GUEST", sign: "-", species: "Visitor", age: "-", height: "-", bio: "Guest Access", likes: [], dislikes: [], notes: "" });  
+        if(saved) { 
+            try { 
+                const parsed = JSON.parse(saved); 
+                // MERGE SAVED DATA WITH DEFAULT STRUCTURE TO PREVENT CRASHES ON OLD BACKUPS
+                DB = { ...DEFAULT_DB, ...parsed };
+                
+                // Ensure arrays exist
+                if(!DB.profiles) DB.profiles = DEFAULT_DB.profiles;
+                if(!DB.inventory) DB.inventory = [];
+                if(!DB.decor) DB.decor = [];
+            } catch(e) { 
+                console.error("Save corrupted, resetting.");
+            } 
         }  
-        if(!DB.cofront) DB.cofront = [];
-        if(!DB.frontHistory) DB.frontHistory = [];
-        if(!DB.consoleHistory) DB.consoleHistory = ["System Initialized..."];
-        if(!DB.dreamLog) DB.dreamLog = [];
-        if(!DB.stamps) DB.stamps = 0;
-        if(!DB.currentFrontStart) DB.currentFrontStart = Date.now();
-        if(!DB.ebiScale) DB.ebiScale = 1;
-
-        DB.profiles.forEach(p => {
-            if(!p.likes) p.likes = [];
-            if(!p.dislikes) p.dislikes = [];
-            if(!p.notes) p.notes = "";
-            if(!p.id) p.id = Math.floor(Math.random()*900000);
-        });
 
         document.getElementById('sys-name-input').value = DB.sysName || "SEIREN OS";  
         document.getElementById('toggle-crt').checked = DB.settings.crt;  
@@ -937,7 +937,7 @@
     }  
   
     function loadUI() {  
-        const p = DB.profiles[DB.active];  
+        const p = DB.profiles[DB.active] || DB.profiles[0]; // Fallback safety
         document.documentElement.style.setProperty('--main', p.color);  
         document.getElementById('sys-name-display').innerText = DB.sysName;  
         document.getElementById('dash-name').innerText = p.name;  
@@ -984,12 +984,10 @@
         }  
     }
 
-    // --- FIXED UPDATE FUNCTION (NO MORE GHOST WRITING) ---
     function updateCurrentProfile() {
         if(DB.active < 0 || DB.active >= DB.profiles.length) return;
         const p = DB.profiles[DB.active];
         
-        // Directly grab values since they are pre-filled now
         p.name = document.getElementById('new-name').value;
         p.age = document.getElementById('new-age').value;
         p.sign = document.getElementById('new-sign').value;
@@ -1006,7 +1004,6 @@
         document.getElementById('modal-profile').style.display='flex';  
         const p = DB.profiles[DB.active];
         
-        // --- PRE-FILL INPUTS (FIXES EDITING) ---
         document.getElementById('new-name').value = p.name;
         document.getElementById('new-age').value = p.age !== "-" ? p.age : "";
         document.getElementById('new-sign').value = p.sign !== "-" ? p.sign : "";
@@ -1642,13 +1639,50 @@
     function setLock(){ const p=document.getElementById('pin-set').value; if(p.length===4){ DB.lock=p; save(); alert("Locked!"); closeModals(); }}  
     function disableLock(){ if(confirm("Remove?")){ DB.lock=null; save(); alert("Removed"); closeModals(); }}  
     function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_bk.json"; document.body.appendChild(a); a.click(); a.remove(); }  
-    function importData(input) { const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload=(e)=>{ try { const json = JSON.parse(e.target.result); DB = json; save(); alert("Backup Loaded Successfully!"); location.reload(); } catch(x) { alert("Error: Invalid Backup File."); console.error(x); } }; reader.readAsText(file); input.value = ""; }  
+    function importData(input) { 
+        const file = input.files[0]; 
+        if(!file) return; 
+        
+        const reader = new FileReader(); 
+        reader.onload=(e)=>{ 
+            try { 
+                const json = JSON.parse(e.target.result); 
+                
+                // CHECK IF THIS IS A SYSTEM BACKUP (LOOK FOR sysName)
+                if(!json.sysName && !json.profiles) {
+                    alert("⚠️ WARNING: This does not look like a System Backup file.\n\nIf this is a PluralKit file, please use the PURPLE 'Import PluralKit' button below.");
+                    input.value = "";
+                    return;
+                }
+
+                // SMART MERGE (Fixes old backups breaking new features)
+                // We keep current DB structure (DEFAULT_DB) and overwrite with loaded data
+                // This ensures new fields like 'ebiScale' or 'roomWallpaper' are not lost/undefined
+                DB = { ...DEFAULT_DB, ...json };
+                
+                // Sanity check for critical arrays
+                if(!DB.profiles) DB.profiles = DEFAULT_DB.profiles;
+                if(!DB.inventory) DB.inventory = [];
+                if(!DB.decor) DB.decor = [];
+
+                save(); 
+                alert("Backup Loaded Successfully!"); 
+                location.reload(); 
+            } catch(x) { 
+                alert("Error: Invalid Backup File. It might be corrupted."); 
+                console.error(x); 
+            } 
+        }; 
+        reader.readAsText(file); 
+        input.value = ""; 
+    }  
     
-    // --- SIMPLIFIED PLURALKIT IMPORT ---
+    // --- BULLETPROOF PLURALKIT IMPORT ---
     function importPluralKit(input) {
         const file = input.files[0];
         if(!file) return;
         const reader = new FileReader();
+        
         reader.onload = (e) => {
             try {
                 const json = JSON.parse(e.target.result);
@@ -1735,4 +1769,4 @@
     }
 </script>  
 </body>  
-    </html>
+</html>
