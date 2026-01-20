@@ -70,6 +70,7 @@
     .bg-strawberry { background-image: url('https://i.postimg.cc/43ZShTb6/f9fc99a5267ad98f2760ee5846f21607.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-heart-bp { background-image: url('https://i.postimg.cc/KYFHgyDX/Untitled83_20260118063949.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-polka-classic { background-image: url('https://i.postimg.cc/6QwmGNfB/Untitled84_20260118064140.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
+    
     .bg-stars-2 { background-image: url('https://i.postimg.cc/XYfPyYDs/Untitled86_20260119115349.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-heart-pink { background-image: url('https://i.postimg.cc/dV2fTVS4/Untitled86_20260119115047.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
     .bg-stars-y2k { background-image: url('https://i.postimg.cc/nrX5sK67/Untitled86_20260119115537.jpg') !important; background-size: cover !important; background-attachment: fixed !important; }
@@ -91,7 +92,7 @@
     body.fx-active .scanlines, body.fx-active .dream-overlay { display: block; }  
     @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }  
 
-    /* --- APP SHELL & SCROLLING FIX --- */  
+    /* --- APP SHELL --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
         background: transparent; 
@@ -110,13 +111,11 @@
         scroll-behavior: smooth; 
         -webkit-overflow-scrolling: touch; 
     }  
-
-    .page { display: none; animation: popIn 0.3s; }  
-    
-    /* FIXED: Pet Page grows with content, but Stage has fixed height */
+    /* FIXED: Pet Page grows with content, but Stage handles touch */
     #page-pet { display: none; flex-direction: column; height: auto; }
     #page-pet.active { display: flex; }
     
+    .page { display: none; animation: popIn 0.3s; }  
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
@@ -188,46 +187,47 @@
     .pk-img { max-width: 150px; border-radius: 10px; margin-top: 5px; display: block; border: 2px solid #eee;}  
     .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; background: #fafafa; }  
 
-    /* --- PET --- */  
+    /* --- PET STAGE --- */  
     .pet-stage { 
-        width: 100%; height: 400px; /* FIXED HEIGHT FOR STAGE ONLY */
+        width: 100%; height: 400px; 
         position: relative; 
         border: 4px ridge var(--main); border-radius: 20px; 
         background-color: rgba(255,255,255,0.1); 
         background-size: cover; background-position: center; 
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
         overflow: hidden; 
-        margin-bottom: 10px;
-        touch-action: none; /* CRITICAL: PREVENTS SCROLL WHEN DRAGGING HERE */
+        margin-bottom: 15px;
+        /* CRITICAL: ONLY THIS AREA BLOCKS SCROLLING FOR DRAGGING */
+        touch-action: none; 
     }  
     
-    /* SCALABLE & MOVEABLE EBI */
     .ebi-img { 
-        width: 160px; pointer-events: auto; z-index: 5; 
-        position: absolute; 
-        left: 50%; top: 50%; 
+        width: 160px; pointer-events: auto; z-index: 20; 
+        position: absolute; left: 50%; top: 50%; 
         transform: translate(-50%, -50%); 
         filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); cursor: pointer; 
         transition: transform 0.1s; 
         margin: 0;
-        touch-action: none; /* LOCK DRAG SCROLL */
     }  
     .ebi-img:active { filter: brightness(1.2); }
     .ebi-img.selected { filter: drop-shadow(0 0 10px var(--main)); }
 
-    /* UPDATED STICKER CLASS */
     .sticker { 
-        position: absolute; cursor: grab; z-index: 10; user-select: none; width: 80px; height: auto; 
+        position: absolute; cursor: grab; z-index: 15; user-select: none; width: 80px; height: auto; 
         transition: transform 0.1s; 
-        touch-action: none; /* LOCK DRAG SCROLL */
     }
     .sticker.selected { filter: drop-shadow(0 0 5px var(--main)); border: 1px dashed white; }
     .sticker img { width: 100%; pointer-events: none; display: block; }
     
+    /* SPEECH BUBBLE: FIXED TO TOP OF PET STAGE */
     .speech-bubble {  
-        position: absolute; top: 30%; left: 50%; transform: translateX(-50%) scale(0);  
+        position: absolute; 
+        top: 10%; left: 50%; transform: translateX(-50%) scale(0);  
         background: white; padding: 10px 15px; border-radius: 20px; border: 2px solid var(--main);  
-        font-size: 0.8rem; font-weight: bold; z-index: 100; text-align: center;  
+        font-size: 0.9rem; font-weight: bold; 
+        z-index: 9999; /* MAX VISIBILITY */
+        text-align: center;  
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
         transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
         pointer-events: none; white-space: nowrap;  
     }  
@@ -252,11 +252,11 @@
         height: 120px; position: relative;
     }
     .console-header { border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; font-weight: bold; letter-spacing: 1px; }
-    .console-log { height: 90px; overflow-y: auto; display: flex; flex-direction: column-reverse; }
+    .console-log { height: 70px; overflow-y: auto; display: flex; flex-direction: column-reverse; }
     .log-line { margin-bottom: 2px; }
     .log-line::before { content: "> "; opacity: 0.6; }
     
-    /* EBI CHAT BUTTON INSIDE CONSOLE */
+    /* EBI CHAT BUTTON */
     .ebi-chat-btn { 
         position: absolute; bottom: 10px; right: 10px; 
         background: var(--main); border: 2px solid white; border-radius: 50%; width: 40px; height: 40px; 
@@ -296,7 +296,6 @@
     .dream-blur { filter: blur(3px); transition: filter 0.3s; cursor: pointer; }
     .dream-blur:hover { filter: blur(0); }
     
-    /* NEW CUSTOM SLIDERS */
     .sensory-slider { margin-bottom: 15px; }
     .sensory-label {
         display: flex; justify-content: space-between; font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;
@@ -312,7 +311,6 @@
         -webkit-appearance: none; height: 16px; width: 16px; background: #e6e6fa; margin-top: -5px; border: 2px solid #483d8b; box-shadow: 0 0 5px #e6e6fa;
     }
     
-    /* FIXED RESIDUE SCANNER STYLING */
     .residue-scanner {
         display: block; width: 100%; box-sizing: border-box;
         border: 2px dashed #483d8b; background: rgba(0,0,0,0.2); 
@@ -601,8 +599,8 @@
             
             <div class="pet-stage" id="pet-stage">  
                 <div id="decor-layer"></div>  
-                <div id="pet-speech" class="speech-bubble">Hello!</div>  
                 <img src="https://i.postimg.cc/13FQckct/Untitled-Artwork-20260110072840-20260110074706.png" class="ebi-img" onclick="clickEbi(event)">  
+                <div id="pet-speech" class="speech-bubble">Hello!</div>  
             </div>
             
             <div id="decor-controls">
@@ -880,6 +878,12 @@
                 if(!DB.profiles) DB.profiles = DEFAULT_DB.profiles;
                 if(!DB.inventory) DB.inventory = [];
                 if(!DB.decor) DB.decor = [];
+                
+                // SAFETY CHECK: Ensure channels exist (Fixes "Chat Not Working" bug)
+                if(!DB.channels || Object.keys(DB.channels).length === 0) {
+                     DB.channels = { 'gen': {name:'general', msgs:[]} };
+                }
+
             } catch(e) { 
                 console.error("Save corrupted, resetting.");
             } 
@@ -1059,7 +1063,10 @@
     function saveBioNotes() { DB.profiles[DB.active].notes = document.getElementById('notes-in').value; save(); }
   
     function toggleSidebar() { document.getElementById('chan-list').classList.toggle('hidden'); const btn = document.querySelector('.sidebar-toggle'); btn.innerText = btn.innerText === '<' ? '>' : '<'; }  
-    function renderChat() {  
+    function renderChat() {
+        // SAFETY CHECK: Re-initialize channels if missing
+        if(!DB.channels) DB.channels = { 'gen': {name:'general', msgs:[]} };
+        
         const list = document.getElementById('chan-list'); list.innerHTML="";  
         Object.keys(DB.channels).forEach(k => {  
             const div = document.createElement('div'); div.className = `chan-btn ${DB.curChan===k?'active':''}`;  
@@ -1070,7 +1077,9 @@
         const add = document.createElement('div'); add.className='chan-btn'; add.style.background='#4fc3f7'; add.style.color='white'; add.innerText='+';  
         add.onclick = () => { const n=prompt("Name:"); if(n){ const id=n.toLowerCase().replace(/\s/g,''); DB.channels[id]={name:n, msgs:[]}; save(); renderChat(); }};  
         list.appendChild(add);  
-        const c = DB.channels[DB.curChan]; document.getElementById('chan-title').innerText = "#" + c.name;  
+        
+        const c = DB.channels[DB.curChan] || DB.channels['gen']; // Fallback
+        document.getElementById('chan-title').innerText = "#" + c.name;  
         const feed = document.getElementById('chat-feed'); feed.innerHTML="";  
         c.msgs.forEach((m, idx) => { 
             const imgHTML = m.img ? `<img src="${m.img}" class="pk-img">` : ''; 
@@ -1247,11 +1256,14 @@
         };
 
         const start = (e) => {
-            e.preventDefault(); 
-            e.stopPropagation();
-            isDrag = true;
-            // Also trigger selection/click logic
-            clickEbi(e); 
+            // Only drag if NOT selected for scale
+            if(selectedDecorIndex === -1) {
+                e.preventDefault(); 
+                e.stopPropagation();
+                isDrag = true;
+            } else {
+                clickEbi(e);
+            }
         };
 
         el.onmousedown = start;
@@ -1266,6 +1278,8 @@
     
     // --- CLICKER & SELECTION FUNCTIONALITY ---
     function clickEbi(e) {
+        e.stopPropagation(); 
+        
         selectedDecorIndex = -1; // -1 represents Ebi
         const ctrls = document.getElementById('decor-controls');
         const slider = document.getElementById('scale-slider');
@@ -1282,13 +1296,9 @@
         DB.xp += 1;
         document.getElementById('cp-display').innerText = DB.xp;
         
-        const rng = Math.random();
-        if(rng < 0.2) {
-            triggerEbiChat();
-        } else if(rng > 0.95) {
-            logToConsole("⚠️ GLITCH DETECTED: +5 XP");
-            DB.xp += 5;
-        }
+        // TRIGGER CHAT (100% chance on click now for feedback)
+        triggerEbiChat();
+        
         save();
     }
 
@@ -1319,13 +1329,11 @@
 
     function updateDecorScale(val) {
         if(selectedDecorIndex === -1) {
-            // Scale Ebi
             DB.ebiScale = val;
             const ebi = document.querySelector('.ebi-img');
             // Must re-apply translate for centering
             ebi.style.transform = `translate(-50%, -50%) scale(${val})`;
         } else if (selectedDecorIndex >= 0) {
-            // Scale Sticker
             DB.decor[selectedDecorIndex].s = val;
             const stickers = document.querySelectorAll('.sticker');
             if(stickers[selectedDecorIndex]) {
@@ -1346,7 +1354,7 @@
         }
     }
 
-    // --- FIXED BACKPACK (STACKING LOGIC + SELL MODE) ---
+    // --- FIXED BACKPACK ---
     function toggleSell() {
         isSelling = !isSelling;
         const btn = document.getElementById('sell-btn');
@@ -1387,7 +1395,20 @@
                 badge = `<span style="position:absolute; bottom:0; right:0; background:red; color:white; font-size:0.6rem; padding:2px 5px; border-radius:10px;">x${counts[item]}</span>`;
             }
             
-            if(item.startsWith('bg-')) {  
+            // LOGIC FOR BEDROOM vs OS WALLPAPERS
+            if(ROOM_WALLPAPERS.includes(item)) {
+                // IT IS A BEDROOM WALLPAPER
+                b.innerHTML = `<img src="${item}" style="width:50px; height:50px; object-fit:cover; border:2px solid #7e57c2; border-radius:5px;">` + badge;
+                b.onclick = () => {
+                    if(isSelling) {
+                        const realIndex = DB.inventory.indexOf(item); 
+                        if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 30; } 
+                        save(); openBackpack();
+                    } else {
+                        DB.roomWallpaper = item; save(); refreshAll(); closeModals(); nav('pet');
+                    }
+                };
+            } else if(item.startsWith('bg-')) {  
                 let icon = BG_ICONS[item] || "🖼️"; b.style.fontSize="1.5rem"; b.innerHTML=icon; 
                 b.style.border="2px solid pink"; b.style.padding="10px"; b.style.borderRadius="10px";
                 
@@ -1408,7 +1429,6 @@
                         if(realIndex > -1) { DB.inventory.splice(realIndex, 1); DB.xp += 10; }
                         save(); openBackpack(); 
                     } else {
-                        // ADD TO DECOR WITH DEFAULT SCALE
                         DB.decor.push({i:item, x:50, y:50, s:1}); 
                         const realIndex = DB.inventory.indexOf(item); 
                         if(realIndex > -1) DB.inventory.splice(realIndex, 1); 
@@ -1426,16 +1446,12 @@
     }  
   
     // --- PHARMACY ---  
-    function logMood(i,p) { 
-        document.getElementById('receipt-list').innerHTML += `<div style="border-bottom:1px dotted #ccc; margin-bottom:5px;">${i} ... ${p} XP</div>`; 
-        pendingXP += p; 
-    }  
-    
+    function logMood(i,p) { document.getElementById('receipt-list').innerHTML += `<div style="border-bottom:1px dotted #ccc; margin-bottom:5px;">${i} ... ${p} XP</div>`; pendingXP+=p; }  
     function processReceipt() { 
-        if(pendingXP > 0){ 
-            DB.xp += pendingXP; 
+        if(pendingXP>0){ 
+            DB.xp+=pendingXP; 
             DB.stamps = (DB.stamps || 0) + 1; // ADD STAMP
-            if(DB.stamps > 10) DB.stamps = 10; // Cap at 10
+            if(DB.stamps > 10) DB.stamps = 10; // Cap at 10 until redeemed
             
             // NEW EXPANDED PRESCRIPTION LOGIC
             const task = CLINICAL_ORDERS[Math.floor(Math.random()*CLINICAL_ORDERS.length)]; 
