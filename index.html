@@ -115,9 +115,11 @@
     
     /* SCROLL CONTROLS */
     .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; padding-bottom: 120px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }  
-    .content.no-scroll { overflow: hidden; } /* LOCK SCROLL FOR PET ROOM */
+    .content.no-scroll { overflow: hidden; padding: 10px; } /* LESS PADDING FOR PET ROOM */
 
+    /* UPDATED: REMOVE HEIGHT 100% SO OTHER PAGES SCROLL */
     .page { display: none; animation: popIn 0.3s; }  
+    
     /* ONLY PET PAGE IS LOCKED to screen height */
     #page-pet { height: 100%; display: none; flex-direction: column; }
     #page-pet.active { display: flex; }
@@ -231,7 +233,8 @@
     .speech-bubble {  
         position: absolute; top: 30%; left: 50%; transform: translateX(-50%) scale(0);  
         background: white; padding: 10px 15px; border-radius: 20px; border: 2px solid var(--main);  
-        font-size: 0.8rem; font-weight: bold; z-index: 20; text-align: center;  
+        font-size: 0.8rem; font-weight: bold; z-index: 100; /* FIXED Z-INDEX */
+        text-align: center;  
         transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
         pointer-events: none; white-space: nowrap;  
     }  
@@ -1808,4 +1811,4 @@
     }
 </script>  
 </body>  
-</html>
+    </html>
