@@ -107,18 +107,17 @@
         overflow-y: auto; 
         overflow-x: hidden; 
         padding: 20px; 
-        padding-bottom: 160px; /* INCREASED BOTTOM PADDING */
+        padding-bottom: 160px;
         scroll-behavior: smooth; 
         -webkit-overflow-scrolling: touch; 
     }  
     
-    /* PREVENT SCROLLING ON THE STAGE BUT ALLOW IT ON THE PAGE */
     .content.no-scroll-on-stage { overflow: hidden; }
 
     #page-pet { display: none; flex-direction: column; height: auto; }
     #page-pet.active { display: flex; }
     
-    .page { display: none; animation: popIn 0.3s; padding-top: 5px; /* MOVED UP */ }  
+    .page { display: none; animation: popIn 0.3s; padding-top: 5px; }  
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
@@ -192,7 +191,7 @@
 
     /* --- PET STAGE --- */  
     .pet-stage { 
-        width: 100%; height: 340px; /* REDUCED HEIGHT TO FIT BETTER */
+        width: 100%; height: 340px; 
         position: relative; 
         border: 4px ridge var(--main); border-radius: 20px; 
         background-color: rgba(255,255,255,0.1); 
@@ -200,7 +199,6 @@
         box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
         overflow: hidden; 
         margin-bottom: 10px;
-        /* CRITICAL: This stops the page from scrolling when dragging stickers */
         touch-action: none; 
     }  
     
@@ -228,7 +226,7 @@
         top: 20%; left: 50%; transform: translateX(-50%) scale(0);  
         background: white; padding: 15px 25px; border-radius: 30px; border: 3px solid var(--main);  
         font-size: 1rem; font-weight: bold; 
-        z-index: 99999; /* MAX VISIBILITY */
+        z-index: 99999; 
         text-align: center;  
         box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
@@ -425,10 +423,19 @@
         box-shadow: 0 5px 10px rgba(0,0,0,0.1);
     }
     .reward-item-display img { width: 90%; height: 90%; object-fit: contain; }
+    
+    /* SAVE INDICATOR */
+    #save-toast {
+        position: fixed; top: 10px; right: 10px;
+        background: rgba(0,0,0,0.7); color: white; padding: 5px 10px;
+        border-radius: 15px; font-size: 0.8rem; opacity: 0;
+        transition: opacity 0.3s; z-index: 99999; pointer-events: none;
+    }
 </style>
 
 </head>  
 <body class="fx-active">  
+<div id="save-toast">💾 Saved</div>
 <div class="scanlines"></div>  
 <div class="dream-overlay"></div>  
 
@@ -904,19 +911,23 @@
     };
 
     window.onload = () => {  
+        // --- 1. ATTEMPT TO PERSIST STORAGE ---
+        if (navigator.storage && navigator.storage.persist) {
+            navigator.storage.persist().then(granted => {
+                console.log("Persistence granted:", granted);
+            });
+        }
+
         const saved = localStorage.getItem('seiren_fixed_v87'); 
         if(saved) { 
             try { 
                 const parsed = JSON.parse(saved); 
-                // MERGE SAVED DATA WITH DEFAULT STRUCTURE TO PREVENT CRASHES ON OLD BACKUPS
                 DB = { ...DEFAULT_DB, ...parsed };
                 
-                // Ensure arrays exist
                 if(!DB.profiles) DB.profiles = DEFAULT_DB.profiles;
                 if(!DB.inventory) DB.inventory = [];
                 if(!DB.decor) DB.decor = [];
                 
-                // SAFETY CHECK: Ensure channels exist (Fixes "Chat Not Working" bug)
                 if(!DB.channels || Object.keys(DB.channels).length === 0) {
                      DB.channels = { 'gen': {name:'general', msgs:[]} };
                 }
@@ -941,7 +952,14 @@
     }  
   
     function refreshAll() { loadUI(); renderChat(); renderDecor(); renderDiary(); renderBio(); renderAlert(); renderConsole(); renderDreamLog(); renderStamps(); }  
-    function save() { localStorage.setItem('seiren_fixed_v87', JSON.stringify(DB)); }  
+    
+    function save() { 
+        localStorage.setItem('seiren_fixed_v87', JSON.stringify(DB)); 
+        // Show save toast
+        const toast = document.getElementById('save-toast');
+        toast.style.opacity = '1';
+        setTimeout(() => toast.style.opacity = '0', 1000);
+    }  
   
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
     
@@ -1881,4 +1899,4 @@
     }
 </script>  
 </body>  
-    </html>
+                                                                                  </html>
