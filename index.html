@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
     <meta name="apple-mobile-web-app-capable" content="yes">  
     <meta name="theme-color" content="#ff69b4">  
-    <title>Seiren OS | System Hub</title>  
+    <title>Seiren OS</title>  
     <link rel="manifest" href="manifest.json">  
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">  
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919573.png">  
 
 <style>  
     /* --- CORE VARIABLES --- */  
@@ -30,183 +32,178 @@
         color: #444;   
     }  
 
-    /* --- NIGHT MODE / DREAM SPACE --- */
-    body.night-mode {
-        background-color: #000 !important;
-        background-image: none !important; 
-        color: #b0c4de !important;
-    }
-    body.night-mode::before {
-        content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-        background-image: url('https://i.postimg.cc/Zn1jB8Lc/Untitled86-20260119120235.jpg');
-        background-size: cover; background-position: center; filter: blur(4px) brightness(0.8) contrast(1.1);
-        transform: scale(1.1); z-index: -1; animation: dream-breathe 20s infinite alternate ease-in-out;
-    }
-
     /* --- APP SHELL --- */  
     .app-shell {  
-        width: 100%; max-width: 480px; background: transparent; 
-        display: none; flex-direction: column; position: relative; height: 100%; z-index: 10; 
+        width: 100%; max-width: 480px; 
+        background: transparent; 
+        display: none; flex-direction: column; position: relative; height: 100%;  
+        z-index: 10; 
     }  
     
-    .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 160px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }  
-    .page { display: none; animation: popIn 0.3s; }  
+    .content { 
+        flex: 1; overflow-y: auto; overflow-x: hidden; 
+        padding: 20px; padding-bottom: 160px;
+        scroll-behavior: smooth; -webkit-overflow-scrolling: touch; 
+    }  
+    
+    .page { display: none; animation: popIn 0.3s; padding-top: 5px; }  
     .page.active { display: block; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
-    /* --- SYSTEM ALERT --- */
-    .sys-alert {
-        background: #ff4444; color: white; padding: 12px; font-weight: bold; 
-        display: none; justify-content: space-between; align-items: center; 
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 200; border-bottom: 2px solid white;
-        text-transform: uppercase; font-size: 0.9rem;
-    }
-
     /* --- ID CARD --- */  
     .id-card-wrap {  
-        background: #fff; border-radius: 15px; padding: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); 
-        margin-bottom: 20px; position: relative; overflow: hidden; border: 1px solid #ccc;  
+        background: #fff; border-radius: 15px; padding: 0;  
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px;   
+        position: relative; overflow: hidden; border: 1px solid #ccc;  
+        min-height: 270px; 
     }  
     .id-card-wrap::before {  
         content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;  
-        background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.1) 45%, rgba(0,255,255,0.1) 50%, rgba(255,255,0,0.1) 55%, transparent 60%);  
-        animation: foil 5s linear infinite; pointer-events: none;
+        background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.2) 45%, rgba(0,255,255,0.3) 50%, rgba(255,255,0,0.2) 55%, transparent 60%);  
+        mix-blend-mode: multiply; pointer-events: none; z-index: 10;  
+        animation: foil 5s linear infinite; opacity: 0.6; 
     }  
-    @keyframes foil { 0% { transform: translate(0,0); } 100% { transform: translate(50%,50%); } }  
+    @keyframes foil { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(50%,50%,0); } }  
+    .id-inner { padding: 15px; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; }  
+    .id-header { border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; font-weight: 900; letter-spacing: 1px; font-size: 0.7rem; color: #555; }  
+    .id-main { display: flex; gap: 15px; margin-bottom: 10px; }  
+    .id-photo { width: 90px; height: 110px; background: #eee; border: 1px solid #999; object-fit: cover; display: block; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }  
+    .id-details { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 5px; font-size: 0.7rem; }  
+    .id-label { color: var(--main); font-weight: bold; font-size: 0.6rem; text-transform: uppercase; display:block; }  
+    .id-val { color: #222; font-weight: bold; display: block; border-bottom: 1px dotted #ccc; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }  
+    .bio-section { background: rgba(255,255,255,0.8); border: 1px solid #ddd; border-radius: 8px; padding: 8px; font-size: 0.75rem; color: #333; flex: 1; overflow-y: auto; max-height: 80px; margin-top: 5px; white-space: pre-wrap; }  
 
-    .id-main { display: flex; gap: 15px; margin-top: 10px; }  
-    .id-photo { width: 90px; height: 110px; background: #eee; border: 1px solid #999; object-fit: cover; }  
-    .id-details { flex: 1; display: flex; flex-direction: column; gap: 4px; font-size: 0.7rem; }  
-    .id-label { color: var(--main); font-weight: bold; text-transform: uppercase; font-size: 0.6rem; }  
-    .id-val { color: #222; font-weight: bold; border-bottom: 1px dotted #ccc; display: block; margin-bottom: 4px; }  
+    /* --- DASHBOARD GRID --- */  
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }  
+    .dash-btn { background: white; border: 2px solid #eee; border-radius: 18px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }  
+    .dash-btn:active { transform: scale(0.96); background: #f9f9f9; border-color: var(--main); }  
 
-    /* --- CHAT AREA --- */  
-    .chat-shell { display: flex; height: 400px; border: 2px solid var(--main); border-radius: 15px; background: white; overflow: hidden; margin-top: 10px; }  
-    .chat-view { flex: 1; display: flex; flex-direction: column; }  
-    .chat-feed { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }  
-    .pk-msg { display: flex; gap: 8px; align-items: flex-start; padding: 5px; border-radius: 8px; }  
-    .pk-av { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }  
-    .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; }  
-
-    /* --- PHARMACY CARD --- */
-    .loyalty-card {
-        background: white; padding: 15px; border-radius: 10px; border: 1px solid #ccc;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px;
-    }
-    .stamp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px; }
-    .stamp-slot { aspect-ratio: 1/1; border: 2px dashed #bbb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-
-    /* --- DREAM JOURNAL --- */
-    .dream-entry { background: rgba(255,255,255,0.1); padding: 10px; border-left: 3px solid #7e57c2; margin-bottom: 10px; }
-    .sensory-slider { margin-bottom: 10px; }
+    /* --- PHARMACY --- */  
+    .receipt-paper { 
+        background: #fff; padding: 15px; 
+        font-family: 'Courier New', monospace; font-size: 0.8rem; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 10px; position: relative; 
+        border-top: 5px solid #333;
+        background-image: linear-gradient(135deg, transparent 50%, #fff 50%), linear-gradient(45deg, #fff 50%, transparent 50%);
+        background-size: 20px 20px; background-repeat: repeat-x; background-position: bottom;
+        padding-bottom: 30px; 
+    }  
+    .mood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px 0; }  
+    .mood-btn { background: white; border: 2px solid #eee; border-radius: 12px; height: 55px; font-size: 1.8rem; cursor: pointer; transition: transform 0.1s; }  
+    .mood-btn:active { transform: scale(0.95); background: var(--main); border-color: var(--main); }
 
     /* --- UI COMPONENTS --- */  
-    .btn-action { background: var(--main); color: white; padding: 12px; width: 100%; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-bottom: 5px; }  
-    .dock { position: fixed; bottom: 25px; left: 20px; right: 20px; background: white; border-radius: 25px; padding: 12px; display: flex; justify-content: space-between; box-shadow: 0 5px 25px rgba(0,0,0,0.1); z-index: 100; }  
-    .dock-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; opacity: 0.5; }  
-    .dock-btn.active { opacity: 1; transform: translateY(-5px); }  
+    .btn-action { background: var(--main); color: white; padding: 12px; width: 100%; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-bottom: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }  
+    .btn-action:active { transform: translateY(3px); box-shadow: none; }  
+      
+    .dock { position: fixed; bottom: 25px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); border-radius: 25px; padding: 12px 25px; display: flex; justify-content: space-between; box-shadow: 0 5px 25px rgba(0,0,0,0.15); z-index: 100; border: 2px solid white; }  
+    .dock-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }  
+    .dock-btn.active { opacity: 1; transform: translateY(-8px); }  
 
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }  
-    .modal-card { background: white; width: 100%; max-width: 400px; border-radius: 20px; padding: 20px; max-height: 80vh; overflow-y: auto; }  
-    input, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; }  
+    .modal-card { 
+        background: white; width: 90%; max-width: 380px; border-radius: 25px; padding: 25px; 
+        border: 4px ridge var(--main); max-height: 80vh; overflow-y: auto; padding-bottom: 40px; 
+    }  
+    input, textarea, select { width: 100%; padding: 10px; margin-bottom: 8px; border: 2px inset #eee; border-radius: 10px; font-family: inherit;}  
+
+    /* --- WELCOME SCREEN --- */
+    #welcome-screen {
+        position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:3000; 
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+    }
 
 </style>
-</head>  
 
+</head>  
 <body>  
-<div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:3000; display:flex; flex-direction:column; align-items:center; justify-content:center;">  
-    <h1 style="color:var(--main);">SEIREN OS</h1>  
-    <p>v.2.0 System Hub</p>
-    <button class="btn-action" style="width:200px;" onclick="enterSystem()">Enter System</button>  
+
+<div id="welcome-screen">  
+    <div style="font-size:4rem; margin-bottom:10px;">💿</div>  
+    <h1 style="color:var(--main); margin:0 0 10px 0;">SEIREN OS</h1>  
+    <p style="font-size:0.8rem; color:#666; margin-bottom:30px;">System Management Interface</p>  
+    
+    <label class="btn-action" style="width:220px; background:#7e57c2; text-align:center; display:block; cursor:pointer; margin-bottom:10px;">  
+        👾 Import PluralKit  
+        <input type="file" id="pk-input" style="display:none;" onchange="importPluralKit(this)">  
+    </label>
+
+    <button class="btn-action" style="width:220px;" onclick="startGuest()">Continue as Guest</button>  
+    <button class="btn-action" style="width:220px; background:#ccc; margin-top:10px;" onclick="resetSystem()">Start New System</button>
 </div>  
 
 <div class="app-shell" id="app">  
-    <div id="sys-alert" class="sys-alert">
-        <span id="sys-alert-msg">⚠️ SYSTEM BROADCAST ACTIVE</span>
-        <button onclick="dismissAlert()" style="background:none; border:none; color:white;">X</button>
-    </div>
-
     <div class="content">
-        <div id="page-dash" class="page active">  
+        <div id="page-dash" class="page active" style="padding-top:20px;">  
             <div class="id-card-wrap">  
-                <div class="id-header" style="display:flex; justify-content:space-between; font-weight:bold; font-size:0.7rem;">
-                    <span id="sys-name-display">ANDROMEDA</span>
-                    <span>SYSTEM ID</span>
-                </div>
-                <div class="id-main">  
-                    <img id="dash-av" class="id-photo" src="">  
-                    <div class="id-details">  
-                        <span class="id-label">IDENTITY</span><span class="id-val" id="dash-name">...</span>
-                        <span class="id-label">STATUS</span><span class="id-val" id="dash-status">Fronting</span>
+                <div class="id-inner">  
+                    <div class="id-header">  
+                        <span id="sys-name-display">SEIREN OS</span>  
+                        <span>GLIMMER ID</span>  
                     </div>  
+                    <div class="id-main">  
+                        <img id="dash-av" class="id-photo" src="">  
+                        <div class="id-details">  
+                            <div><span class="id-label">NAME</span><span class="id-val" id="dash-name">Guest</span></div>  
+                            <div style="display:flex; gap:10px;">  
+                                <div style="flex:1;"><span class="id-label">AGE</span><span class="id-val" id="dash-age">--</span></div>  
+                                <div style="flex:1;"><span class="id-label">HEIGHT</span><span class="id-val" id="dash-height">--</span></div>  
+                            </div>  
+                            <div style="display:flex; gap:10px;">  
+                                <div style="flex:1;"><span class="id-label">SIGN</span><span class="id-val" id="dash-sign">--</span></div>  
+                                <div style="flex:1;"><span class="id-label">SPECIES</span><span class="id-val" id="dash-species">--</span></div>  
+                            </div>  
+                        </div>  
+                    </div>  
+                    <span class="id-label">PERSONNEL NOTES</span>  
+                    <div class="bio-section" id="dash-bio">Guest Access</div>  
                 </div>  
-                <div style="margin-top:10px;">
-                    <span class="id-label">PERSONNEL NOTES</span>
-                    <div id="dash-bio" style="font-size:0.75rem; background:#f9f9f9; padding:8px; border-radius:5px; margin-top:4px;">...</div>
-                </div>
             </div>  
 
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">  
-                <button class="btn-action" onclick="openProfileModal()">👥 Switch Member</button>  
-                <button class="btn-action" style="background:#4fc3f7;" onclick="sendAlert()">⚠️ Broadcast</button>  
-                <button class="btn-action" style="background:#9575cd;" onclick="nav('dream')">🌙 Dream Log</button>  
-                <button class="btn-action" style="background:#607d8b;" onclick="exportData()">💾 Backup Hub</button>  
+            <div class="dash-grid">  
+                <div class="dash-btn" onclick="openProfileModal()"><span>👥</span><br>Switch/Edit</div>  
+                <div class="dash-btn" onclick="openSettingsModal()"><span>⚙️</span><br>Settings</div>  
+                <div class="dash-btn" onclick="nav('pharmacy')"><span>🏥</span><br>Care</div>
+                <div class="dash-btn" onclick="exportData()"><span>💾</span><br>Backup</div>  
             </div>  
         </div>  
 
-        <div id="page-pharmacy" class="page">
-            <h2>System Care</h2>
-            <div class="loyalty-card">
-                <div style="text-align:center; font-weight:bold; color:var(--main);">PRESCRIPTION REFILL CARD</div>
-                <div class="stamp-grid" id="stamp-grid"></div>
-                <p style="font-size:0.7rem; text-align:center; margin-top:10px;">Log symptoms to earn stamps.</p>
-            </div>
-
-            <div style="background:white; padding:15px; border-radius:15px;">
-                <label>Log Symptom:</label>
-                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:5px; margin-top:10px;">
-                    <button onclick="logSymptom('Panic')" style="padding:8px; font-size:0.7rem;">😰 Panic</button>
-                    <button onclick="logSymptom('Non-verbal')" style="padding:8px; font-size:0.7rem;">😶 Silent</button>
-                    <button onclick="logSymptom('Dissociated')" style="padding:8px; font-size:0.7rem;">🌫️ Numb</button>
-                    <button onclick="logSymptom('Overstimulated')" style="padding:8px; font-size:0.7rem;">💥 Loud</button>
-                    <button onclick="logSymptom('Blurry')" style="padding:8px; font-size:0.7rem;">🌀 Blurry</button>
-                    <button onclick="logSymptom('Little')" style="padding:8px; font-size:0.7rem;">🍼 Little</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="page-dream" class="page">
-            <h2>Dream Archives</h2>
-            <div style="background:white; padding:15px; border-radius:15px; margin-bottom:20px;">
-                <input type="text" id="dream-loc" placeholder="Location (e.g. The Pool Rooms)">
-                <textarea id="dream-text" placeholder="What happened?"></textarea>
-                
-                <div class="sensory-slider">
-                    <label style="font-size:0.7rem;">REALITY VS GLITCH</label>
-                    <input type="range" id="dream-reality" min="0" max="100">
-                </div>
-
-                <label style="display:block; background:#eee; padding:10px; text-align:center; border-radius:10px; cursor:pointer; margin-bottom:10px;">
-                    📸 Upload Residue (Selfie/Image)
-                    <input type="file" accept="image/*" style="display:none;" onchange="handleDreamImage(this)">
-                </label>
-                <img id="dream-preview" style="width:100%; display:none; border-radius:10px; margin-bottom:10px;">
-
-                <button class="btn-action" style="background:#7e57c2;" onclick="saveDream()">Archive Log</button>
-            </div>
-            <div id="dream-feed"></div>
-        </div>
-
-        <div id="page-chat" class="page">  
-            <div class="chat-shell">  
-                <div class="chat-view">  
-                    <div id="chat-feed" class="chat-feed"></div>  
-                    <div class="chat-input-area">  
-                        <label style="cursor:pointer; font-size:1.2rem;">🖼️<input type="file" accept="image/*" style="display:none;" onchange="handleChatImage(this)"></label>
-                        <input type="text" id="msg-in" placeholder="System Message...">  
-                        <button onclick="sendMsg()" style="background:var(--main); color:white; border:none; padding:5px 15px; border-radius:8px;">Send</button>  
-                    </div>  
+        <div id="page-pharmacy" class="page">  
+            <h2 style="color:var(--main); text-align:center; margin-bottom:15px; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Pharmacy & Care</h2>  
+            
+            <div style="background:white; padding:15px; border-radius:15px; border:2px solid var(--main);">  
+                <div id="receipt-list" class="receipt-paper">
+                    <div style="text-align:center; border-bottom:1px dashed #000; margin-bottom:10px;">SEIREN CLINIC</div>
+                    <div id="receipt-content"></div>
                 </div>  
+                
+                <div style="text-align:center; margin-bottom:5px; font-size:0.7rem; color:#888;">LOG SYMPTOMS:</div>  
+                <div class="mood-grid">  
+                    <button class="mood-btn" onclick="logMood('😊 Happy')">😊</button>  
+                    <button class="mood-btn" onclick="logMood('😢 Sad')">😢</button>  
+                    <button class="mood-btn" onclick="logMood('😡 Angry')">😡</button>  
+                    <button class="mood-btn" onclick="logMood('🌀 Anxious')">🌀</button>  
+                    <button class="mood-btn" onclick="logMood('💤 Tired')">💤</button>  
+                    <button class="mood-btn" onclick="logMood('✨ Hyper')">✨</button>  
+                    <button class="mood-btn" onclick="logMood('💀 Dead')">💀</button>  
+                    <button class="mood-btn" onclick="logMood('💖 Loved')">💖</button>  
+                    <button class="mood-btn" onclick="logMood('😰 Panic')">😰</button>  
+                    <button class="mood-btn" onclick="logMood('🌫️ Numb')">🌫️</button>  
+                    <button class="mood-btn" onclick="logMood('⚡ Manic')">⚡</button>  
+                    <button class="mood-btn" onclick="logMood('🥀 Lonely')">🥀</button>  
+                    <button class="mood-btn" onclick="logMood('🎪 Silly')">🎪</button>  
+                    <button class="mood-btn" onclick="logMood('🩹 Hurt')">🩹</button>  
+                    <button class="mood-btn" onclick="logMood('🤢 Sick')">🤢</button>  
+                    <button class="mood-btn" onclick="logMood('🤯 Overwhelmed')">🤯</button>  
+                    <button class="mood-btn" onclick="logMood('🥺 Sensitive')">🥺</button>  
+                    <button class="mood-btn" onclick="logMood('😤 Frustrated')">😤</button>
+                    <button class="mood-btn" onclick="logMood('🍼 Little')">🍼</button>
+                    <button class="mood-btn" onclick="logMood('😶 Non-verbal')">😶</button>
+                    <button class="mood-btn" onclick="logMood('🌫️ Dissociated')">🌫️</button>
+                    <button class="mood-btn" onclick="logMood('💥 Overstimulated')">💥</button>
+                </div>  
+
+                <button class="btn-action" style="margin-top:10px; background:#78909c;" onclick="clearReceipt()">Print & Save Receipt</button>  
             </div>  
         </div>  
     </div> 
@@ -214,214 +211,259 @@
     <div class="dock">  
         <button class="dock-btn active" onclick="nav('dash')">🏠</button>  
         <button class="dock-btn" onclick="nav('pharmacy')">🏥</button>  
-        <button class="dock-btn" onclick="nav('chat')">💬</button>  
-        <button class="dock-btn" onclick="toggleNightMode()">🌙</button>
+    </div>
+</div>  
+
+<div id="modal-settings" class="modal">  
+    <div class="modal-card">  
+        <h3>Settings</h3>  
+        <label>System Name:</label>  
+        <input type="text" id="sys-name-input" placeholder="Seiren OS">  
+        <button class="btn-action" onclick="saveSystemName()">Update Name</button>  
+        <button class="btn-action" style="margin-top:15px; background:#ccc;" onclick="closeModals()">Close</button>  
     </div>
 </div>  
 
 <div id="modal-profile" class="modal">  
     <div class="modal-card">  
-        <h3>Switch Member</h3>  
-        <div id="prof-list"></div>  
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3>System Members</h3>
+        </div>
+        <div id="prof-list" style="margin-bottom:15px; max-height:150px; overflow-y:auto; border:1px solid #eee;"></div>  
         <hr>  
-        <h4>Add Member</h4>  
+        <h4>Profile Editor</h4>  
         <input type="text" id="new-name" placeholder="Name">  
-        <textarea id="new-bio" placeholder="Notes..."></textarea>
-        <button class="btn-action" onclick="createProfile()">Add to System</button>
-        <button class="btn-action" style="background:#ccc;" onclick="closeModals()">Close</button>  
+        <div style="display:flex; gap:10px;">  
+            <input type="text" id="new-age" placeholder="Age" style="width:30%;">  
+            <input type="text" id="new-sign" placeholder="Sign/Pronouns" style="width:70%;">  
+        </div>  
+        <div style="display:flex; gap:10px;">  
+            <input type="text" id="new-species" placeholder="Species" style="width:70%;">  
+            <input type="text" id="new-height" placeholder="Height" style="width:30%;">  
+        </div>  
+        <textarea id="new-bio" placeholder="Profile Info / Notes..." style="height:60px; font-family:inherit;"></textarea>  
+        <label style="display:block; padding:10px; background:#eee; text-align:center; border-radius:10px; margin-bottom:10px;">  
+            📂 Upload Photo  
+            <input type="file" accept="image/*" style="display:none;" onchange="handleFile(this, 'av-preview')">  
+        </label>  
+        <img id="av-preview" src="" style="width:60px; height:60px; margin:0 auto; display:block; object-fit:cover; border-radius:50%; background:#eee; margin-bottom:10px;">  
+        <input type="color" id="new-color" value="#ff69b4" style="width:100%; border:none; height:30px;">  
+        <div style="display:flex; gap:5px; margin-top:10px;">
+            <button class="btn-action" style="background:#81c784; flex:1;" onclick="updateCurrentProfile()">Save Changes</button>
+            <button class="btn-action" style="flex:1;" onclick="createProfile()">Create New</button>
+        </div>
+        <button class="btn-action" style="margin-top:5px; background:#ccc;" onclick="closeModals()">Close</button>  
     </div>
 </div>  
 
 <script>  
-    let DB = {  
-        sysName: "ANDROMEDA",  
-        profiles: [{ name: "Runa", av: "", color: "#ff69b4", bio: "Hardware 25, Software 14", id: 1 }], 
-        active: 0, 
-        msgs: [], 
-        dreams: [], 
-        stamps: 0,
-        alert: null
+    let DEFAULT_DB = {  
+        sysName: "SEIREN OS",  
+        profiles: [{ 
+            name: "Guest", 
+            av: "https://cdn-icons-png.flaticon.com/512/2919/2919573.png", 
+            color: "#ff69b4", 
+            id: "GUEST", 
+            sign: "-", 
+            species: "Visitor", 
+            age: "-", 
+            height: "-", 
+            bio: "Guest Access" 
+        }], 
+        active: 0
     };
-
-    let tempChatImg = "";
-    let tempDreamImg = "";
+    
+    let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
+    let uploadedAv = ""; 
 
     window.onload = () => {  
-        // Request persistent storage
-        if (navigator.storage && navigator.storage.persist) {
-            navigator.storage.persist().then(granted => console.log("Storage Persisted:", granted));
+        const saved = localStorage.getItem('seiren_nogacha_v1'); 
+        if(saved) { 
+            DB = JSON.parse(saved); 
+            // If we have saved data and it's not just the default Guest, skip welcome
+            if(DB.profiles.length > 1 || DB.profiles[0].name !== "Guest") {
+                document.getElementById('welcome-screen').style.display = 'none';
+                document.querySelector('.app-shell').style.display='flex';
+                loadUI();
+            }
         }
-
-        const saved = localStorage.getItem('seiren_system_v1'); 
-        if(saved) DB = JSON.parse(saved);  
-        refreshUI();
     };  
+  
+    function startGuest() {
+        document.getElementById('welcome-screen').style.display = 'none';
+        document.querySelector('.app-shell').style.display='flex';
+        loadUI();
+    }
 
-    function save() { localStorage.setItem('seiren_system_v1', JSON.stringify(DB)); }
+    function resetSystem() {
+        if(confirm("This will erase current data and start fresh. OK?")) {
+            DB = JSON.parse(JSON.stringify(DEFAULT_DB));
+            // Reset to a blank "System Host" instead of Guest
+            DB.profiles[0].name = "Host";
+            DB.profiles[0].bio = "System Host";
+            save();
+            location.reload();
+        }
+    }
+    
+    function save() { localStorage.setItem('seiren_nogacha_v1', JSON.stringify(DB)); }  
+    function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
+    
+    function handleFile(inpt, id) {   
+        const file = inpt.files[0]; if(!file) return;  
+        const reader = new FileReader();  
+        reader.onload = (e) => {  
+            uploadedAv = e.target.result;
+            document.getElementById(id).src = uploadedAv; 
+        };  
+        reader.readAsDataURL(file); 
+    }  
+  
+    function loadUI() {  
+        const p = DB.profiles[DB.active] || DB.profiles[0]; 
+        document.documentElement.style.setProperty('--main', p.color);  
+        document.getElementById('sys-name-display').innerText = DB.sysName;  
+        document.getElementById('dash-name').innerText = p.name;  
+        document.getElementById('dash-sign').innerText = p.sign||"?";  
+        document.getElementById('dash-species').innerText = p.species||"?";  
+        document.getElementById('dash-age').innerText = p.age||"?";  
+        document.getElementById('dash-height').innerText = p.height||"?";  
+        document.getElementById('dash-bio').innerText = p.bio || "No info provided.";  
+        document.getElementById('dash-av').src = p.av;  
+    }  
+  
+    function createProfile() {  
+        const n = document.getElementById('new-name').value;  
+        if(n) {  
+            // Remove Guest if it's the only one
+            if(DB.profiles.length === 1 && DB.profiles[0].id === "GUEST") DB.profiles = [];
 
-    function enterSystem() {  
-        document.getElementById('welcome-screen').style.display = 'none';  
-        document.querySelector('.app-shell').style.display='flex'; 
-        refreshUI(); 
+            DB.profiles.push({  
+                name:n, color:document.getElementById('new-color').value,   
+                av: uploadedAv || "https://cdn-icons-png.flaticon.com/512/2919/2919573.png",  
+                sign:document.getElementById('new-sign').value,   
+                species:document.getElementById('new-species').value,   
+                age:document.getElementById('new-age').value,  
+                height:document.getElementById('new-height').value,  
+                bio:document.getElementById('new-bio').value,
+                id: Math.floor(Math.random()*900000)  
+            });  
+            uploadedAv = ""; DB.active = DB.profiles.length - 1;  
+            save(); closeModals(); loadUI();  
+        }  
+    }
+
+    function updateCurrentProfile() {
+        const p = DB.profiles[DB.active];
+        p.name = document.getElementById('new-name').value || p.name;
+        p.age = document.getElementById('new-age').value || p.age;
+        p.sign = document.getElementById('new-sign').value || p.sign;
+        p.species = document.getElementById('new-species').value || p.species;
+        p.height = document.getElementById('new-height').value || p.height;
+        p.bio = document.getElementById('new-bio').value || p.bio;
+        p.color = document.getElementById('new-color').value || p.color;
+        if(uploadedAv) { p.av = uploadedAv; uploadedAv = ""; }
+        save(); closeModals(); loadUI();
+    }
+  
+    function openProfileModal() {  
+        document.getElementById('modal-profile').style.display='flex';  
+        const p = DB.profiles[DB.active];
+        document.getElementById('new-name').value = p.name;
+        document.getElementById('new-age').value = p.age;
+        document.getElementById('new-sign').value = p.sign;
+        document.getElementById('new-species').value = p.species;
+        document.getElementById('new-height').value = p.height;
+        document.getElementById('new-bio').value = p.bio;
+        document.getElementById('new-color').value = p.color;
+        document.getElementById('av-preview').src = p.av;
+
+        const list = document.getElementById('prof-list'); list.innerHTML="";  
+        DB.profiles.forEach((p,i)=>{  
+            list.innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">  
+                <b>${p.name}</b>  
+                <div>  
+                    <button onclick="switchProfile(${i})">Switch</button>  
+                    ${i!==0 ? `<button style="color:red; margin-left:5px;" onclick="if(confirm('Delete?')){DB.profiles.splice(${i},1); DB.active=0; save(); openProfileModal(); loadUI();}">x</button>` : ''}  
+                </div>  
+            </div>`;  
+        });  
     }  
 
-    function nav(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('page-'+id).classList.add('active');
-        document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
-        if(id === 'chat') renderChat();
-        if(id === 'dream') renderDreams();
-    }
+    function switchProfile(index) { DB.active = index; save(); loadUI(); closeModals(); }
 
-    function refreshUI() {
-        const p = DB.profiles[DB.active];
-        document.getElementById('dash-name').innerText = p.name;
-        document.getElementById('dash-bio').innerText = p.bio;
-        document.getElementById('dash-av').src = p.av || "https://cdn-icons-png.flaticon.com/512/2919/2919573.png";
-        document.documentElement.style.setProperty('--main', p.color);
-        renderStamps();
-        renderAlert();
+    // --- PHARMACY ---
+    function logMood(m) {
+        const d = new Date().toLocaleTimeString();
+        document.getElementById('receipt-content').innerHTML += `<div>${m} ... ${d}</div>`;
     }
-
-    /* --- CHAT FUNCTIONS --- */
-    function handleChatImage(input) {
-        const reader = new FileReader();
-        reader.onload = (e) => { tempChatImg = e.target.result; alert("Selfie attached!"); };
-        reader.readAsDataURL(input.files[0]);
-    }
-
-    function sendMsg() {
-        const input = document.getElementById('msg-in');
-        if(!input.value && !tempChatImg) return;
-        const p = DB.profiles[DB.active];
-        DB.msgs.push({
-            name: p.name,
-            color: p.color,
-            txt: input.value,
-            img: tempChatImg,
-            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-        });
-        input.value = ""; tempChatImg = "";
-        save(); renderChat();
-    }
-
-    function renderChat() {
-        const feed = document.getElementById('chat-feed');
-        feed.innerHTML = DB.msgs.map(m => `
-            <div class="pk-msg">
-                <div style="flex:1;">
-                    <b style="color:${m.color}; font-size:0.8rem;">${m.name}</b> <small style="opacity:0.5;">${m.time}</small>
-                    <div style="font-size:0.9rem;">${m.txt}</div>
-                    ${m.img ? `<img src="${m.img}" style="max-width:200px; border-radius:10px; margin-top:5px;">` : ''}
-                </div>
-            </div>
-        `).join('');
-        feed.scrollTop = feed.scrollHeight;
-    }
-
-    /* --- PHARMACY --- */
-    function logSymptom(s) {
-        DB.stamps++;
-        if(DB.stamps > 10) DB.stamps = 10;
-        alert("Logged: " + s + ". Stamp added to card.");
-        save(); renderStamps();
-    }
-
-    function renderStamps() {
-        const grid = document.getElementById('stamp-grid');
-        grid.innerHTML = "";
-        for(let i=0; i<10; i++) {
-            grid.innerHTML += `<div class="stamp-slot">${i < DB.stamps ? '💖' : ''}</div>`;
+    
+    function clearReceipt() {
+        if(confirm("Print Receipt and Clear?")) {
+            document.getElementById('receipt-content').innerHTML = "";
+            alert("Symptoms Logged to System History.");
+            // Here you could add code to save to a permanent 'diary' array if you wanted.
         }
     }
 
-    /* --- DREAM LOG --- */
-    function handleDreamImage(input) {
+    // --- IMPORT PLURALKIT ---
+    function importPluralKit(input) {
+        const file = input.files[0];
+        if(!file) return;
         const reader = new FileReader();
-        reader.onload = (e) => { 
-            tempDreamImg = e.target.result; 
-            const prev = document.getElementById('dream-preview');
-            prev.src = tempDreamImg; prev.style.display = 'block';
+        reader.onload = (e) => {
+            try {
+                const json = JSON.parse(e.target.result);
+                let members = [];
+                
+                // PK Export Format Handling
+                if (json.members) members = json.members; 
+                else if (json.tuppers) members = json.tuppers; 
+                else if (Array.isArray(json)) members = json; 
+                else members = [json]; // Single file
+
+                let count = 0;
+                // If importing into Guest, clear Guest first
+                if (DB.profiles.length === 1 && DB.profiles[0].id === "GUEST") DB.profiles = [];
+
+                members.forEach(m => {
+                    DB.profiles.push({
+                        name: m.name || "Unknown",
+                        av: m.avatar_url || "https://cdn-icons-png.flaticon.com/512/2919/2919573.png",
+                        sign: m.pronouns || "-",
+                        age: m.birthday || "-",
+                        species: "System Member",
+                        height: "-",
+                        bio: m.description || "",
+                        color: m.color ? "#"+m.color : "#ff69b4",
+                        id: m.id || Math.floor(Math.random()*900000)
+                    });
+                    count++;
+                });
+
+                if(DB.profiles.length > 0) DB.active = 0;
+                
+                save();
+                alert(`Success! Imported ${count} members.`);
+                startGuest(); // Enter system
+            } catch(err) {
+                alert("Import Failed: " + err.message);
+            }
         };
-        reader.readAsDataURL(input.files[0]);
+        reader.readAsText(file);
+        input.value = ""; 
     }
 
-    function saveDream() {
-        const txt = document.getElementById('dream-text').value;
-        if(!txt && !tempDreamImg) return;
-        DB.dreams.unshift({
-            loc: document.getElementById('dream-loc').value,
-            txt: txt,
-            img: tempDreamImg,
-            reality: document.getElementById('dream-reality').value,
-            date: new Date().toLocaleDateString()
-        });
-        document.getElementById('dream-text').value = "";
-        document.getElementById('dream-preview').style.display = 'none';
-        tempDreamImg = "";
-        save(); renderDreams();
-    }
+    function nav(id) { 
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
+        document.getElementById('page-'+id).classList.add('active'); 
+        document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); 
+    }  
+    
+    function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
+    function openSettingsModal() { document.getElementById('modal-settings').style.display='flex'; }  
+    function exportData() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB)); a.download="seiren_backup.json"; document.body.appendChild(a); a.click(); a.remove(); }  
 
-    function renderDreams() {
-        const feed = document.getElementById('dream-feed');
-        feed.innerHTML = DB.dreams.map(d => `
-            <div class="dream-entry">
-                <small>${d.date} | ${d.loc}</small>
-                <p>${d.txt}</p>
-                ${d.img ? `<img src="${d.img}" style="width:100%; border-radius:5px; filter: grayscale(100%);">` : ''}
-                <div style="height:4px; background:#eee; margin-top:5px;">
-                    <div style="width:${d.reality}%; height:100%; background:var(--main);"></div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    /* --- ALERTS --- */
-    function sendAlert() {
-        const msg = prompt("Enter Broadcast Message:");
-        if(msg) { DB.alert = msg; save(); renderAlert(); }
-    }
-    function renderAlert() {
-        const el = document.getElementById('sys-alert');
-        if(DB.alert) {
-            document.getElementById('sys-alert-msg').innerText = "⚠️ " + DB.alert;
-            el.style.display = 'flex';
-        } else el.style.display = 'none';
-    }
-    function dismissAlert() { DB.alert = null; save(); renderAlert(); }
-
-    /* --- PROFILE MODAL --- */
-    function openProfileModal() {
-        document.getElementById('modal-profile').style.display = 'flex';
-        const list = document.getElementById('prof-list');
-        list.innerHTML = DB.profiles.map((p, i) => `
-            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
-                <b>${p.name}</b>
-                <button onclick="switchMember(${i})">Switch</button>
-            </div>
-        `).join('');
-    }
-
-    function switchMember(i) { DB.active = i; save(); refreshUI(); closeModals(); }
-
-    function createProfile() {
-        const name = document.getElementById('new-name').value;
-        if(!name) return;
-        DB.profiles.push({ name: name, bio: document.getElementById('new-bio').value, color: "#" + Math.floor(Math.random()*16777215).toString(16), id: Date.now() });
-        save(); openProfileModal();
-    }
-
-    function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-    function toggleNightMode() { document.body.classList.toggle('night-mode'); }
-    function exportData() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(DB));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "seiren_system_backup.json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-    }
 </script>  
 </body>  
 </html>
