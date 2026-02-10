@@ -85,7 +85,7 @@
     .dash-btn { background: white; border: 2px solid #eee; border-radius: 18px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }  
     .dash-btn:active { transform: scale(0.96); background: #f9f9f9; border-color: var(--main); }  
 
-    /* --- CHAT WITH CHANNELS (FIXED) --- */
+    /* --- CHAT WITH CHANNELS --- */
     .chat-shell { 
         display: flex; flex-direction: row; /* Horizontal layout for sidebar */
         height: 100%; 
@@ -275,7 +275,7 @@
                     <div class="chat-input-area">  
                         <label style="cursor:pointer; font-size:1.5rem; color:#888;">📎<input type="file" accept="image/*" style="display:none;" onchange="handleChatImage(this)"></label>  
                         <input type="text" id="msg-in" style="width:100%; margin:0;" placeholder="Message...">  
-                        <button class="btn-action" style="width:auto; margin:0;" onclick="sendMsg()">Send</button>  
+                        <button class="btn-action" style="width:auto; margin:0;" onmousedown="event.preventDefault(); sendMsg()">Send</button>  
                     </div>  
                 </div>
             </div>  
@@ -370,7 +370,6 @@
             id: "GUEST", bio: "Guest Access" 
         }], 
         active: 0,
-        // CHANNELS STRUCTURE RESTORED
         channels: { 'gen': {name:'general', msgs:[]} },
         curChan: 'gen',
         dreams: [],
@@ -383,12 +382,12 @@
     let tempDreamImg = "";
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_sys_v3'); 
+        const saved = localStorage.getItem('seiren_sys_v4_spamfix'); 
         if(saved) { 
             const loaded = JSON.parse(saved);
             DB = { ...DEFAULT_DB, ...loaded };
             
-            // MIGRATION FIX: If old save had simple array msgs, move to channels
+            // Channel migration
             if(Array.isArray(loaded.msgs)) {
                 DB.channels = { 'gen': {name:'general', msgs: loaded.msgs } };
                 delete DB.msgs;
@@ -418,7 +417,7 @@
         }
     }
     
-    function save() { localStorage.setItem('seiren_sys_v3', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_sys_v4_spamfix', JSON.stringify(DB)); }  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
     function toggleNightMode() {
         DB.nightMode = !DB.nightMode;
@@ -518,7 +517,7 @@
         if(confirm("Clear log?")) document.getElementById('receipt-content').innerHTML = "";
     }
 
-    // --- CHAT WITH CHANNELS ---
+    // --- CHAT WITH CHANNELS & SPAM FIX ---
     function handleChatImage(inpt) {   
         const file = inpt.files[0]; if(!file) return;  
         const reader = new FileReader(); reader.onload = (e) => { chatImg = e.target.result; alert("Image attached!"); }; reader.readAsDataURL(file); inpt.value = ""; 
@@ -530,16 +529,17 @@
         const p = DB.profiles[DB.active];  
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
-        // Ensure channel exists
         if(!DB.channels) DB.channels = { 'gen': {name:'general', msgs:[]} };
         if(!DB.channels[DB.curChan]) DB.curChan = 'gen';
 
         DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value, img:chatImg, time:time });  
         i.value=""; chatImg=""; save(); renderChat();  
+        
+        // KEEP FOCUS TO ALLOW SPAM
+        setTimeout(() => i.focus(), 10);
     } 
 
     function renderChat() {
-        // Render Channels
         const list = document.getElementById('chan-list');
         list.innerHTML = "";
         
@@ -553,7 +553,6 @@
             list.appendChild(btn);
         });
 
-        // Add Channel Button
         const addBtn = document.createElement('div');
         addBtn.className = "chan-btn add";
         addBtn.innerText = "+";
@@ -567,7 +566,6 @@
         };
         list.appendChild(addBtn);
 
-        // Render Messages
         const feed = document.getElementById('chat-feed'); 
         feed.innerHTML="";
         document.getElementById('chat-title').innerText = "#" + (DB.channels[DB.curChan]?.name || "general");
