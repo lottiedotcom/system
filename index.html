@@ -273,7 +273,15 @@
                     <div class="chat-header" id="chat-title">#general</div>
                     <div class="chat-feed" id="chat-feed"></div>  
                     <div class="chat-input-area">  
-                        <label style="cursor:pointer; font-size:1.5rem; color:#888;">📎<input type="file" accept="image/*" style="display:none;" onchange="handleChatImage(this)"></label>  
+                        <label style="cursor:pointer; font-size:1.5rem; color:#888;">
+                            📎<input type="file" accept="image/*" style="display:none;" onchange="handleChatImage(this)">
+                        </label>
+                        
+                        <div id="chat-preview-container" style="display:none; position:relative; margin-right:5px;">
+                            <img id="chat-preview" style="height:35px; width:35px; object-fit:cover; border-radius:5px; border:1px solid var(--main);">
+                            <div style="position:absolute; top:-5px; right:-5px; background:red; color:white; border-radius:50%; width:15px; height:15px; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="clearChatImg()">x</div>
+                        </div>
+
                         <input type="text" id="msg-in" style="width:100%; margin:0;" placeholder="Message...">  
                         <button class="btn-action" style="width:auto; margin:0;" onmousedown="event.preventDefault(); sendMsg()">Send</button>  
                     </div>  
@@ -382,12 +390,11 @@
     let tempDreamImg = "";
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_sys_v4_spamfix'); 
+        const saved = localStorage.getItem('seiren_sys_v5_final'); 
         if(saved) { 
             const loaded = JSON.parse(saved);
             DB = { ...DEFAULT_DB, ...loaded };
             
-            // Channel migration
             if(Array.isArray(loaded.msgs)) {
                 DB.channels = { 'gen': {name:'general', msgs: loaded.msgs } };
                 delete DB.msgs;
@@ -417,7 +424,7 @@
         }
     }
     
-    function save() { localStorage.setItem('seiren_sys_v4_spamfix', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_sys_v5_final', JSON.stringify(DB)); }  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
     function toggleNightMode() {
         DB.nightMode = !DB.nightMode;
@@ -517,11 +524,25 @@
         if(confirm("Clear log?")) document.getElementById('receipt-content').innerHTML = "";
     }
 
-    // --- CHAT WITH CHANNELS & SPAM FIX ---
+    // --- CHAT WITH CHANNELS & SPAM FIX & IMAGE PREVIEW ---
     function handleChatImage(inpt) {   
         const file = inpt.files[0]; if(!file) return;  
-        const reader = new FileReader(); reader.onload = (e) => { chatImg = e.target.result; alert("Image attached!"); }; reader.readAsDataURL(file); inpt.value = ""; 
+        const reader = new FileReader(); 
+        reader.onload = (e) => { 
+            chatImg = e.target.result; 
+            // PREVIEW AND FOCUS FIX
+            document.getElementById('chat-preview').src = chatImg;
+            document.getElementById('chat-preview-container').style.display = 'block';
+            document.getElementById('msg-in').focus(); 
+        }; 
+        reader.readAsDataURL(file); 
+        inpt.value = ""; 
     }  
+
+    function clearChatImg() {
+        chatImg = "";
+        document.getElementById('chat-preview-container').style.display = 'none';
+    }
 
     function sendMsg() {  
         const i = document.getElementById('msg-in'); 
@@ -533,9 +554,13 @@
         if(!DB.channels[DB.curChan]) DB.curChan = 'gen';
 
         DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value, img:chatImg, time:time });  
-        i.value=""; chatImg=""; save(); renderChat();  
         
-        // KEEP FOCUS TO ALLOW SPAM
+        // RESET BUT KEEP FOCUS
+        i.value=""; 
+        clearChatImg();
+        save(); 
+        renderChat();  
+        
         setTimeout(() => i.focus(), 10);
     } 
 
