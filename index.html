@@ -34,8 +34,8 @@
 
     /* --- NIGHT MODE --- */
     body.night-mode { background-color: #1a1a2e !important; background-image: none !important; color: #e6e6fa !important; }
-    body.night-mode .modal-card, body.night-mode .id-card-wrap, body.night-mode .app-shell { background: #16213e; color: #e6e6fa; border-color: #0f3460; }
-    body.night-mode .dock { background: #0f3460; border-color: #1a1a2e; }
+    body.night-mode .modal-card, body.night-mode .id-card-wrap, body.night-mode .app-shell, body.night-mode .dock { background: #16213e; color: #e6e6fa; border-color: #0f3460; }
+    body.night-mode .dock-btn { filter: invert(1); }
 
     /* --- APP SHELL --- */  
     .app-shell {  
@@ -62,13 +62,6 @@
         position: relative; overflow: hidden; border: 1px solid #ccc;  
         min-height: 270px; 
     }  
-    .id-card-wrap::before {  
-        content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;  
-        background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.2) 45%, rgba(0,255,255,0.3) 50%, rgba(255,255,0,0.2) 55%, transparent 60%);  
-        mix-blend-mode: multiply; pointer-events: none; z-index: 10;  
-        animation: foil 5s linear infinite; opacity: 0.6; 
-    }  
-    @keyframes foil { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(50%,50%,0); } }  
     .id-inner { padding: 15px; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; }  
     .id-header { border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; font-weight: 900; letter-spacing: 1px; font-size: 0.7rem; color: #555; }  
     .id-main { display: flex; gap: 15px; margin-bottom: 10px; }  
@@ -83,7 +76,7 @@
     .dash-btn { background: white; border: 2px solid #eee; border-radius: 18px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }  
     .dash-btn:active { transform: scale(0.96); background: #f9f9f9; border-color: var(--main); }  
 
-    /* --- CHAT STYLES (RESTORED) --- */
+    /* --- CHAT STYLES --- */
     .chat-shell { display: flex; height: 100%; border: 2px solid var(--main); border-radius: 15px; background: white; overflow: hidden; position:relative; box-shadow: 0 5px 15px rgba(0,0,0,0.1); min-height: 500px; flex-direction: column; }
     .chat-feed { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background-image: radial-gradient(#f0f0f0 1px, transparent 1px); background-size: 20px 20px; }
     .pk-msg { display: flex; gap: 10px; align-items: flex-start; }
@@ -93,7 +86,7 @@
     .pk-txt { font-size: 0.9rem; white-space: pre-wrap; word-wrap: break-word; }
     .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; background: #fafafa; }
     
-    /* --- DREAM JOURNAL STYLES (RESTORED) --- */
+    /* --- DREAM JOURNAL STYLES --- */
     .dream-entry { background: rgba(255,255,255,0.9); padding: 15px; border-left: 4px solid var(--main); margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .sensory-slider { margin-bottom: 15px; }
     .sensory-range { width: 100%; }
@@ -154,6 +147,7 @@
 
 <div class="app-shell" id="app">  
     <div class="content">
+        
         <div id="page-dash" class="page active" style="padding-top:20px;">  
             <div class="id-card-wrap">  
                 <div class="id-inner">  
@@ -183,13 +177,15 @@
             <div class="dash-grid">  
                 <div class="dash-btn" onclick="openProfileModal()"><span>👥</span><br>Switch/Edit</div>  
                 <div class="dash-btn" onclick="openSettingsModal()"><span>⚙️</span><br>Settings</div>  
-                <div class="dash-btn" onclick="nav('pharmacy')"><span>🏥</span><br>Care</div>
+                <div class="dash-btn" onclick="nav('pharmacy')"><span>🏥</span><br>Care Log</div>
+                <div class="dash-btn" onclick="nav('dream')"><span>🌙</span><br>Dream Log</div>
+                <div class="dash-btn" onclick="nav('chat')"><span>💬</span><br>Chat</div>
                 <div class="dash-btn" onclick="exportData()"><span>💾</span><br>Backup</div>  
             </div>  
         </div>  
 
         <div id="page-pharmacy" class="page">  
-            <h2 style="color:var(--main); text-align:center; margin-bottom:15px; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Pharmacy & Care</h2>  
+            <h2 style="color:var(--main); text-align:center; margin-bottom:15px; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Clinical Log</h2>  
             
             <div style="background:white; padding:15px; border-radius:15px; border:2px solid var(--main);">  
                 <div id="receipt-list" class="receipt-paper">
@@ -223,7 +219,7 @@
                     <button class="mood-btn" onclick="logMood('💥 Overstimulated')">💥</button>
                 </div>  
 
-                <button class="btn-action" style="margin-top:10px; background:#78909c;" onclick="clearReceipt()">Print & Save Receipt</button>  
+                <button class="btn-action" style="margin-top:10px; background:#78909c;" onclick="clearReceipt()">Clear Log</button>  
             </div>  
         </div> 
 
@@ -317,6 +313,7 @@
 </div>  
 
 <script>  
+    // --- NO GACHA, NO EBI, JUST SYSTEM ---
     let DEFAULT_DB = {  
         sysName: "SEIREN OS",  
         profiles: [{ 
@@ -342,7 +339,8 @@
     let tempDreamImg = "";
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_nogacha_v2'); 
+        // Key changed to ensure clean slate from previous gacha version
+        const saved = localStorage.getItem('seiren_pure_system_v1'); 
         if(saved) { 
             DB = { ...DEFAULT_DB, ...JSON.parse(saved) }; 
             if(!DB.msgs) DB.msgs = [];
@@ -374,7 +372,7 @@
         }
     }
     
-    function save() { localStorage.setItem('seiren_nogacha_v2', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_pure_system_v1', JSON.stringify(DB)); }  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
     function toggleNightMode() {
         DB.nightMode = !DB.nightMode;
@@ -465,16 +463,15 @@
 
     function switchProfile(index) { DB.active = index; save(); loadUI(); closeModals(); }
 
-    // --- PHARMACY ---
+    // --- LOGGING (NO REWARDS) ---
     function logMood(m) {
         const d = new Date().toLocaleTimeString();
         document.getElementById('receipt-content').innerHTML += `<div>${m} ... ${d}</div>`;
     }
     
     function clearReceipt() {
-        if(confirm("Print Receipt and Clear?")) {
+        if(confirm("Clear this log?")) {
             document.getElementById('receipt-content').innerHTML = "";
-            alert("Symptoms Logged to System History.");
         }
     }
 
