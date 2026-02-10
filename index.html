@@ -36,6 +36,8 @@
     body.night-mode { background-color: #1a1a2e !important; background-image: none !important; color: #e6e6fa !important; }
     body.night-mode .modal-card, body.night-mode .id-card-wrap, body.night-mode .app-shell, body.night-mode .dock { background: #16213e; color: #e6e6fa; border-color: #0f3460; }
     body.night-mode .dock-btn { filter: invert(1); }
+    body.night-mode .channel-sidebar { background: #0f3460; border-color: #1a1a2e; }
+    body.night-mode .chan-btn { background: #1a1a2e; color: #fff; border-color: #0f3460; }
 
     /* --- APP SHELL --- */  
     .app-shell {  
@@ -47,12 +49,12 @@
     
     .content { 
         flex: 1; overflow-y: auto; overflow-x: hidden; 
-        padding: 20px; padding-bottom: 160px;
+        padding: 15px; padding-bottom: 100px;
         scroll-behavior: smooth; -webkit-overflow-scrolling: touch; 
     }  
     
-    .page { display: none; animation: popIn 0.3s; padding-top: 5px; }  
-    .page.active { display: block; }  
+    .page { display: none; animation: popIn 0.3s; height: 100%; display: none; flex-direction: column; }  
+    .page.active { display: flex; }  
     @keyframes popIn { from {opacity:0; transform:scale(0.98);} to {opacity:1; transform:scale(1);} }  
 
     /* --- ID CARD --- */  
@@ -60,8 +62,15 @@
         background: #fff; border-radius: 15px; padding: 0;  
         box-shadow: 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 20px;   
         position: relative; overflow: hidden; border: 1px solid #ccc;  
-        min-height: 270px; 
+        min-height: 270px; flex-shrink: 0;
     }  
+    .id-card-wrap::before {  
+        content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;  
+        background: linear-gradient(115deg, transparent 40%, rgba(255,0,150,0.2) 45%, rgba(0,255,255,0.3) 50%, rgba(255,255,0,0.2) 55%, transparent 60%);  
+        mix-blend-mode: multiply; pointer-events: none; z-index: 10;  
+        animation: foil 5s linear infinite; opacity: 0.6; 
+    }  
+    @keyframes foil { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(50%,50%,0); } }  
     .id-inner { padding: 15px; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; }  
     .id-header { border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; font-weight: 900; letter-spacing: 1px; font-size: 0.7rem; color: #555; }  
     .id-main { display: flex; gap: 15px; margin-bottom: 10px; }  
@@ -76,19 +85,52 @@
     .dash-btn { background: white; border: 2px solid #eee; border-radius: 18px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }  
     .dash-btn:active { transform: scale(0.96); background: #f9f9f9; border-color: var(--main); }  
 
-    /* --- CHAT STYLES --- */
-    .chat-shell { display: flex; height: 100%; border: 2px solid var(--main); border-radius: 15px; background: white; overflow: hidden; position:relative; box-shadow: 0 5px 15px rgba(0,0,0,0.1); min-height: 500px; flex-direction: column; }
+    /* --- CHAT WITH CHANNELS (FIXED) --- */
+    .chat-shell { 
+        display: flex; flex-direction: row; /* Horizontal layout for sidebar */
+        height: 100%; 
+        border: 2px solid var(--main); border-radius: 15px; 
+        background: white; overflow: hidden; position:relative; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+    }
+    
+    .channel-sidebar {
+        width: 70px; background: #f0f0f0; border-right: 1px solid #ddd;
+        display: flex; flex-direction: column; align-items: center; gap: 10px;
+        padding-top: 15px; overflow-y: auto;
+    }
+    
+    .chan-btn {
+        width: 45px; height: 45px; border-radius: 50%; 
+        background: white; border: 2px solid #ccc;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: bold; color: #666; font-size: 0.8rem; cursor: pointer;
+        flex-shrink: 0;
+    }
+    .chan-btn.active { border-color: var(--main); color: var(--main); background: #fff0f5; }
+    .chan-btn.add { background: var(--main); color: white; border: none; font-size: 1.2rem; }
+
+    .chat-view { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .chat-header { padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; color: var(--main); display: flex; justify-content: space-between; align-items: center; }
     .chat-feed { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background-image: radial-gradient(#f0f0f0 1px, transparent 1px); background-size: 20px 20px; }
+    
     .pk-msg { display: flex; gap: 10px; align-items: flex-start; }
     .pk-av { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .pk-content { background: #fff; padding: 8px 12px; border-radius: 12px; border-top-left-radius: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); max-width: 80%; }
+    .pk-content { background: #fff; padding: 8px 12px; border-radius: 12px; border-top-left-radius: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); max-width: 100%; }
     .pk-name { font-weight: bold; font-size: 0.8rem; margin-bottom: 2px; display: flex; justify-content: space-between; gap: 10px; }
     .pk-txt { font-size: 0.9rem; white-space: pre-wrap; word-wrap: break-word; }
     .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; background: #fafafa; }
     
-    /* --- DREAM JOURNAL STYLES --- */
-    .dream-entry { background: rgba(255,255,255,0.9); padding: 15px; border-left: 4px solid var(--main); margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .sensory-slider { margin-bottom: 15px; }
+    /* --- DREAM JOURNAL (FIXED SIZE) --- */
+    #page-dream { padding-bottom: 120px; }
+    .dream-form {
+        background: white; padding: 20px; border-radius: 15px; 
+        margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border: 2px solid #eee;
+    }
+    .dream-entry { background: rgba(255,255,255,0.9); padding: 15px; border-left: 5px solid var(--main); margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .sensory-slider { margin-bottom: 10px; }
     .sensory-range { width: 100%; }
 
     /* --- PHARMACY --- */  
@@ -148,7 +190,7 @@
 <div class="app-shell" id="app">  
     <div class="content">
         
-        <div id="page-dash" class="page active" style="padding-top:20px;">  
+        <div id="page-dash" class="page active" style="flex-direction:column;">  
             <div class="id-card-wrap">  
                 <div class="id-inner">  
                     <div class="id-header">  
@@ -184,7 +226,7 @@
             </div>  
         </div>  
 
-        <div id="page-pharmacy" class="page">  
+        <div id="page-pharmacy" class="page" style="flex-direction:column;">  
             <h2 style="color:var(--main); text-align:center; margin-bottom:15px; background:white; border-radius:10px; display:inline-block; padding:5px 15px;">Clinical Log</h2>  
             
             <div style="background:white; padding:15px; border-radius:15px; border:2px solid var(--main);">  
@@ -225,28 +267,32 @@
 
         <div id="page-chat" class="page" style="height:100%; padding-bottom:80px;">  
             <div class="chat-shell">  
-                <div class="chat-feed" id="chat-feed"></div>  
-                <div class="chat-input-area">  
-                    <label style="cursor:pointer; font-size:1.5rem; color:#888;">📎<input type="file" accept="image/*" style="display:none;" onchange="handleChatImage(this)"></label>  
-                    <input type="text" id="msg-in" style="width:100%; margin:0;" placeholder="Message...">  
-                    <button class="btn-action" style="width:auto; margin:0;" onclick="sendMsg()">Send</button>  
-                </div>  
+                <div class="channel-sidebar" id="chan-list"></div>
+                
+                <div class="chat-view">
+                    <div class="chat-header" id="chat-title">#general</div>
+                    <div class="chat-feed" id="chat-feed"></div>  
+                    <div class="chat-input-area">  
+                        <label style="cursor:pointer; font-size:1.5rem; color:#888;">📎<input type="file" accept="image/*" style="display:none;" onchange="handleChatImage(this)"></label>  
+                        <input type="text" id="msg-in" style="width:100%; margin:0;" placeholder="Message...">  
+                        <button class="btn-action" style="width:auto; margin:0;" onclick="sendMsg()">Send</button>  
+                    </div>  
+                </div>
             </div>  
         </div>
 
-        <div id="page-dream" class="page">
+        <div id="page-dream" class="page" style="flex-direction:column;">
             <h2 style="text-align:center; color:var(--main); background:white; border-radius:10px; padding:5px;">Dream Journal</h2>
-            <div class="bio-section" style="background:white; padding:15px; margin-bottom:15px;">
-                <label>Location:</label>
-                <input type="text" id="dream-loc" placeholder="The Pool Rooms...">
+            
+            <div class="dream-form">
+                <input type="text" id="dream-loc" placeholder="Dream Location / Level">
+                
+                <textarea id="dream-text" style="height:150px; font-size:1rem;" placeholder="Write entry here..."></textarea>
                 
                 <div class="sensory-slider">
                     <label style="font-size:0.7rem; color:#888;">REALITY LEVEL</label>
                     <input type="range" id="dream-reality" min="0" max="100" class="sensory-range">
                 </div>
-
-                <label>Log:</label>
-                <textarea id="dream-text" style="height:80px;"></textarea>
 
                 <label class="btn-action" style="background:#7e57c2; text-align:center; display:block;">
                     📸 Upload Residue
@@ -256,6 +302,7 @@
                 
                 <button class="btn-action" style="margin-top:10px;" onclick="saveDream()">Save Entry</button>
             </div>
+            
             <div id="dream-feed"></div>
         </div>
 
@@ -313,22 +360,19 @@
 </div>  
 
 <script>  
-    // --- NO GACHA, NO EBI, JUST SYSTEM ---
+    // --- DATABASE STRUCTURE ---
     let DEFAULT_DB = {  
         sysName: "SEIREN OS",  
         profiles: [{ 
             name: "Guest", 
             av: "https://cdn-icons-png.flaticon.com/512/2919/2919573.png", 
             color: "#ff69b4", 
-            id: "GUEST", 
-            sign: "-", 
-            species: "Visitor", 
-            age: "-", 
-            height: "-", 
-            bio: "Guest Access" 
+            id: "GUEST", bio: "Guest Access" 
         }], 
         active: 0,
-        msgs: [],
+        // CHANNELS STRUCTURE RESTORED
+        channels: { 'gen': {name:'general', msgs:[]} },
+        curChan: 'gen',
         dreams: [],
         nightMode: false
     };
@@ -339,14 +383,18 @@
     let tempDreamImg = "";
 
     window.onload = () => {  
-        // Key changed to ensure clean slate from previous gacha version
-        const saved = localStorage.getItem('seiren_pure_system_v1'); 
+        const saved = localStorage.getItem('seiren_sys_v3'); 
         if(saved) { 
-            DB = { ...DEFAULT_DB, ...JSON.parse(saved) }; 
-            if(!DB.msgs) DB.msgs = [];
-            if(!DB.dreams) DB.dreams = [];
+            const loaded = JSON.parse(saved);
+            DB = { ...DEFAULT_DB, ...loaded };
             
-            // If we have saved data, skip welcome
+            // MIGRATION FIX: If old save had simple array msgs, move to channels
+            if(Array.isArray(loaded.msgs)) {
+                DB.channels = { 'gen': {name:'general', msgs: loaded.msgs } };
+                delete DB.msgs;
+            }
+            if(!DB.channels) DB.channels = { 'gen': {name:'general', msgs:[]} };
+            
             if(DB.profiles.length > 1 || DB.profiles[0].name !== "Guest") {
                 document.getElementById('welcome-screen').style.display = 'none';
                 document.querySelector('.app-shell').style.display='flex';
@@ -363,16 +411,14 @@
     }
 
     function resetSystem() {
-        if(confirm("This will erase current data and start fresh. OK?")) {
+        if(confirm("Erase all data?")) {
             DB = JSON.parse(JSON.stringify(DEFAULT_DB));
             DB.profiles[0].name = "Host";
-            DB.profiles[0].bio = "System Host";
-            save();
-            location.reload();
+            save(); location.reload();
         }
     }
     
-    function save() { localStorage.setItem('seiren_pure_system_v1', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_sys_v3', JSON.stringify(DB)); }  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
     function toggleNightMode() {
         DB.nightMode = !DB.nightMode;
@@ -463,19 +509,16 @@
 
     function switchProfile(index) { DB.active = index; save(); loadUI(); closeModals(); }
 
-    // --- LOGGING (NO REWARDS) ---
+    // --- PHARMACY ---
     function logMood(m) {
         const d = new Date().toLocaleTimeString();
         document.getElementById('receipt-content').innerHTML += `<div>${m} ... ${d}</div>`;
     }
-    
     function clearReceipt() {
-        if(confirm("Clear this log?")) {
-            document.getElementById('receipt-content').innerHTML = "";
-        }
+        if(confirm("Clear log?")) document.getElementById('receipt-content').innerHTML = "";
     }
 
-    // --- CHAT LOGIC ---
+    // --- CHAT WITH CHANNELS ---
     function handleChatImage(inpt) {   
         const file = inpt.files[0]; if(!file) return;  
         const reader = new FileReader(); reader.onload = (e) => { chatImg = e.target.result; alert("Image attached!"); }; reader.readAsDataURL(file); inpt.value = ""; 
@@ -487,13 +530,50 @@
         const p = DB.profiles[DB.active];  
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
-        DB.msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value, img:chatImg, time:time });  
+        // Ensure channel exists
+        if(!DB.channels) DB.channels = { 'gen': {name:'general', msgs:[]} };
+        if(!DB.channels[DB.curChan]) DB.curChan = 'gen';
+
+        DB.channels[DB.curChan].msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value, img:chatImg, time:time });  
         i.value=""; chatImg=""; save(); renderChat();  
     } 
 
     function renderChat() {
-        const feed = document.getElementById('chat-feed'); feed.innerHTML="";  
-        DB.msgs.forEach(m => { 
+        // Render Channels
+        const list = document.getElementById('chan-list');
+        list.innerHTML = "";
+        
+        if(!DB.channels) DB.channels = { 'gen': {name:'general', msgs:[]} };
+
+        Object.keys(DB.channels).forEach(k => {
+            const btn = document.createElement('div');
+            btn.className = `chan-btn ${DB.curChan === k ? 'active' : ''}`;
+            btn.innerText = DB.channels[k].name.substring(0,2).toUpperCase();
+            btn.onclick = () => { DB.curChan = k; renderChat(); };
+            list.appendChild(btn);
+        });
+
+        // Add Channel Button
+        const addBtn = document.createElement('div');
+        addBtn.className = "chan-btn add";
+        addBtn.innerText = "+";
+        addBtn.onclick = () => {
+            const n = prompt("Channel Name:");
+            if(n) {
+                const id = n.toLowerCase().replace(/\s/g, '');
+                DB.channels[id] = { name: n, msgs: [] };
+                save(); renderChat();
+            }
+        };
+        list.appendChild(addBtn);
+
+        // Render Messages
+        const feed = document.getElementById('chat-feed'); 
+        feed.innerHTML="";
+        document.getElementById('chat-title').innerText = "#" + (DB.channels[DB.curChan]?.name || "general");
+        
+        const msgs = DB.channels[DB.curChan]?.msgs || [];
+        msgs.forEach(m => { 
             const imgHTML = m.img ? `<img src="${m.img}" style="max-width:200px; border-radius:10px; margin-top:5px;">` : ''; 
             feed.innerHTML += `
             <div class="pk-msg">
@@ -507,15 +587,14 @@
         feed.scrollTop = feed.scrollHeight;  
     }
 
-    // --- DREAM JOURNAL LOGIC ---
+    // --- DREAM JOURNAL ---
     function handleDreamImage(inpt) {
         const file = inpt.files[0]; if(!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
             tempDreamImg = e.target.result;
             const prev = document.getElementById('dream-preview');
-            prev.src = tempDreamImg;
-            prev.style.display = 'block';
+            prev.src = tempDreamImg; prev.style.display = 'block';
         };
         reader.readAsDataURL(file);
     }
@@ -562,7 +641,6 @@
             try {
                 const json = JSON.parse(e.target.result);
                 let members = [];
-                
                 if (json.members) members = json.members; 
                 else if (json.tuppers) members = json.tuppers; 
                 else if (Array.isArray(json)) members = json; 
