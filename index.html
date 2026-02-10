@@ -32,6 +32,11 @@
         color: #444;   
     }  
 
+    /* --- NIGHT MODE --- */
+    body.night-mode { background-color: #1a1a2e !important; background-image: none !important; color: #e6e6fa !important; }
+    body.night-mode .modal-card, body.night-mode .id-card-wrap, body.night-mode .app-shell { background: #16213e; color: #e6e6fa; border-color: #0f3460; }
+    body.night-mode .dock { background: #0f3460; border-color: #1a1a2e; }
+
     /* --- APP SHELL --- */  
     .app-shell {  
         width: 100%; max-width: 480px; 
@@ -77,6 +82,21 @@
     .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }  
     .dash-btn { background: white; border: 2px solid #eee; border-radius: 18px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }  
     .dash-btn:active { transform: scale(0.96); background: #f9f9f9; border-color: var(--main); }  
+
+    /* --- CHAT STYLES (RESTORED) --- */
+    .chat-shell { display: flex; height: 100%; border: 2px solid var(--main); border-radius: 15px; background: white; overflow: hidden; position:relative; box-shadow: 0 5px 15px rgba(0,0,0,0.1); min-height: 500px; flex-direction: column; }
+    .chat-feed { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background-image: radial-gradient(#f0f0f0 1px, transparent 1px); background-size: 20px 20px; }
+    .pk-msg { display: flex; gap: 10px; align-items: flex-start; }
+    .pk-av { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .pk-content { background: #fff; padding: 8px 12px; border-radius: 12px; border-top-left-radius: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); max-width: 80%; }
+    .pk-name { font-weight: bold; font-size: 0.8rem; margin-bottom: 2px; display: flex; justify-content: space-between; gap: 10px; }
+    .pk-txt { font-size: 0.9rem; white-space: pre-wrap; word-wrap: break-word; }
+    .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; background: #fafafa; }
+    
+    /* --- DREAM JOURNAL STYLES (RESTORED) --- */
+    .dream-entry { background: rgba(255,255,255,0.9); padding: 15px; border-left: 4px solid var(--main); margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .sensory-slider { margin-bottom: 15px; }
+    .sensory-range { width: 100%; }
 
     /* --- PHARMACY --- */  
     .receipt-paper { 
@@ -205,12 +225,51 @@
 
                 <button class="btn-action" style="margin-top:10px; background:#78909c;" onclick="clearReceipt()">Print & Save Receipt</button>  
             </div>  
-        </div>  
+        </div> 
+
+        <div id="page-chat" class="page" style="height:100%; padding-bottom:80px;">  
+            <div class="chat-shell">  
+                <div class="chat-feed" id="chat-feed"></div>  
+                <div class="chat-input-area">  
+                    <label style="cursor:pointer; font-size:1.5rem; color:#888;">📎<input type="file" accept="image/*" style="display:none;" onchange="handleChatImage(this)"></label>  
+                    <input type="text" id="msg-in" style="width:100%; margin:0;" placeholder="Message...">  
+                    <button class="btn-action" style="width:auto; margin:0;" onclick="sendMsg()">Send</button>  
+                </div>  
+            </div>  
+        </div>
+
+        <div id="page-dream" class="page">
+            <h2 style="text-align:center; color:var(--main); background:white; border-radius:10px; padding:5px;">Dream Journal</h2>
+            <div class="bio-section" style="background:white; padding:15px; margin-bottom:15px;">
+                <label>Location:</label>
+                <input type="text" id="dream-loc" placeholder="The Pool Rooms...">
+                
+                <div class="sensory-slider">
+                    <label style="font-size:0.7rem; color:#888;">REALITY LEVEL</label>
+                    <input type="range" id="dream-reality" min="0" max="100" class="sensory-range">
+                </div>
+
+                <label>Log:</label>
+                <textarea id="dream-text" style="height:80px;"></textarea>
+
+                <label class="btn-action" style="background:#7e57c2; text-align:center; display:block;">
+                    📸 Upload Residue
+                    <input type="file" accept="image/*" style="display:none;" onchange="handleDreamImage(this)">
+                </label>
+                <img id="dream-preview" style="width:100%; display:none; margin-top:10px; border-radius:10px;">
+                
+                <button class="btn-action" style="margin-top:10px;" onclick="saveDream()">Save Entry</button>
+            </div>
+            <div id="dream-feed"></div>
+        </div>
+
     </div> 
 
     <div class="dock">  
         <button class="dock-btn active" onclick="nav('dash')">🏠</button>  
         <button class="dock-btn" onclick="nav('pharmacy')">🏥</button>  
+        <button class="dock-btn" onclick="nav('chat')">💬</button>  
+        <button class="dock-btn" onclick="nav('dream')">🌙</button>  
     </div>
 </div>  
 
@@ -219,7 +278,8 @@
         <h3>Settings</h3>  
         <label>System Name:</label>  
         <input type="text" id="sys-name-input" placeholder="Seiren OS">  
-        <button class="btn-action" onclick="saveSystemName()">Update Name</button>  
+        <button class="btn-action" onclick="saveSystemName()">Update Name</button>
+        <button class="btn-action" style="margin-top:10px;" onclick="toggleNightMode()">Toggle Night Mode</button>
         <button class="btn-action" style="margin-top:15px; background:#ccc;" onclick="closeModals()">Close</button>  
     </div>
 </div>  
@@ -270,21 +330,30 @@
             height: "-", 
             bio: "Guest Access" 
         }], 
-        active: 0
+        active: 0,
+        msgs: [],
+        dreams: [],
+        nightMode: false
     };
     
     let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
     let uploadedAv = ""; 
+    let chatImg = "";
+    let tempDreamImg = "";
 
     window.onload = () => {  
-        const saved = localStorage.getItem('seiren_nogacha_v1'); 
+        const saved = localStorage.getItem('seiren_nogacha_v2'); 
         if(saved) { 
-            DB = JSON.parse(saved); 
-            // If we have saved data and it's not just the default Guest, skip welcome
+            DB = { ...DEFAULT_DB, ...JSON.parse(saved) }; 
+            if(!DB.msgs) DB.msgs = [];
+            if(!DB.dreams) DB.dreams = [];
+            
+            // If we have saved data, skip welcome
             if(DB.profiles.length > 1 || DB.profiles[0].name !== "Guest") {
                 document.getElementById('welcome-screen').style.display = 'none';
                 document.querySelector('.app-shell').style.display='flex';
                 loadUI();
+                if(DB.nightMode) document.body.classList.add('night-mode');
             }
         }
     };  
@@ -298,7 +367,6 @@
     function resetSystem() {
         if(confirm("This will erase current data and start fresh. OK?")) {
             DB = JSON.parse(JSON.stringify(DEFAULT_DB));
-            // Reset to a blank "System Host" instead of Guest
             DB.profiles[0].name = "Host";
             DB.profiles[0].bio = "System Host";
             save();
@@ -306,8 +374,14 @@
         }
     }
     
-    function save() { localStorage.setItem('seiren_nogacha_v1', JSON.stringify(DB)); }  
+    function save() { localStorage.setItem('seiren_nogacha_v2', JSON.stringify(DB)); }  
     function saveSystemName() { DB.sysName = document.getElementById('sys-name-input').value; save(); loadUI(); closeModals(); }  
+    function toggleNightMode() {
+        DB.nightMode = !DB.nightMode;
+        if(DB.nightMode) document.body.classList.add('night-mode');
+        else document.body.classList.remove('night-mode');
+        save();
+    }
     
     function handleFile(inpt, id) {   
         const file = inpt.files[0]; if(!file) return;  
@@ -335,7 +409,6 @@
     function createProfile() {  
         const n = document.getElementById('new-name').value;  
         if(n) {  
-            // Remove Guest if it's the only one
             if(DB.profiles.length === 1 && DB.profiles[0].id === "GUEST") DB.profiles = [];
 
             DB.profiles.push({  
@@ -402,8 +475,85 @@
         if(confirm("Print Receipt and Clear?")) {
             document.getElementById('receipt-content').innerHTML = "";
             alert("Symptoms Logged to System History.");
-            // Here you could add code to save to a permanent 'diary' array if you wanted.
         }
+    }
+
+    // --- CHAT LOGIC ---
+    function handleChatImage(inpt) {   
+        const file = inpt.files[0]; if(!file) return;  
+        const reader = new FileReader(); reader.onload = (e) => { chatImg = e.target.result; alert("Image attached!"); }; reader.readAsDataURL(file); inpt.value = ""; 
+    }  
+
+    function sendMsg() {  
+        const i = document.getElementById('msg-in'); 
+        if(!i.value && !chatImg) return;  
+        const p = DB.profiles[DB.active];  
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        DB.msgs.push({ name:p.name, av:p.av, color:p.color, txt:i.value, img:chatImg, time:time });  
+        i.value=""; chatImg=""; save(); renderChat();  
+    } 
+
+    function renderChat() {
+        const feed = document.getElementById('chat-feed'); feed.innerHTML="";  
+        DB.msgs.forEach(m => { 
+            const imgHTML = m.img ? `<img src="${m.img}" style="max-width:200px; border-radius:10px; margin-top:5px;">` : ''; 
+            feed.innerHTML += `
+            <div class="pk-msg">
+                <img src="${m.av}" class="pk-av">
+                <div class="pk-content">
+                    <div class="pk-name" style="color:${m.color}">${m.name} <span style="color:#ccc; font-weight:normal; font-size:0.7em;">${m.time}</span></div>
+                    <div class="pk-txt">${m.txt}${imgHTML}</div>
+                </div>
+            </div>`; 
+        });  
+        feed.scrollTop = feed.scrollHeight;  
+    }
+
+    // --- DREAM JOURNAL LOGIC ---
+    function handleDreamImage(inpt) {
+        const file = inpt.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            tempDreamImg = e.target.result;
+            const prev = document.getElementById('dream-preview');
+            prev.src = tempDreamImg;
+            prev.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function saveDream() {
+        const loc = document.getElementById('dream-loc').value;
+        const txt = document.getElementById('dream-text').value;
+        const reality = document.getElementById('dream-reality').value;
+        
+        if(txt || loc || tempDreamImg) {
+            DB.dreams.unshift({
+                d: new Date().toLocaleDateString(),
+                loc: loc, reality: reality,
+                txt: txt, img: tempDreamImg 
+            });
+            document.getElementById('dream-loc').value="";
+            document.getElementById('dream-text').value="";
+            document.getElementById('dream-preview').style.display='none';
+            tempDreamImg = "";
+            save(); renderDreams();
+        }
+    }
+
+    function renderDreams() {
+        const f = document.getElementById('dream-feed'); f.innerHTML = "";
+        DB.dreams.forEach((d, i) => {
+            f.innerHTML += `
+            <div class="dream-entry">
+                <button style="color:red; background:none; border:none; float:right; cursor:pointer;" onclick="if(confirm('Delete?')){DB.dreams.splice(${i},1); save(); renderDreams();}">x</button>
+                <small style="opacity:0.7;">${d.d} • ${d.loc || 'Unknown'}</small>
+                <div style="font-size:0.7rem; color:${d.reality > 50 ? 'red' : 'blue'};">Reality Level: ${d.reality}%</div>
+                ${d.img ? `<img src="${d.img}" style="width:100%; border-radius:5px; margin:5px 0; filter:grayscale(100%);">` : ''}
+                <p style="margin-top:5px; white-space:pre-wrap;">${d.txt}</p>
+            </div>`;
+        });
     }
 
     // --- IMPORT PLURALKIT ---
@@ -416,14 +566,12 @@
                 const json = JSON.parse(e.target.result);
                 let members = [];
                 
-                // PK Export Format Handling
                 if (json.members) members = json.members; 
                 else if (json.tuppers) members = json.tuppers; 
                 else if (Array.isArray(json)) members = json; 
-                else members = [json]; // Single file
+                else members = [json]; 
 
                 let count = 0;
-                // If importing into Guest, clear Guest first
                 if (DB.profiles.length === 1 && DB.profiles[0].id === "GUEST") DB.profiles = [];
 
                 members.forEach(m => {
@@ -442,10 +590,9 @@
                 });
 
                 if(DB.profiles.length > 0) DB.active = 0;
-                
                 save();
                 alert(`Success! Imported ${count} members.`);
-                startGuest(); // Enter system
+                startGuest(); 
             } catch(err) {
                 alert("Import Failed: " + err.message);
             }
@@ -458,6 +605,8 @@
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
         document.getElementById('page-'+id).classList.add('active'); 
         document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active')); 
+        if(id==='chat') renderChat();
+        if(id==='dream') renderDreams();
     }  
     
     function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }  
